@@ -5,7 +5,7 @@ import { z } from 'zod'
  * Una variable solo es obligatoria a partir de la fase que la usa, para que los
  * gates de las fases anteriores no se rompan por credenciales que aún no existen.
  */
-export const FASE_ACTUAL = 12
+export const FASE_ACTUAL = 13
 
 /**
  * Desde qué fase pasa a ser obligatoria cada variable PARA EL CRM.
@@ -28,21 +28,7 @@ export const FASE_REQUERIDA = {
   OPENAI_COST_ALERT_DAILY_USD: 11,
 } as const
 
-/**
- * Lo que necesita la instancia de n8n, no el CRM. Se comprueba con el script
- * de integraciones antes de lanzar, no al arrancar el panel.
- */
-export const VARIABLES_INTEGRACION = [
-  'CRM_BASE_URL',
-  'N8N_WEBHOOK_SECRET',
-  'OPENAI_API_KEY',
-  'CHATWOOT_BASE_URL',
-  'CHATWOOT_API_TOKEN',
-  'CHATWOOT_ACCOUNT_ID',
-  'WHATSAPP_CLOUD_API_TOKEN',
-  'WHATSAPP_PHONE_NUMBER_ID',
-  'WHATSAPP_VERIFY_TOKEN',
-] as const
+export { VARIABLES_INTEGRACION } from './variables-integracion'
 
 export type NombreVariable = keyof typeof FASE_REQUERIDA
 
