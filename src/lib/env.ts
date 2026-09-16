@@ -5,7 +5,7 @@ import { z } from 'zod'
  * Una variable solo es obligatoria a partir de la fase que la usa, para que los
  * gates de las fases anteriores no se rompan por credenciales que aún no existen.
  */
-export const FASE_ACTUAL = 13
+export const FASE_ACTUAL = 14
 
 /**
  * Desde qué fase pasa a ser obligatoria cada variable PARA EL CRM.

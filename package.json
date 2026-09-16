@@ -18,7 +18,8 @@
     "db:migrate": "tsx scripts/db-migrate.ts",
     "db:seed": "tsx scripts/db-seed.ts",
     "db:staff": "tsx scripts/crear-staff.ts",
-    "check:integraciones": "tsx scripts/check-integraciones-env.ts"
+    "check:integraciones": "tsx scripts/check-integraciones-env.ts",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.13",
+    "@playwright/test": "1.63.0",
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",

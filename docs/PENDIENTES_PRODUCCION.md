@@ -16,6 +16,14 @@ reemplazarse por lo definitivo antes de atender al primer cliente real.
 - [ ] `nombre_negocio` y `saludo_agente` en `configuracion` — hoy tienen texto por defecto.
 - [ ] Dirección de la planta (referencia del radio de 5 km y origen de los despachos).
 
+## Bloqueado, esperando algo tuyo
+- [ ] **Token de Vercel** para desplegar el CRM (Account Settings → Tokens).
+- [ ] **Playwright no pudo descargar Chromium** en esta máquina: el CDN dio
+      timeout tres veces seguidas. La suite E2E está escrita y el CI la corre,
+      pero **no se ha ejecutado localmente todavía**. Reintentar con
+      `pnpm exec playwright install chromium`.
+- [ ] Repositorio remoto en GitHub, para que corra el CI.
+
 ## Infraestructura
 - [ ] **Segundo proyecto de Supabase para producción.** Hoy `cvdlslltevwxprdktmfu`
       sirve para desarrollo y pruebas a la vez, y las pruebas escriben y borran
