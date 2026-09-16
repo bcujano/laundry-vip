@@ -91,3 +91,10 @@ export function ultimaHoraDelDia(parametros: ParametrosVentana): string {
   const minutos = limite % 60
   return `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}`
 }
+
+/** Inicio y fin del día natural de Quito que contiene a `instante`. */
+export function limitesDelDia(instante: Date): { desde: Date; hasta: Date } {
+  const local = aLocal(instante)
+  const inicio = medianoche(local, 0)
+  return { desde: aInstante(inicio), hasta: aInstante(new Date(inicio.getTime() + MS_POR_DIA)) }
+}
