@@ -1,4 +1,4 @@
-import { afterAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import {
   actualizarRegistro,
@@ -8,10 +8,12 @@ import {
 } from '@/server/webhook/handlers/operador'
 import { corrida } from '../util/corrida.ts'
 
-const OPERADOR = '+593963987124'
 const INTRUSO = '+593999888777'
 const CORRIDA = corrida()
 const PREFIJO = `+5939${CORRIDA}`
+// Operador propio de la corrida: la base es la real y la lista blanca tiene
+// números de verdad. Nunca se usa ni se limpia la conversación de uno de ellos.
+const OPERADOR = `${PREFIJO}99`
 
 let indice = 0
 function nuevoTelefono(): string {
@@ -21,8 +23,15 @@ function nuevoTelefono(): string {
 
 const ITEMS = [{ descripcion: '5 camisetas', cantidad: 5, metodo: 'agua' as const }]
 
+beforeAll(async () => {
+  await supabaseAdmin()
+    .from('operador_whitelist')
+    .insert({ telefono: OPERADOR, nombre: `Operador de prueba ${CORRIDA}`, activo: true })
+})
+
 afterAll(async () => {
   const cliente = supabaseAdmin()
+  await cliente.from('operador_whitelist').delete().eq('telefono', OPERADOR)
   const { data } = await cliente.from('clientes').select('id').like('telefono', `${PREFIJO}%`)
   for (const fila of data ?? []) {
     await cliente.from('pedidos').delete().eq('cliente_id', fila.id)
