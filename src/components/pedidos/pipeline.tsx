@@ -58,8 +58,10 @@ export function Pipeline({ pedidos }: { pedidos: TarjetaPedido[] }) {
     <div className="flex flex-col gap-3">
       <Aviso estado={estado} />
 
-      <div className="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
-        <div className="flex min-w-max gap-3 pb-2">
+      {/* Móvil: columnas deslizables de lado. Escritorio: todas a la vista, sin scroll lateral
+          (dos filas de 4 en pantallas medianas, una fila de 8 en las anchas). */}
+      <div className="-mx-4 snap-x snap-mandatory overflow-x-auto px-4 lg:mx-0 lg:snap-none lg:overflow-visible lg:px-0">
+        <div className="flex min-w-max gap-3 pb-2 lg:grid lg:min-w-0 lg:grid-cols-4 lg:gap-2 2xl:grid-cols-8">
           {COLUMNAS.map((columna) => {
             const delColumna = pedidos.filter((pedido) => pedido.estado === columna)
             const total = delColumna.reduce((suma, pedido) => suma + (pedido.monto ?? 0), 0)
@@ -67,7 +69,7 @@ export function Pipeline({ pedidos }: { pedidos: TarjetaPedido[] }) {
             return (
               // biome-ignore lint/a11y/noStaticElementInteractions: zona de soltado del tablero
               <div
-                className={`columna-pipeline w-64 shrink-0 rounded-xl border p-2 transition-colors ${
+                className={`columna-pipeline w-[78vw] max-w-72 shrink-0 snap-start rounded-xl border p-2 transition-colors sm:w-64 lg:w-auto lg:max-w-none lg:min-w-0 ${
                   encima === columna
                     ? 'border-[var(--primario)] bg-[var(--exito-suave)]'
                     : 'border-[var(--borde)] bg-[var(--superficie)]'
@@ -80,8 +82,13 @@ export function Pipeline({ pedidos }: { pedidos: TarjetaPedido[] }) {
                 }}
                 onDrop={() => soltar(columna)}
               >
-                <div className="mb-2 flex items-baseline justify-between px-1">
-                  <p className="font-semibold text-xs">{estadoLegible(columna)}</p>
+                <div className="mb-2 flex items-baseline justify-between gap-1 px-1">
+                  <p
+                    className="min-w-0 truncate font-semibold text-xs"
+                    title={estadoLegible(columna)}
+                  >
+                    {estadoLegible(columna)}
+                  </p>
                   <span className="text-[var(--texto-suave)] text-xs tabular-nums">
                     {delColumna.length}
                   </span>
@@ -104,8 +111,10 @@ export function Pipeline({ pedidos }: { pedidos: TarjetaPedido[] }) {
                       onDragEnd={() => setArrastrando(null)}
                       onDragStart={() => setArrastrando(pedido.id)}
                     >
-                      <p className="truncate font-medium text-sm">{pedido.cliente}</p>
-                      <div className="mt-1 flex items-center justify-between gap-2">
+                      <p className="truncate font-medium text-sm" title={pedido.cliente}>
+                        {pedido.cliente}
+                      </p>
+                      <div className="mt-1 flex flex-wrap items-center justify-between gap-x-2">
                         <span className="text-[var(--texto-suave)] text-xs tabular-nums">
                           {pedido.ventana ? soloHora(pedido.ventana) : 'sin ventana'}
                         </span>

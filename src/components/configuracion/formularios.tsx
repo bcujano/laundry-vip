@@ -168,16 +168,6 @@ export function FormularioConfiguracion({ config }: { config: Configuracion }) {
             type="number"
           />
         </Etiquetado>
-        <Etiquetado para="campo-limite_costo_diario_openai_usd" texto="Tope diario OpenAI (USD)">
-          <Campo
-            defaultValue={Number(config.limite_costo_diario_openai_usd).toFixed(2)}
-            min="0"
-            id="campo-limite_costo_diario_openai_usd"
-            name="limite_costo_diario_openai_usd"
-            step="0.01"
-            type="number"
-          />
-        </Etiquetado>
       </div>
 
       <div className="flex items-center gap-3">

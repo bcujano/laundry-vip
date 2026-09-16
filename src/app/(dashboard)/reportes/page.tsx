@@ -3,7 +3,6 @@ import { Tabla, Tarjeta, Td, Th, TituloSeccion, Vacio } from '@/components/ui/pr
 import { exigirPermiso } from '@/lib/auth'
 import { moneda, soloFecha, tipoNegocioLegible } from '@/lib/format'
 import { generar, periodoDesdeNombre } from '@/server/reportes/repo'
-import { usoDeHoy } from '@/server/webhook/cost-tracking'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,7 +22,7 @@ export default async function Reportes({ searchParams }: { searchParams: Promise
   const periodoClave = (Array.isArray(crudo) ? crudo[0] : crudo) || 'mes'
 
   const periodo = periodoDesdeNombre(periodoClave)
-  const [reporte, uso] = await Promise.all([generar(periodo), usoDeHoy()])
+  const reporte = await generar(periodo)
 
   return (
     <div className="flex flex-col gap-4">
@@ -107,24 +106,6 @@ export default async function Reportes({ searchParams }: { searchParams: Promise
             </tbody>
           </Tabla>
         )}
-      </Tarjeta>
-
-      <Tarjeta>
-        <TituloSeccion>Gasto del agente hoy</TituloSeccion>
-        <dl className="grid gap-3 p-4 text-sm sm:grid-cols-3">
-          <div>
-            <dt className="text-[var(--color-texto-apagado)]">Costo acumulado</dt>
-            <dd className="tabular-nums">{moneda(uso.costo_dia_usd)}</dd>
-          </div>
-          <div>
-            <dt className="text-[var(--color-texto-apagado)]">Tope diario</dt>
-            <dd className="tabular-nums">{moneda(uso.limite_usd)}</dd>
-          </div>
-          <div>
-            <dt className="text-[var(--color-texto-apagado)]">Tokens</dt>
-            <dd className="tabular-nums">{uso.tokens_dia.toLocaleString('es-EC')}</dd>
-          </div>
-        </dl>
       </Tarjeta>
     </div>
   )

@@ -3,15 +3,26 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ConversacionAgente } from '@/components/clientes/conversacion'
 import { FichaCliente } from '@/components/clientes/ficha'
+import { ReportarDiscrepancia } from '@/components/clientes/reportar-discrepancia'
 import { EtiquetaEstado } from '@/components/pedidos/etiquetas'
 import { CabeceraTarjeta, Tabla, Tarjeta, Td, Th, Vacio } from '@/components/ui/primitivos'
 import { verifyAuth } from '@/lib/auth'
 import { fechaHora, moneda, soloFecha, telefonoLegible, tipoNegocioLegible } from '@/lib/format'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { conversacionDe, obtener } from '@/server/clientes/repo'
-import type { Pedido } from '@/types/database'
+import type { EstadoPedido, Pedido } from '@/types/database'
 
 export const dynamic = 'force-dynamic'
+
+/** Solo se reporta discrepancia en pedidos vivos que no estén ya congelados. */
+const ABIERTOS_A_DISCREPANCIA = new Set<EstadoPedido>([
+  'nuevo',
+  'esperando_pago_para_recoleccion',
+  'recolectado',
+  'en_proceso',
+  'esperando_pago_para_entrega',
+  'listo_para_entrega',
+])
 
 export default async function DetalleCliente({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -119,12 +130,20 @@ export default async function DetalleCliente({ params }: { params: Promise<{ id:
                         : `${moneda(pedido.monto_estimado_lavado)} est.`}
                     </Td>
                     <Td>
-                      <Link
-                        className="text-[var(--primario)] text-sm hover:underline"
-                        href={`/pedidos/${pedido.id}`}
-                      >
-                        Ver
-                      </Link>
+                      <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
+                        {ABIERTOS_A_DISCREPANCIA.has(pedido.estado) ? (
+                          <ReportarDiscrepancia
+                            pedidoId={pedido.id}
+                            vigente={pedido.monto_confirmado_lavado ?? pedido.monto_estimado_lavado}
+                          />
+                        ) : null}
+                        <Link
+                          className="text-[var(--primario)] text-sm hover:underline"
+                          href={`/pedidos/${pedido.id}`}
+                        >
+                          Ver
+                        </Link>
+                      </div>
                     </Td>
                   </tr>
                 ))}

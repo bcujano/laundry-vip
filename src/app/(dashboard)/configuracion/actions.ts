@@ -21,7 +21,6 @@ const esquema = z.object({
   margen_minimo_minutos: z.coerce.number().int().min(0).max(720),
   tarifa_combo: z.coerce.number().min(0),
   limite_mensajes_diarios_por_telefono: z.coerce.number().int().min(1),
-  limite_costo_diario_openai_usd: z.coerce.number().min(0),
 })
 
 export async function guardarConfiguracion(

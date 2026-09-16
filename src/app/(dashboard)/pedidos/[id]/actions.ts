@@ -102,6 +102,8 @@ export async function corregirCotizacionAccion(
   if (!resultado.ok) return { error: resultado.error }
 
   revalidatePath(`/pedidos/${pedidoId}`)
+  // La ficha del cliente también muestra el pedido y su botón de discrepancia.
+  revalidatePath('/clientes/[id]', 'page')
   return {
     ok: true,
     aviso: `Corregido de ${resultado.datos.montoAnterior.toFixed(2)} a ${resultado.datos.montoCorregido.toFixed(2)}. Hay que avisar al cliente antes de pedirle el pago.`,
@@ -116,6 +118,8 @@ export async function resolverDiscrepanciaAccion(pedidoId: string): Promise<Esta
   if (!resultado.ok) return { error: resultado.error }
 
   revalidatePath(`/pedidos/${pedidoId}`)
+  // La ficha del cliente también muestra el pedido y su botón de discrepancia.
+  revalidatePath('/clientes/[id]', 'page')
   return { ok: true, aviso: 'Discrepancia cerrada. El pedido sigue su curso.' }
 }
 
