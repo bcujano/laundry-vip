@@ -52,6 +52,7 @@ n8n + Chatwoot + WhatsApp Cloud API · OpenAI `gpt-4.1-mini` y `gpt-transcribe`
 | `pnpm typecheck` · `pnpm lint` · `pnpm test` | el gate |
 | `pnpm db:migrate` · `pnpm db:seed` | esquema y catálogo (idempotentes) |
 | `pnpm db:staff` · `pnpm db:password <correo>` | cuentas del CRM |
+| `pnpm db:demo` · `pnpm db:demo --borrar` | datos de ejemplo (teléfonos `+5932200…`) |
 | `pnpm check:integraciones` | las 9 credenciales de n8n |
 
 ## Regla imperativa sobre el CRM 321
