@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
 
 /** Rutas que un anónimo sí puede ver. */
-const PUBLICAS = ['/login', '/callback']
+const PUBLICAS = ['/login', '/callback', '/sesion']
 
 /**
  * Protección de rutas. En Next 16 vive en src/proxy.ts, no en middleware.ts.
