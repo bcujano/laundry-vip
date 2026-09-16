@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/primitivos'
 import { verifyAuth } from '@/lib/auth'
 import { soloFecha, telefonoLegible, tipoNegocioLegible } from '@/lib/format'
-import { listar, POR_PAGINA } from '@/server/clientes/repo'
+import { esSegmentoClientes, listar, POR_PAGINA, SEGMENTOS_CLIENTES } from '@/server/clientes/repo'
 import type { TipoNegocio } from '@/types/database'
 
 export const dynamic = 'force-dynamic'
@@ -38,12 +38,22 @@ export default async function Clientes({ searchParams }: { searchParams: Promise
   const tipo = (leer(params, 'tipo') || 'todos') as TipoNegocio | 'todos'
   const busqueda = leer(params, 'q')
   const pagina = Number.parseInt(leer(params, 'pagina') || '1', 10) || 1
+  const segmentoCrudo = leer(params, 'segmento')
+  const segmento = esSegmentoClientes(segmentoCrudo) ? segmentoCrudo : undefined
+  const canal =
+    leer(params, 'canal') === 'whatsapp_agente' ? ('whatsapp_agente' as const) : undefined
 
   const [resultado, sesion] = await Promise.all([
-    listar({ pagina, tipoNegocio: tipo, busqueda }),
+    listar({ pagina, tipoNegocio: tipo, busqueda, segmento, canal }),
     verifyAuth(),
   ])
-  const consulta = `tipo=${tipo}&q=${encodeURIComponent(busqueda)}`
+  const consulta = `tipo=${tipo}&q=${encodeURIComponent(busqueda)}${segmento ? `&segmento=${segmento}` : ''}${canal ? `&canal=${canal}` : ''}`
+  const filtroDashboard = [
+    segmento ? SEGMENTOS_CLIENTES[segmento] : null,
+    canal ? 'Llegaron por el agente de WhatsApp' : null,
+  ]
+    .filter(Boolean)
+    .join(' · ')
 
   return (
     <div className="flex flex-col gap-4">
@@ -54,7 +64,19 @@ export default async function Clientes({ searchParams }: { searchParams: Promise
 
       <div className="grid gap-4 xl:grid-cols-3">
         <div className="flex flex-col gap-3 xl:col-span-2">
+          {filtroDashboard ? (
+            <p className="flex flex-wrap items-center gap-2 text-sm">
+              <span className="rounded-full bg-[var(--fondo)] px-3 py-1 font-medium">
+                {filtroDashboard}
+              </span>
+              <Link className="text-[var(--primario)] hover:underline" href="/clientes">
+                Quitar filtro
+              </Link>
+            </p>
+          ) : null}
           <form className="flex flex-wrap items-end gap-2" method="get">
+            {segmento ? <input name="segmento" type="hidden" value={segmento} /> : null}
+            {canal ? <input name="canal" type="hidden" value={canal} /> : null}
             <label className="flex min-w-48 flex-1 flex-col gap-1.5 text-sm" htmlFor="buscar">
               <span className="font-medium">Buscar</span>
               <input
@@ -88,7 +110,7 @@ export default async function Clientes({ searchParams }: { searchParams: Promise
             {resultado.clientes.length === 0 ? (
               <Vacio
                 mensaje={
-                  busqueda || tipo !== 'todos'
+                  busqueda || tipo !== 'todos' || filtroDashboard
                     ? 'Ningún cliente coincide con ese filtro.'
                     : 'Todavía no hay clientes. Crea uno aquí al lado, o espera al primero del agente.'
                 }

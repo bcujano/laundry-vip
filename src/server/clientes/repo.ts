@@ -1,13 +1,27 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import type { Cliente, Conversacion, TipoNegocio } from '@/types/database'
+import type { CanalOrigen, Cliente, Conversacion, TipoNegocio } from '@/types/database'
 
 /** Toda lista del CRM pagina de a 50: es un panel de trabajo, no un catálogo. */
 export const POR_PAGINA = 50
+
+/** Segmentos que enlaza el dashboard: leads que ya compraron y los que no. */
+export const SEGMENTOS_CLIENTES = {
+  con_pedidos: 'Con al menos un pedido',
+  sin_pedidos: 'Leads sin pedido todavía',
+} as const
+
+export type SegmentoClientes = keyof typeof SEGMENTOS_CLIENTES
+
+export function esSegmentoClientes(valor: string): valor is SegmentoClientes {
+  return Object.hasOwn(SEGMENTOS_CLIENTES, valor)
+}
 
 export type FiltroClientes = {
   pagina?: number
   tipoNegocio?: TipoNegocio | 'todos'
   busqueda?: string
+  segmento?: SegmentoClientes
+  canal?: CanalOrigen
 }
 
 export type PaginaClientes = {
@@ -21,11 +35,23 @@ export async function listar(filtro: FiltroClientes = {}): Promise<PaginaCliente
   const pagina = Math.max(1, filtro.pagina ?? 1)
   const desde = (pagina - 1) * POR_PAGINA
 
+  // Embeber pedidos(id) permite filtrar por "tiene o no tiene pedidos" en la
+  // misma consulta: !inner se queda con los que tienen, left + null con los que no.
+  const seleccion =
+    filtro.segmento === 'con_pedidos'
+      ? '*, pedidos!inner(id)'
+      : filtro.segmento === 'sin_pedidos'
+        ? '*, pedidos!left(id)'
+        : '*'
+
   let consulta = supabaseAdmin()
     .from('clientes')
-    .select('*', { count: 'exact' })
+    .select(seleccion, { count: 'exact' })
     .order('created_at', { ascending: false })
     .range(desde, desde + POR_PAGINA - 1)
+
+  if (filtro.segmento === 'sin_pedidos') consulta = consulta.is('pedidos', null)
+  if (filtro.canal) consulta = consulta.eq('canal_origen', filtro.canal)
 
   if (filtro.tipoNegocio && filtro.tipoNegocio !== 'todos') {
     consulta = consulta.eq('tipo_negocio', filtro.tipoNegocio)
@@ -46,7 +72,9 @@ export async function listar(filtro: FiltroClientes = {}): Promise<PaginaCliente
 
   const total = count ?? 0
   return {
-    clientes: (data ?? []) as Cliente[],
+    clientes: ((data ?? []) as unknown as (Cliente & { pedidos?: unknown })[]).map(
+      ({ pedidos: _pedidos, ...cliente }) => cliente as Cliente,
+    ),
     total,
     pagina,
     paginas: Math.max(1, Math.ceil(total / POR_PAGINA)),

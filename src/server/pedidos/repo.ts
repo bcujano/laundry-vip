@@ -40,11 +40,35 @@ export async function colaDeHoy(ahora = new Date()): Promise<PedidoConCliente[]>
   return (data ?? []) as PedidoConCliente[]
 }
 
+/**
+ * Grupos que el dashboard enlaza: cada cifra del tablero abre la lista exacta
+ * de pedidos que la compone.
+ */
+export const GRUPOS_PEDIDOS = {
+  discrepancia: 'Congelados por discrepancia',
+  esperando_pago: 'Esperando pago para despachar',
+  sin_verificar: 'Recolectados sin contar en planta',
+  por_verificar: 'Monto estimado, pendiente de conteo',
+  verificados: 'Lavado ya verificado',
+} as const
+
+export type GrupoPedidos = keyof typeof GRUPOS_PEDIDOS
+
+export function esGrupoPedidos(valor: string): valor is GrupoPedidos {
+  return Object.hasOwn(GRUPOS_PEDIDOS, valor)
+}
+
 export type FiltroPedidos = {
   pagina?: number
   estado?: EstadoPedido | 'todos'
   canal?: CanalPedido | 'todos'
+  grupo?: GrupoPedidos
+  /** Solo pedidos creados en los últimos N días. */
+  dias?: number
 }
+
+const SIN_FACTURAR = '("cancelado","recoleccion_fallida")'
+const CERRADOS = '("entregado","cancelado","recoleccion_fallida")'
 
 export type PaginaPedidos = {
   pedidos: PedidoConCliente[]
@@ -65,6 +89,34 @@ export async function listar(filtro: FiltroPedidos = {}): Promise<PaginaPedidos>
 
   if (filtro.estado && filtro.estado !== 'todos') consulta = consulta.eq('estado', filtro.estado)
   if (filtro.canal && filtro.canal !== 'todos') consulta = consulta.eq('canal', filtro.canal)
+
+  if (filtro.dias && filtro.dias > 0) {
+    const desdeFecha = new Date(Date.now() - filtro.dias * 24 * 60 * 60 * 1000)
+    consulta = consulta.gte('created_at', desdeFecha.toISOString())
+  }
+
+  switch (filtro.grupo) {
+    case 'discrepancia':
+      consulta = consulta.eq('discrepancia_detectada', true).not('estado', 'in', CERRADOS)
+      break
+    case 'esperando_pago':
+      consulta = consulta.in('estado', [
+        'esperando_pago_para_recoleccion',
+        'esperando_pago_para_entrega',
+      ])
+      break
+    case 'sin_verificar':
+      consulta = consulta.eq('estado', 'recolectado').eq('discrepancia_detectada', false)
+      break
+    case 'por_verificar':
+      consulta = consulta.is('monto_confirmado_lavado', null).not('estado', 'in', SIN_FACTURAR)
+      break
+    case 'verificados':
+      consulta = consulta
+        .not('monto_confirmado_lavado', 'is', null)
+        .not('estado', 'in', SIN_FACTURAR)
+      break
+  }
 
   const { data, error, count } = await consulta
   if (error) throw new Error(`No se pudieron leer los pedidos: ${error.message}`)

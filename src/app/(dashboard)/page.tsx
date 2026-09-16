@@ -17,21 +17,25 @@ function Kpi({
   valor,
   pie,
   icono,
+  href,
 }: {
   titulo: string
   valor: string
   pie: string
   icono: React.ReactNode
+  href: string
 }) {
   return (
-    <Tarjeta className="p-4">
-      <div className="flex items-start justify-between gap-2">
-        <p className="font-medium text-[var(--texto-suave)] text-sm">{titulo}</p>
-        <span className="rounded-lg bg-[var(--fondo)] p-2 text-[var(--primario)]">{icono}</span>
-      </div>
-      <p className="mt-2 font-bold text-2xl tabular-nums">{valor}</p>
-      <p className="mt-0.5 text-[var(--texto-suave)] text-xs">{pie}</p>
-    </Tarjeta>
+    <Link className="group block" href={href}>
+      <Tarjeta className="h-full p-4 transition group-hover:border-[var(--primario)] group-hover:shadow-md">
+        <div className="flex items-start justify-between gap-2">
+          <p className="font-medium text-[var(--texto-suave)] text-sm">{titulo}</p>
+          <span className="rounded-lg bg-[var(--fondo)] p-2 text-[var(--primario)]">{icono}</span>
+        </div>
+        <p className="mt-2 font-bold text-2xl tabular-nums">{valor}</p>
+        <p className="mt-0.5 text-[var(--texto-suave)] text-xs">{pie}</p>
+      </Tarjeta>
+    </Link>
   )
 }
 
@@ -39,18 +43,23 @@ function ListaAtencion({
   titulo,
   pedidos,
   color,
+  grupo,
 }: {
   titulo: string
   pedidos: ResumenPedido[]
   color: string
+  grupo: string
 }) {
   if (pedidos.length === 0) return null
 
   return (
     <div className="mb-4 last:mb-0">
-      <p className={`mb-1.5 font-semibold text-sm ${color}`}>
-        {titulo}: {pedidos.length}
-      </p>
+      <Link
+        className={`mb-1.5 flex items-center gap-1 font-semibold text-sm hover:underline ${color}`}
+        href={`/pedidos?grupo=${grupo}`}
+      >
+        {titulo}: {pedidos.length} <ArrowRight size={12} />
+      </Link>
       <div className="space-y-1">
         {pedidos.slice(0, 3).map((pedido) => (
           <Link
@@ -65,7 +74,12 @@ function ListaAtencion({
           </Link>
         ))}
         {pedidos.length > 3 ? (
-          <p className="px-2 text-[var(--texto-suave)] text-xs">+{pedidos.length - 3} más…</p>
+          <Link
+            className="block px-2 text-[var(--primario)] text-xs hover:underline"
+            href={`/pedidos?grupo=${grupo}`}
+          >
+            Ver los {pedidos.length}
+          </Link>
         ) : null}
       </div>
     </div>
@@ -97,24 +111,28 @@ export default async function Dashboard() {
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Kpi
+          href="/cola"
           icono={<ClipboardList size={18} />}
           pie={`${datos.sinAtender} sin atender`}
           titulo="Recolecciones hoy"
           valor={String(datos.pedidosHoy)}
         />
         <Kpi
+          href="/reportes?periodo=mes"
           icono={<DollarSign size={18} />}
           pie="lavado ya verificado"
           titulo="Facturado (30 días)"
           valor={moneda(datos.facturadoMes)}
         />
         <Kpi
+          href="/pedidos?grupo=por_verificar&dias=30"
           icono={<Wallet size={18} />}
           pie="pendiente de contar en planta"
           titulo="Estimado (30 días)"
           valor={moneda(datos.estimadoMes)}
         />
         <Kpi
+          href="/clientes"
           icono={<Users size={18} />}
           pie={`${datos.enPlanta} pedidos en proceso`}
           titulo="Clientes"
@@ -135,16 +153,19 @@ export default async function Dashboard() {
           <div className="px-4 pb-4">
             <ListaAtencion
               color="text-[var(--peligro)]"
+              grupo="discrepancia"
               pedidos={discrepancias}
               titulo="Congelados por discrepancia"
             />
             <ListaAtencion
               color="text-[var(--aviso)]"
+              grupo="esperando_pago"
               pedidos={esperandoPago}
               titulo="Esperando pago para despachar"
             />
             <ListaAtencion
               color="text-[var(--texto-suave)]"
+              grupo="sin_verificar"
               pedidos={sinVerificar}
               titulo="Recolectados sin contar en planta"
             />
@@ -189,13 +210,24 @@ export default async function Dashboard() {
         </Tarjeta>
 
         <Tarjeta>
-          <CabeceraTarjeta titulo="Pedidos por estado (30 días)" />
+          <CabeceraTarjeta
+            extra={
+              <Link className="text-[var(--primario)] text-xs hover:underline" href="/pipeline">
+                Ver pipeline →
+              </Link>
+            }
+            titulo="Pedidos por estado (30 días)"
+          />
           {datos.porEstado.length === 0 ? (
             <Vacio mensaje="Todavía no hay pedidos." />
           ) : (
             <div className="flex flex-col gap-2 p-4">
               {datos.porEstado.map((fila) => (
-                <div className="flex items-center gap-2" key={fila.estado}>
+                <Link
+                  className="flex items-center gap-2 rounded hover:bg-[var(--fondo)]"
+                  href={`/pedidos?estado=${fila.estado}&dias=30`}
+                  key={fila.estado}
+                >
                   <div className="w-28 shrink-0">
                     <EtiquetaEstado estado={fila.estado} />
                   </div>
@@ -207,7 +239,7 @@ export default async function Dashboard() {
                       {fila.total}
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}

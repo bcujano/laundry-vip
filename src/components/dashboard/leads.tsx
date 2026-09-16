@@ -15,21 +15,23 @@ function Cifra({
   valor,
   pie,
   icono,
+  href,
 }: {
   titulo: string
   valor: string
   pie: string
   icono: React.ReactNode
+  href: string
 }) {
   return (
-    <div className="flex items-start gap-3 p-4">
+    <Link className="flex items-start gap-3 p-4 transition hover:bg-[var(--fondo)]" href={href}>
       <span className="rounded-lg bg-[var(--fondo)] p-2 text-[var(--primario)]">{icono}</span>
       <div className="min-w-0">
         <p className="text-[var(--texto-suave)] text-xs">{titulo}</p>
         <p className="font-bold text-xl tabular-nums">{valor}</p>
         <p className="text-[var(--texto-suave)] text-xs">{pie}</p>
       </div>
-    </div>
+    </Link>
   )
 }
 
@@ -37,27 +39,41 @@ function Cifra({
 export function SeccionLeads({ datos }: { datos: EmbudoLeads }) {
   return (
     <Tarjeta>
-      <CabeceraTarjeta titulo="Leads de WhatsApp (30 días)" />
+      <CabeceraTarjeta
+        extra={
+          <Link
+            className="text-[var(--primario)] text-xs hover:underline"
+            href="/clientes?segmento=sin_pedidos"
+          >
+            Ver leads sin pedido →
+          </Link>
+        }
+        titulo="Leads de WhatsApp (30 días)"
+      />
       <div className="grid divide-[var(--borde)] border-[var(--borde)] border-b sm:grid-cols-2 sm:divide-x xl:grid-cols-4">
         <Cifra
+          href="/clientes?canal=whatsapp_agente"
           icono={<MessageCircle size={16} />}
           pie={`${datos.leadsHoy} hoy`}
           titulo="Leads nuevos"
           valor={String(datos.leads30)}
         />
         <Cifra
+          href="/clientes?segmento=con_pedidos"
           icono={<UserCheck size={16} />}
           pie="hicieron al menos un pedido"
           titulo="Convertidos"
           valor={String(datos.convertidos30)}
         />
         <Cifra
+          href="/reportes?periodo=mes"
           icono={<TrendingUp size={16} />}
           pie="de leads a pedido"
           titulo="Conversión"
           valor={`${datos.tasaConversion}%`}
         />
         <Cifra
+          href="/clientes?segmento=sin_pedidos"
           icono={<Flame size={16} />}
           pie={`${datos.escalados} escalados a humano`}
           titulo="Calientes sin pedido"

@@ -5,7 +5,7 @@ import { TablaPedidos } from '@/components/pedidos/tabla-pedidos'
 import { Tarjeta, TituloSeccion, Vacio } from '@/components/ui/primitivos'
 import { verifyAuth } from '@/lib/auth'
 import { listar as listarClientes } from '@/server/clientes/repo'
-import { listar, POR_PAGINA } from '@/server/pedidos/repo'
+import { esGrupoPedidos, GRUPOS_PEDIDOS, listar, POR_PAGINA } from '@/server/pedidos/repo'
 import { type CanalPedido, ESTADOS_PEDIDO, type EstadoPedido } from '@/types/database'
 
 export const dynamic = 'force-dynamic'
@@ -24,14 +24,23 @@ export default async function Pedidos({ searchParams }: { searchParams: Promise<
   const estado = (leer(params, 'estado') || 'todos') as EstadoPedido | 'todos'
   const canal = (leer(params, 'canal') || 'todos') as CanalPedido | 'todos'
   const pagina = Number.parseInt(leer(params, 'pagina') || '1', 10) || 1
+  const grupoCrudo = leer(params, 'grupo')
+  const grupo = esGrupoPedidos(grupoCrudo) ? grupoCrudo : undefined
+  const dias = Number.parseInt(leer(params, 'dias') || '0', 10) || undefined
 
   const [resultado, sesion, clientes] = await Promise.all([
-    listar({ pagina, estado, canal }),
+    listar({ pagina, estado, canal, grupo, dias }),
     verifyAuth(),
     listarClientes({ pagina: 1 }),
   ])
   const puedeGestionar = sesion !== null && sesion.staff.rol !== 'operador'
-  const consulta = `estado=${estado}&canal=${canal}`
+  const consulta = `estado=${estado}&canal=${canal}${grupo ? `&grupo=${grupo}` : ''}${dias ? `&dias=${dias}` : ''}`
+  const filtroDashboard = [
+    grupo ? GRUPOS_PEDIDOS[grupo] : null,
+    dias ? `últimos ${dias} días` : null,
+  ]
+    .filter(Boolean)
+    .join(' · ')
 
   return (
     <div className="flex flex-col gap-4">
@@ -42,7 +51,20 @@ export default async function Pedidos({ searchParams }: { searchParams: Promise<
         </span>
       </div>
 
+      {filtroDashboard ? (
+        <p className="flex flex-wrap items-center gap-2 text-sm">
+          <span className="rounded-full bg-[var(--fondo)] px-3 py-1 font-medium">
+            {filtroDashboard}
+          </span>
+          <Link className="text-[var(--primario)] hover:underline" href="/pedidos">
+            Quitar filtro
+          </Link>
+        </p>
+      ) : null}
+
       <form className="flex flex-wrap items-end gap-2" method="get">
+        {grupo ? <input name="grupo" type="hidden" value={grupo} /> : null}
+        {dias ? <input name="dias" type="hidden" value={dias} /> : null}
         <div className="flex flex-col gap-1 text-sm">
           <label className="font-medium" htmlFor="filtro-estado">
             Estado
@@ -99,7 +121,7 @@ export default async function Pedidos({ searchParams }: { searchParams: Promise<
         {resultado.pedidos.length === 0 ? (
           <Vacio
             mensaje={
-              estado === 'todos' && canal === 'todos'
+              estado === 'todos' && canal === 'todos' && !filtroDashboard
                 ? 'Todavía no hay pedidos. El primero llegará por el agente de WhatsApp o desde el local.'
                 : 'Ningún pedido coincide con ese filtro.'
             }
