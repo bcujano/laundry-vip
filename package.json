@@ -14,7 +14,9 @@
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
     "format": "biome check --write .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "db:migrate": "tsx scripts/db-migrate.ts",
+    "db:seed": "tsx scripts/db-seed.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.116.0",
