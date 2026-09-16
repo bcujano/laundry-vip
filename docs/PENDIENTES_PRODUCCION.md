@@ -17,7 +17,11 @@ reemplazarse por lo definitivo antes de atender al primer cliente real.
 - [ ] Dirección de la planta (referencia del radio de 5 km y origen de los despachos).
 
 ## Bloqueado, esperando algo tuyo
-- [ ] **Token de Vercel** para desplegar el CRM (Account Settings → Tokens).
+- [x] ~~Token de Vercel~~ — desplegado en https://laundry-vip.vercel.app
+- [ ] **Supabase → Authentication → URL Configuration**: añadir
+      `https://laundry-vip.vercel.app/callback` a *Redirect URLs*. Sin eso, el
+      enlace mágico que llega por correo no vuelve al CRM.
+- [ ] Rotar el token de Vercel cuando termine la construcción.
 - [ ] **Playwright no pudo descargar Chromium** en esta máquina: el CDN dio
       timeout tres veces seguidas. La suite E2E está escrita y el CI la corre,
       pero **no se ha ejecutado localmente todavía**. Reintentar con
@@ -31,7 +35,7 @@ reemplazarse por lo definitivo antes de atender al primer cliente real.
 - [ ] Contraseña de la base: rotarla al pasar a producción.
 - [ ] Clave propia de OpenAI con tope de gasto.
 - [ ] Instancias de n8n y Chatwoot en Railway.
-- [ ] Token de Vercel y dominio del CRM.
+- [x] ~~Token de Vercel~~ — hecho. Falta el dominio propio si quieres uno.
 - [ ] WhatsApp Business Cloud API: número exclusivo, WABA y token permanente.
 
 ## Configuración en el panel de Supabase
