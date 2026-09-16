@@ -74,7 +74,18 @@ mismo día 11:30 · apertura 08:00, cierre 17:00.
 
 ## 3. La tarea en curso: el agente en n8n
 
-Está **todo decidido y nada ejecutado**. El dueño dio el visto bueno al plan.
+> **Actualización 2026-09-16 (tarde):** el JSON ya está generado en
+> `n8n/workflows/laundry-vip-agente.json` (36 nodos) con su constitución en
+> `n8n/prompt-agente-laundry.md` y pruebas en
+> `tests/unit/workflow-laundry-agente.test.ts`. El dueño simplificó el triaje:
+> **se borró todo lo posterior al agente** salvo la respuesta a Chatwoot y el
+> escalamiento a humano (sin eso el bot queda mudo). Sin ubicación por pin, sin
+> follow-up, sin nodos de 321. El dueño lo importa a mano: **no se crea nada en
+> n8n desde aquí**. Token de Meta: lo resolvió él (token definitivo). Pendiente:
+> importar, crear credenciales, apuntar el webhook de la cuenta 3 y probar.
+> El `lavanderia-vip-agente.json` de la fase 12 queda obsoleto.
+
+Lo que sigue abajo es el plan original, del que sale lo anterior.
 
 ### La decisión que manda sobre todas
 
