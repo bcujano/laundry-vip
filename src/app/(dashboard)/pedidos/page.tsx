@@ -1,7 +1,10 @@
 import Link from 'next/link'
 import { estadoLegible } from '@/components/pedidos/etiquetas'
+import { NuevoPedido } from '@/components/pedidos/nuevo-pedido'
 import { TablaPedidos } from '@/components/pedidos/tabla-pedidos'
 import { Tarjeta, TituloSeccion, Vacio } from '@/components/ui/primitivos'
+import { verifyAuth } from '@/lib/auth'
+import { listar as listarClientes } from '@/server/clientes/repo'
 import { listar, POR_PAGINA } from '@/server/pedidos/repo'
 import { type CanalPedido, ESTADOS_PEDIDO, type EstadoPedido } from '@/types/database'
 
@@ -22,7 +25,12 @@ export default async function Pedidos({ searchParams }: { searchParams: Promise<
   const canal = (leer(params, 'canal') || 'todos') as CanalPedido | 'todos'
   const pagina = Number.parseInt(leer(params, 'pagina') || '1', 10) || 1
 
-  const resultado = await listar({ pagina, estado, canal })
+  const [resultado, sesion, clientes] = await Promise.all([
+    listar({ pagina, estado, canal }),
+    verifyAuth(),
+    listarClientes({ pagina: 1 }),
+  ])
+  const puedeGestionar = sesion !== null && sesion.staff.rol !== 'operador'
   const consulta = `estado=${estado}&canal=${canal}`
 
   return (
@@ -97,7 +105,7 @@ export default async function Pedidos({ searchParams }: { searchParams: Promise<
             }
           />
         ) : (
-          <TablaPedidos pedidos={resultado.pedidos} />
+          <TablaPedidos pedidos={resultado.pedidos} puedeBorrar={puedeGestionar} />
         )}
       </Tarjeta>
 
@@ -120,6 +128,17 @@ export default async function Pedidos({ searchParams }: { searchParams: Promise<
             </Link>
           ) : null}
         </nav>
+      ) : null}
+
+      {puedeGestionar ? (
+        <div className="max-w-xl">
+          <NuevoPedido
+            clientes={clientes.clientes.map((cliente) => ({
+              id: cliente.id,
+              nombre: cliente.nombre_negocio || cliente.nombre_contacto || cliente.telefono,
+            }))}
+          />
+        </div>
       ) : null}
     </div>
   )

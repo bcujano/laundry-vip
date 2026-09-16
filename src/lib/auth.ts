@@ -1,6 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { supabaseServer } from '@/lib/supabase/server'
-import type { RolStaff, Staff } from '@/types/database'
+import type { Staff } from '@/types/database'
 
 export type Sesion = { userId: string; email: string; staff: Staff }
 
@@ -34,21 +34,12 @@ export async function verifyAuth(): Promise<Sesion | null> {
   }
 }
 
-/** Permisos por rol. El servidor los aplica; ocultar el botón no es control. */
-const PERMISOS: Record<RolStaff, ReadonlySet<string>> = {
-  superadmin: new Set(['pedidos', 'clientes', 'reportes', 'servicios', 'configuracion', 'staff']),
-  admin: new Set(['pedidos', 'clientes', 'reportes']),
-  operador: new Set(['pedidos', 'clientes']),
-}
+import { type Area as AreaPermiso, puede } from './permisos'
 
-export type Area = 'pedidos' | 'clientes' | 'reportes' | 'servicios' | 'configuracion' | 'staff'
-
-export function puede(rol: RolStaff, area: Area): boolean {
-  return PERMISOS[rol].has(area)
-}
+export { type Area, puede } from './permisos'
 
 /** Igual que verifyAuth, pero además exige permiso sobre un área. */
-export async function exigirPermiso(area: Area): Promise<Sesion | null> {
+export async function exigirPermiso(area: AreaPermiso): Promise<Sesion | null> {
   const sesion = await verifyAuth()
   if (!sesion) return null
   return puede(sesion.staff.rol, area) ? sesion : null

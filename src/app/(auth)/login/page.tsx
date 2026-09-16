@@ -1,54 +1,74 @@
 'use client'
 
+import { Loader2, LogIn } from 'lucide-react'
 import { useActionState } from 'react'
-import { type EstadoLogin, enviarEnlace } from './actions'
+import { type EstadoLogin, entrar } from './actions'
 
 const INICIAL: EstadoLogin = {}
 
 export default function Login() {
-  const [estado, accion, pendiente] = useActionState(enviarEnlace, INICIAL)
+  const [estado, accion, pendiente] = useActionState(entrar, INICIAL)
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center p-6">
-      <h1 className="text-2xl font-semibold">Lavandería VIP</h1>
-      <p className="mt-1 text-sm text-[var(--color-texto-apagado)]">
-        Entra con tu correo. Te enviamos un enlace de acceso.
-      </p>
+    <main className="flex min-h-screen items-center justify-center bg-[var(--fondo)] px-4">
+      <div className="w-full max-w-sm">
+        <div className="mb-6 text-center">
+          <h1 className="font-bold text-2xl tracking-tight">Lavandería VIP</h1>
+          <p className="mt-1 text-[var(--texto-suave)] text-sm">Gestión de pedidos y clientes</p>
+        </div>
 
-      {estado.enviado ? (
-        <p
-          className="mt-6 rounded-[var(--radius-tarjeta)] border border-[var(--color-borde)] bg-[var(--color-superficie)] p-4 text-sm"
-          role="status"
-        >
-          Si ese correo tiene una cuenta, el enlace ya va en camino. Revisa tu bandeja.
-        </p>
-      ) : (
-        <form action={accion} className="mt-6 flex flex-col gap-3">
-          <label className="text-sm font-medium" htmlFor="email">
-            Correo
-          </label>
-          <input
-            autoComplete="email"
-            className="rounded-[var(--radius-control)] border border-[var(--color-borde)] bg-[var(--color-superficie)] px-3 py-2 text-sm"
-            id="email"
-            name="email"
-            required
-            type="email"
-          />
+        <form action={accion} className="tarjeta flex flex-col gap-4 p-6">
+          <div className="flex flex-col gap-1.5">
+            <label className="font-medium text-sm" htmlFor="email">
+              Correo
+            </label>
+            <input
+              autoComplete="username"
+              className="campo"
+              id="email"
+              name="email"
+              required
+              type="email"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="font-medium text-sm" htmlFor="password">
+              Contraseña
+            </label>
+            <input
+              autoComplete="current-password"
+              className="campo"
+              id="password"
+              name="password"
+              required
+              type="password"
+            />
+          </div>
+
           {estado.error ? (
-            <p className="text-sm text-[var(--color-destructivo)]" role="alert">
+            <p
+              className="rounded-lg bg-[var(--peligro-suave)] px-3 py-2 text-[var(--peligro)] text-sm"
+              role="alert"
+            >
               {estado.error}
             </p>
           ) : null}
+
           <button
-            className="rounded-[var(--radius-control)] bg-[var(--color-primario)] px-3 py-2 text-sm font-medium text-white disabled:opacity-60"
+            className="boton boton-primario justify-center"
             disabled={pendiente}
             type="submit"
           >
-            {pendiente ? 'Enviando…' : 'Enviar enlace'}
+            {pendiente ? <Loader2 className="animate-spin" size={16} /> : <LogIn size={16} />}
+            {pendiente ? 'Entrando…' : 'Entrar'}
           </button>
         </form>
-      )}
+
+        <p className="mt-4 text-center text-[var(--texto-suave)] text-xs">
+          ¿No tienes cuenta? Pídesela al administrador.
+        </p>
+      </div>
     </main>
   )
 }

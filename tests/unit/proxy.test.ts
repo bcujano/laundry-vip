@@ -34,10 +34,12 @@ describe('protección de rutas', () => {
     expect(respuesta.headers.get('location')).toBeNull()
   })
 
-  it('deja pasar el callback del enlace mágico', async () => {
+  it('manda al login cualquier ruta que no sea pública', async () => {
     getUser.mockResolvedValue(ANONIMO)
-    const respuesta = await proxy(peticion('/callback?code=abc'))
-    expect(respuesta.headers.get('location')).toBeNull()
+    for (const ruta of ['/clientes', '/pipeline', '/usuarios', '/reportes']) {
+      const respuesta = await proxy(peticion(ruta))
+      expect(respuesta.headers.get('location'), ruta).toContain('/login')
+    }
   })
 
   it('saca de /login a quien ya tiene sesión', async () => {
@@ -51,5 +53,46 @@ describe('protección de rutas', () => {
     getUser.mockResolvedValue(CON_SESION)
     const respuesta = await proxy(peticion('/pedidos'))
     expect(respuesta.headers.get('location')).toBeNull()
+  })
+})
+
+describe('sesión rota', () => {
+  function conCookieRota(ruta: string) {
+    const peticion = new NextRequest(new URL(ruta, 'http://localhost:3000'))
+    peticion.cookies.set('sb-proyecto-auth-token', 'basura-caducada')
+    return peticion
+  }
+
+  it('un token inválido NO cuenta como sesión: manda al login', async () => {
+    // getUser devuelve error cuando el refresh token ya no sirve.
+    getUser.mockResolvedValue({
+      data: { user: null },
+      error: { message: 'refresh_token_not_found' },
+    })
+
+    const respuesta = await proxy(conCookieRota('/'))
+    expect(respuesta.headers.get('location')).toContain('/login')
+  })
+
+  it('borra las cookies rotas para que no se arme un bucle', async () => {
+    getUser.mockResolvedValue({ data: { user: null }, error: { message: 'jwt expired' } })
+
+    const respuesta = await proxy(conCookieRota('/'))
+    const borradas = respuesta.cookies.getAll().filter((cookie) => cookie.value === '')
+    expect(borradas.length).toBeGreaterThan(0)
+  })
+
+  it('con cookies rotas, /login se queda en /login', async () => {
+    getUser.mockResolvedValue({ data: { user: null }, error: { message: 'jwt expired' } })
+
+    const respuesta = await proxy(conCookieRota('/login'))
+    expect(respuesta.headers.get('location')).toBeNull()
+  })
+
+  it('si getUser explota, se trata como anónimo y no se cuelga', async () => {
+    getUser.mockRejectedValue(new Error('red caída'))
+
+    const respuesta = await proxy(conCookieRota('/pedidos'))
+    expect(respuesta.headers.get('location')).toContain('/login')
   })
 })

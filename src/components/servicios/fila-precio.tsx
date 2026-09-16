@@ -1,14 +1,28 @@
 'use client'
 
+import { Trash2 } from 'lucide-react'
+
 import { useActionState } from 'react'
-import { type EstadoServicio, guardarPrecio } from '@/app/(dashboard)/servicios/actions'
-import { Boton, Campo, Td } from '@/components/ui/primitivos'
+import {
+  borrarServicio,
+  type EstadoServicio,
+  guardarPrecio,
+} from '@/app/(dashboard)/servicios/actions'
+import { Boton, BotonAccion, Campo, Td } from '@/components/ui/primitivos'
 import { metodoLegible, moneda, rangoPrecio, unidadLegible } from '@/lib/format'
 import type { Servicio } from '@/types/database'
 
 const INICIAL: EstadoServicio = {}
 
-export function FilaPrecio({ servicio, editable }: { servicio: Servicio; editable: boolean }) {
+export function FilaPrecio({
+  servicio,
+  editable,
+  puedeBorrar = false,
+}: {
+  servicio: Servicio
+  editable: boolean
+  puedeBorrar?: boolean
+}) {
   const [estado, accion, pendiente] = useActionState(guardarPrecio, INICIAL)
   const esRango = Number(servicio.precio_min) !== Number(servicio.precio_max)
 
@@ -40,7 +54,7 @@ export function FilaPrecio({ servicio, editable }: { servicio: Servicio; editabl
               step="0.01"
               type="number"
             />
-            <Boton disabled={pendiente} type="submit" variante="secundario">
+            <Boton disabled={pendiente} type="submit" variante="suave">
               {pendiente ? '…' : 'Guardar'}
             </Boton>
             {estado.error ? (
@@ -62,6 +76,18 @@ export function FilaPrecio({ servicio, editable }: { servicio: Servicio; editabl
             : moneda(servicio.precio_min)}
         </Td>
       )}
+
+      {puedeBorrar ? (
+        <Td>
+          <BotonAccion
+            confirmacion={`¿Borrar "${servicio.nombre_item}" del catálogo? Los pedidos viejos conservan su descripción.`}
+            icono={<Trash2 size={14} />}
+            onEjecutar={() => borrarServicio(servicio.id)}
+            texto=""
+            variante="peligro"
+          />
+        </Td>
+      ) : null}
     </tr>
   )
 }

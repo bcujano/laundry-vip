@@ -106,11 +106,11 @@ export function ChecklistConteo({
 function BotonAccion({
   texto,
   onEjecutar,
-  variante = 'secundario',
+  variante = 'suave',
 }: {
   texto: string
   onEjecutar: () => Promise<EstadoAccion>
-  variante?: 'primario' | 'secundario' | 'destructivo'
+  variante?: 'primario' | 'suave' | 'peligro'
 }) {
   const [estado, setEstado] = useState<EstadoAccion>(INICIAL)
   const [pendiente, iniciar] = useTransition()
@@ -241,7 +241,7 @@ export function CorreccionCotizacion({ pedido }: { pedido: Pedido }) {
             required
           />
         </div>
-        <Boton disabled={pendiente} type="submit" variante="destructivo">
+        <Boton disabled={pendiente} type="submit" variante="peligro">
           {pendiente ? 'Corrigiendo…' : 'Corregir cotización'}
         </Boton>
       </form>

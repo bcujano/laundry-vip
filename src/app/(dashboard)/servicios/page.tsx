@@ -1,13 +1,14 @@
 import { FilaPrecio } from '@/components/servicios/fila-precio'
 import { Tabla, Tarjeta, Th, TituloSeccion, Vacio } from '@/components/ui/primitivos'
-import { verifyAuth } from '@/lib/auth'
+import { puede, verifyAuth } from '@/lib/auth'
 import { contar, listarPorCategoria } from '@/server/servicios/repo'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Servicios() {
   const sesion = await verifyAuth()
-  const editable = sesion?.staff.rol === 'superadmin'
+  const editable = sesion !== null && puede(sesion.staff.rol, 'servicios')
+  const puedeBorrar = sesion !== null && puede(sesion.staff.rol, 'borrar')
   const [categorias, total] = await Promise.all([listarPorCategoria(), contar()])
 
   if (categorias.length === 0) {
@@ -45,11 +46,17 @@ export default async function Servicios() {
                 <Th>Método</Th>
                 <Th>Unidad</Th>
                 <Th>{editable ? 'Precio mín. / máx.' : 'Precio'}</Th>
+                {puedeBorrar ? <Th> </Th> : null}
               </tr>
             </thead>
             <tbody>
               {grupo.items.map((servicio) => (
-                <FilaPrecio editable={editable} key={servicio.id} servicio={servicio} />
+                <FilaPrecio
+                  editable={editable}
+                  key={servicio.id}
+                  puedeBorrar={puedeBorrar}
+                  servicio={servicio}
+                />
               ))}
             </tbody>
           </Tabla>

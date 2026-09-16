@@ -230,7 +230,7 @@ export function ListaBlanca({ operadores }: { operadores: OperadorWhitelist[] })
         <Etiquetado para="campo-telefono" texto="Teléfono">
           <Campo id="campo-telefono" name="telefono" placeholder="0963987124" required />
         </Etiquetado>
-        <Boton disabled={pendiente} type="submit" variante="secundario">
+        <Boton disabled={pendiente} type="submit" variante="suave">
           {pendiente ? 'Agregando…' : 'Agregar'}
         </Boton>
         <Aviso estado={estado} />

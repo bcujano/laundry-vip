@@ -1,23 +1,27 @@
-import type { ComponentProps, ReactNode } from 'react'
+'use client'
 
-/** Utilitario y denso: 2 o 3 personas lo usan horas al día, no es marketing. */
+import { Loader2 } from 'lucide-react'
+import type { ComponentProps, ReactNode } from 'react'
+import { useState, useTransition } from 'react'
+
+/** Piezas compartidas. Densas, utilitarias y con foco visible. */
 
 export function Tarjeta({ children, className = '' }: { children: ReactNode; className?: string }) {
+  return <section className={`tarjeta ${className}`}>{children}</section>
+}
+
+export function CabeceraTarjeta({ titulo, extra }: { titulo: ReactNode; extra?: ReactNode }) {
   return (
-    <section
-      className={`rounded-[var(--radius-tarjeta)] border border-[var(--color-borde)] bg-[var(--color-superficie)] ${className}`}
-    >
-      {children}
-    </section>
+    <div className="flex flex-wrap items-center justify-between gap-2 border-[var(--borde)] border-b px-4 py-3">
+      <h2 className="font-semibold text-sm">{titulo}</h2>
+      {extra}
+    </div>
   )
 }
 
+/** Envoltorio corto para las pantallas que solo necesitan un título. */
 export function TituloSeccion({ children }: { children: ReactNode }) {
-  return (
-    <h2 className="border-[var(--color-borde)] border-b px-4 py-2 font-semibold text-sm">
-      {children}
-    </h2>
-  )
+  return <CabeceraTarjeta titulo={children} />
 }
 
 export function Tabla({ children }: { children: ReactNode }) {
@@ -31,7 +35,7 @@ export function Tabla({ children }: { children: ReactNode }) {
 export function Th({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
     <th
-      className={`border-[var(--color-borde)] border-b px-3 py-2 text-left font-medium text-[var(--color-texto-apagado)] text-xs uppercase tracking-wide ${className}`}
+      className={`whitespace-nowrap border-[var(--borde)] border-b px-3 py-2 text-left font-medium text-[10px] text-[var(--texto-suave)] uppercase tracking-wider ${className}`}
       scope="col"
     >
       {children}
@@ -41,68 +45,144 @@ export function Th({ children, className = '' }: { children: ReactNode; classNam
 
 export function Td({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <td className={`border-[var(--color-borde)] border-b px-3 py-2 align-middle ${className}`}>
+    <td className={`border-[var(--borde)] border-b px-3 py-2 align-middle ${className}`}>
       {children}
     </td>
   )
 }
 
-export function Boton({ className = '', variante = 'primario', ...props }: BotonProps) {
-  const estilos: Record<string, string> = {
-    primario: 'bg-[var(--color-primario)] text-white',
-    secundario:
-      'border border-[var(--color-borde)] bg-[var(--color-superficie)] text-[var(--color-texto)]',
-    destructivo: 'bg-[var(--color-destructivo)] text-white',
-  }
-  return (
-    <button
-      className={`rounded-[var(--radius-control)] px-3 py-1.5 font-medium text-sm disabled:opacity-60 ${estilos[variante]} ${className}`}
-      type="button"
-      {...props}
-    />
-  )
-}
+type VarianteBoton = 'primario' | 'suave' | 'peligro'
 
-type BotonProps = ComponentProps<'button'> & {
-  variante?: 'primario' | 'secundario' | 'destructivo'
+export function Boton({
+  className = '',
+  variante = 'primario',
+  ...props
+}: ComponentProps<'button'> & { variante?: VarianteBoton }) {
+  return <button className={`boton boton-${variante} ${className}`} type="button" {...props} />
 }
 
 export function Campo({ className = '', ...props }: ComponentProps<'input'>) {
-  return (
-    <input
-      className={`rounded-[var(--radius-control)] border border-[var(--color-borde)] bg-[var(--color-superficie)] px-2 py-1 text-sm ${className}`}
-      {...props}
-    />
-  )
+  return <input className={`campo ${className}`} {...props} />
 }
 
 export function Seleccion({ className = '', ...props }: ComponentProps<'select'>) {
+  return <select className={`campo ${className}`} {...props} />
+}
+
+export function Etiquetado({
+  texto,
+  para,
+  children,
+  className = '',
+}: {
+  texto: string
+  para: string
+  children: ReactNode
+  className?: string
+}) {
   return (
-    <select
-      className={`rounded-[var(--radius-control)] border border-[var(--color-borde)] bg-[var(--color-superficie)] px-2 py-1 text-sm ${className}`}
-      {...props}
-    />
+    <div className={`flex flex-col gap-1.5 ${className}`}>
+      <label className="font-medium text-sm" htmlFor={para}>
+        {texto}
+      </label>
+      {children}
+    </div>
   )
 }
 
-/** Estado vacío: siempre con un mensaje que dice qué falta, nunca en blanco. */
-export function Vacio({ mensaje }: { mensaje: string }) {
+/** Estado vacío: siempre con un mensaje que dice qué falta. */
+export function Vacio({ mensaje, accion }: { mensaje: string; accion?: ReactNode }) {
   return (
-    <p className="px-4 py-10 text-center text-[var(--color-texto-apagado)] text-sm">{mensaje}</p>
+    <div className="flex flex-col items-center gap-3 px-4 py-12 text-center">
+      <p className="text-[var(--texto-suave)] text-sm">{mensaje}</p>
+      {accion}
+    </div>
   )
+}
+
+export type Tono = 'neutro' | 'exito' | 'aviso' | 'peligro' | 'primario'
+
+const TONOS: Record<Tono, string> = {
+  neutro: 'bg-[var(--fondo)] text-[var(--texto-suave)]',
+  exito: 'bg-[var(--exito-suave)] text-[var(--exito)]',
+  aviso: 'bg-[var(--aviso-suave)] text-[var(--aviso)]',
+  peligro: 'bg-[var(--peligro-suave)] text-[var(--peligro)]',
+  primario: 'bg-[var(--primario)] text-white',
 }
 
 export function Etiqueta({ children, tono = 'neutro' }: { children: ReactNode; tono?: Tono }) {
-  const tonos: Record<Tono, string> = {
-    neutro: 'bg-[var(--color-fondo)] text-[var(--color-texto-apagado)]',
-    exito: 'bg-[var(--color-exito)] text-white',
-    alerta: 'bg-[var(--color-destructivo)] text-white',
-  }
   return (
-    <span className={`rounded-[var(--radius-control)] px-2 py-0.5 text-xs ${tonos[tono]}`}>
+    <span
+      className={`inline-block whitespace-nowrap rounded-md px-2 py-0.5 font-medium text-xs ${TONOS[tono]}`}
+    >
       {children}
     </span>
   )
 }
 
-type Tono = 'neutro' | 'exito' | 'alerta'
+export type Resultado = { error?: string; aviso?: string; ok?: boolean }
+
+export function Aviso({ estado }: { estado: Resultado }) {
+  if (estado.error) {
+    return (
+      <p
+        className="rounded-lg bg-[var(--peligro-suave)] px-3 py-2 text-[var(--peligro)] text-sm"
+        role="alert"
+      >
+        {estado.error}
+      </p>
+    )
+  }
+  if (estado.aviso) {
+    return (
+      <p
+        className="rounded-lg bg-[var(--exito-suave)] px-3 py-2 text-[var(--exito)] text-sm"
+        role="status"
+      >
+        {estado.aviso}
+      </p>
+    )
+  }
+  return null
+}
+
+/**
+ * Botón que ejecuta una acción de servidor y muestra su resultado.
+ * Con `confirmacion` pide confirmación nombrando lo que va a pasar: borrar
+ * algo nunca debe ser un clic distraído.
+ */
+export function BotonAccion({
+  texto,
+  onEjecutar,
+  variante = 'suave',
+  confirmacion,
+  icono,
+  className = '',
+}: {
+  texto: string
+  onEjecutar: () => Promise<Resultado>
+  variante?: VarianteBoton
+  confirmacion?: string
+  icono?: ReactNode
+  className?: string
+}) {
+  const [estado, setEstado] = useState<Resultado>({})
+  const [pendiente, iniciar] = useTransition()
+
+  return (
+    <span className={`inline-flex flex-wrap items-center gap-2 ${className}`}>
+      <Boton
+        disabled={pendiente}
+        onClick={() => {
+          if (confirmacion && !window.confirm(confirmacion)) return
+          iniciar(async () => setEstado(await onEjecutar()))
+        }}
+        variante={variante}
+      >
+        {pendiente ? <Loader2 className="animate-spin" size={14} /> : icono}
+        {texto}
+      </Boton>
+      <Aviso estado={estado} />
+    </span>
+  )
+}

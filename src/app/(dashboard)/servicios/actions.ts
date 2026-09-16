@@ -3,9 +3,10 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { exigirPermiso } from '@/lib/auth'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { actualizarPrecio, alternarActivo, crear } from '@/server/servicios/repo'
 
-export type EstadoServicio = { error?: string; ok?: boolean }
+export type EstadoServicio = { error?: string; aviso?: string; ok?: boolean }
 
 const precio = z.coerce.number().min(0, 'El precio no puede ser negativo.')
 
@@ -83,6 +84,19 @@ export async function cambiarActivo(id: string, activo: boolean): Promise<Estado
   }
   const resultado = await alternarActivo(id, activo)
   if (!resultado.ok) return { error: resultado.error }
+
+  revalidatePath('/servicios')
+  return { ok: true }
+}
+
+/** Borra un ítem del catálogo. Los pedidos viejos conservan su descripción. */
+export async function borrarServicio(id: string): Promise<EstadoServicio> {
+  if (!(await exigirPermiso('borrar'))) {
+    return { error: 'Tu rol no puede borrar ítems del catálogo.' }
+  }
+
+  const { error } = await supabaseAdmin().from('servicios').delete().eq('id', id)
+  if (error) return { error: error.message }
 
   revalidatePath('/servicios')
   return { ok: true }

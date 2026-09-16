@@ -1,6 +1,17 @@
+import { ArrowRight, Search } from 'lucide-react'
 import Link from 'next/link'
-import { Tabla, Tarjeta, Td, Th, TituloSeccion, Vacio } from '@/components/ui/primitivos'
-import { moneda, soloFecha, telefonoLegible, tipoNegocioLegible } from '@/lib/format'
+import { NuevoCliente } from '@/components/clientes/ficha'
+import {
+  CabeceraTarjeta,
+  Etiqueta,
+  Tabla,
+  Tarjeta,
+  Td,
+  Th,
+  Vacio,
+} from '@/components/ui/primitivos'
+import { verifyAuth } from '@/lib/auth'
+import { soloFecha, telefonoLegible, tipoNegocioLegible } from '@/lib/format'
 import { listar, POR_PAGINA } from '@/server/clientes/repo'
 import type { TipoNegocio } from '@/types/database'
 
@@ -28,120 +39,141 @@ export default async function Clientes({ searchParams }: { searchParams: Promise
   const busqueda = leer(params, 'q')
   const pagina = Number.parseInt(leer(params, 'pagina') || '1', 10) || 1
 
-  const resultado = await listar({ pagina, tipoNegocio: tipo, busqueda })
+  const [resultado, sesion] = await Promise.all([
+    listar({ pagina, tipoNegocio: tipo, busqueda }),
+    verifyAuth(),
+  ])
+  const consulta = `tipo=${tipo}&q=${encodeURIComponent(busqueda)}`
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-baseline gap-3">
-        <h1 className="font-semibold text-2xl">Clientes</h1>
-        <span className="text-[var(--color-texto-apagado)] text-sm">
-          {resultado.total} en total
-        </span>
+      <div className="flex flex-wrap items-baseline gap-3">
+        <h1 className="font-bold text-2xl tracking-tight">Clientes</h1>
+        <span className="text-[var(--texto-suave)] text-sm">{resultado.total} en total</span>
       </div>
 
-      <form className="flex flex-wrap items-end gap-2" method="get">
-        <label className="flex flex-col gap-1 text-sm">
-          Buscar
-          <input
-            className="rounded-[var(--radius-control)] border border-[var(--color-borde)] bg-[var(--color-superficie)] px-2 py-1 text-sm"
-            defaultValue={busqueda}
-            name="q"
-            placeholder="negocio, contacto o teléfono"
-            type="search"
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          Tipo de negocio
-          <select
-            className="rounded-[var(--radius-control)] border border-[var(--color-borde)] bg-[var(--color-superficie)] px-2 py-1 text-sm"
-            defaultValue={tipo}
-            name="tipo"
-          >
-            {TIPOS.map((opcion) => (
-              <option key={opcion} value={opcion}>
-                {opcion === 'todos' ? 'Todos' : tipoNegocioLegible(opcion)}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button
-          className="rounded-[var(--radius-control)] bg-[var(--color-primario)] px-3 py-1.5 font-medium text-sm text-white"
-          type="submit"
-        >
-          Filtrar
-        </button>
-      </form>
+      <div className="grid gap-4 xl:grid-cols-3">
+        <div className="flex flex-col gap-3 xl:col-span-2">
+          <form className="flex flex-wrap items-end gap-2" method="get">
+            <label className="flex min-w-48 flex-1 flex-col gap-1.5 text-sm" htmlFor="buscar">
+              <span className="font-medium">Buscar</span>
+              <input
+                className="campo"
+                defaultValue={busqueda}
+                id="buscar"
+                name="q"
+                placeholder="negocio, contacto o teléfono"
+                type="search"
+              />
+            </label>
+            <label className="flex flex-col gap-1.5 text-sm" htmlFor="tipo">
+              <span className="font-medium">Tipo</span>
+              <select className="campo w-40" defaultValue={tipo} id="tipo" name="tipo">
+                {TIPOS.map((opcion) => (
+                  <option key={opcion} value={opcion}>
+                    {opcion === 'todos' ? 'Todos' : tipoNegocioLegible(opcion)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button className="boton boton-primario" type="submit">
+              <Search size={16} /> Filtrar
+            </button>
+          </form>
 
-      <Tarjeta>
-        <TituloSeccion>
-          Página {resultado.pagina} de {resultado.paginas}
-        </TituloSeccion>
+          <Tarjeta>
+            <CabeceraTarjeta
+              titulo={`Página ${resultado.pagina} de ${resultado.paginas} · ${POR_PAGINA} por página`}
+            />
+            {resultado.clientes.length === 0 ? (
+              <Vacio
+                mensaje={
+                  busqueda || tipo !== 'todos'
+                    ? 'Ningún cliente coincide con ese filtro.'
+                    : 'Todavía no hay clientes. Crea uno aquí al lado, o espera al primero del agente.'
+                }
+              />
+            ) : (
+              <Tabla>
+                <thead>
+                  <tr>
+                    <Th>Negocio</Th>
+                    <Th className="hidden sm:table-cell">Contacto</Th>
+                    <Th>Teléfono</Th>
+                    <Th className="hidden md:table-cell">Tipo</Th>
+                    <Th className="hidden lg:table-cell">Facturación</Th>
+                    <Th className="hidden lg:table-cell">Alta</Th>
+                    <Th> </Th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {resultado.clientes.map((cliente) => (
+                    <tr key={cliente.id}>
+                      <Td>
+                        <Link
+                          className="font-medium hover:underline"
+                          href={`/clientes/${cliente.id}`}
+                        >
+                          {cliente.nombre_negocio || cliente.nombre_contacto || 'Sin nombre'}
+                        </Link>
+                      </Td>
+                      <Td className="hidden text-[var(--texto-suave)] sm:table-cell">
+                        {cliente.nombre_contacto ?? '—'}
+                      </Td>
+                      <Td className="tabular-nums">{telefonoLegible(cliente.telefono)}</Td>
+                      <Td className="hidden md:table-cell">
+                        {tipoNegocioLegible(cliente.tipo_negocio)}
+                      </Td>
+                      <Td className="hidden lg:table-cell">
+                        {cliente.modelo_facturacion === 'consolidado_mensual' ? (
+                          <Etiqueta tono="aviso">Mensual</Etiqueta>
+                        ) : (
+                          <span className="text-[var(--texto-suave)] text-xs">Por pedido</span>
+                        )}
+                      </Td>
+                      <Td className="hidden text-[var(--texto-suave)] lg:table-cell">
+                        {soloFecha(cliente.created_at)}
+                      </Td>
+                      <Td>
+                        <Link
+                          aria-label={`Abrir la ficha de ${cliente.nombre_negocio ?? cliente.telefono}`}
+                          className="flex justify-end text-[var(--texto-suave)] hover:text-[var(--primario)]"
+                          href={`/clientes/${cliente.id}`}
+                        >
+                          <ArrowRight size={16} />
+                        </Link>
+                      </Td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Tabla>
+            )}
+          </Tarjeta>
 
-        {resultado.clientes.length === 0 ? (
-          <Vacio
-            mensaje={
-              busqueda || tipo !== 'todos'
-                ? 'Ningún cliente coincide con ese filtro.'
-                : 'Todavía no hay clientes. El primero entrará por el agente de WhatsApp o desde el local.'
-            }
-          />
-        ) : (
-          <Tabla>
-            <thead>
-              <tr>
-                <Th>Negocio</Th>
-                <Th>Contacto</Th>
-                <Th>Teléfono</Th>
-                <Th>Tipo</Th>
-                <Th>Facturación</Th>
-                <Th>Saldo</Th>
-                <Th>Alta</Th>
-              </tr>
-            </thead>
-            <tbody>
-              {resultado.clientes.map((cliente) => (
-                <tr key={cliente.id}>
-                  <Td>{cliente.nombre_negocio ?? '—'}</Td>
-                  <Td>{cliente.nombre_contacto ?? '—'}</Td>
-                  <Td className="tabular-nums">{telefonoLegible(cliente.telefono)}</Td>
-                  <Td>{tipoNegocioLegible(cliente.tipo_negocio)}</Td>
-                  <Td className="text-[var(--color-texto-apagado)]">
-                    {cliente.modelo_facturacion === 'consolidado_mensual'
-                      ? 'Mensual'
-                      : 'Por pedido'}
-                  </Td>
-                  <Td className="tabular-nums">{moneda(cliente.saldo_acumulado)}</Td>
-                  <Td className="text-[var(--color-texto-apagado)]">
-                    {soloFecha(cliente.created_at)}
-                  </Td>
-                </tr>
-              ))}
-            </tbody>
-          </Tabla>
-        )}
-      </Tarjeta>
-
-      {resultado.paginas > 1 ? (
-        <nav className="flex gap-2 text-sm">
-          {resultado.pagina > 1 ? (
-            <Link
-              className="underline"
-              href={`/clientes?tipo=${tipo}&q=${encodeURIComponent(busqueda)}&pagina=${resultado.pagina - 1}`}
-            >
-              ← Anterior
-            </Link>
+          {resultado.paginas > 1 ? (
+            <nav className="flex gap-3 text-sm">
+              {resultado.pagina > 1 ? (
+                <Link
+                  className="text-[var(--primario)] hover:underline"
+                  href={`/clientes?${consulta}&pagina=${resultado.pagina - 1}`}
+                >
+                  ← Anterior
+                </Link>
+              ) : null}
+              {resultado.pagina < resultado.paginas ? (
+                <Link
+                  className="text-[var(--primario)] hover:underline"
+                  href={`/clientes?${consulta}&pagina=${resultado.pagina + 1}`}
+                >
+                  Siguiente →
+                </Link>
+              ) : null}
+            </nav>
           ) : null}
-          {resultado.pagina < resultado.paginas ? (
-            <Link
-              className="underline"
-              href={`/clientes?tipo=${tipo}&q=${encodeURIComponent(busqueda)}&pagina=${resultado.pagina + 1}`}
-            >
-              Siguiente →
-            </Link>
-          ) : null}
-          <span className="text-[var(--color-texto-apagado)]">{POR_PAGINA} por página</span>
-        </nav>
-      ) : null}
+        </div>
+
+        {sesion && sesion.staff.rol !== 'operador' ? <NuevoCliente /> : null}
+      </div>
     </div>
   )
 }

@@ -69,6 +69,7 @@ describe('permisos por rol', () => {
       'clientes',
       'reportes',
       'servicios',
+      'borrar',
       'configuracion',
       'staff',
     ] as const) {
@@ -76,17 +77,20 @@ describe('permisos por rol', () => {
     }
   })
 
-  it('admin no toca precios ni configuración', () => {
+  it('admin gestiona y borra, pero no toca configuración ni cuentas', () => {
     expect(puede('admin', 'pedidos')).toBe(true)
+    expect(puede('admin', 'clientes')).toBe(true)
     expect(puede('admin', 'reportes')).toBe(true)
-    expect(puede('admin', 'servicios')).toBe(false)
+    expect(puede('admin', 'servicios')).toBe(true)
+    expect(puede('admin', 'borrar')).toBe(true)
     expect(puede('admin', 'configuracion')).toBe(false)
     expect(puede('admin', 'staff')).toBe(false)
   })
 
-  it('operador solo opera pedidos y clientes', () => {
+  it('el operador trabaja pedidos y clientes, pero no borra', () => {
     expect(puede('operador', 'pedidos')).toBe(true)
     expect(puede('operador', 'clientes')).toBe(true)
+    expect(puede('operador', 'borrar')).toBe(false)
     expect(puede('operador', 'reportes')).toBe(false)
     expect(puede('operador', 'servicios')).toBe(false)
     expect(puede('operador', 'configuracion')).toBe(false)
