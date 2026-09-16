@@ -1,10 +1,12 @@
 import { AlertTriangle, ArrowRight, ClipboardList, DollarSign, Users, Wallet } from 'lucide-react'
 import Link from 'next/link'
+import { SeccionLeads } from '@/components/dashboard/leads'
 import { EtiquetaEstado } from '@/components/pedidos/etiquetas'
 import { CabeceraTarjeta, Tarjeta, Vacio } from '@/components/ui/primitivos'
 import { verifyAuth } from '@/lib/auth'
 import { fechaHora, moneda, soloFecha, soloHora } from '@/lib/format'
 import { parametrosVentana } from '@/server/configuracion/repo'
+import { embudoLeads } from '@/server/dashboard/leads'
 import { type ResumenPedido, tablero } from '@/server/dashboard/repo'
 import { obtenerProximaVentana } from '@/server/scheduling/ventana'
 
@@ -73,7 +75,11 @@ function ListaAtencion({
 export default async function Dashboard() {
   const ahora = new Date()
   const sesion = await verifyAuth()
-  const [datos, parametros] = await Promise.all([tablero(ahora), parametrosVentana()])
+  const [datos, parametros, leads] = await Promise.all([
+    tablero(ahora),
+    parametrosVentana(),
+    embudoLeads(ahora),
+  ])
   const proxima = obtenerProximaVentana(ahora, parametros)
 
   const { discrepancias, esperandoPago, sinVerificar } = datos.requierenAtencion
@@ -115,6 +121,8 @@ export default async function Dashboard() {
           valor={String(datos.clientes)}
         />
       </div>
+
+      <SeccionLeads datos={leads} />
 
       {totalAtencion > 0 ? (
         <Tarjeta className="border-[var(--peligro)]/25 bg-[var(--peligro-suave)]/40">

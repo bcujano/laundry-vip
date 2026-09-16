@@ -90,8 +90,8 @@ export async function registrarClientePresencial(
       .from('clientes')
       .insert({
         telefono: parametros.telefono_cliente,
-        nombre_contacto: parametros.nombre_contacto ?? null,
-        nombre_negocio: parametros.nombre_negocio ?? null,
+        nombre_contacto: parametros.nombre_contacto?.trim() || null,
+        nombre_negocio: parametros.nombre_negocio?.trim() || null,
         canal_origen: 'presencial',
       })
       .select('*')
@@ -182,8 +182,9 @@ export async function actualizarRegistro(
 
   if (parametros.nombre_contacto || parametros.nombre_negocio) {
     const cambios: Record<string, string> = {}
-    if (parametros.nombre_contacto) cambios.nombre_contacto = parametros.nombre_contacto
-    if (parametros.nombre_negocio) cambios.nombre_negocio = parametros.nombre_negocio
+    if (parametros.nombre_contacto?.trim())
+      cambios.nombre_contacto = parametros.nombre_contacto.trim()
+    if (parametros.nombre_negocio?.trim()) cambios.nombre_negocio = parametros.nombre_negocio.trim()
     await supabase.from('clientes').update(cambios).eq('id', pedido.cliente_id)
   }
 

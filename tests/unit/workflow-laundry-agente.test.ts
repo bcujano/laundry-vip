@@ -137,3 +137,59 @@ describe('registro en el CRM en cada turno (patrón del CRM de 321)', () => {
     expect(codigo).toContain('ext.lead_nombre !== perfil')
   })
 })
+
+describe('modo operador (lista blanca de planta)', () => {
+  const promptOperador = readFileSync(resolve(RAIZ, 'n8n/prompt-operador-laundry.md'), 'utf8')
+  const destinos = (nombre: string) =>
+    (workflow.connections[nombre]?.main ?? []).map((salida) => salida.map((c) => c.node))
+
+  it('verifica la lista blanca y bifurca entre operador y cliente', () => {
+    expect(destinos('Typing Indicator')).toEqual([['Verificar Operador']])
+    expect(destinos('Verificar Operador')).toEqual([['¿Es Operador?']])
+    expect(destinos('¿Es Operador?')).toEqual([['Agente Operador'], ['Agente Laundry VIP']])
+    expect(destinos('Agente Operador')).toEqual([['Extraer JSON']])
+  })
+
+  it('el agente de planta tiene sus tools, su memoria y su constitución', () => {
+    const tools = Object.entries(workflow.connections)
+      .filter(([, tipos]) => tipos.ai_tool?.[0]?.[0]?.node === 'Agente Operador')
+      .map(([nombre]) => nombre)
+      .sort()
+    expect(tools).toEqual(
+      [
+        'actualizar_registro',
+        'confirmar_pago',
+        'consultar_pedido',
+        'corregir_cotizacion',
+        'cotizar_prendas_operador',
+        'generar_reporte',
+        'registrar_cliente_presencial',
+      ].sort(),
+    )
+    expect(String(porNombre('Memory Operador')?.parameters.sessionKey)).toContain('operador_')
+    const opciones = porNombre('Agente Operador')?.parameters.options as { systemMessage: string }
+    expect(opciones.systemMessage).toBe(promptOperador.replace(/\n$/, ''))
+    expect(opciones.systemMessage).toContain('NUNCA borra')
+  })
+
+  it('las acciones de operador llevan el teléfono del que escribe, no uno que invente el modelo', () => {
+    for (const nombre of [
+      'registrar_cliente_presencial',
+      'actualizar_registro',
+      'confirmar_pago',
+    ]) {
+      const cuerpo = String(porNombre(nombre)?.parameters.jsonBody)
+      expect(cuerpo).toContain('telefono_operador')
+      expect(cuerpo).toContain("$('WhatsApp Inicio').first().json.contacts[0].wa_id")
+    }
+  })
+
+  it('el parser lee al agente que corrió y el operador no se registra como lead', () => {
+    expect(String(porNombre('Extraer JSON')?.parameters.jsCode)).toContain(
+      '$input.first().json.output',
+    )
+    expect(String(porNombre('Preparar CRM Body')?.parameters.jsCode)).toContain(
+      'if (esOperador) return []',
+    )
+  })
+})
