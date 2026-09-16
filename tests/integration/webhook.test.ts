@@ -179,6 +179,30 @@ describe('cliente y memoria', () => {
     expect((segunda.sobre.data as { creado: boolean }).creado).toBe(false)
   })
 
+  it('find_or_create_client rellena huecos sin pisar lo que ya hay', async () => {
+    const { sobre } = await llamar({
+      accion: 'find_or_create_client',
+      parametros: {
+        telefono: TELEFONO,
+        nombre_contacto: 'Ana Pérez',
+        nombre_negocio: 'Otro nombre',
+        tipo_negocio: 'hotel',
+      },
+    })
+    const cliente = (sobre.data as { cliente: Record<string, string> }).cliente
+    expect(cliente.nombre_contacto).toBe('Ana Pérez')
+    expect(cliente.nombre_negocio).toBe(`Clínica ${CORRIDA}`)
+    expect(cliente.tipo_negocio).toBe('hotel')
+
+    const otra = await llamar({
+      accion: 'find_or_create_client',
+      parametros: { telefono: TELEFONO, nombre_contacto: 'Otra persona', tipo_negocio: 'clinica' },
+    })
+    const igual = (otra.sobre.data as { cliente: Record<string, string> }).cliente
+    expect(igual.nombre_contacto).toBe('Ana Pérez')
+    expect(igual.tipo_negocio).toBe('hotel')
+  })
+
   it('la memoria de conversación se acumula entre llamadas', async () => {
     await llamar({
       accion: 'sincronizar_memoria_conversacion',

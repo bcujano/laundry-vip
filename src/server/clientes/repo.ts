@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import type { Cliente, TipoNegocio } from '@/types/database'
+import type { Cliente, Conversacion, TipoNegocio } from '@/types/database'
 
 /** Toda lista del CRM pagina de a 50: es un panel de trabajo, no un catálogo. */
 export const POR_PAGINA = 50
@@ -73,4 +73,16 @@ export async function obtenerPorTelefono(telefono: string): Promise<Cliente | nu
 
   if (error) throw new Error(`No se pudo leer el cliente: ${error.message}`)
   return (data as Cliente | null) ?? null
+}
+
+/** Lo último que el agente registró de la conversación de WhatsApp con este cliente. */
+export async function conversacionDe(telefono: string): Promise<Conversacion | null> {
+  const { data, error } = await supabaseAdmin()
+    .from('conversaciones')
+    .select('*')
+    .eq('telefono', telefono)
+    .maybeSingle()
+
+  if (error) throw new Error(`No se pudo leer la conversación: ${error.message}`)
+  return (data as Conversacion | null) ?? null
 }

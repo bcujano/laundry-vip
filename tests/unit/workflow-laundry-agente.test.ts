@@ -111,3 +111,29 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(crudo).not.toMatch(/eyJ[A-Za-z0-9_-]{20,}\./)
   })
 })
+
+describe('registro en el CRM en cada turno (patrón del CRM de 321)', () => {
+  it('después del parser registra cliente y conversación, sin frenar la respuesta', () => {
+    expect(workflow.connections['Extraer JSON']?.main?.[0]?.map((c) => c.node)).toContain(
+      'Preparar CRM Body',
+    )
+    expect(workflow.connections['Preparar CRM Body']?.main?.[0]?.[0]?.node).toBe(
+      'Registrar Cliente CRM',
+    )
+    expect(workflow.connections['Registrar Cliente CRM']?.main?.[0]?.[0]?.node).toBe(
+      'Registrar Conversacion CRM',
+    )
+    for (const nombre of ['Registrar Cliente CRM', 'Registrar Conversacion CRM']) {
+      const nodo = workflow.nodes.find((n) => n.name === nombre) as Nodo & { onError?: string }
+      expect(nodo.onError).toBe('continueRegularOutput')
+      expect(nodo.credentials?.httpHeaderAuth?.name).toBe('CRM Laundry VIP Webhook')
+    }
+  })
+
+  it('usa las acciones del webhook y no mete el perfil de WhatsApp como nombre', () => {
+    const codigo = String(porNombre('Preparar CRM Body')?.parameters.jsCode)
+    expect(codigo).toContain("accion: 'find_or_create_client'")
+    expect(codigo).toContain("accion: 'sincronizar_memoria_conversacion'")
+    expect(codigo).toContain('ext.lead_nombre !== perfil')
+  })
+})

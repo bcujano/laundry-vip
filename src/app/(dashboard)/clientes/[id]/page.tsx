@@ -1,13 +1,14 @@
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { ConversacionAgente } from '@/components/clientes/conversacion'
 import { FichaCliente } from '@/components/clientes/ficha'
 import { EtiquetaEstado } from '@/components/pedidos/etiquetas'
 import { CabeceraTarjeta, Tabla, Tarjeta, Td, Th, Vacio } from '@/components/ui/primitivos'
 import { verifyAuth } from '@/lib/auth'
 import { fechaHora, moneda, soloFecha, telefonoLegible, tipoNegocioLegible } from '@/lib/format'
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { obtener } from '@/server/clientes/repo'
+import { conversacionDe, obtener } from '@/server/clientes/repo'
 import type { Pedido } from '@/types/database'
 
 export const dynamic = 'force-dynamic'
@@ -17,11 +18,14 @@ export default async function DetalleCliente({ params }: { params: Promise<{ id:
   const [cliente, sesion] = await Promise.all([obtener(id), verifyAuth()])
   if (!cliente) notFound()
 
-  const { data } = await supabaseAdmin()
-    .from('pedidos')
-    .select('*')
-    .eq('cliente_id', id)
-    .order('created_at', { ascending: false })
+  const [{ data }, conversacion] = await Promise.all([
+    supabaseAdmin()
+      .from('pedidos')
+      .select('*')
+      .eq('cliente_id', id)
+      .order('created_at', { ascending: false }),
+    conversacionDe(cliente.telefono),
+  ])
 
   const pedidos = (data ?? []) as Pedido[]
   const facturado = pedidos
@@ -62,7 +66,7 @@ export default async function DetalleCliente({ params }: { params: Promise<{ id:
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        <div className="lg:col-span-1">
+        <div className="flex flex-col gap-4 lg:col-span-1">
           <FichaCliente
             cliente={{
               id: cliente.id,
@@ -77,6 +81,7 @@ export default async function DetalleCliente({ params }: { params: Promise<{ id:
             puedeBorrar={sesion?.staff.rol !== 'operador'}
             tienePedidos={pedidos.length > 0}
           />
+          <ConversacionAgente conversacion={conversacion} />
         </div>
 
         <Tarjeta className="lg:col-span-2">

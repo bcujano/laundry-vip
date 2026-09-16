@@ -116,7 +116,36 @@ export async function findOrCreateClient(
   if (errorLectura) return fallo('ERROR_INTERNO', errorLectura.message, 500)
 
   if (existente) {
-    const fila = existente as Cliente
+    let fila = existente as Cliente
+
+    // El agente registra al cliente desde el primer mensaje, sin nombre. Lo que
+    // aprende después solo rellena huecos: nunca pisa lo que editó el operador.
+    const huecos: Partial<Cliente> = {}
+    if (!fila.nombre_contacto && parametros.nombre_contacto?.trim()) {
+      huecos.nombre_contacto = parametros.nombre_contacto.trim()
+    }
+    if (!fila.nombre_negocio && parametros.nombre_negocio?.trim()) {
+      huecos.nombre_negocio = parametros.nombre_negocio.trim()
+    }
+    if (
+      fila.tipo_negocio === 'particular' &&
+      parametros.tipo_negocio &&
+      parametros.tipo_negocio !== 'particular'
+    ) {
+      huecos.tipo_negocio = parametros.tipo_negocio
+    }
+
+    if (Object.keys(huecos).length > 0) {
+      const { data, error } = await cliente
+        .from('clientes')
+        .update(huecos)
+        .eq('id', fila.id)
+        .select('*')
+        .single()
+      if (error) return fallo('ERROR_INTERNO', error.message, 500)
+      fila = data as Cliente
+    }
+
     return exito({
       cliente: fila,
       creado: false,
@@ -129,8 +158,8 @@ export async function findOrCreateClient(
     .from('clientes')
     .insert({
       telefono: parametros.telefono,
-      nombre_contacto: parametros.nombre_contacto ?? null,
-      nombre_negocio: parametros.nombre_negocio ?? null,
+      nombre_contacto: parametros.nombre_contacto?.trim() || null,
+      nombre_negocio: parametros.nombre_negocio?.trim() || null,
       tipo_negocio: parametros.tipo_negocio ?? 'particular',
       canal_origen: parametros.canal_origen ?? 'whatsapp_agente',
     })
