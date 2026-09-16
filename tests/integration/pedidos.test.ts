@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { POR_PAGINA, colaDeHoy, listar, obtener, ultimoDelCliente } from '@/server/pedidos/repo'
+import { colaDeHoy, listar, obtener, POR_PAGINA, ultimoDelCliente } from '@/server/pedidos/repo'
 import { limitesDelDia } from '@/server/scheduling/ventana'
 
 const CORRIDA = String(Date.now()).slice(-6)
