@@ -9,6 +9,12 @@ import {
   vehiculo,
   verificarWhitelistOperador,
 } from './cliente'
+import {
+  actualizarRegistro,
+  confirmarPagoOperador,
+  corregirCotizacionOperador,
+  registrarClientePresencial,
+} from './operador'
 import { consultarEstadoPorTelefono, consultarPedidoPorId, crear } from './pedidos'
 
 /**
@@ -30,10 +36,10 @@ const MANEJADORES: Record<Accion, Manejador> = {
   obtener_proxima_ventana: proximaVentana,
   crear_pedido: crear,
   consultar_estado_pedido: consultarEstadoPorTelefono,
-  registrar_cliente_presencial: PENDIENTE(10),
-  actualizar_registro: PENDIENTE(10),
-  confirmar_pago: PENDIENTE(10),
-  corregir_cotizacion: PENDIENTE(10),
+  registrar_cliente_presencial: registrarClientePresencial,
+  actualizar_registro: actualizarRegistro,
+  confirmar_pago: confirmarPagoOperador,
+  corregir_cotizacion: corregirCotizacionOperador,
   generar_reporte: PENDIENTE(11),
   consultar_pedido: consultarPedidoPorId,
 }
