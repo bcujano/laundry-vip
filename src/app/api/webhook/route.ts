@@ -3,6 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { env } from '@/lib/env'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { despachar } from '@/server/webhook/handlers'
+import { esOperadorConocido, registrarMensaje } from '@/server/webhook/rate-limit'
 import type { Sobre } from '@/server/webhook/respuesta'
 import { sobreEntrante } from '@/server/webhook/schemas'
 
@@ -69,6 +70,20 @@ export async function POST(peticion: NextRequest): Promise<NextResponse> {
   if (!sobre.success) {
     const detalle = sobre.error.issues[0]?.message ?? 'Falta el campo "accion".'
     return error('ACCION_DESCONOCIDA', detalle, 400)
+  }
+
+  // El tope diario se aplica ANTES de despachar: pasado el límite la acción
+  // no llega a ejecutarse. Los operadores no consumen cuota.
+  const telefono = sobre.data.telefono
+  if (telefono && !(await esOperadorConocido(telefono))) {
+    const limite = await registrarMensaje(telefono)
+    if (limite.excedido) {
+      return error(
+        'LIMITE_DIARIO_ALCANZADO',
+        `Este número ya usó sus ${limite.limite} mensajes de hoy.`,
+        429,
+      )
+    }
   }
 
   try {

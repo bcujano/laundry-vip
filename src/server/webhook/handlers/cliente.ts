@@ -3,6 +3,7 @@ import { parametrosVentana } from '@/server/configuracion/repo'
 import { calcularVehiculo, cotizarPrendas, ErrorCotizacion } from '@/server/pricing/cotizar'
 import { obtenerProximaVentana, ultimaHoraDelDia } from '@/server/scheduling/ventana'
 import type { Cliente, Conversacion } from '@/types/database'
+import { type ResultadoUso, registrarUso } from '../cost-tracking'
 import { exito, fallo, type ResultadoAccion } from '../respuesta'
 import type { ParametrosDe } from '../schemas'
 
@@ -17,7 +18,7 @@ import type { ParametrosDe } from '../schemas'
  */
 export async function registrarEventoEntrante(
   parametros: ParametrosDe<'registrar_evento_entrante'>,
-): Promise<ResultadoAccion<{ ya_procesado: boolean }>> {
+): Promise<ResultadoAccion<{ ya_procesado: boolean; alerta_costo?: ResultadoUso }>> {
   const { error } = await supabaseAdmin()
     .from('eventos_procesados')
     .insert({
@@ -27,10 +28,18 @@ export async function registrarEventoEntrante(
     })
 
   // 23505 = unique_violation: esta clave ya entró antes.
-  if (error?.code === '23505') return exito({ ya_procesado: true })
-  if (error) return fallo('ERROR_INTERNO', error.message, 500)
+  const yaProcesado = error?.code === '23505'
+  if (error && !yaProcesado) return fallo('ERROR_INTERNO', error.message, 500)
 
-  return exito({ ya_procesado: false })
+  // El gasto se acumula aunque el mensaje sea repetido: el turno ya se pagó.
+  const uso = parametros.uso_openai
+    ? await registrarUso(parametros.uso_openai.tokens, parametros.uso_openai.costo_estimado_usd)
+    : undefined
+
+  return exito({
+    ya_procesado: yaProcesado,
+    ...(uso?.debe_alertar ? { alerta_costo: uso } : {}),
+  })
 }
 
 /** Memoria de la conversación: lo que el agente sabe de este teléfono. */

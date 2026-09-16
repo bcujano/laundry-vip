@@ -31,10 +31,15 @@ export const ACCIONES = [
 
 export type Accion = (typeof ACCIONES)[number]
 
-/** Sobre común: el cuerpo siempre trae la acción y sus parámetros. */
+/**
+ * Sobre común: la acción, sus parámetros y —opcionalmente— el teléfono de
+ * quien está hablando. Ese teléfono es lo que permite aplicar el tope diario
+ * de mensajes antes de ejecutar nada.
+ */
 export const sobreEntrante = z.object({
   accion: z.enum(ACCIONES),
   parametros: z.unknown().optional(),
+  telefono: telefono.optional(),
 })
 
 export const itemCotizable = z.object({
@@ -48,6 +53,13 @@ export const parametrosPorAccion = {
     dedupe_key: z.string().min(1),
     tipo: z.string().min(1),
     payload: z.record(z.string(), z.unknown()).optional(),
+    // n8n reporta aquí lo que gastó el turno anterior en OpenAI.
+    uso_openai: z
+      .object({
+        tokens: z.number().int().nonnegative(),
+        costo_estimado_usd: z.number().nonnegative(),
+      })
+      .optional(),
   }),
 
   sincronizar_memoria_conversacion: z.object({

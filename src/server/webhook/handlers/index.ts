@@ -16,15 +16,13 @@ import {
   registrarClientePresencial,
 } from './operador'
 import { consultarEstadoPorTelefono, consultarPedidoPorId, crear } from './pedidos'
+import { generarReporte } from './reportes'
 
 /**
  * Registro de acciones. Añadir una acción es añadir su schema y su entrada
  * aquí; el route.ts no cambia nunca.
  */
 type Manejador = (parametros: never) => ResultadoAccion<unknown> | Promise<ResultadoAccion<unknown>>
-
-const PENDIENTE = (fase: number) => () =>
-  fallo('ACCION_DESCONOCIDA', `Esta acción se construye en la fase ${fase}.`, 501)
 
 const MANEJADORES: Record<Accion, Manejador> = {
   registrar_evento_entrante: registrarEventoEntrante,
@@ -40,7 +38,7 @@ const MANEJADORES: Record<Accion, Manejador> = {
   actualizar_registro: actualizarRegistro,
   confirmar_pago: confirmarPagoOperador,
   corregir_cotizacion: corregirCotizacionOperador,
-  generar_reporte: PENDIENTE(11),
+  generar_reporte: generarReporte,
   consultar_pedido: consultarPedidoPorId,
 }
 
