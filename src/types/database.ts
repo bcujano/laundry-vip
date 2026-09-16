@@ -4,7 +4,7 @@
  * contrato que el código en TypeScript acepta cumplir.
  */
 
-export type RolStaff = 'dueno' | 'operador'
+export type RolStaff = 'superadmin' | 'admin' | 'operador'
 export type EstadoStaff = 'activo' | 'inactivo'
 export type TipoNegocio = 'clinica' | 'restaurante' | 'hotel' | 'otro' | 'particular'
 export type CanalOrigen = 'whatsapp_agente' | 'presencial' | 'referral_ads'
@@ -88,6 +88,9 @@ export type Configuracion = {
   dias_operacion: number[]
   hora_recoleccion_inicio: string
   hora_recoleccion_fin: string
+  hora_apertura: string
+  hora_cierre: string
+  margen_minimo_minutos: number
   tarifa_combo: number
   limite_mensajes_diarios_por_telefono: number
   limite_costo_diario_openai_usd: number

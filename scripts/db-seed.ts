@@ -38,7 +38,17 @@ export async function sembrar(sql: Sql): Promise<ResultadoSiembra> {
 
   // La configuración es una fila única; si ya existe no se toca, porque el
   // dueño pudo haberla ajustado desde el CRM.
-  await sql`insert into configuracion (id) values (1) on conflict (id) do nothing`
+  await sql`
+    insert into configuracion (
+      id, nombre_negocio, dias_operacion,
+      hora_recoleccion_inicio, hora_recoleccion_fin,
+      hora_apertura, hora_cierre, margen_minimo_minutos
+    ) values (
+      1, 'Lavandería VIP', '{1,2,3,4,5,6}',
+      '08:00', '12:00', '08:00', '17:00', 30
+    )
+    on conflict (id) do nothing
+  `
 
   const [conteo] = await sql<{ total: number }[]>`
     select count(*)::int as total from servicios

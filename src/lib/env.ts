@@ -5,7 +5,7 @@ import { z } from 'zod'
  * Una variable solo es obligatoria a partir de la fase que la usa, para que los
  * gates de las fases anteriores no se rompan por credenciales que aún no existen.
  */
-export const FASE_ACTUAL = 2
+export const FASE_ACTUAL = 3
 
 /** Desde qué fase pasa a ser obligatoria cada variable (sección 4 del plan). */
 export const FASE_REQUERIDA = {
@@ -102,6 +102,11 @@ export function validarEntorno(fuente: Record<string, string | undefined>, fase:
   return resultado.data as EntornoValidado
 }
 
+/**
+ * Todas las variables se tipan como presentes. Es cierto solo para las de
+ * FASE_ACTUAL o anteriores: leer una de una fase posterior compila pero da
+ * undefined en ejecución. Cada fase usa las suyas.
+ */
 export type EntornoValidado = {
   [K in NombreVariable]: K extends 'OPENAI_COST_ALERT_DAILY_USD' ? number : string
 }
