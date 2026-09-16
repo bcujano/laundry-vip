@@ -193,3 +193,22 @@ describe('modo operador (lista blanca de planta)', () => {
     )
   })
 })
+
+describe('guardia anti-alucinación', () => {
+  it('los agentes devuelven los pasos intermedios para poder auditar las tools', () => {
+    for (const nombre of ['Agente Laundry VIP', 'Agente Operador']) {
+      const opciones = porNombre(nombre)?.parameters.options as {
+        returnIntermediateSteps?: boolean
+      }
+      expect(opciones.returnIntermediateSteps).toBe(true)
+    }
+  })
+
+  it('una confirmación sin tool ok:true o con un ID que no salió de una tool se reemplaza', () => {
+    const codigo = String(porNombre('Extraer JSON')?.parameters.jsCode)
+    expect(codigo).toContain('intermediateSteps')
+    expect(codigo).toContain('idInventado')
+    expect(codigo).toContain('escrituraFantasma')
+    expect(codigo).toContain('La orden NO quedó registrada')
+  })
+})

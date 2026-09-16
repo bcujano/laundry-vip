@@ -95,6 +95,31 @@ describe('registro presencial por voz', () => {
     expect(pedido?.numero_fundas).toBeNull()
   })
 
+  it('avisa cuando el teléfono dictado ya es de otro cliente', async () => {
+    const telefono = nuevoTelefono()
+    await registrarClientePresencial({
+      telefono_operador: OPERADOR,
+      telefono_cliente: telefono,
+      nombre_contacto: 'Juan Pérez',
+      items: ITEMS,
+    })
+
+    const segundo = await registrarClientePresencial({
+      telefono_operador: OPERADOR,
+      telefono_cliente: telefono,
+      nombre_contacto: 'Iván Ubillús',
+      items: ITEMS,
+    })
+
+    expect(segundo.ok).toBe(true)
+    if (!segundo.ok) return
+    expect(segundo.data).toMatchObject({
+      cliente_creado: false,
+      nombre_cliente: 'Juan Pérez',
+      telefono_de_otro_cliente: true,
+    })
+  })
+
   it('exige el teléfono del cliente', async () => {
     const resultado = await registrarClientePresencial({
       telefono_operador: OPERADOR,

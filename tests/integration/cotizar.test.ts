@@ -127,8 +127,9 @@ describe('el resumen', () => {
   })
 
   it('suma solo las líneas que tienen precio', async () => {
+    // Bufanda y no chal: servicios.test.ts cambia el precio del chal mientras corre.
     const { resumen } = await cotizarPrendas([
-      { descripcion: 'chal', cantidad: 2 },
+      { descripcion: 'bufanda', cantidad: 2 },
       { descripcion: 'un kayak inflable', cantidad: 1 },
     ])
     expect(resumen.subtotal).toBe(6)

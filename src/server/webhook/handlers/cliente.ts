@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { parametrosVentana } from '@/server/configuracion/repo'
+import { obtener as obtenerConfig, parametrosVentana } from '@/server/configuracion/repo'
 import { calcularVehiculo, cotizarPrendas, ErrorCotizacion } from '@/server/pricing/cotizar'
 import { obtenerProximaVentana, ultimaHoraDelDia } from '@/server/scheduling/ventana'
 import type { Cliente, Conversacion } from '@/types/database'
@@ -203,9 +203,14 @@ export async function proximaVentana(parametros: ParametrosDe<'obtener_proxima_v
     fin: string
     es_hoy: boolean
     ultima_hora_del_dia: string
+    hora_apertura: string
+    hora_cierre: string
+    tarifa_combo: number
   }>
 > {
-  const config = await parametrosVentana()
+  // Horario y tarifa salen de Configuración: el dueño los cambia en el CRM y el
+  // agente no puede tener un valor escrito a mano en su prompt.
+  const [config, negocio] = await Promise.all([parametrosVentana(), obtenerConfig()])
   const desde = parametros?.desde ? new Date(parametros.desde) : new Date()
 
   if (Number.isNaN(desde.getTime())) {
@@ -218,5 +223,8 @@ export async function proximaVentana(parametros: ParametrosDe<'obtener_proxima_v
     fin: ventana.fin.toISOString(),
     es_hoy: ventana.esHoy,
     ultima_hora_del_dia: ultimaHoraDelDia(config),
+    hora_apertura: negocio.hora_apertura.slice(0, 5),
+    hora_cierre: negocio.hora_cierre.slice(0, 5),
+    tarifa_combo: Number(negocio.tarifa_combo),
   })
 }

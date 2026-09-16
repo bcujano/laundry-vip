@@ -121,6 +121,14 @@ export async function registrarClientePresencial(
     pedido_id: resultado.pedido.id,
     cliente_id: cliente.id,
     cliente_creado: existente === null,
+    nombre_cliente: cliente.nombre_negocio || cliente.nombre_contacto,
+    // Si el teléfono ya era de otra persona, la orden queda a su nombre: el agente
+    // tiene que avisarlo en vez de confirmar como si fuera el cliente dictado.
+    telefono_de_otro_cliente:
+      existente !== null &&
+      Boolean(parametros.nombre_contacto?.trim()) &&
+      (cliente.nombre_contacto ?? '').trim().toLowerCase() !==
+        (parametros.nombre_contacto ?? '').trim().toLowerCase(),
     estado: resultado.pedido.estado,
     monto_estimado_lavado: resultado.montoEstimadoLavado,
     estado_cotizacion: 'estimado_pendiente_verificacion',

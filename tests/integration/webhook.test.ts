@@ -2,6 +2,8 @@ import { NextRequest } from 'next/server'
 import { afterAll, describe, expect, it } from 'vitest'
 import { POST } from '@/app/api/webhook/route'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { obtener as obtenerConfig, parametrosVentana } from '@/server/configuracion/repo'
+import { ultimaHoraDelDia } from '@/server/scheduling/ventana'
 import { corrida } from '../util/corrida.ts'
 
 const SECRETO = process.env.N8N_WEBHOOK_SECRET as string
@@ -146,9 +148,17 @@ describe('acciones de logística', () => {
     const { estado, sobre } = await llamar({ accion: 'obtener_proxima_ventana', parametros: {} })
     expect(estado).toBe(200)
 
-    const data = sobre.data as { inicio: string; ultima_hora_del_dia: string }
+    const data = sobre.data as {
+      inicio: string
+      ultima_hora_del_dia: string
+      tarifa_combo: number
+      hora_apertura: string
+    }
     expect(new Date(data.inicio).getTime()).toBeGreaterThan(Date.now())
-    expect(data.ultima_hora_del_dia).toBe('11:30')
+    // Sale de Configuración, que el dueño edita: se compara contra la base, no contra un fijo.
+    expect(data.ultima_hora_del_dia).toBe(ultimaHoraDelDia(await parametrosVentana()))
+    expect(data.tarifa_combo).toBe(Number((await obtenerConfig()).tarifa_combo))
+    expect(data.hora_apertura).toMatch(/^\d{2}:\d{2}$/)
   })
 
   it('un domingo de madrugada ofrece el lunes, nunca rechaza', async () => {

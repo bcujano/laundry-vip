@@ -18,13 +18,15 @@ afterAll(async () => {
 })
 
 describe('configuración del negocio', () => {
-  it('trae el horario real que quedó sembrado', async () => {
+  // El dueño edita estos valores en el CRM: se prueba la forma, no un valor fijo.
+  it('trae un horario y una tarifa válidos', async () => {
     const config = await obtener()
-    expect(config.dias_operacion).toEqual([1, 2, 3, 4, 5, 6])
-    expect(config.hora_recoleccion_inicio.slice(0, 5)).toBe('08:00')
-    expect(config.hora_recoleccion_fin.slice(0, 5)).toBe('12:00')
-    expect(config.margen_minimo_minutos).toBe(30)
-    expect(Number(config.tarifa_combo)).toBe(5)
+    expect(config.dias_operacion.length).toBeGreaterThan(0)
+    for (const dia of config.dias_operacion) expect(dia).toBeGreaterThanOrEqual(1)
+    expect(config.hora_recoleccion_inicio).toMatch(/^\d{2}:\d{2}/)
+    expect(config.hora_recoleccion_fin > config.hora_recoleccion_inicio).toBe(true)
+    expect(config.margen_minimo_minutos).toBeGreaterThanOrEqual(0)
+    expect(Number(config.tarifa_combo)).toBeGreaterThanOrEqual(0)
   })
 
   it('los parámetros de la base alimentan el cálculo de ventanas', async () => {
