@@ -308,6 +308,11 @@ Para que nadie los reintroduzca:
   el id sale de `tests/util/corrida.ts` con `randomInt`. Si vuelves a ver
   fallos de clave duplicada, **no toques la lógica**: borra las filas de prueba
   (`telefono like '+5939%'`) y vuelve a correr.
+- **La suite borraba la conversación real del dueño.** `operador.test.ts`
+  usaba `+593963987124` (número real en la lista blanca) y en `afterAll`
+  borraba su fila de `conversaciones`. Ahora cada corrida crea su propio
+  operador de prueba. Regla: **ninguna prueba escribe ni borra con un número
+  real**; la base de pruebas es la de producción.
 - **Dos veces un servidor zombi** en el puerto 3000 sirvió un build viejo y las
   mediciones salieron falsas. Por eso `/api/health` reporta la fase compilada:
   si no coincide, estás midiendo contra otra cosa.
