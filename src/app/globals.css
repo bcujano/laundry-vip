@@ -53,6 +53,31 @@ body {
   color: var(--texto);
 }
 
+/*
+ * El cajón de móvil se abre con la variable --cajon, que pone el componente.
+ * Se usa una variable en vez de un estilo en línea para que la regla de
+ * escritorio pueda ganar sin recurrir a !important: en pantalla grande la
+ * barra está siempre fija, pase lo que pase con el estado del cajón.
+ */
+.barra-lateral {
+  translate: var(--cajon, -100%);
+  transition: translate 0.2s ease;
+}
+
+@media (min-width: 1024px) {
+  .barra-lateral {
+    translate: 0;
+  }
+}
+
+/* Quien pidió menos movimiento no recibe la animación del cajón. */
+@media (prefers-reduced-motion: reduce) {
+  .barra-lateral,
+  .tarjeta-arrastrable {
+    transition: none;
+  }
+}
+
 /* La barra lateral hace scroll pero sin barra visible. */
 .nav-lateral {
   scrollbar-width: none;

@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { type CSSProperties, useEffect, useState } from 'react'
 import { salir } from '@/app/(auth)/login/actions'
 import { type Area, puede } from '@/lib/permisos'
 import type { RolStaff } from '@/types/database'
@@ -176,10 +176,15 @@ export function BarraLateral({ sesion }: { sesion: DatosSesion }) {
         />
       ) : null}
 
+      {/*
+        El desplazamiento se pasa por la variable --cajon, no por clases de
+        Tailwind: las utilidades translate-x compiten por orden en la hoja de
+        estilos y el cajón se quedaba fuera de pantalla aunque el estado fuera
+        "abierto". Una variable propia no entra en esa pelea.
+      */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-[var(--lateral)] transition-transform lg:translate-x-0 ${
-          abierta ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className="barra-lateral fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-[var(--lateral)]"
+        style={{ '--cajon': abierta ? '0%' : '-100%' } as CSSProperties}
       >
         <Contenido alNavegar={abierta ? () => setAbierta(false) : undefined} sesion={sesion} />
       </aside>
