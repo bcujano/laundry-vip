@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primario: #0f5c4f;
+  --color-fondo: #f8faf9;
+  --color-superficie: #ffffff;
+  --color-borde: #d8e0dd;
+  --color-texto: #0f1a17;
+  --color-texto-apagado: #5b6a65;
+  --color-destructivo: #b3261e;
+  --color-exito: #1e7a46;
+  --radius-control: 6px;
+  --radius-tarjeta: 10px;
+}
+
+body {
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+}
