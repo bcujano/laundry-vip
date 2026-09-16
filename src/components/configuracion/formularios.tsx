@@ -1,0 +1,240 @@
+'use client'
+
+import { useActionState } from 'react'
+import {
+  agregarOperadorWhitelist,
+  type EstadoConfig,
+  guardarConfiguracion,
+} from '@/app/(dashboard)/configuracion/actions'
+import { Boton, Campo, Tabla, Td, Th } from '@/components/ui/primitivos'
+import { telefonoLegible } from '@/lib/format'
+import type { Configuracion, OperadorWhitelist } from '@/types/database'
+
+const INICIAL: EstadoConfig = {}
+
+const DIAS = [
+  { valor: 1, nombre: 'Lun' },
+  { valor: 2, nombre: 'Mar' },
+  { valor: 3, nombre: 'Mié' },
+  { valor: 4, nombre: 'Jue' },
+  { valor: 5, nombre: 'Vie' },
+  { valor: 6, nombre: 'Sáb' },
+  { valor: 7, nombre: 'Dom' },
+]
+
+function Aviso({ estado }: { estado: EstadoConfig }) {
+  if (estado.error) {
+    return (
+      <p className="text-[var(--color-destructivo)] text-sm" role="alert">
+        {estado.error}
+      </p>
+    )
+  }
+  if (estado.ok) {
+    return (
+      <p className="text-[var(--color-exito)] text-sm" role="status">
+        Guardado.
+      </p>
+    )
+  }
+  return null
+}
+
+/** `para` apunta al id del control: WCAG exige la asociación explícita. */
+function Etiquetado({
+  texto,
+  para,
+  children,
+}: {
+  texto: string
+  para: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className="flex flex-col gap-1 text-sm">
+      <label className="font-medium" htmlFor={para}>
+        {texto}
+      </label>
+      {children}
+    </div>
+  )
+}
+
+export function FormularioConfiguracion({ config }: { config: Configuracion }) {
+  const [estado, accion, pendiente] = useActionState(guardarConfiguracion, INICIAL)
+  const hhmm = (valor: string) => valor.slice(0, 5)
+
+  return (
+    <form action={accion} className="flex flex-col gap-4 p-4">
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Etiquetado para="campo-nombre_negocio" texto="Nombre del negocio">
+          <Campo
+            defaultValue={config.nombre_negocio}
+            id="campo-nombre_negocio"
+            name="nombre_negocio"
+            required
+          />
+        </Etiquetado>
+        <Etiquetado para="campo-saludo_agente" texto="Saludo del agente">
+          <Campo
+            defaultValue={config.saludo_agente}
+            id="campo-saludo_agente"
+            name="saludo_agente"
+          />
+        </Etiquetado>
+      </div>
+
+      <fieldset className="flex flex-col gap-2">
+        <legend className="font-medium text-sm">Días de operación</legend>
+        <div className="flex flex-wrap gap-3">
+          {DIAS.map((dia) => (
+            <label className="flex items-center gap-1 text-sm" key={dia.valor}>
+              <input
+                defaultChecked={config.dias_operacion.includes(dia.valor)}
+                name="dias_operacion"
+                type="checkbox"
+                value={dia.valor}
+              />
+              {dia.nombre}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <div className="grid gap-3 sm:grid-cols-4">
+        <Etiquetado para="campo-hora_apertura" texto="Abre">
+          <Campo
+            defaultValue={hhmm(config.hora_apertura)}
+            id="campo-hora_apertura"
+            name="hora_apertura"
+            type="time"
+          />
+        </Etiquetado>
+        <Etiquetado para="campo-hora_cierre" texto="Cierra">
+          <Campo
+            defaultValue={hhmm(config.hora_cierre)}
+            id="campo-hora_cierre"
+            name="hora_cierre"
+            type="time"
+          />
+        </Etiquetado>
+        <Etiquetado para="campo-hora_recoleccion_inicio" texto="Recolección desde">
+          <Campo
+            defaultValue={hhmm(config.hora_recoleccion_inicio)}
+            id="campo-hora_recoleccion_inicio"
+            name="hora_recoleccion_inicio"
+            type="time"
+          />
+        </Etiquetado>
+        <Etiquetado para="campo-hora_recoleccion_fin" texto="Recolección hasta">
+          <Campo
+            defaultValue={hhmm(config.hora_recoleccion_fin)}
+            id="campo-hora_recoleccion_fin"
+            name="hora_recoleccion_fin"
+            type="time"
+          />
+        </Etiquetado>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-4">
+        <Etiquetado para="campo-margen_minimo_minutos" texto="Margen mínimo (min)">
+          <Campo
+            defaultValue={config.margen_minimo_minutos}
+            min="0"
+            id="campo-margen_minimo_minutos"
+            name="margen_minimo_minutos"
+            type="number"
+          />
+        </Etiquetado>
+        <Etiquetado para="campo-tarifa_combo" texto="Tarifa combo (USD)">
+          <Campo
+            defaultValue={Number(config.tarifa_combo).toFixed(2)}
+            min="0"
+            id="campo-tarifa_combo"
+            name="tarifa_combo"
+            step="0.01"
+            type="number"
+          />
+        </Etiquetado>
+        <Etiquetado
+          para="campo-limite_mensajes_diarios_por_telefono"
+          texto="Máx. mensajes por teléfono/día"
+        >
+          <Campo
+            defaultValue={config.limite_mensajes_diarios_por_telefono}
+            min="1"
+            id="campo-limite_mensajes_diarios_por_telefono"
+            name="limite_mensajes_diarios_por_telefono"
+            type="number"
+          />
+        </Etiquetado>
+        <Etiquetado para="campo-limite_costo_diario_openai_usd" texto="Tope diario OpenAI (USD)">
+          <Campo
+            defaultValue={Number(config.limite_costo_diario_openai_usd).toFixed(2)}
+            min="0"
+            id="campo-limite_costo_diario_openai_usd"
+            name="limite_costo_diario_openai_usd"
+            step="0.01"
+            type="number"
+          />
+        </Etiquetado>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <Boton disabled={pendiente} type="submit">
+          {pendiente ? 'Guardando…' : 'Guardar configuración'}
+        </Boton>
+        <Aviso estado={estado} />
+      </div>
+    </form>
+  )
+}
+
+export function ListaBlanca({ operadores }: { operadores: OperadorWhitelist[] }) {
+  const [estado, accion, pendiente] = useActionState(agregarOperadorWhitelist, INICIAL)
+
+  return (
+    <div className="flex flex-col gap-3 p-4">
+      <Tabla>
+        <thead>
+          <tr>
+            <Th>Nombre</Th>
+            <Th>Teléfono</Th>
+            <Th>Estado</Th>
+          </tr>
+        </thead>
+        <tbody>
+          {operadores.map((operador) => (
+            <tr key={operador.id}>
+              <Td>{operador.nombre}</Td>
+              <Td className="tabular-nums">{telefonoLegible(operador.telefono)}</Td>
+              <Td>{operador.activo ? 'Activo' : 'Inactivo'}</Td>
+            </tr>
+          ))}
+          {operadores.length === 0 ? (
+            <tr>
+              <Td className="text-[var(--color-texto-apagado)]">
+                Ningún operador habilitado todavía.
+              </Td>
+              <Td> </Td>
+              <Td> </Td>
+            </tr>
+          ) : null}
+        </tbody>
+      </Tabla>
+
+      <form action={accion} className="flex flex-wrap items-end gap-2">
+        <Etiquetado para="campo-nombre" texto="Nombre">
+          <Campo id="campo-nombre" name="nombre" placeholder="Operador de planta" required />
+        </Etiquetado>
+        <Etiquetado para="campo-telefono" texto="Teléfono">
+          <Campo id="campo-telefono" name="telefono" placeholder="0963987124" required />
+        </Etiquetado>
+        <Boton disabled={pendiente} type="submit" variante="secundario">
+          {pendiente ? 'Agregando…' : 'Agregar'}
+        </Boton>
+        <Aviso estado={estado} />
+      </form>
+    </div>
+  )
+}
