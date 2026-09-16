@@ -5,9 +5,17 @@ import { z } from 'zod'
  * Una variable solo es obligatoria a partir de la fase que la usa, para que los
  * gates de las fases anteriores no se rompan por credenciales que aún no existen.
  */
-export const FASE_ACTUAL = 11
+export const FASE_ACTUAL = 12
 
-/** Desde qué fase pasa a ser obligatoria cada variable (sección 4 del plan). */
+/**
+ * Desde qué fase pasa a ser obligatoria cada variable PARA EL CRM.
+ *
+ * Ojo con lo que NO está aquí: las credenciales de OpenAI, Chatwoot y WhatsApp
+ * no las usa el CRM, las usa la instancia de n8n. El CRM no llama a OpenAI por
+ * diseño (n8n lo hace por HTTP directo), así que exigirlas para arrancar el
+ * panel sería mentir sobre lo que hace falta. Se validan aparte, con
+ * scripts/check-integraciones-env.ts.
+ */
 export const FASE_REQUERIDA = {
   SUPABASE_URL: 1,
   SUPABASE_ANON_KEY: 1,
@@ -18,31 +26,34 @@ export const FASE_REQUERIDA = {
   NEXT_PUBLIC_SUPABASE_ANON_KEY: 3,
   N8N_WEBHOOK_SECRET: 8,
   OPENAI_COST_ALERT_DAILY_USD: 11,
-  CRM_BASE_URL: 12,
-  OPENAI_API_KEY: 12,
-  CHATWOOT_BASE_URL: 13,
-  CHATWOOT_API_TOKEN: 13,
-  CHATWOOT_ACCOUNT_ID: 13,
-  WHATSAPP_CLOUD_API_TOKEN: 13,
-  WHATSAPP_PHONE_NUMBER_ID: 13,
-  WHATSAPP_VERIFY_TOKEN: 13,
 } as const
+
+/**
+ * Lo que necesita la instancia de n8n, no el CRM. Se comprueba con el script
+ * de integraciones antes de lanzar, no al arrancar el panel.
+ */
+export const VARIABLES_INTEGRACION = [
+  'CRM_BASE_URL',
+  'N8N_WEBHOOK_SECRET',
+  'OPENAI_API_KEY',
+  'CHATWOOT_BASE_URL',
+  'CHATWOOT_API_TOKEN',
+  'CHATWOOT_ACCOUNT_ID',
+  'WHATSAPP_CLOUD_API_TOKEN',
+  'WHATSAPP_PHONE_NUMBER_ID',
+  'WHATSAPP_VERIFY_TOKEN',
+] as const
 
 export type NombreVariable = keyof typeof FASE_REQUERIDA
 
 /** Variables que deben ser una URL absoluta válida, no solo texto no vacío. */
-const SON_URL = new Set<NombreVariable>([
-  'SUPABASE_URL',
-  'NEXT_PUBLIC_SUPABASE_URL',
-  'CRM_BASE_URL',
-  'CHATWOOT_BASE_URL',
-])
+const SON_URL = new Set<string>(['SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_URL'])
 
 /** Variables que deben ser una cadena de conexión de Postgres. */
-const SON_CONEXION_PG = new Set<NombreVariable>(['SUPABASE_DB_URL', 'TEST_DATABASE_URL'])
+const SON_CONEXION_PG = new Set<string>(['SUPABASE_DB_URL', 'TEST_DATABASE_URL'])
 
 /** Variables numéricas: se validan como número positivo, no como texto. */
-const SON_NUMERO = new Set<NombreVariable>(['OPENAI_COST_ALERT_DAILY_USD'])
+const SON_NUMERO = new Set<string>(['OPENAI_COST_ALERT_DAILY_USD'])
 
 function esquemaDeVariable(nombre: NombreVariable, obligatoria: boolean) {
   let base: z.ZodType<unknown>

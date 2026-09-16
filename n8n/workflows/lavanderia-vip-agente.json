@@ -1,0 +1,1062 @@
+{
+  "name": "Lavanderia VIP - Agente WhatsApp",
+  "meta": {
+    "descripcion": "Dos ramas en un solo workflow: modo cliente y modo operador. Receta Tool First en ambos. Ningun secreto va literal: todo sale de variables de entorno de la instancia de n8n.",
+    "entrada": "El webhook de WhatsApp Cloud API apunta AQUI, no a Chatwoot, porque el objeto referral de Meta Ads solo existe en el payload crudo de WhatsApp. Chatwoot queda como bandeja humana y recibe el espejo.",
+    "frases_escalacion_cerradas": [
+      "quiero hablar con una persona",
+      "quiero hablar con un humano",
+      "pasame con alguien",
+      "necesito hablar con el dueno",
+      "quiero poner una queja",
+      "esto es un reclamo",
+      "me perdieron una prenda",
+      "me danaron una prenda"
+    ]
+  },
+  "nodes": [
+    {
+      "name": "Verificacion de Meta (GET)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [0, 0],
+      "webhookId": "lavanderia-vip-verify",
+      "parameters": {
+        "path": "lavanderia-vip",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "name": "Responder hub.challenge",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [220, 0],
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query?.['hub.verify_token'] === $env.WHATSAPP_VERIFY_TOKEN ? $json.query?.['hub.challenge'] : 'no autorizado' }}",
+        "options": {}
+      }
+    },
+    {
+      "name": "Mensaje entrante (POST)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [0, 240],
+      "webhookId": "lavanderia-vip-entrante",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lavanderia-vip",
+        "options": {}
+      }
+    },
+    {
+      "name": "Es un mensaje valido?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [220, 240],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "mensaje-valido",
+              "leftValue": "={{ $json.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0] ? 'si' : 'no' }}",
+              "rightValue": "si",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Debounce 30s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [440, 240],
+      "webhookId": "lavanderia-vip-debounce",
+      "notes": "La gente manda cuatro mensajes seguidos. Se espera a que termine de escribir antes de contestar.",
+      "parameters": {
+        "amount": 30,
+        "unit": "seconds"
+      }
+    },
+    {
+      "name": "Extraer mensaje y referral",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 240],
+      "parameters": {
+        "jsCode": "const valor = $('Mensaje entrante (POST)').item.json.body.entry[0].changes[0].value\nconst mensaje = valor.messages[0]\nconst telefono = String(mensaje.from).startsWith('+') ? mensaje.from : '+' + mensaje.from\n\n// El referral solo viene cuando el lead entro por un anuncio Click-to-WhatsApp.\n// Es la unica forma de saber que anuncio trajo al cliente.\nconst referral = mensaje.referral || null\n\nreturn [{ json: {\n  dedupe_key: mensaje.id,\n  telefono,\n  tipo: mensaje.type,\n  texto: mensaje.text?.body || mensaje.button?.text || '',\n  audio_id: mensaje.audio?.id || null,\n  imagen_id: mensaje.image?.id || null,\n  nombre_perfil: valor.contacts?.[0]?.profile?.name || null,\n  referral,\n} }]"
+      }
+    },
+    {
+      "name": "Cargar constituciones",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [880, 380],
+      "notes": "Las dos constituciones viven aqui, dentro del workflow versionado. La copia legible esta en n8n/constituciones.md.",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "const-cliente",
+              "name": "constitucion_cliente",
+              "value": "Eres el asistente de Lavanderia VIP, una lavanderia de barrio en La Kennedy, Quito. Atiendes por WhatsApp 24/7 a clientes B2B: clinicas, restaurantes y hoteles.\n\nTRATO: de usted, siempre. Profesional, breve y claro. Nunca tutees.\n\nREGLA MADRE (Tool First): tu trabajo en esta llamada es DECIDIR una accion, no redactar. Devuelves JSON con la forma {\"llamada\": {\"accion\": \"...\", \"parametros\": {...}}, \"motivo\": \"...\"}. La redaccion la hace otra llamada distinta usando UNICAMENTE lo que devuelva el CRM.\n\nNUNCA INVENTES:\n- Ningun precio. Los precios salen solo de cotizar_prendas.\n- Ninguna fecha ni horario. Salen solo de obtener_proxima_ventana.\n- Ninguna disponibilidad, promocion ni descuento.\nSi no tienes el dato, pide la accion que lo consigue. Si aun asi no existe, dilo.\n\nCOTIZACION:\n- Todo monto que comuniques va marcado como ESTIMADO PENDIENTE DE VERIFICACION. El monto final lo confirma el operador contando las prendas en planta, antes de lavar.\n- Si una linea vuelve con requiere_metodo, pregunta el metodo y no des precio de esa prenda.\n- Si vuelve con requiere_desambiguacion, pregunta cual de las opciones es.\n- Si vuelve encontrado: false, di que ese articulo lo confirma el operador. No lo cotices.\n- Si vuelve es_rango, comunica los dos limites. Nunca elijas uno.\n\nFUNDAS Y PRENDAS SON COSAS DISTINTAS: la lista de prendas es lo que se cotiza. El numero de fundas solo sirve para elegir vehiculo (1 funda moto, mas de 1 auto). Nunca los mezcles.\n\nENTREGA: el cliente elige. Combo: tarifa plana, la lavanderia gestiona y paga ambos tramos. A la carta: por tramo, transporte propio del cliente o via apps a su costo real, que puede salir mas caro que el combo. La lavanderia nunca subsidia el flete.\n\nHORARIO: nunca rechaces por horario. Si escriben de madrugada o en dia no laborable, ofrece la siguiente ventana valida que devuelva el CRM.\n\nCONFIRMACION EXPLICITA: antes de pedir crear_pedido repite el resumen completo (prendas, estimado marcado como pendiente de verificacion, costo de transporte y opciones de entrega) y espera un SI explicito del cliente. Sin ese si, no crees nada.\n\nPRIVACIDAD: si el CRM dice debe_enviar_aviso_privacidad, incluye el aviso de tratamiento de datos (LOPDP Ecuador) una sola vez, en el primer contacto.\n\nESCALAR_HUMANO: marca requiere_escalar_humano solo si el cliente dice literalmente una de estas frases. Esta lista es cerrada; un \"ok gracias\" NO escala:\n- quiero hablar con una persona\n- quiero hablar con un humano\n- pasame con alguien\n- necesito hablar con el dueno\n- quiero poner una queja\n- esto es un reclamo\n- me perdieron una prenda\n- me danaron una prenda",
+              "type": "string"
+            },
+            {
+              "id": "const-operador",
+              "name": "constitucion_operador",
+              "value": "Eres el asistente interno de Lavanderia VIP hablando con un OPERADOR de planta autorizado. Este canal es multimodal: voz, texto e imagen.\n\nREGLA MADRE (Tool First): en esta llamada solo DECIDES la accion. Devuelves JSON {\"llamada\": {\"accion\": \"...\", \"parametros\": {...}}, \"motivo\": \"...\"}. La redaccion la hace otra llamada con los datos que devuelva el CRM.\n\nESTE CANAL NUNCA BORRA NADA. No existe ninguna accion de eliminacion por WhatsApp. Si el operador pide borrar un cliente, un pedido o un servicio, respondes que eliminar exige entrar al CRM. No hay excepciones.\n\nLO QUE SI PUEDES PEDIR:\n- registrar_cliente_presencial: un cliente que llego al local. Siempre canal presencial, sin direccion ni vehiculo ni fundas.\n- actualizar_registro: corregir lo que se acaba de dictar. Actualiza el MISMO pedido, nunca crea uno nuevo.\n- confirmar_pago: marcar pagado un tramo o el lavado.\n- corregir_cotizacion: cambiar el monto del lavado. Exige motivo, porque hay que explicarselo al cliente.\n- consultar_pedido y generar_reporte.\n\nNUNCA INVENTES un precio ni un monto. Si hace falta cotizar, pide cotizar_prendas.\n\nDISCREPANCIAS: si el conteo no cuadra o corriges una cotizacion, el pedido queda congelado y hay que avisarle al cliente el monto final y el motivo ANTES de pedirle el pago. El monto original del agente nunca se cobra si un humano lo corrigio.\n\nLas notas de voz llegan ya transcritas. Si la transcripcion viene confusa, pide que la repitan en vez de adivinar datos.",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      }
+    },
+    {
+      "name": "Idempotencia y costo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 240],
+      "onError": "continueRegularOutput",
+      "notes": "dedupe_key = message_id de WhatsApp. Si n8n reintenta, el mismo mensaje no se procesa dos veces. Aqui tambien se reporta el gasto de OpenAI del turno anterior.",
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.CRM_BASE_URL}}/api/webhook",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-webhook-secret",
+              "value": "={{$env.N8N_WEBHOOK_SECRET}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ accion: 'registrar_evento_entrante', telefono: $json.telefono, parametros: { dedupe_key: $json.dedupe_key, tipo: 'message_created', payload: { referral: $json.referral } } }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      }
+    },
+    {
+      "name": "Ya se proceso antes?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [1100, 240],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "dedupe",
+              "leftValue": "={{ $json.data?.ya_procesado === true ? 'si' : 'no' }}",
+              "rightValue": "no",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Es nota de voz?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [1320, 240],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "es-audio",
+              "leftValue": "={{ $('Extraer mensaje y referral').item.json.audio_id ? 'si' : 'no' }}",
+              "rightValue": "si",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Transcribir nota de voz",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1540, 140],
+      "onError": "continueRegularOutput",
+      "notes": "Modelo de transcripcion: gpt-transcribe. El modelo antiguo de OpenAI para audio NO se usa aqui, tiene apagado programado; hay una prueba que falla si alguien lo mete.",
+      "credentials": {
+        "openAiApi": {
+          "name": "OpenAI Lavanderia VIP"
+        }
+      },
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/audio/transcriptions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-transcribe"
+            },
+            {
+              "name": "language",
+              "value": "es"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      }
+    },
+    {
+      "name": "Es operador?",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1760, 240],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.CRM_BASE_URL}}/api/webhook",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-webhook-secret",
+              "value": "={{$env.N8N_WEBHOOK_SECRET}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ accion: 'verificar_whitelist_operador', parametros: { telefono: $('Extraer mensaje y referral').item.json.telefono } }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      }
+    },
+    {
+      "name": "IF operador o cliente",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [1980, 240],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "es-operador",
+              "leftValue": "={{ $json.data?.es_operador === true ? 'operador' : 'cliente' }}",
+              "rightValue": "operador",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Buscar o crear cliente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2200, 400],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.CRM_BASE_URL}}/api/webhook",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-webhook-secret",
+              "value": "={{$env.N8N_WEBHOOK_SECRET}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ accion: 'find_or_create_client', telefono: $('Extraer mensaje y referral').item.json.telefono, parametros: { telefono: $('Extraer mensaje y referral').item.json.telefono, nombre_contacto: $('Extraer mensaje y referral').item.json.nombre_perfil, canal_origen: $('Extraer mensaje y referral').item.json.referral ? 'referral_ads' : 'whatsapp_agente' } }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      }
+    },
+    {
+      "name": "Cargar memoria",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2420, 400],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.CRM_BASE_URL}}/api/webhook",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-webhook-secret",
+              "value": "={{$env.N8N_WEBHOOK_SECRET}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ accion: 'sincronizar_memoria_conversacion', parametros: { telefono: $('Extraer mensaje y referral').item.json.telefono } }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      }
+    },
+    {
+      "name": "Cliente: planificar accion (Tool First 1)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2640, 400],
+      "onError": "continueRegularOutput",
+      "notes": "Tool First, llamada 1 de 2. Decide accion y parametros. NO redacta texto.",
+      "credentials": {
+        "openAiApi": {
+          "name": "OpenAI Lavanderia VIP"
+        }
+      },
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'gpt-4.1-mini', temperature: 0, top_p: 0.1, response_format: { type: 'json_object' }, messages: [ { role: 'system', content: $('Cargar constituciones').item.json.constitucion_cliente }, { role: 'user', content: JSON.stringify({ mensaje: $('Extraer mensaje y referral').item.json.texto, memoria: $json.data?.contexto, referral: $('Extraer mensaje y referral').item.json.referral }) } ] }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      }
+    },
+    {
+      "name": "Cliente: ejecutar accion",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2860, 400],
+      "onError": "continueRegularOutput",
+      "notes": "La unica fuente de precios, fechas y estados. El modelo nunca los calcula.",
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.CRM_BASE_URL}}/api/webhook",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-webhook-secret",
+              "value": "={{$env.N8N_WEBHOOK_SECRET}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify(Object.assign({ telefono: $('Extraer mensaje y referral').item.json.telefono }, JSON.parse($json.choices[0].message.content).llamada)) }}",
+        "options": {
+          "timeout": 30000
+        }
+      }
+    },
+    {
+      "name": "Cliente: redactar respuesta (Tool First 2)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3080, 400],
+      "onError": "continueRegularOutput",
+      "notes": "Tool First, llamada 2 de 2. Redacta usando UNICAMENTE lo que devolvio el CRM.",
+      "credentials": {
+        "openAiApi": {
+          "name": "OpenAI Lavanderia VIP"
+        }
+      },
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'gpt-4.1-mini', temperature: 0, top_p: 0.1, response_format: { type: 'json_object' }, messages: [ { role: 'system', content: $('Cargar constituciones').item.json.constitucion_cliente }, { role: 'user', content: 'Redacta la respuesta usando UNICAMENTE estos datos del CRM. No agregues ningun precio, fecha ni dato que no este aqui: ' + JSON.stringify($json) } ] }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      }
+    },
+    {
+      "name": "Operador: planificar accion (Tool First 1)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2200, 80],
+      "onError": "continueRegularOutput",
+      "notes": "Tool First, llamada 1 de 2 del modo operador. Decide accion y parametros, no redacta.",
+      "credentials": {
+        "openAiApi": {
+          "name": "OpenAI Lavanderia VIP"
+        }
+      },
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'gpt-4.1-mini', temperature: 0, top_p: 0.1, response_format: { type: 'json_object' }, messages: [ { role: 'system', content: $('Cargar constituciones').item.json.constitucion_operador }, { role: 'user', content: JSON.stringify({ mensaje: $('Extraer mensaje y referral').item.json.texto || $json.text, telefono_operador: $('Extraer mensaje y referral').item.json.telefono }) } ] }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      }
+    },
+    {
+      "name": "Operador: ejecutar accion",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2420, 80],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.CRM_BASE_URL}}/api/webhook",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-webhook-secret",
+              "value": "={{$env.N8N_WEBHOOK_SECRET}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify(JSON.parse($json.choices[0].message.content).llamada) }}",
+        "options": {
+          "timeout": 30000
+        }
+      }
+    },
+    {
+      "name": "Operador: redactar respuesta (Tool First 2)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2640, 80],
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "openAiApi": {
+          "name": "OpenAI Lavanderia VIP"
+        }
+      },
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'gpt-4.1-mini', temperature: 0, top_p: 0.1, response_format: { type: 'json_object' }, messages: [ { role: 'system', content: $('Cargar constituciones').item.json.constitucion_operador }, { role: 'user', content: 'Confirma al operador lo que hizo el CRM, usando UNICAMENTE estos datos: ' + JSON.stringify($json) } ] }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      }
+    },
+    {
+      "name": "Extraer respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3300, 240],
+      "parameters": {
+        "jsCode": "// try/catch que nunca tumba el flujo. Si el modelo devolvio algo que no es\n// JSON, se responde con una espera segura y se marca para escalar a humano.\nconst crudo = $json.choices?.[0]?.message?.content\nlet salida\ntry {\n  salida = JSON.parse(crudo)\n} catch (error) {\n  salida = {\n    mensaje: 'Permitame un momento, por favor. Le confirmo enseguida.',\n    requiere_escalar_humano: true,\n    error_parseo: String(error),\n  }\n}\nconst base = $('Extraer mensaje y referral').item.json\nreturn [{ json: { telefono: base.telefono, dedupe_key: base.dedupe_key, salida, datos_crm: $json.data || null } }]"
+      }
+    },
+    {
+      "name": "Hubo error?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [3520, 240],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "hubo-error",
+              "leftValue": "={{ $json.salida?.error_parseo ? 'si' : 'no' }}",
+              "rightValue": "si",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Registrar error del agente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3740, 100],
+      "onError": "continueRegularOutput",
+      "notes": "Queda en errores_agente para poder mirarlo despues. Nunca se traga en silencio.",
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.CRM_BASE_URL}}/api/webhook",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-webhook-secret",
+              "value": "={{$env.N8N_WEBHOOK_SECRET}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ accion: 'registrar_evento_entrante', parametros: { dedupe_key: 'error-' + $json.dedupe_key, tipo: 'error_agente', payload: { mensaje_error: $json.salida?.error_parseo, telefono: $json.telefono } } }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      }
+    },
+    {
+      "name": "Es un pedido nuevo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [3740, 380],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "pedido-nuevo",
+              "leftValue": "={{ $json.datos_crm?.pedido_id ? 'si' : 'no' }}",
+              "rightValue": "si",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Avisar al operador del pedido nuevo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3960, 300],
+      "onError": "continueRegularOutput",
+      "notes": "Mitad de la notificacion dual. La otra mitad es el resaltado del pedido nuevo en Cola de hoy, que el CRM hace solo.",
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v21.0/{{$env.WHATSAPP_PHONE_NUMBER_ID}}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.WHATSAPP_CLOUD_API_TOKEN}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $env.TELEFONO_OPERADOR_PRINCIPAL, type: 'text', text: { body: 'Pedido nuevo ' + $json.datos_crm.pedido_id + '. Revise Cola de hoy en el CRM.' } }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      }
+    },
+    {
+      "name": "Preparar solicitud de despacho",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3960, 460],
+      "parameters": {
+        "jsCode": "const pedido = $json.datos_crm || {}\n\n// No existe API de despacho de courier en Ecuador: el despacho es\n// humano-confirmado. Esto solo ARMA la solicitud; el operador la ejecuta en\n// la app de Uber o con la mensajeria local.\n//\n// Solo se prepara si la lavanderia gestiona ese tramo por app Y ya esta\n// pagado. Nunca se despacha un tramo app sin su pago confirmado.\nconst listo = pedido.metodo_transporte_recoleccion === 'app' && pedido.pago_recoleccion === 'pagado'\nif (!listo) return []\n\nreturn [{ json: { solicitud_despacho: {\n  requiere_accion_humana: true,\n  pedido_id: pedido.pedido_id,\n  vehiculo: pedido.vehiculo_sugerido,\n  direccion: pedido.direccion_recoleccion,\n  ventana: pedido.ventana_recoleccion_inicio,\n} } }]"
+      }
+    },
+    {
+      "name": "Espejar en Chatwoot",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [4180, 380],
+      "onError": "continueRegularOutput",
+      "notes": "Chatwoot es la bandeja humana: el mensaje se espeja ahi para que una persona pueda tomar la conversacion cuando haga falta.",
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.CHATWOOT_BASE_URL}}/api/v1/accounts/{{$env.CHATWOOT_ACCOUNT_ID}}/conversations/{{$json.datos_crm?.chatwoot_conversation_id}}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api_access_token",
+              "value": "={{$env.CHATWOOT_API_TOKEN}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ content: $json.salida.mensaje, message_type: 'outgoing' }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      }
+    },
+    {
+      "name": "Responder por WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [4400, 240],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v21.0/{{$env.WHATSAPP_PHONE_NUMBER_ID}}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.WHATSAPP_CLOUD_API_TOKEN}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $json.telefono, type: 'text', text: { body: $json.salida.mensaje } }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Verificacion de Meta (GET)": {
+      "main": [
+        [
+          {
+            "node": "Responder hub.challenge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje entrante (POST)": {
+      "main": [
+        [
+          {
+            "node": "Es un mensaje valido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es un mensaje valido?": {
+      "main": [
+        [
+          {
+            "node": "Debounce 30s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debounce 30s": {
+      "main": [
+        [
+          {
+            "node": "Extraer mensaje y referral",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer mensaje y referral": {
+      "main": [
+        [
+          {
+            "node": "Cargar constituciones",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Idempotencia y costo": {
+      "main": [
+        [
+          {
+            "node": "Ya se proceso antes?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ya se proceso antes?": {
+      "main": [
+        [
+          {
+            "node": "Es nota de voz?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es nota de voz?": {
+      "main": [
+        [
+          {
+            "node": "Transcribir nota de voz",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Es operador?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribir nota de voz": {
+      "main": [
+        [
+          {
+            "node": "Es operador?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es operador?": {
+      "main": [
+        [
+          {
+            "node": "IF operador o cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF operador o cliente": {
+      "main": [
+        [
+          {
+            "node": "Operador: planificar accion (Tool First 1)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Buscar o crear cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar o crear cliente": {
+      "main": [
+        [
+          {
+            "node": "Cargar memoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cargar memoria": {
+      "main": [
+        [
+          {
+            "node": "Cliente: planificar accion (Tool First 1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cliente: planificar accion (Tool First 1)": {
+      "main": [
+        [
+          {
+            "node": "Cliente: ejecutar accion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cliente: ejecutar accion": {
+      "main": [
+        [
+          {
+            "node": "Cliente: redactar respuesta (Tool First 2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cliente: redactar respuesta (Tool First 2)": {
+      "main": [
+        [
+          {
+            "node": "Extraer respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Operador: planificar accion (Tool First 1)": {
+      "main": [
+        [
+          {
+            "node": "Operador: ejecutar accion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Operador: ejecutar accion": {
+      "main": [
+        [
+          {
+            "node": "Operador: redactar respuesta (Tool First 2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Operador: redactar respuesta (Tool First 2)": {
+      "main": [
+        [
+          {
+            "node": "Extraer respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer respuesta": {
+      "main": [
+        [
+          {
+            "node": "Hubo error?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hubo error?": {
+      "main": [
+        [
+          {
+            "node": "Registrar error del agente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Es un pedido nuevo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar error del agente": {
+      "main": [
+        [
+          {
+            "node": "Responder por WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es un pedido nuevo?": {
+      "main": [
+        [
+          {
+            "node": "Avisar al operador del pedido nuevo",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Preparar solicitud de despacho",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Espejar en Chatwoot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Avisar al operador del pedido nuevo": {
+      "main": [
+        [
+          {
+            "node": "Espejar en Chatwoot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Espejar en Chatwoot": {
+      "main": [
+        [
+          {
+            "node": "Responder por WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cargar constituciones": {
+      "main": [
+        [
+          {
+            "node": "Idempotencia y costo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Guayaquil",
+    "saveDataErrorExecution": "all",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "tags": []
+}
