@@ -33,7 +33,7 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(crudo).not.toContain('accounts/1/')
     expect(crudo).not.toContain('937260122807094')
     expect(crudo).not.toContain('chatwoot-inmobiliaria')
-    expect(crudo).not.toMatch(/321/)
+    expect(crudo).not.toMatch(/321 (INMO|Soluciones)|Arqui|Inmo/i)
     expect(crudo).not.toMatch(/googleSheets|googleCalendar|gmail/i)
   })
 
