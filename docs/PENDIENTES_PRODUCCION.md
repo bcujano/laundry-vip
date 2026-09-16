@@ -1,5 +1,8 @@
 # Qué hay que cambiar antes de producción
 
+> El estado completo del proyecto y la tarea en curso están en
+> [CONTINUIDAD.md](CONTINUIDAD.md). Este archivo es solo la lista de deudas.
+
 Lista viva. Todo lo de aquí es dato de prueba o atajo consciente que debe
 reemplazarse por lo definitivo antes de atender al primer cliente real.
 
@@ -59,3 +62,32 @@ reemplazarse por lo definitivo antes de atender al primer cliente real.
   adelante hace falta un diálogo con trampa de foco, ahí sí entra Radix.
 - **El catálogo se puede ver con cualquier rol**, pero solo el superadmin lo
   edita. El operador necesita consultar precios para trabajar: ver no es editar.
+
+
+## n8n, Chatwoot y WhatsApp (añadido el 2026-09-16)
+
+### Temporal
+- [ ] **Número de prueba de Meta** `+1 555 156 4767`: máximo 5 destinatarios
+      registrados a mano y **sin anuncios Click-to-WhatsApp**, así que hoy no
+      hay `referral`.
+- [ ] **Token de Meta de 24 horas.** Mañana el canal de Chatwoot deja de
+      recibir. Cambiarlo por uno permanente de System User.
+- [ ] **n8n y Chatwoot compartidos con 321.** Acordado por falta de tiempo.
+      Lavandería VIP vive en la **cuenta 3** de Chatwoot, aislada de la 1.
+- [ ] **Credencial de OpenAI compartida con 321**: el gasto se mezcla en la
+      misma factura.
+- [ ] Contraseña del superadmin puesta por Claude: `tQTQRBcfVdzFnwUc`.
+- [ ] `brncjn+admin@gmail.com` es un alias de prueba para el rol admin.
+- [ ] El token de Vercel quedó escrito en el chat: **rotarlo**.
+
+### Pendiente
+- [ ] Instancia propia de n8n y de Chatwoot (separar de 321).
+- [ ] Modo operador por voz: las 4 acciones del webhook ya existen y están
+      probadas; falta la rama en n8n.
+- [ ] Follow-up automático: los 6 nodos quedan **deshabilitados** en el
+      workflow, listos para conectar.
+- [ ] Tabla `meta_referrals` en Supabase y encender la captura, cuando haya
+      número real.
+- [ ] Resolver el horario: el dueño dijo que abre a las **8:00**, Google Maps
+      dice **8:30**. Está sembrado 08:00 en `configuracion`.
+- [ ] Pantalla para cerrar el mes de los clientes `consolidado_mensual`.

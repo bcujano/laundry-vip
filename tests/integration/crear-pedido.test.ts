@@ -4,8 +4,9 @@ import { obtener as obtenerConfig } from '@/server/configuracion/repo'
 import { crearPedido } from '@/server/pedidos/crear'
 import { consultarEstadoPorTelefono } from '@/server/webhook/handlers/pedidos'
 import type { Cliente } from '@/types/database'
+import { corrida } from '../util/corrida.ts'
 
-const CORRIDA = String(Date.now()).slice(-6)
+const CORRIDA = corrida()
 const PREFIJO = `+5939${CORRIDA}`
 const ITEMS = [{ descripcion: '3 camisetas', cantidad: 3, metodo: 'agua' as const }]
 

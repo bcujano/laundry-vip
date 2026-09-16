@@ -8,9 +8,10 @@ import { crearPedido } from '@/server/pedidos/crear'
 import { generar } from '@/server/reportes/repo'
 import { registrarUso, usoDeHoy } from '@/server/webhook/cost-tracking'
 import { fechaDeHoy, registrarMensaje } from '@/server/webhook/rate-limit'
+import { corrida } from '../util/corrida.ts'
 
 const SECRETO = process.env.N8N_WEBHOOK_SECRET as string
-const CORRIDA = String(Date.now()).slice(-6)
+const CORRIDA = corrida()
 const PREFIJO = `+5939${CORRIDA}`
 const OPERADOR = '+593963987124'
 

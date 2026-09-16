@@ -3,8 +3,9 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 import { confirmarPago, corregirCotizacion, resolverDiscrepancia } from '@/server/pedidos/cobros'
 import { avanzarEstado } from '@/server/pedidos/estado'
 import { verificarConteo } from '@/server/pedidos/verificacion'
+import { corrida } from '../util/corrida.ts'
 
-const CORRIDA = String(Date.now()).slice(-6)
+const CORRIDA = corrida()
 const TELEFONO = `+5939${CORRIDA}11`
 const CONTEXTO = { actor: 'operador' as const, staffId: null }
 

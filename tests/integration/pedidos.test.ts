@@ -2,8 +2,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { colaDeHoy, listar, obtener, POR_PAGINA, ultimoDelCliente } from '@/server/pedidos/repo'
 import { limitesDelDia } from '@/server/scheduling/ventana'
+import { corrida } from '../util/corrida.ts'
 
-const CORRIDA = String(Date.now()).slice(-6)
+const CORRIDA = corrida()
 const TELEFONO = `+5939${CORRIDA}00`
 let clienteId = ''
 

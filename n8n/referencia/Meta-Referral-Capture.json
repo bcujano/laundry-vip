@@ -1,0 +1,205 @@
+{
+  "name": "Meta Referral Capture",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "meta-referral",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "d5e362b9-deb8-45c2-9a02-250120c9ddbc",
+      "name": "Webhook GET",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [0, 0],
+      "webhookId": "5c3a7cdd-0096-43cb-9f70-0915744ee7fe"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query?.['hub.challenge'] || 'OK' }}",
+        "options": {}
+      },
+      "id": "71774665-62fc-4ed8-8d18-fa947855b6bc",
+      "name": "Responder Challenge",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [224, 0]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "meta-referral",
+        "options": {}
+      },
+      "id": "2ce268a8-ad13-43a6-be66-ecc8317c0155",
+      "name": "Webhook POST",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [0, 304],
+      "webhookId": "56fd9905-d266-46e9-b118-5e8de8c71886"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1f86f536-7df3-4157-b4de-721a6f75945e",
+              "leftValue": "={{ $json.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.referral ? 'yes' : 'no' }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e52e90db-b7a0-4cbc-be2c-b3e1737d8553",
+      "name": "Tiene Referral?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [224, 304]
+    },
+    {
+      "parameters": {
+        "jsCode": "const ref = $input.first().json.body.entry[0].changes[0].value.messages[0].referral || {};\nconst SERVICES = ['construccion_convencional','cargotectura','remodelacion','diseno_arquitectonico','corretaje_venta','corretaje_arriendo','administracion_inmueble','avaluo','inspeccion','consultoria','agente_ia','crm_ia','capacitacion','compra','renta','otro'];\n\nconst systemPrompt = `Eres analizador de anuncios Click-to-WhatsApp de 321 Soluciones Inmobiliarias (Quito, Ecuador). Construyen casas convencionales y cargotectura (containers), hacen remodelaciones, corretaje (venta/arriendo), administracion de inmuebles, avaluos, inspecciones, consultorias, y servicios IA.\n\nDevuelve SOLO JSON estricto:\n{\n  \"ad_image_analysis\": {\n    \"producto_principal\": string,\n    \"precio_visible\": string|null,\n    \"cta_observado\": string|null,\n    \"estilo\": string,\n    \"elementos_visuales_clave\": string[]\n  },\n  \"service_type_inferred\": uno de [${SERVICES.join(', ')}]\n}\n\nSi no identificas algo usa null. service_type_inferred es tu mejor inferencia.`;\n\nconst userText = `Headline: ${ref.headline || ''}\\nBody: ${ref.body || ''}\\nSource URL: ${ref.source_url || ''}\\nSource type: ${ref.source_type || ''}`;\n\nconst userContent = [{ type: 'text', text: userText }];\nif (ref.image_url) userContent.push({ type: 'image_url', image_url: { url: ref.image_url } });\n\nreturn [{\n  json: {\n    ...$input.first().json,\n    _openai_payload: {\n      model: 'gpt-4o-mini',\n      response_format: { type: 'json_object' },\n      messages: [\n        { role: 'system', content: systemPrompt },\n        { role: 'user', content: userContent }\n      ]\n    }\n  }\n}];"
+      },
+      "id": "1f8fc220-7ee9-463f-a196-7a31496d6b70",
+      "name": "Construir Payload OpenAI",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [448, 304]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json._openai_payload) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "44148942-8e84-4285-b2cb-b4c0dd32445e",
+      "name": "Analizar con OpenAI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [672, 304],
+      "credentials": {
+        "openAiApi": {
+          "id": "GvNmUCZRx5ZvZerQ",
+          "name": "OpenAi account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO meta_referrals (phone, headline, body, source_url, source_type, source_id, image_url, video_url, ctwa_clid, ad_image_analysis, service_type_inferred)\nVALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)\nON CONFLICT (phone) DO UPDATE SET\n  headline=EXCLUDED.headline, body=EXCLUDED.body, source_url=EXCLUDED.source_url,\n  source_type=EXCLUDED.source_type, source_id=EXCLUDED.source_id,\n  image_url=EXCLUDED.image_url, video_url=EXCLUDED.video_url,\n  ctwa_clid=EXCLUDED.ctwa_clid,\n  ad_image_analysis=EXCLUDED.ad_image_analysis,\n  service_type_inferred=EXCLUDED.service_type_inferred,\n  received_at=now();",
+        "options": {
+          "queryReplacement": "={{ (() => { const ref = $('Webhook POST').item.json.body.entry[0].changes[0].value.messages[0].referral || {}; const from = $('Webhook POST').item.json.body.entry[0].changes[0].value.messages[0].from; let parsed = {}; try { parsed = JSON.parse($json.choices?.[0]?.message?.content || '{}'); } catch(e) {} return [from, ref.headline || '', ref.body || '', ref.source_url || '', ref.source_type || '', ref.source_id || '', ref.image_url || '', ref.video_url || '', ref.ctwa_clid || '', JSON.stringify(parsed.ad_image_analysis || {}), parsed.service_type_inferred || 'otro']; })() }}"
+        }
+      },
+      "id": "ec91777b-f163-46a8-99ec-234d42c535a8",
+      "name": "Guardar Referral",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [896, 304],
+      "credentials": {
+        "postgres": {
+          "id": "TGBJ53hagMcO6xZu",
+          "name": "Postgres account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook GET": {
+      "main": [
+        [
+          {
+            "node": "Responder Challenge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook POST": {
+      "main": [
+        [
+          {
+            "node": "Tiene Referral?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tiene Referral?": {
+      "main": [
+        [
+          {
+            "node": "Construir Payload OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Construir Payload OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Analizar con OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analizar con OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Guardar Referral",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "timezone": "America/Guayaquil",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true
+  },
+  "versionId": "66d49535-4c99-4743-97a8-3253235a7642",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "instanceId": "20717d105fad0a342076932104f0aba54d7325cef689f3217fb0999a86b5b8e4"
+  },
+  "nodeGroups": [],
+  "id": "Mduk8hFNjpJXx5H1",
+  "tags": []
+}

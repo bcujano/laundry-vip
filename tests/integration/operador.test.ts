@@ -6,10 +6,11 @@ import {
   corregirCotizacionOperador,
   registrarClientePresencial,
 } from '@/server/webhook/handlers/operador'
+import { corrida } from '../util/corrida.ts'
 
 const OPERADOR = '+593963987124'
 const INTRUSO = '+593999888777'
-const CORRIDA = String(Date.now()).slice(-6)
+const CORRIDA = corrida()
 const PREFIJO = `+5939${CORRIDA}`
 
 let indice = 0

@@ -1,12 +1,13 @@
 import { expect, test } from '@playwright/test'
 import { createClient } from '@supabase/supabase-js'
+import { corrida } from '../util/corrida.ts'
 
 /**
  * Camino de humo completo, con sesión real: el operador entra, ve la cola,
  * abre un pedido, confirma un pago y la pantalla se actualiza sin recargar.
  */
 
-const CORRIDA = String(Date.now()).slice(-6)
+const CORRIDA = corrida()
 const TELEFONO = `+5939${CORRIDA}77`
 
 function admin() {

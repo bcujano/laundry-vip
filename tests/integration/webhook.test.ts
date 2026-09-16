@@ -2,9 +2,10 @@ import { NextRequest } from 'next/server'
 import { afterAll, describe, expect, it } from 'vitest'
 import { POST } from '@/app/api/webhook/route'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { corrida } from '../util/corrida.ts'
 
 const SECRETO = process.env.N8N_WEBHOOK_SECRET as string
-const CORRIDA = String(Date.now()).slice(-6)
+const CORRIDA = corrida()
 const TELEFONO = `+5939${CORRIDA}22`
 
 type Sobre = { ok: boolean; data?: unknown; error?: { code: string; message: string } }
