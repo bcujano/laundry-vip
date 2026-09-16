@@ -9,6 +9,7 @@ import {
   vehiculo,
   verificarWhitelistOperador,
 } from './cliente'
+import { consultarEstadoPorTelefono, consultarPedidoPorId, crear } from './pedidos'
 
 /**
  * Registro de acciones. Añadir una acción es añadir su schema y su entrada
@@ -27,14 +28,14 @@ const MANEJADORES: Record<Accion, Manejador> = {
   cotizar_prendas: cotizar,
   calcular_vehiculo: vehiculo,
   obtener_proxima_ventana: proximaVentana,
-  crear_pedido: PENDIENTE(9),
-  consultar_estado_pedido: PENDIENTE(9),
+  crear_pedido: crear,
+  consultar_estado_pedido: consultarEstadoPorTelefono,
   registrar_cliente_presencial: PENDIENTE(10),
   actualizar_registro: PENDIENTE(10),
   confirmar_pago: PENDIENTE(10),
   corregir_cotizacion: PENDIENTE(10),
   generar_reporte: PENDIENTE(11),
-  consultar_pedido: PENDIENTE(11),
+  consultar_pedido: consultarPedidoPorId,
 }
 
 export async function despachar(
