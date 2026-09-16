@@ -1,0 +1,1972 @@
+{
+  "name": "iAgente Laundry VIP",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "laundry-vip",
+        "options": {}
+      },
+      "name": "Chatwoot Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [-2000, 512],
+      "typeVersion": 2,
+      "webhookId": "15b2786a-581a-487f-872c-77c07f9d769f",
+      "id": "2dc10955-51e3-467e-beb1-9abd1c01a975"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f001",
+              "leftValue": "={{ $json.body.event }}",
+              "rightValue": "message_created",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "f002",
+              "leftValue": "={{ $json.body.message_type }}",
+              "rightValue": "incoming",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Filtro Chatwoot",
+      "type": "n8n-nodes-base.if",
+      "position": [-1776, 512],
+      "typeVersion": 2.2,
+      "id": "b5bb0925-4dba-4e96-ae4b-187ccacd2183"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f-humano",
+              "leftValue": "={{ ($json.body?.conversation?.labels || []).includes('humano') }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Filtro Humano",
+      "type": "n8n-nodes-base.if",
+      "position": [-1552, 512],
+      "typeVersion": 2.2,
+      "id": "95af27f5-fefc-4170-94d3-6f8f59618c22"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a001",
+              "name": "contacts",
+              "type": "array",
+              "value": "={{ [{ wa_id: ($json.body.sender?.phone_number || '').replace('+','').replace(/ /g,'') || $json.body.sender?.identifier || $json.body.conversation?.contact_inbox?.source_id || '', profile: { name: $json.body.sender?.name || 'Cliente' } }] }}"
+            },
+            {
+              "id": "a002",
+              "name": "messages",
+              "type": "array",
+              "value": "={{ [{ from: ($json.body.sender?.phone_number || '').replace('+','').replace(/ /g,'') || $json.body.sender?.identifier || $json.body.conversation?.contact_inbox?.source_id || '', text: { body: $json.body.content || '' }, type: ($json.body.attachments && $json.body.attachments.length > 0) ? $json.body.attachments[0].file_type : 'text', image: { id: ($json.body.attachments && $json.body.attachments.length > 0 && $json.body.attachments[0].file_type === 'image') ? $json.body.attachments[0].data_url : '', caption: $json.body.content || '' }, audio: { id: ($json.body.attachments && $json.body.attachments.length > 0 && $json.body.attachments[0].file_type === 'audio') ? $json.body.attachments[0].data_url : '', caption: '' } }] }}"
+            },
+            {
+              "id": "a003",
+              "name": "_chatwoot_conversation_id",
+              "type": "number",
+              "value": "={{ $json.body.conversation?.id || 0 }}"
+            },
+            {
+              "id": "a004",
+              "name": "_chatwoot_account_id",
+              "type": "number",
+              "value": "=3"
+            },
+            {
+              "id": "a005",
+              "name": "_chatwoot_inbox_id",
+              "type": "number",
+              "value": "={{ $json.body.inbox?.id || 0 }}"
+            },
+            {
+              "id": "a006",
+              "name": "_chatwoot_contact_id",
+              "type": "number",
+              "value": "={{ $json.body.sender?.id || 0 }}"
+            },
+            {
+              "id": "a007",
+              "name": "type",
+              "type": "string",
+              "value": "={{ ($json.body.attachments && $json.body.attachments.length > 0) ? $json.body.attachments[0].file_type : 'text' }}"
+            },
+            {
+              "id": "a008",
+              "name": "_chatwoot_message_id",
+              "type": "number",
+              "value": "={{ $json.body.id }}"
+            },
+            {
+              "id": "a009",
+              "name": "_referral_headline",
+              "type": "string",
+              "value": "={{ $json.body.content_attributes?.external_created_at ? '' : ($json.body.conversation?.additional_attributes?.referral?.headline || $json.body.conversation?.custom_attributes?.referral_headline || '') }}"
+            },
+            {
+              "id": "a010",
+              "name": "_referral_body",
+              "type": "string",
+              "value": "={{ $json.body.conversation?.additional_attributes?.referral?.body || $json.body.conversation?.custom_attributes?.referral_body || '' }}"
+            },
+            {
+              "id": "a011",
+              "name": "_referral_source_url",
+              "type": "string",
+              "value": "={{ $json.body.conversation?.additional_attributes?.referral?.source_url || $json.body.conversation?.custom_attributes?.referral_source_url || '' }}"
+            },
+            {
+              "id": "a012",
+              "name": "_referral_media_url",
+              "type": "string",
+              "value": "={{ $json.body.conversation?.additional_attributes?.referral?.image_url || $json.body.conversation?.additional_attributes?.referral?.video_url || '' }}"
+            },
+            {
+              "id": "a013",
+              "name": "_es_desde_anuncio",
+              "type": "boolean",
+              "value": "={{ !!($json.body.conversation?.additional_attributes?.referral?.headline || $json.body.conversation?.custom_attributes?.referral_headline) }}"
+            },
+            {
+              "id": "bb853002-4286-4f64-8230-21e4d7e496c9",
+              "name": "_conversation_labels",
+              "value": "={{ ($json.body.conversation?.labels || []).join(',') }}",
+              "type": "string"
+            },
+            {
+              "id": "bce3fcae-13c7-4350-a543-1d8a39103c59",
+              "name": "_whatsapp_message_id",
+              "value": "={{ $json.body.source_id || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "WhatsApp Inicio",
+      "type": "n8n-nodes-base.set",
+      "position": [-1296, 384],
+      "typeVersion": 3.4,
+      "id": "e3dba1b5-ab72-4ca1-a0ff-84cc938ce40f"
+    },
+    {
+      "parameters": {
+        "url": "=https://chatwoot-production-8564.up.railway.app/api/v1/accounts/3/conversations/{{ $('WhatsApp Inicio').item.json._chatwoot_conversation_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "name": "Obtener Ultimos Mensajes",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [-432, 384],
+      "typeVersion": 4.2,
+      "id": "a4480b3e-5b71-45c3-bb2f-f913ef851cd5",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3W2BykSid0f9dMTV",
+          "name": "Chatwoot Laundry VIP API"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "es-ultimo",
+              "leftValue": "=={{ (() => {\n  const msgs = $json.payload || [];\n  const myMsgId = String($('WhatsApp Inicio').item.json._chatwoot_message_id || '');\n  const lastInbound = msgs.filter(m => m.message_type === 0).sort((a,b) => b.created_at - a.created_at)[0];\n  if (!lastInbound || String(lastInbound.id) !== myMsgId) return 'ABORT';\n  const lastOutbound = msgs.filter(m => m.message_type === 1).sort((a,b) => b.created_at - a.created_at)[0];\n  if (lastOutbound && lastOutbound.created_at >= lastInbound.created_at) return 'ABORT';\n  return myMsgId;\n})() }}",
+              "rightValue": "=={{ String($('WhatsApp Inicio').item.json._chatwoot_message_id || '') }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Es Ultimo Mensaje?",
+      "type": "n8n-nodes-base.if",
+      "position": [-208, 384],
+      "typeVersion": 2.2,
+      "id": "a2202343-7329-40de-a1c6-4a2e40f76763"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "combine-text",
+              "name": "combined_text",
+              "type": "string",
+              "value": "={{ (() => { const msgs = $json.payload || []; const lastOut = msgs.filter(m => m.message_type === 1).sort((a,b) => b.created_at - a.created_at)[0]; const cutoff = lastOut ? lastOut.created_at : 0; return msgs.filter(m => m.message_type === 0 && m.created_at > cutoff).sort((a,b) => a.created_at - b.created_at).map(m => m.content).filter(t => t && t.trim()).join('\\n'); })() || $('WhatsApp Inicio').item.json.messages[0].text.body }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Combinar Textos",
+      "type": "n8n-nodes-base.set",
+      "position": [16, 384],
+      "typeVersion": 3.4,
+      "id": "641ab622-0c04-47fb-8cd5-aeb7342a509f"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "sw-audio",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "leftValue": "={{ $('WhatsApp Inicio').item.json.type == 'audio' }}",
+                    "rightValue": ""
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "sw-image",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "leftValue": "={{ $('WhatsApp Inicio').item.json.type == 'image' }}",
+                    "rightValue": ""
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Imagen"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Texto"
+        }
+      },
+      "name": "Tipo de Mensaje",
+      "type": "n8n-nodes-base.switch",
+      "position": [240, 368],
+      "typeVersion": 3.2,
+      "id": "42980b56-ec79-4773-b0f7-63fd8fc7d388"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "audio-url",
+              "name": "url",
+              "type": "string",
+              "value": "={{ $('WhatsApp Inicio').item.json.messages[0].audio.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Obtener URL Audio",
+      "type": "n8n-nodes-base.set",
+      "position": [464, -16],
+      "typeVersion": 3.4,
+      "id": "4418640e-c034-4dba-867f-6a9e6cbc9488"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "name": "Descargar Audio",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [688, -16],
+      "typeVersion": 4.2,
+      "id": "ed109eb4-c147-43d8-b710-0081062a8d2b",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3W2BykSid0f9dMTV",
+          "name": "Chatwoot Laundry VIP API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/audio/transcriptions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-transcribe"
+            },
+            {
+              "name": "language",
+              "value": "es"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "name": "Transcribir Audio",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [976, -16],
+      "typeVersion": 4.2,
+      "id": "4ce0f708-d4de-45af-90e6-ee6c78226a74",
+      "credentials": {
+        "openAiApi": {
+          "id": "GvNmUCZRx5ZvZerQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "img-url",
+              "name": "url",
+              "type": "string",
+              "value": "={{ $('WhatsApp Inicio').item.json.messages[0].image.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Obtener URL Imagen",
+      "type": "n8n-nodes-base.set",
+      "position": [464, 288],
+      "typeVersion": 3.4,
+      "id": "d888a40d-975c-486f-b0d4-ea868d239bf1"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "name": "Descargar Imagen",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [688, 288],
+      "typeVersion": 4.2,
+      "id": "52d4ea54-6c88-4169-8771-f3a7d9726f34",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3W2BykSid0f9dMTV",
+          "name": "Chatwoot Laundry VIP API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Eres el extractor de hechos de imágenes de Lavandería VIP. NO interpretes ni converses: solo reporta lo que se ve.\nTexto que acompañó la imagen: \"{{ $('WhatsApp Inicio').item.json.messages[0].image.caption }}\"\n\nResponde EXACTAMENTE en este formato, empezando por la primera línea:\n[IMAGEN RECIBIDA]\ntipo_de_imagen: prendas | mancha | comprobante | documento | otro\nprendas_visibles: lista de prendas que se ven (vacía si no hay)\ncantidad_estimada: número aproximado de prendas (0 si no aplica)\nmanchas: [{prenda, zona, aspecto}] o ninguna\ntexto_legible: monto, fecha, banco, referencia u otro texto visible; \"ninguno\" si no hay\ntexto_del_cliente: el texto que acompañó la imagen\n\nNunca afirmes que un pago está confirmado ni que una mancha saldrá.",
+        "messages": {
+          "messageValues": [
+            {
+              "type": "HumanMessagePromptTemplate",
+              "messageType": "imageBinary"
+            }
+          ]
+        }
+      },
+      "name": "Explicar Imagen",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [912, 176],
+      "typeVersion": 1.4,
+      "id": "d7f8eea5-42fd-4f69-94d9-a40aab3a53bb"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "name": "OpenAI Vision",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [976, 400],
+      "typeVersion": 1.2,
+      "id": "e7f24ac1-1c2e-4cdb-b4a7-bb1aada45527",
+      "credentials": {
+        "openAiApi": {
+          "id": "GvNmUCZRx5ZvZerQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 0
+      },
+      "name": "Espera Texto",
+      "type": "n8n-nodes-base.wait",
+      "position": [976, 576],
+      "webhookId": "fab563f2-fb77-4b41-af55-a928dece7d34",
+      "typeVersion": 1.1,
+      "id": "2232023a-6f0e-4cfd-a1e5-9fe4aa25f716"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "msg-type",
+              "name": "message_type",
+              "type": "string",
+              "value": "={{ $('WhatsApp Inicio').item.json.messages[0].type }}"
+            },
+            {
+              "id": "msg-text",
+              "name": "message_text",
+              "type": "string",
+              "value": "={{ $json.text || $('Combinar Textos').item.json.combined_text || $('WhatsApp Inicio').item.json.messages[0].text.body || '' }}"
+            },
+            {
+              "id": "msg-from",
+              "name": "from",
+              "type": "string",
+              "value": "={{ $('WhatsApp Inicio').item.json.messages[0].from }}"
+            },
+            {
+              "id": "msg-caption",
+              "name": "message_caption",
+              "type": "string",
+              "value": "={{ $('WhatsApp Inicio').item.json.messages[0].image?.caption || $('WhatsApp Inicio').item.json.messages[0].audio?.caption || '' }}"
+            },
+            {
+              "id": "msg-final",
+              "name": "text",
+              "type": "string",
+              "value": "={{ $json.text || $('Combinar Textos').item.json.combined_text || $('WhatsApp Inicio').item.json.messages[0].text.body || '' }}"
+            },
+            {
+              "id": "msg-referral",
+              "name": "contexto_anuncio",
+              "type": "string",
+              "value": "={{ $('Agregar Referral').item.json._es_desde_anuncio ? '\\n\\n📢 CONTEXTO DEL ANUNCIO (NO preguntar que servicio le interesa, ya lo sabe):\\nServicio inferido: ' + $('Agregar Referral').item.json._referral_service_type + '\\nProducto del anuncio: ' + $('Agregar Referral').item.json._referral_producto + '\\nTitulo: ' + $('Agregar Referral').item.json._referral_headline + '\\nDescripcion: ' + $('Agregar Referral').item.json._referral_body + '\\nPrecio mostrado: ' + ($('Agregar Referral').item.json._referral_precio_visible || 'no especificado') + '\\nCTA: ' + ($('Agregar Referral').item.json._referral_cta || 'consulta') + '\\nEstilo del anuncio: ' + $('Agregar Referral').item.json._referral_estilo + '\\nURL anuncio: ' + $('Agregar Referral').item.json._referral_source_url + '\\n\\nIMPORTANTE: Responde directamente sobre el tema del anuncio. NO preguntes que servicio le interesa. Usa el servicio inferido al registrar el lead en CRM.' : '' }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "name": "Preparar Mensaje Final",
+      "type": "n8n-nodes-base.set",
+      "position": [1264, 288],
+      "typeVersion": 3.4,
+      "id": "cef8349b-3888-48bd-b4f0-c7ff18d37c56"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chatwoot-production-8564.up.railway.app/api/v1/accounts/3/conversations/{{ $('WhatsApp Inicio').item.json._chatwoot_conversation_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"content\": {{ JSON.stringify($json.texto_limpio || $json.output || '') }},\n  \"message_type\": \"outgoing\",\n  \"private\": false\n}",
+        "options": {}
+      },
+      "name": "Enviar Respuesta Chatwoot",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [2960, 400],
+      "typeVersion": 4.2,
+      "id": "07592933-8ba1-4d12-9fcc-511c2fa8097f",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3W2BykSid0f9dMTV",
+          "name": "Chatwoot Laundry VIP API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "esc-check",
+              "leftValue": "={{ $('Extraer JSON').item.json.escalar_humano }}",
+              "rightValue": "si",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "name": "Necesita Humano?",
+      "type": "n8n-nodes-base.if",
+      "position": [2960, 96],
+      "typeVersion": 2.2,
+      "id": "e2d6228d-9135-4f90-b955-bddd1a750b23",
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chatwoot-production-8564.up.railway.app/api/v1/accounts/3/conversations/{{ $('WhatsApp Inicio').item.json._chatwoot_conversation_id }}/labels",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"labels\": [\"humano\"]\n}",
+        "options": {
+          "timeout": 5000
+        }
+      },
+      "name": "Etiqueta Humano",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [3200, 80],
+      "typeVersion": 4.2,
+      "id": "1f9a351f-3fdc-426a-81c2-e8fc274ce834",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3W2BykSid0f9dMTV",
+          "name": "Chatwoot Laundry VIP API"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chatwoot-production-8564.up.railway.app/api/v1/accounts/3/conversations/{{ $('WhatsApp Inicio').item.json._chatwoot_conversation_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"content\": \"🔔 **ESCALADO A HUMANO**\\n\\n👤 Cliente: {{ $('WhatsApp Inicio').item.json.contacts[0].profile.name }}\\n📱 Tel: {{ $('WhatsApp Inicio').item.json.contacts[0].wa_id }}\\n💬 Dijo: {{ $('Preparar Mensaje Final').item.json.message_text }}\\n\\n🤖 El agente IA respondio y se ha retirado. Para devolver control al bot, quita la etiqueta *humano*.\",\n  \"message_type\": \"outgoing\",\n  \"private\": true\n}",
+        "options": {
+          "timeout": 5000
+        }
+      },
+      "name": "Nota Escalamiento",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [3440, 80],
+      "typeVersion": 4.2,
+      "id": "3cb8374c-f9b7-42b1-b60f-d4b778b79174",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3W2BykSid0f9dMTV",
+          "name": "Chatwoot Laundry VIP API"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "name": "Debounce",
+      "type": "n8n-nodes-base.wait",
+      "position": [-656, 384],
+      "typeVersion": 1.1,
+      "webhookId": "70c6052b-3f1d-482f-b0a0-732260431d4b",
+      "id": "633cb13e-f0cf-44bd-be01-628b86af3bd0"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [2580, 752],
+      "id": "f1debb93-7cf3-489c-8c3c-08517f305a2a",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Preparar Mensaje Final').item.json.message_text }}{{ $('Preparar Mensaje Final').item.json.contexto_anuncio }}",
+        "options": {
+          "systemMessage": "=Eres la asistente virtual de Lavandería VIP, una lavandería de barrio en La\nKennedy, Quito (De los Pinos y Pedro Barrios · fijo (02) 281-0815). Atiendes por\nWhatsApp a negocios (clínicas, restaurantes, hoteles) y a particulares: cotizas\ncontra el catálogo real, agendas la recolección y das seguimiento a pedidos.\n\nFECHA Y HORA ACTUAL (Quito, UTC-5): {{ $now.setZone('America/Guayaquil').toFormat(\"EEEE d 'de' MMMM yyyy, HH:mm\", {locale: 'es'}) }}\nTELÉFONO DEL CLIENTE: +{{ $('WhatsApp Inicio').item.json.contacts[0].wa_id }}\nNOMBRE EN WHATSAPP: {{ $('WhatsApp Inicio').item.json.contacts[0].profile.name }}\n\n============================\nSECCIÓN 0: MEMORIA Y CONTEXTO (LEER PRIMERO SIEMPRE)\n============================\n\n1. Lee TODO el historial. La conversación es UN HILO COHERENTE.\n2. No contradigas precios ni datos que YA diste. No repitas lo ya entregado.\n3. No preguntes lo que el cliente YA respondió. Si ya saludaste, no te\n   presentes de nuevo. Si ya sabes su nombre, úsalo.\n4. Identifica qué dato falta para avanzar al siguiente paso y pide SOLO ese.\n\n============================\nSECCIÓN 1: TONO\n============================\n\n- Trato de USTED, siempre. Cordial, profesional y breve.\n- Máximo 60 palabras por mensaje salvo resúmenes de pedido.\n- Nada de plantillas vacías («¡Excelente pregunta!»). Nada de eco literal.\n- Si preguntan si eres persona o bot: «Soy la asistente virtual de Lavandería\n  VIP. Si prefiere, le paso con una persona del equipo.»\n\n============================\nSECCIÓN 2: HERRAMIENTAS (OBLIGATORIAS)\n============================\n\nTodas consultan el sistema real de la lavandería. NUNCA inventes un precio,\nuna fecha, una hora ni un estado de pedido: si no salió de una herramienta, no\nlo dices.\n\n- cotizar_prendas: TODO precio sale de aquí. Mándale lo que el cliente declaró\n  con sus palabras («camiseta», «edredón 3 plazas», «mantel»).\n  · Si una línea trae requiere_metodo: pregunta el método (métodos_disponibles)\n    y NO des precio de esa prenda.\n  · Si trae requiere_desambiguacion: muestra las opciones y pregunta cuál es.\n  · Si trae precio_min distinto de precio_max: da el RANGO, no elijas extremo.\n  · Si encontrado es false sin opciones: dile que esa prenda la confirma el\n    operador en planta.\n  · Cuando el cliente responde el método o la opción, vuelve a llamar a\n    cotizar_prendas con la lista completa.\n  · NUNCA menciones métodos (agua, seco, planchado) ni opciones de una prenda\n    sin haber llamado antes a cotizar_prendas. Si el cliente no dijo cuántas,\n    llama igual con cantidad 1 para conocer las opciones reales del catálogo.\n- NUNCA digas que un pedido quedó creado sin haber llamado a crear_pedido en\n  este turno y recibido ok:true.\n- obtener_proxima_ventana: la próxima ventana de recolección válida. Devuelve\n  horas en UTC: réstale 5 horas para decirlas en hora de Quito. También trae\n  hora_apertura y hora_cierre del local (ya en hora de Quito) y tarifa_combo:\n  úsala para cualquier pregunta de horario o de precio del combo.\n- calcular_vehiculo: con el número de fundas dice si va moto o auto.\n- find_or_create_client: identifica o registra al cliente. Devuelve cliente.id\n  (lo necesitas para crear_pedido) y debe_enviar_aviso_privacidad.\n- crear_pedido: registra el pedido. SOLO tras el «sí» explícito (Sección 5).\n- consultar_estado_pedido: «¿cómo va mi pedido?». Usa el teléfono del cliente.\n- Calculator: sumas simples si hacen falta. Nunca para inventar precios.\n\nSi una herramienta responde ok:false, no se lo muestres crudo: explica en\nsimple qué falta o dile que un asesor lo revisa.\n\n============================\nSECCIÓN 3: REGLAS DE NEGOCIO (NO NEGOCIABLES)\n============================\n\n1. TODO monto es un ESTIMADO pendiente de verificación: el operador cuenta las\n   prendas en planta antes de lavar. Dilo siempre que des un precio.\n2. Nunca rechaces por horario. Si hoy ya no alcanza, ofrece la siguiente\n   ventana que devuelva obtener_proxima_ventana.\n3. Las fundas SOLO sirven para elegir vehículo (1 funda → moto, más → auto).\n   Nunca las mezcles con la lista de prendas ni les pongas precio.\n4. Entrega: el cliente elige\n   · COMBO: tarifa plana y la lavandería gestiona recolección y entrega. El\n     valor es tarifa_combo de obtener_proxima_ventana; nunca lo digas de memoria.\n   · A LA CARTA: por tramo. «app» = la lavandería pide el transporte y el\n     cliente paga el costo real; «propio_cliente» = el cliente lo trae o lo\n     retira. Un tramo por app no se despacha sin su pago confirmado.\n5. Este canal NUNCA borra ni anula nada. Si piden borrar, cancelar o modificar\n   datos: «Eso lo gestiona nuestro equipo desde el sistema; le paso con una\n   persona» y escalas.\n6. Si preguntan dónde queda el local: De los Pinos y Pedro Barrios, La Kennedy,\n   Quito · https://maps.google.com/?q=-0.1382973,-78.4820373\n\n============================\nSECCIÓN 4: IMÁGENES Y NOTAS DE VOZ\n============================\n\nLas notas de voz te llegan ya transcritas: trátalas como texto.\n\nUna imagen te llega como «[IMAGEN RECIBIDA]» con hechos extraídos\n(tipo_de_imagen, prendas_visibles, cantidad_estimada, manchas, texto_legible).\nTú decides qué significan según la conversación. Tres reglas duras:\n\n1. UN COMPROBANTE NUNCA CONFIRMA UN PAGO. Acusa recibo: «Recibimos su\n   comprobante; queda pendiente de verificación por nuestro equipo.» Jamás\n   digas «pago confirmado».\n2. NO COTICES CONTANDO PRENDAS EN LA FOTO. Puedes decir «veo unas 7 prendas,\n   ¿me confirma la lista?», pero el precio sale de cotizar_prendas sobre lo que\n   el cliente declare.\n3. UNA MANCHA NO SE PROMETE. Puedes decir qué tratamiento aplica; nunca «sí\n   sale». Di que el resultado depende de la tela y la antigüedad de la mancha.\n\n============================\nSECCIÓN 5: FLUJO DE UN PEDIDO\n============================\n\n1. Qué prendas y cuántas → cotizar_prendas (resuelve métodos y opciones).\n2. Cuántas fundas → calcular_vehiculo.\n3. Combo o a la carta (y por tramo, app o propio).\n4. Dirección de recolección.\n5. Ventana → obtener_proxima_ventana.\n6. Nombre de contacto y, si es negocio, nombre y tipo (clinica, restaurante,\n   hotel, otro; particular si no es negocio) → find_or_create_client con\n   canal_origen whatsapp_agente.\n7. RESUMEN COMPLETO: prendas, estimado, fundas y vehículo, tipo de entrega,\n   dirección y ventana. Pregunta «¿Confirmo su pedido?» y ESPERA un sí\n   explícito. «ok», «gracias» o silencio NO son un sí.\n8. Con el sí → crear_pedido (canal whatsapp_agente, cliente_id del paso 6,\n   items con el método ya elegido, ventana_recoleccion_inicio y _fin en ISO\n   tal como vinieron de obtener_proxima_ventana). Confirma el pedido y recuerda\n   que el monto final se verifica en planta.\n\nSi find_or_create_client devuelve debe_enviar_aviso_privacidad: true, agrega\nUNA sola vez al final: «Sus datos se usan solo para gestionar sus pedidos,\nconforme a la Ley Orgánica de Protección de Datos Personales.»\n\n============================\nSECCIÓN 6: ESCALAR A HUMANO\n============================\n\nescalar_humano: true SOLO si el cliente:\n- pide hablar con una persona, un humano o el dueño;\n- pone una queja o un reclamo;\n- dice que le perdieron o dañaron una prenda;\n- pide borrar, anular o modificar algo (Sección 3.5);\n- o una herramienta falla dos veces seguidas.\nUn «ok gracias» NO escala. Al escalar: «Le paso con una persona de nuestro\nequipo, en breve le escriben.»\n\n============================\nFORMATO DE RESPUESTA — JSON ESTRICTO\n============================\n\nResponde SIEMPRE con EXACTAMENTE un objeto JSON:\n\n{\n  \"respuesta_lead\": \"texto que se enviará al cliente\",\n  \"tool_consultada\": \"nombre_tool|null\",\n  \"imagenes\": [],\n  \"videos\": [],\n  \"ubicacion\": false,\n  \"escalar_humano\": false,\n  \"metadata\": {\n    \"temperatura\": \"frio|tibio|caliente\",\n    \"pain_point\": \"qué necesita el cliente\",\n    \"objeciones\": [],\n    \"next_action\": \"cotizar|agendar|pedido_creado|seguimiento|esperar_respuesta\",\n    \"quality_score\": 1,\n    \"tipo_lead\": \"clinica|restaurante|hotel|particular|otro\",\n    \"datos_lead\": {\n      \"nombre\": null,\n      \"servicio\": null,\n      \"ubicacion\": null\n    }\n  }\n}\n\n- respuesta_lead: texto LIMPIO para WhatsApp, sin markdown de encabezados.\n- imagenes y videos: siempre vacíos.\n- Comillas dobles ASCII (\"), nunca curvas. Sin ```json. Nada antes ni después.\n- Si hablas de precios y tool_consultada es null, es FALLO.\n\nCHECKLIST ANTES DE RESPONDER:\n1. ¿Leí el historial? ¿No contradigo nada?\n2. ¿Todo precio, hora o estado salió de una herramienta?\n3. ¿Marqué los montos como estimado pendiente de verificación?\n4. ¿Voy a crear un pedido sin un sí explícito? → detener.\n5. ¿Confirmé un pago por una imagen? → corregir.",
+          "maxIterations": 10,
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [2256, 288],
+      "id": "9dbc6488-3e77-405f-a8e9-065307156866",
+      "name": "Agente Laundry VIP"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {
+          "frequencyPenalty": 0,
+          "maxTokens": 1500,
+          "responseFormat": "json_object",
+          "presencePenalty": 0,
+          "temperature": 0,
+          "topP": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [1984, 448],
+      "id": "fe303196-537e-4f24-8663-305d9dda892f",
+      "name": "OpenAI Laundry",
+      "credentials": {
+        "openAiApi": {
+          "id": "GvNmUCZRx5ZvZerQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('WhatsApp Inicio').item.json.contacts[0].wa_id }}",
+        "tableName": "n8n_laundry_chat_histories",
+        "contextWindowLength": 30
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [2128, 448],
+      "id": "7708f333-ef58-4843-8542-77176f091418",
+      "name": "Memory Laundry",
+      "credentials": {
+        "postgres": {
+          "id": "uS6oHAzjK8OQg6K3",
+          "name": "Postgres Laundry VIP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v22.0/502312282974917/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"status\": \"read\",\n  \"message_id\": \"{{ $('WhatsApp Inicio').item.json._whatsapp_message_id }}\",\n  \"typing_indicator\": {\n    \"type\": \"text\"\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [1472, 288],
+      "id": "06a71b4f-5f05-4754-b630-22c5f7bb0801",
+      "name": "Typing Indicator",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "baJJfX3zWMindSEN",
+          "name": "Meta WhatsApp Laundry VIP"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ''::text AS headline, ''::text AS body, ''::text AS source_url, ''::text AS image_url, ''::text AS ctwa_clid, ''::text AS ad_id, ''::text AS service_type_inferred, '{}'::text AS ad_image_analysis",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [-1088, 384],
+      "id": "bf35392c-e4df-4802-b106-497192af0c43",
+      "name": "Buscar Referral",
+      "credentials": {
+        "postgres": {
+          "id": "uS6oHAzjK8OQg6K3",
+          "name": "Postgres Laundry VIP"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const waData = $('WhatsApp Inicio').first().json;\nconst ref = $input.first().json;\n\nlet analysis = {};\ntry { analysis = JSON.parse(ref.ad_image_analysis || '{}'); } catch(e) {}\n\nreturn [{\n  json: {\n    ...waData,\n    _es_desde_anuncio: !!(ref.ctwa_clid),\n    _referral_headline: ref.headline || '',\n    _referral_body: ref.body || '',\n    _referral_source_url: ref.source_url || '',\n    _referral_media_url: ref.image_url || '',\n    _referral_ctwa_clid: ref.ctwa_clid || '',\n    _referral_ad_id: ref.ad_id || '',\n    _referral_service_type: ref.service_type_inferred || '',\n    _referral_producto: analysis.producto_principal || '',\n    _referral_precio_visible: analysis.precio_visible || '',\n    _referral_cta: analysis.cta_observado || '',\n    _referral_estilo: analysis.estilo || '',\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-880, 384],
+      "id": "cdb19bb1-262e-4324-9e00-cb3ed517bd27",
+      "name": "Agregar Referral"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parser robusto del output JSON del Agente Laundry VIP\n// Tolerante a: comillas curvas, BOM, fences ```json, múltiples JSON pegados, NBSP\n\nconst rawOutput = $input.first().json.output || '';\nconst waInicio = $('WhatsApp Inicio').first().json;\n\nfunction tryParseLLMOutput(s) {\n  if (typeof s !== 'string') return s;\n  let t = s\n    .replace(/^\\uFEFF/, '')                          // BOM\n    .replace(/^\\s*```(?:json)?\\s*/i, '')             // fence apertura\n    .replace(/\\s*```\\s*$/i, '')                      // fence cierre\n    .replace(/[\\u201C\\u201D]/g, '\"')                 // comillas curvas dobles -> \"\n    .replace(/[\\u2018\\u2019]/g, \"'\")                 // comillas curvas simples -> '\n    .replace(/\\u00A0/g, ' ');                        // nbsp -> espacio\n  // Si hay multiples JSON pegados, quedate con el primer objeto balanceado\n  const start = t.indexOf('{');\n  if (start === -1) throw new Error('no JSON found');\n  let depth = 0, end = -1, inStr = false, esc = false;\n  for (let i = start; i < t.length; i++) {\n    const c = t[i];\n    if (inStr) {\n      if (esc) esc = false;\n      else if (c === '\\\\') esc = true;\n      else if (c === '\"') inStr = false;\n    } else {\n      if (c === '\"') inStr = true;\n      else if (c === '{') depth++;\n      else if (c === '}') { depth--; if (depth === 0) { end = i; break; } }\n    }\n  }\n  if (end === -1) throw new Error('unbalanced JSON');\n  return JSON.parse(t.slice(start, end + 1));\n}\n\nlet parsed = {};\nlet parseFailed = false;\ntry {\n  parsed = typeof rawOutput === 'string' ? tryParseLLMOutput(rawOutput) : rawOutput;\n} catch(e) {\n  // Fallback FINAL: NUNCA mandar JSON crudo. Mensaje de cortesia + escalar humano.\n  parseFailed = true;\n  parsed = {\n    respuesta_lead: 'Permítame un momento, le contacta una persona de nuestro equipo.',\n    tool_consultada: null,\n    imagenes: [],\n    videos: [],\n    ubicacion: false,\n    escalar_humano: true,\n    metadata: {\n      temperatura: 'tibio',\n      pain_point: 'parser fallo, escalar a humano',\n      objeciones: [],\n      next_action: 'esperar_respuesta',\n      quality_score: 0,\n      tipo_lead: 'otro',\n      datos_lead: {}\n    }\n  };\n}\n\n\n// ── Guardia anti-alucinación ─────────────────────────────────────────────\n// El modelo puede escribir \"✅ Orden registrada\" con un ID inventado sin haber\n// llamado a la herramienta. Solo vale lo que la herramienta devolvió ok:true\n// en ESTE turno; un UUID que no salió de una herramienta es inventado.\nconst pasos = Array.isArray($input.first().json.intermediateSteps) ? $input.first().json.intermediateSteps : [];\nconst ESCRITURAS = ['registrar_cliente_presencial', 'actualizar_registro', 'confirmar_pago', 'corregir_cotizacion', 'crear_pedido'];\nconst observaciones = pasos.map((p) => String((p && p.observation) || '')).join(' ');\nconst escriturasOk = pasos.filter((p) => p && p.action && ESCRITURAS.includes(p.action.tool) && /\"ok\"\\s*:\\s*true/.test(String(p.observation || '')));\nconst textoModelo = String(parsed.respuesta_lead || '');\nconst uuids = textoModelo.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi) || [];\nconst idInventado = uuids.some((id) => !observaciones.includes(id));\nconst escrituraFantasma = ESCRITURAS.includes(parsed.tool_consultada) && escriturasOk.length === 0;\nlet esOperadorGuardia = false;\ntry { esOperadorGuardia = $('Verificar Operador').first().json.data?.es_operador === true; } catch (e) {}\nconst confirmacionFalsa = !parseFailed && (idInventado || escrituraFantasma);\nif (confirmacionFalsa) {\n  parsed.respuesta_lead = esOperadorGuardia\n    ? '⚠️ La orden NO quedó registrada: no llegué a guardarla en el sistema. Responde «registrar» y la guardo ahora con los mismos datos.'\n    : 'Disculpe, no pude completar el registro en este momento. Una persona de nuestro equipo lo revisa y le confirma en breve.';\n  if (!esOperadorGuardia) parsed.escalar_humano = true;\n}\n\nconst imagenes = Array.isArray(parsed.imagenes) ? parsed.imagenes : [];\nconst videos = Array.isArray(parsed.videos) ? parsed.videos : [];\nconst metadata = parsed.metadata || {};\nconst datosLead = metadata.datos_lead || {};\n\nreturn [{\n  json: {\n    // Texto limpio que se enviara al lead (sin metadata, sin markers)\n    texto_limpio: parsed.respuesta_lead || '',\n    \n    // Imagenes (hasta 5) para los nodos Enviar Img 1-5\n    img1: imagenes[0] || '',\n    img2: imagenes[1] || '',\n    img3: imagenes[2] || '',\n    img4: imagenes[3] || '',\n    img5: imagenes[4] || '',\n    \n    // Videos (hasta 2) para los nodos Enviar Video\n    vid1: videos[0] || '',\n    vid2: videos[1] || '',\n    \n    // Markers de comportamiento\n    ubicacion: parsed.ubicacion === true ? 'si' : '',\n    escalar_humano: parsed.escalar_humano === true ? 'si' : '',\n    \n    // Datos del flow (no cambian)\n    phone: waInicio.contacts[0].wa_id,\n    conv_id: waInicio._chatwoot_conversation_id,\n    \n    // Flag de parser para diagnostico\n    parser_failed: parseFailed,\n    confirmacion_falsa: confirmacionFalsa,\n    \n    // Metadata para CRM / logging\n    metadata_temperatura: metadata.temperatura || 'frio',\n    metadata_pain_point: metadata.pain_point || '',\n    metadata_objeciones: Array.isArray(metadata.objeciones) ? metadata.objeciones.join(', ') : '',\n    metadata_next_action: metadata.next_action || 'esperar_respuesta',\n    metadata_quality_score: metadata.quality_score || 0,\n    metadata_tipo_lead: metadata.tipo_lead || 'otro',\n    metadata_tool_consultada: parsed.tool_consultada || null,\n    \n    // Datos del lead (estructurados)\n    lead_nombre: datosLead.nombre || null,\n    lead_servicio: datosLead.servicio || null,\n    lead_ubicacion: datosLead.ubicacion || null,\n    lead_metros: datosLead.metros || null,\n    lead_nivel_acabado: datosLead.nivel_acabado || null,\n    lead_presupuesto_usd: datosLead.presupuesto_usd || null,\n    lead_timeline: datosLead.timeline || null,\n    lead_tiene_terreno: datosLead.tiene_terreno || null,\n    \n    // Cotizacion (mantenido por compatibilidad - vacio por ahora)\n    cotizacion_json: ''\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2700, 288],
+      "id": "ae7f947e-134f-491d-849f-c17e5eb98fcc",
+      "name": "Extraer JSON"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Cotiza prendas contra el catálogo real. Úsala SIEMPRE antes de decir cualquier precio.",
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"accion\":\"cotizar_prendas\",\"parametros\": {\"items\": {{ JSON.stringify($fromAI('items', 'Array JSON de prendas: [{\"descripcion\":\"camiseta\",\"cantidad\":5,\"metodo\":\"agua\"}]. metodo es opcional: unico, agua, seco o planchado. Solo inclúyelo si el cliente ya lo eligió.', 'json')) }} }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "name": "cotizar_prendas",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [1500, 752],
+      "id": "b2442573-c169-4359-81a8-91993d54e5ca",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Devuelve la próxima ventana válida de recolección (inicio y fin en UTC ISO). Úsala antes de proponer cualquier hora.",
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"accion\":\"obtener_proxima_ventana\",\"parametros\": {}}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "name": "obtener_proxima_ventana",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [1680, 752],
+      "id": "fae4f629-f49d-48cf-a9af-24ea0292df2c",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Dice si la recolección va en moto o auto según el número de fundas.",
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"accion\":\"calcular_vehiculo\",\"parametros\": {\"numero_fundas\": {{ JSON.stringify($fromAI('numero_fundas', 'Número entero de fundas que entregará el cliente', 'number')) }} }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "name": "calcular_vehiculo",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [1860, 752],
+      "id": "97dbc5f0-85b8-4e51-b4e0-2bfa4cc3a4ef",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Busca o registra al cliente por su teléfono. Devuelve cliente.id y si hay que enviar el aviso de privacidad.",
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"accion\":\"find_or_create_client\",\"parametros\": {\"telefono\": \"+{{ $('WhatsApp Inicio').first().json.contacts[0].wa_id }}\", \"canal_origen\": \"whatsapp_agente\", \"nombre_contacto\": {{ JSON.stringify($fromAI('nombre_contacto', 'Nombre de la persona de contacto', 'string')) }} , \"nombre_negocio\": {{ JSON.stringify($fromAI('nombre_negocio', 'Nombre del negocio; cadena vacía si es particular', 'string')) }} , \"tipo_negocio\": {{ JSON.stringify($fromAI('tipo_negocio', 'Uno de: clinica, restaurante, hotel, otro, particular', 'string')) }} }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "name": "find_or_create_client",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [2040, 752],
+      "id": "0455e462-3532-4ec9-b54a-be54c0076b97",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Crea el pedido. SOLO después de que el cliente confirmó el resumen con un sí explícito.",
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"accion\":\"crear_pedido\",\"parametros\": {{ JSON.stringify(Object.assign({canal: 'whatsapp_agente'}, $fromAI('pedido', 'Objeto JSON con: cliente_id (uuid de find_or_create_client), tipo_entrega (combo o a_la_carta), items (como en cotizar_prendas, con metodo ya elegido), numero_fundas, direccion_recoleccion, ventana_recoleccion_inicio y ventana_recoleccion_fin (ISO tal como vinieron), y si es a_la_carta metodo_transporte_recoleccion y metodo_transporte_entrega (app o propio_cliente).', 'json'))) }} }",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "name": "crear_pedido",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [2220, 752],
+      "id": "63786aba-122d-47e7-b90e-5eb8d6657d8b",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Devuelve el estado del pedido más reciente de este cliente.",
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"accion\":\"consultar_estado_pedido\",\"parametros\": {\"telefono\": \"+{{ $('WhatsApp Inicio').first().json.contacts[0].wa_id }}\"}}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "name": "consultar_estado_pedido",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [2400, 752],
+      "id": "08927a87-9ca0-4f9c-87f2-4f5a5a9ae82e",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"accion\":\"verificar_whitelist_operador\",\"parametros\":{\"telefono\":\"+{{ $('WhatsApp Inicio').first().json.contacts[0].wa_id }}\"}}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "name": "Verificar Operador",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1640, 288],
+      "id": "61109b40-8010-4cfa-b9f5-d3f6176bfc28",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "es-operador",
+              "leftValue": "={{ $json.data?.es_operador === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "name": "¿Es Operador?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1860, 288],
+      "id": "aea848a0-b6c7-4476-8a6f-16b2cc9a1b2a"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Preparar Mensaje Final').item.json.message_text }}{{ $('Preparar Mensaje Final').item.json.contexto_anuncio }}",
+        "options": {
+          "systemMessage": "=Eres el asistente interno de planta de Lavandería VIP (La Kennedy, Quito). Hablas\ncon un OPERADOR autorizado del local, no con un cliente. Tu trabajo es meter al\nsistema lo que el operador recibe en el mostrador: clientes presenciales y sus\nórdenes, correcciones, pagos y consultas. Te escribe por texto, nota de voz\n(llega transcrita) o foto.\n\nFECHA Y HORA ACTUAL (Quito, UTC-5): {{ $now.setZone('America/Guayaquil').toFormat(\"EEEE d 'de' MMMM yyyy, HH:mm\", {locale: 'es'}) }}\nOPERADOR: {{ $('WhatsApp Inicio').item.json.contacts[0].profile.name }} · +{{ $('WhatsApp Inicio').item.json.contacts[0].wa_id }}\n\n============================\nSECCIÓN 0: MEMORIA\n============================\n\nLee todo el historial. Si en un turno anterior registraste una orden, su\npedido_id está ahí: úsalo para corregir, consultar o confirmar pagos. Nunca\npidas un dato que el operador ya dio.\n\n============================\nSECCIÓN 1: TONO\n============================\n\n- Directo y operativo, de tú. Mensajes cortos, en viñetas cuando ayuden.\n- Nada de ventas ni saludos largos: el operador está trabajando.\n\n============================\nSECCIÓN 2: HERRAMIENTAS\n============================\n\nTodas escriben o leen el sistema real. NUNCA digas que algo quedó registrado si\nla herramienta no respondió ok:true.\n\n- cotizar_prendas_operador: resuelve prendas y métodos contra el catálogo.\n  Úsala ANTES de registrar para detectar requiere_metodo o\n  requiere_desambiguacion.\n- registrar_cliente_presencial: crea (o reutiliza) al cliente y su ORDEN\n  presencial con las prendas. Devuelve pedido_id y monto estimado.\n- actualizar_registro: corrige la última orden (o la del pedido_id que indiques):\n  reemplaza la lista de prendas o completa nombres. NUNCA crea una orden nueva.\n- consultar_pedido: detalle de una orden por pedido_id.\n- confirmar_pago: marca pagado un tramo (recoleccion, entrega o lavado) de una\n  orden. Solo si el operador lo dice explícitamente.\n- corregir_cotizacion: cambia el monto de lavado tras contar en planta, con\n  motivo obligatorio. Congela la orden hasta avisar al cliente.\n- generar_reporte: resumen de pedidos y montos entre dos fechas (YYYY-MM-DD).\n- Calculator: sumas.\n\nSi una herramienta responde ok:false, dile al operador en una línea qué faltó.\n\nREGLA DE ORO — NADA SE DA POR HECHO SIN LA HERRAMIENTA:\n- Para decir «✅ Orden registrada», «corregido» o «pago confirmado» TIENES que\n  haber llamado a la herramienta EN ESTE MISMO TURNO y haber recibido ok:true.\n- El monto y el ID se copian EXACTOS del resultado. Jamás escribas un ID o un\n  monto que no te devolvió una herramienta.\n- Tu memoria solo guarda lo que respondiste, no si la herramienta corrió. Si el\n  operador escribe «registrar», «no se registró» o reenvía la orden, llama de\n  nuevo a registrar_cliente_presencial con los datos del historial.\n- Si el resultado trae cliente_creado: false y el nombre guardado es distinto\n  del que dictó el operador, avísale: «Ese teléfono ya es de <nombre>; la orden\n  quedó a su nombre».\n\n============================\nSECCIÓN 3: REGISTRAR UNA ORDEN PRESENCIAL\n============================\n\nEjemplo: «Recibí un bulto de 10 prendas de Juan Pérez, 0991234567: 6 camisas en\nagua, 2 pantalones y 2 edredones de 2 plazas».\n\n1. Extrae: nombre del cliente, nombre del negocio (si lo dice), teléfono y la\n   lista de prendas con cantidad y método.\n2. TELÉFONO OBLIGATORIO en formato +593: «0991234567» → «+593991234567».\n   Sin teléfono no se registra: pídelo (sirve para avisar que la ropa está lista).\n3. Llama cotizar_prendas_operador con la lista. Si alguna prenda pide método u\n   opción, pregúntalo en UN solo mensaje con todas las dudas juntas.\n4. Si el total de prendas no cuadra con lo que dijo (dijo 10 y suman 9),\n   señálalo antes de registrar.\n5. Con todo resuelto → registrar_cliente_presencial DIRECTAMENTE (el operador ya\n   confirmó al dictarlo; no pidas un «sí» extra salvo que haya dudas).\n6. Responde:\n   ✅ Orden registrada\n   • Cliente: nombre · teléfono\n   • Prendas: lista con cantidades\n   • Estimado: $X,XX (pendiente de conteo en planta)\n   • ID: el pedido_id COMPLETO (la memoria solo guarda lo que respondes; sin\n     el id completo no podrás consultarlo ni confirmar pagos después)\n\nSi luego dice «corrige: eran 4 camisas, no 6», usa actualizar_registro con la\nlista COMPLETA corregida. Nunca registres una orden nueva para corregir.\n\n============================\nSECCIÓN 4: FOTOS\n============================\n\nUna foto llega como «[IMAGEN RECIBIDA]» con hechos extraídos. Si son prendas,\npropón la lista que se ve («veo 3 camisas, 2 pantalones…») y pide al operador\nque la confirme o corrija con cliente y teléfono antes de registrar. Si es un\ncomprobante, di lo que se lee (monto, banco, referencia) y pregunta a qué orden\ny tramo corresponde antes de confirmar_pago.\n\n============================\nSECCIÓN 5: LÍMITES DUROS\n============================\n\n1. Este canal NUNCA borra ni cancela nada. Si lo pide: «Eliminar o cancelar se\n   hace desde el CRM: https://laundry-vip.vercel.app».\n2. Nunca inventes precios: todo monto sale de las herramientas.\n3. Nunca confirmes un pago sin que el operador lo diga.\n\n============================\nFORMATO DE RESPUESTA — JSON ESTRICTO\n============================\n\nResponde SIEMPRE con EXACTAMENTE un objeto JSON:\n\n{\n  \"respuesta_lead\": \"texto que se enviará al operador\",\n  \"tool_consultada\": \"nombre_tool|null\",\n  \"imagenes\": [],\n  \"videos\": [],\n  \"ubicacion\": false,\n  \"escalar_humano\": false,\n  \"metadata\": {\n    \"temperatura\": \"tibio\",\n    \"pain_point\": \"qué pidió el operador\",\n    \"objeciones\": [],\n    \"next_action\": \"orden_registrada|correccion|consulta|pago|reporte|esperar_respuesta\",\n    \"quality_score\": 1,\n    \"tipo_lead\": \"operador\",\n    \"datos_lead\": {\n      \"nombre\": null,\n      \"servicio\": null,\n      \"ubicacion\": null\n    }\n  }\n}\n\n- escalar_humano: siempre false (el operador ya es el humano).\n- Comillas dobles ASCII (\"), nunca curvas. Sin ```json. Nada antes ni después.",
+          "maxIterations": 10,
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [2256, -120],
+      "id": "7056d737-6f64-4104-b10d-184c5b618cd9",
+      "name": "Agente Operador"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {
+          "frequencyPenalty": 0,
+          "maxTokens": 1500,
+          "responseFormat": "json_object",
+          "presencePenalty": 0,
+          "temperature": 0,
+          "topP": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [2060, 60],
+      "id": "16b889f0-030f-465f-8972-c1b9a65bb12b",
+      "name": "OpenAI Operador",
+      "credentials": {
+        "openAiApi": {
+          "id": "GvNmUCZRx5ZvZerQ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=operador_{{ $('WhatsApp Inicio').item.json.contacts[0].wa_id }}",
+        "tableName": "n8n_laundry_chat_histories",
+        "contextWindowLength": 30
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [2200, 60],
+      "id": "45659f75-a7b6-4c16-a36e-6065c668e7f0",
+      "name": "Memory Operador",
+      "credentials": {
+        "postgres": {
+          "id": "uS6oHAzjK8OQg6K3",
+          "name": "Postgres Laundry VIP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Resuelve prendas, métodos y precios contra el catálogo. Úsala antes de registrar una orden.",
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"accion\":\"cotizar_prendas\",\"parametros\": {\"items\": {{ JSON.stringify($fromAI('items', 'Array JSON de prendas: [{\"descripcion\":\"camisa\",\"cantidad\":6,\"metodo\":\"agua\"}]. metodo opcional: unico, agua, seco o planchado.', 'json')) }} }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "name": "cotizar_prendas_operador",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [2360, -300],
+      "id": "eeacf839-629b-4ab1-87cc-09a4d08c16eb",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Registra una ORDEN presencial: crea o reutiliza el cliente por teléfono y guarda sus prendas. Devuelve pedido_id y monto estimado.",
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"accion\":\"registrar_cliente_presencial\",\"parametros\": {\"telefono_operador\": \"+{{ $('WhatsApp Inicio').first().json.contacts[0].wa_id }}\", \"telefono_cliente\": {{ JSON.stringify($fromAI('telefono_cliente', 'Teléfono del cliente en formato +593XXXXXXXXX', 'string')) }} , \"nombre_contacto\": {{ JSON.stringify($fromAI('nombre_contacto', 'Nombre del cliente', 'string')) }} , \"nombre_negocio\": {{ JSON.stringify($fromAI('nombre_negocio', 'Nombre del negocio o cadena vacía', 'string')) }} , \"items\": {{ JSON.stringify($fromAI('items', 'Array JSON de prendas: [{\"descripcion\":\"camisa\",\"cantidad\":6,\"metodo\":\"agua\"}]. metodo opcional: unico, agua, seco o planchado.', 'json')) }} }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "name": "registrar_cliente_presencial",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [2530, -300],
+      "id": "8d9ff8bc-2cab-4303-9e05-affa5e8b2195",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Corrige la última orden registrada (o la del pedido_id): reemplaza la lista completa de prendas y/o completa nombres. Nunca crea una orden nueva.",
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"accion\":\"actualizar_registro\",\"parametros\": {{ JSON.stringify(Object.assign({telefono_operador: '+' + $('WhatsApp Inicio').first().json.contacts[0].wa_id}, $fromAI('correccion', 'Objeto JSON con lo que cambia: pedido_id (opcional, uuid), items (lista COMPLETA corregida, opcional), nombre_contacto, nombre_negocio (opcionales).', 'json'))) }} }",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "name": "actualizar_registro",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [2700, -300],
+      "id": "a49bf212-e994-4856-830b-f1f4de63f694",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Detalle de una orden por su pedido_id completo.",
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"accion\":\"consultar_pedido\",\"parametros\": {\"pedido_id\": {{ JSON.stringify($fromAI('pedido_id', 'uuid completo del pedido', 'string')) }} }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "name": "consultar_pedido",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [2870, -300],
+      "id": "d598d959-8eb8-4dc0-b139-53f8a8a193ce",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Marca pagado un tramo de una orden. Solo si el operador lo dice explícitamente.",
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"accion\":\"confirmar_pago\",\"parametros\": {\"telefono_operador\": \"+{{ $('WhatsApp Inicio').first().json.contacts[0].wa_id }}\", \"pedido_id\": {{ JSON.stringify($fromAI('pedido_id', 'uuid completo del pedido', 'string')) }} , \"tramo\": {{ JSON.stringify($fromAI('tramo', 'Uno de: recoleccion, entrega, lavado', 'string')) }} }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "name": "confirmar_pago",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [3040, -300],
+      "id": "8a80c98b-95c5-40e5-a974-1f3ce19bad2e",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Corrige el monto de lavado tras contar en planta, con motivo. Congela la orden hasta avisar al cliente.",
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"accion\":\"corregir_cotizacion\",\"parametros\": {\"telefono_operador\": \"+{{ $('WhatsApp Inicio').first().json.contacts[0].wa_id }}\", \"pedido_id\": {{ JSON.stringify($fromAI('pedido_id', 'uuid completo del pedido', 'string')) }} , \"monto_corregido\": {{ JSON.stringify($fromAI('monto_corregido', 'Monto corregido en dólares', 'number')) }} , \"motivo\": {{ JSON.stringify($fromAI('motivo', 'Motivo de la corrección', 'string')) }} }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "name": "corregir_cotizacion",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [3210, -300],
+      "id": "761d1235-a01b-4846-8e67-d9f27f9d2985",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Resumen de pedidos y montos entre dos fechas.",
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"accion\":\"generar_reporte\",\"parametros\": {\"telefono_operador\": \"+{{ $('WhatsApp Inicio').first().json.contacts[0].wa_id }}\", \"desde\": {{ JSON.stringify($fromAI('desde', 'Fecha inicial YYYY-MM-DD', 'string')) }} , \"hasta\": {{ JSON.stringify($fromAI('hasta', 'Fecha final YYYY-MM-DD', 'string')) }} }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "name": "generar_reporte",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [3380, -300],
+      "id": "491df812-bcfc-4fc1-b4de-af502edab245",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Arma lo que se registra en el CRM de Lavandería VIP en cada turno.\n// Nunca inventa: el nombre solo entra si el cliente lo dijo (no el perfil de WhatsApp).\nconst wa = $('WhatsApp Inicio').first().json;\nconst ext = $('Extraer JSON').first().json;\nconst msg = $('Preparar Mensaje Final').first().json;\n\n// Un operador de planta no es un lead: sus órdenes ya quedan en el CRM por sus tools.\nlet esOperador = false;\ntry { esOperador = $('Verificar Operador').first().json.data?.es_operador === true; } catch (e) {}\nif (esOperador) return [];\n\nconst telefono = '+' + String(wa.contacts[0].wa_id || '').replace(/D/g, '');\nconst perfil = (wa.contacts[0].profile && wa.contacts[0].profile.name) || '';\nconst nombre = ext.lead_nombre && ext.lead_nombre !== perfil ? String(ext.lead_nombre) : '';\nconst tipo = ['clinica', 'restaurante', 'hotel'].includes(ext.metadata_tipo_lead) ? ext.metadata_tipo_lead : null;\nconst convId = Number(wa._chatwoot_conversation_id) || null;\n\nconst clienteParams = { telefono, canal_origen: 'whatsapp_agente' };\nif (nombre) clienteParams.nombre_contacto = nombre;\nif (tipo) clienteParams.tipo_negocio = tipo;\n\nconst conversacionParams = {\n  telefono,\n  contexto: {\n    nombre_whatsapp: perfil,\n    temperatura: ext.metadata_temperatura || '',\n    necesidad: ext.metadata_pain_point || '',\n    proxima_accion: ext.metadata_next_action || '',\n    ultimo_mensaje_cliente: String(msg.message_text || '').slice(0, 500),\n    ultima_respuesta_agente: String(ext.texto_limpio || '').slice(0, 500),\n    escalado: ext.escalar_humano === 'si',\n    tool_consultada: ext.metadata_tool_consultada || null,\n    chatwoot_url: convId ? 'https://chatwoot-production-8564.up.railway.app/app/accounts/3/conversations/' + convId : '',\n  },\n};\nif (convId) conversacionParams.chatwoot_conversation_id = convId;\n\nreturn [{ json: {\n  cliente: { accion: 'find_or_create_client', parametros: clienteParams },\n  conversacion: { accion: 'sincronizar_memoria_conversacion', parametros: conversacionParams },\n} }];"
+      },
+      "name": "Preparar CRM Body",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2960, 640],
+      "id": "1323f90e-f856-4952-9a1b-dfbe0ea8f3eb",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($('Preparar CRM Body').first().json.cliente) }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "name": "Registrar Cliente CRM",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3200, 640],
+      "id": "aee9f7ed-7e67-4495-8324-c0971e2eb158",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($('Preparar CRM Body').first().json.conversacion) }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "name": "Registrar Conversacion CRM",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3440, 640],
+      "id": "5314b42d-70aa-44ed-baf6-affd7aef658b",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Chatwoot Webhook": {
+      "main": [
+        [
+          {
+            "node": "Filtro Chatwoot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro Chatwoot": {
+      "main": [
+        [
+          {
+            "node": "Filtro Humano",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro Humano": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Inicio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Inicio": {
+      "main": [
+        [
+          {
+            "node": "Buscar Referral",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Referral": {
+      "main": [
+        [
+          {
+            "node": "Agregar Referral",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agregar Referral": {
+      "main": [
+        [
+          {
+            "node": "Debounce",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debounce": {
+      "main": [
+        [
+          {
+            "node": "Obtener Ultimos Mensajes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener Ultimos Mensajes": {
+      "main": [
+        [
+          {
+            "node": "Es Ultimo Mensaje?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es Ultimo Mensaje?": {
+      "main": [
+        [
+          {
+            "node": "Combinar Textos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combinar Textos": {
+      "main": [
+        [
+          {
+            "node": "Tipo de Mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tipo de Mensaje": {
+      "main": [
+        [
+          {
+            "node": "Obtener URL Audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Obtener URL Imagen",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Espera Texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener URL Audio": {
+      "main": [
+        [
+          {
+            "node": "Descargar Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar Audio": {
+      "main": [
+        [
+          {
+            "node": "Transcribir Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribir Audio": {
+      "main": [
+        [
+          {
+            "node": "Preparar Mensaje Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener URL Imagen": {
+      "main": [
+        [
+          {
+            "node": "Descargar Imagen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar Imagen": {
+      "main": [
+        [
+          {
+            "node": "Explicar Imagen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Explicar Imagen": {
+      "main": [
+        [
+          {
+            "node": "Preparar Mensaje Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Vision": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Explicar Imagen",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Espera Texto": {
+      "main": [
+        [
+          {
+            "node": "Preparar Mensaje Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Mensaje Final": {
+      "main": [
+        [
+          {
+            "node": "Typing Indicator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Typing Indicator": {
+      "main": [
+        [
+          {
+            "node": "Verificar Operador",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Laundry": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente Laundry VIP",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory Laundry": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente Laundry VIP",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Laundry VIP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente Laundry VIP": {
+      "main": [
+        [
+          {
+            "node": "Extraer JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer JSON": {
+      "main": [
+        [
+          {
+            "node": "Enviar Respuesta Chatwoot",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Necesita Humano?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Preparar CRM Body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Necesita Humano?": {
+      "main": [
+        [
+          {
+            "node": "Etiqueta Humano",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Etiqueta Humano": {
+      "main": [
+        [
+          {
+            "node": "Nota Escalamiento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cotizar_prendas": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Laundry VIP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "obtener_proxima_ventana": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Laundry VIP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "calcular_vehiculo": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Laundry VIP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "find_or_create_client": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Laundry VIP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "crear_pedido": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Laundry VIP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_estado_pedido": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Laundry VIP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cotizar_prendas_operador": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Operador",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "registrar_cliente_presencial": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Operador",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "actualizar_registro": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Operador",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_pedido": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Operador",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "confirmar_pago": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Operador",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "corregir_cotizacion": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Operador",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "generar_reporte": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Operador",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar Operador": {
+      "main": [
+        [
+          {
+            "node": "¿Es Operador?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Operador?": {
+      "main": [
+        [
+          {
+            "node": "Agente Operador",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agente Laundry VIP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente Operador": {
+      "main": [
+        [
+          {
+            "node": "Extraer JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Operador": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente Operador",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory Operador": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente Operador",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar CRM Body": {
+      "main": [
+        [
+          {
+            "node": "Registrar Cliente CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar Cliente CRM": {
+      "main": [
+        [
+          {
+            "node": "Registrar Conversacion CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "timezone": "America/Guayaquil",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "tags": []
+}
