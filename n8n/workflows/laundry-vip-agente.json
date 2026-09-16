@@ -11,8 +11,8 @@
       "type": "n8n-nodes-base.webhook",
       "position": [-2000, 512],
       "typeVersion": 2,
-      "webhookId": "8b4b1b18-8d45-422a-aeb6-2a1cbac0d088",
-      "id": "08eb0827-3884-4092-8dde-2eced46c58c8"
+      "webhookId": "0a171ccf-4525-4354-a10a-9e08c15ff364",
+      "id": "1f9bf3b4-d60d-4645-b35a-2ae72b38215c"
     },
     {
       "parameters": {
@@ -51,7 +51,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-1776, 512],
       "typeVersion": 2.2,
-      "id": "ae44ce98-f360-4f5f-ab89-c71aa63f9eb7"
+      "id": "dd8f39ef-7cf4-490d-b676-b06a572e87d6"
     },
     {
       "parameters": {
@@ -82,7 +82,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-1552, 512],
       "typeVersion": 2.2,
-      "id": "65a55d3d-c6e8-45ae-a326-0f562846331a"
+      "id": "f5e205ae-54a9-4a6b-9e9e-30c4318c7627"
     },
     {
       "parameters": {
@@ -186,7 +186,7 @@
       "type": "n8n-nodes-base.set",
       "position": [-1296, 384],
       "typeVersion": 3.4,
-      "id": "4bea5914-09dd-44c7-a493-71611c01d051"
+      "id": "04ed8ddd-71f2-411b-9053-1c6ae30f15b2"
     },
     {
       "parameters": {
@@ -201,9 +201,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [-432, 384],
       "typeVersion": 4.2,
-      "id": "28ea31c2-426b-4378-83c1-089b243b02e3",
+      "id": "13a61c5f-77a7-4540-8934-38ec2e44a898",
       "credentials": {
         "httpHeaderAuth": {
+          "id": "3W2BykSid0f9dMTV",
           "name": "Chatwoot Laundry VIP API"
         }
       },
@@ -237,7 +238,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-208, 384],
       "typeVersion": 2.2,
-      "id": "7f191cf0-4759-4553-9169-fc911290ae55"
+      "id": "69ea1d46-da72-4cb4-b21f-1e65df2f3dbc"
     },
     {
       "parameters": {
@@ -257,7 +258,7 @@
       "type": "n8n-nodes-base.set",
       "position": [16, 384],
       "typeVersion": 3.4,
-      "id": "7edb81f3-ac04-4f42-9105-adf1389f1526"
+      "id": "9898a51c-ff03-4122-b492-16962e5c86fe"
     },
     {
       "parameters": {
@@ -324,7 +325,7 @@
       "type": "n8n-nodes-base.switch",
       "position": [240, 368],
       "typeVersion": 3.2,
-      "id": "ad99c784-ef32-46a5-b0cd-e6255b41f346"
+      "id": "6f346974-107a-4f60-a0f4-b31a8a41d4e7"
     },
     {
       "parameters": {
@@ -344,7 +345,7 @@
       "type": "n8n-nodes-base.set",
       "position": [464, -16],
       "typeVersion": 3.4,
-      "id": "fd4c6fb1-8804-4400-b748-1bc744beffd3"
+      "id": "876a0af9-648f-4325-a080-f0be711d7918"
     },
     {
       "parameters": {
@@ -357,9 +358,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [688, -16],
       "typeVersion": 4.2,
-      "id": "9468e67c-d2f1-4f84-bb1e-803e5a88ede4",
+      "id": "91394fd7-b1ee-4a43-b197-a723db3d70fb",
       "credentials": {
         "httpHeaderAuth": {
+          "id": "3W2BykSid0f9dMTV",
           "name": "Chatwoot Laundry VIP API"
         }
       }
@@ -397,7 +399,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [976, -16],
       "typeVersion": 4.2,
-      "id": "64b9e68f-22f0-4565-95f8-8d25b6938f98",
+      "id": "eb87b501-024e-4ffb-b9d8-8c632323a377",
       "credentials": {
         "openAiApi": {
           "id": "GvNmUCZRx5ZvZerQ",
@@ -423,7 +425,7 @@
       "type": "n8n-nodes-base.set",
       "position": [464, 288],
       "typeVersion": 3.4,
-      "id": "621ce2ef-463f-40e2-87ca-a4a77c057543"
+      "id": "d0afefa0-0785-4105-bf8c-a26d6cfa82ae"
     },
     {
       "parameters": {
@@ -436,9 +438,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [688, 288],
       "typeVersion": 4.2,
-      "id": "fde4f3c8-4326-4359-ace8-2f3c6b834f56",
+      "id": "94ec19b0-13e9-456b-aa2e-155bb80fc3e8",
       "credentials": {
         "httpHeaderAuth": {
+          "id": "3W2BykSid0f9dMTV",
           "name": "Chatwoot Laundry VIP API"
         }
       }
@@ -460,7 +463,7 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "position": [912, 176],
       "typeVersion": 1.4,
-      "id": "1b2eb197-d6e2-4730-a664-4c6f955617d7"
+      "id": "66ff5ed9-670e-4a03-aaeb-89b43067a385"
     },
     {
       "parameters": {
@@ -476,7 +479,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "position": [976, 400],
       "typeVersion": 1.2,
-      "id": "6905013f-1455-48ad-85bc-6c76f9a796da",
+      "id": "e4b67d34-4337-425a-9576-8a350c35f16f",
       "credentials": {
         "openAiApi": {
           "id": "GvNmUCZRx5ZvZerQ",
@@ -491,9 +494,9 @@
       "name": "Espera Texto",
       "type": "n8n-nodes-base.wait",
       "position": [976, 576],
-      "webhookId": "c571273a-fc40-438d-bd74-fa7f034311a1",
+      "webhookId": "e07be8c7-f122-46d4-9f90-a78ff69c3d93",
       "typeVersion": 1.1,
-      "id": "97366cc1-c504-457a-8aa1-9c54852e2286"
+      "id": "dd2271ad-070b-45f0-b8d8-317cb469acae"
     },
     {
       "parameters": {
@@ -544,7 +547,7 @@
       "type": "n8n-nodes-base.set",
       "position": [1264, 288],
       "typeVersion": 3.4,
-      "id": "c0683b6a-e6de-4dea-ad99-56f26505009d"
+      "id": "3d99cf05-3c80-461f-9570-0822678c6304"
     },
     {
       "parameters": {
@@ -561,9 +564,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [2960, 400],
       "typeVersion": 4.2,
-      "id": "c79c0eb3-a4f2-48a4-9910-6eb5bf2301fa",
+      "id": "33f139e8-4058-4577-b72f-a34664d6dab6",
       "credentials": {
         "httpHeaderAuth": {
+          "id": "3W2BykSid0f9dMTV",
           "name": "Chatwoot Laundry VIP API"
         }
       }
@@ -597,7 +601,7 @@
       "type": "n8n-nodes-base.if",
       "position": [2960, 96],
       "typeVersion": 2.2,
-      "id": "01c6433a-f2cb-4375-80eb-e3762da1114e",
+      "id": "6e373320-5228-4a15-9162-88bdde5894a4",
       "continueOnFail": true
     },
     {
@@ -617,9 +621,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [3200, 80],
       "typeVersion": 4.2,
-      "id": "ac6e75c2-2caa-41ce-8929-e7d29ca018cc",
+      "id": "367dd80f-fad8-4495-afc1-8837bf6a257f",
       "credentials": {
         "httpHeaderAuth": {
+          "id": "3W2BykSid0f9dMTV",
           "name": "Chatwoot Laundry VIP API"
         }
       },
@@ -642,9 +647,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [3440, 80],
       "typeVersion": 4.2,
-      "id": "95129b16-9a3f-4a11-bf17-fc3ebc33b545",
+      "id": "0ebd6270-a429-492c-aac2-c203fd263b14",
       "credentials": {
         "httpHeaderAuth": {
+          "id": "3W2BykSid0f9dMTV",
           "name": "Chatwoot Laundry VIP API"
         }
       },
@@ -658,15 +664,15 @@
       "type": "n8n-nodes-base.wait",
       "position": [-656, 384],
       "typeVersion": 1.1,
-      "webhookId": "47c12f40-1f66-4148-bbbf-fcfd0ec964e0",
-      "id": "1d720ee9-264e-460c-bf5e-691e6a5ede3b"
+      "webhookId": "c2268bee-e124-40cc-857b-b1620adf0e29",
+      "id": "0a5e7296-da31-4498-9fc5-de5b272c1047"
     },
     {
       "parameters": {},
       "type": "@n8n/n8n-nodes-langchain.toolCalculator",
       "typeVersion": 1,
       "position": [2580, 752],
-      "id": "b6387d6d-9536-4041-b36f-068bd81cda21",
+      "id": "5392f813-e138-4fc5-bddc-280a74aa2445",
       "name": "Calculator"
     },
     {
@@ -681,7 +687,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [2256, 288],
-      "id": "b3bfbe04-187e-4043-8e68-ef873569d0b2",
+      "id": "93ea8377-e18a-4c0c-970d-2c53be11b4d3",
       "name": "Agente Laundry VIP"
     },
     {
@@ -704,7 +710,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [1984, 448],
-      "id": "3efdc79e-cebb-4034-a831-9d63d7f290b8",
+      "id": "e570be3c-fe42-4975-a1df-c02304fa8125",
       "name": "OpenAI Laundry",
       "credentials": {
         "openAiApi": {
@@ -723,10 +729,11 @@
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.3,
       "position": [2128, 448],
-      "id": "63f4e76d-46af-48cc-8e9c-80309b588823",
+      "id": "e147ec99-6b83-465e-882c-896f91b8aac3",
       "name": "Memory Laundry",
       "credentials": {
         "postgres": {
+          "id": "uS6oHAzjK8OQg6K3",
           "name": "Postgres Laundry VIP"
         }
       }
@@ -751,10 +758,11 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [1472, 288],
-      "id": "a1bcf84c-32c2-4741-84e7-baae2bf1eb6c",
+      "id": "b15b3e68-17c3-4544-a1ad-6db8b448f734",
       "name": "Typing Indicator",
       "credentials": {
         "httpHeaderAuth": {
+          "id": "baJJfX3zWMindSEN",
           "name": "Meta WhatsApp Laundry VIP"
         }
       },
@@ -769,10 +777,11 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [-1088, 384],
-      "id": "5af86369-766c-4044-afa2-333e524b7508",
+      "id": "4c8c99d8-d2df-4d67-abda-fd8a23678c73",
       "name": "Buscar Referral",
       "credentials": {
         "postgres": {
+          "id": "uS6oHAzjK8OQg6K3",
           "name": "Postgres Laundry VIP"
         }
       },
@@ -785,7 +794,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-880, 384],
-      "id": "1a03d66c-0bb1-47c2-9829-f72b6a35ff2a",
+      "id": "473ba6d2-a2ad-4e6b-8acb-5b37e1c08120",
       "name": "Agregar Referral"
     },
     {
@@ -795,7 +804,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [2700, 288],
-      "id": "b55613ee-37bb-477e-b5c0-b50415163f1f",
+      "id": "bb845dff-63a1-4e7f-8da4-3d23027b0d6a",
       "name": "Extraer JSON"
     },
     {
@@ -821,9 +830,10 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [1500, 752],
-      "id": "5b89c724-4fc2-434c-88b9-7f2ec8cb0c14",
+      "id": "fd13843d-588a-432f-ad2c-d518d16bf1d0",
       "credentials": {
         "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
           "name": "CRM Laundry VIP Webhook"
         }
       }
@@ -851,9 +861,10 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [1680, 752],
-      "id": "e584bafe-06c9-4248-819a-6e2c0e1bdb7f",
+      "id": "179515b0-26dc-41ef-b918-acf8c7356a7e",
       "credentials": {
         "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
           "name": "CRM Laundry VIP Webhook"
         }
       }
@@ -881,9 +892,10 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [1860, 752],
-      "id": "0c398346-6a49-40cb-bfcd-2dc79503ba9b",
+      "id": "21790c04-2ffa-41d9-992e-99e219846fba",
       "credentials": {
         "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
           "name": "CRM Laundry VIP Webhook"
         }
       }
@@ -911,9 +923,10 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2040, 752],
-      "id": "cf98d7c2-676d-42e4-88af-dd698888fddc",
+      "id": "abd08ace-3bc8-4032-969b-2156b7b1a2f1",
       "credentials": {
         "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
           "name": "CRM Laundry VIP Webhook"
         }
       }
@@ -941,9 +954,10 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2220, 752],
-      "id": "8c6bbf4c-bd58-42fb-a846-00aeb71c16dd",
+      "id": "bc8fd365-fd36-4e3d-a87e-784e5b3607bd",
       "credentials": {
         "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
           "name": "CRM Laundry VIP Webhook"
         }
       }
@@ -971,9 +985,10 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2400, 752],
-      "id": "c84da104-d1fb-4137-a799-212cf0ae69af",
+      "id": "5025b64a-4b24-4e83-8f85-0d8e24993216",
       "credentials": {
         "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
           "name": "CRM Laundry VIP Webhook"
         }
       }
