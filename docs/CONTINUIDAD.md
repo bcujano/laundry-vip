@@ -1,371 +1,215 @@
 # Estado y continuidad
 
-Última actualización: **2026-09-16**. Este documento es el traspaso entre
-sesiones. Si acabas de entrar, léelo entero antes de escribir código.
+Última actualización: **2026-09-17**. Traspaso entre sesiones: léelo entero
+antes de tocar nada. La historia del plan original del agente está en
+[`historia-agente.md`](historia-agente.md).
+
+---
+
+## 0. Arranque rápido
+
+**Prompt para abrir la siguiente sesión** (el dueño lo pega tal cual):
+
+> Continúo Lavandería VIP en `C:\dev\laundry-vip`. Lee `CLAUDE.md` y
+> `docs/CONTINUIDAD.md` completos antes de nada. Estamos en producción: CRM en
+> https://laundry-vip.vercel.app y agente de WhatsApp en n8n (workflow
+> `Bleb55WBKPfBdxVg`) con el número definitivo +593 98 566 2822. Revisa la
+> sección «Lo pendiente» y dime en 5 líneas qué recomiendas hacer primero.
+> No toques nada de 321.
+
+**Verificación en 1 minuto** de que todo sigue vivo:
+
+```bash
+curl -s https://laundry-vip.vercel.app/api/health
+```
+```bash
+pnpm typecheck && pnpm lint && pnpm test
+```
+
+Y en n8n (MCP): `search_workflow_executions` sobre `Bleb55WBKPfBdxVg`. Si el MCP
+dice «Workflow is not available in MCP», el dueño tiene que activarlo en la
+tarjeta del workflow (se apaga cada vez que se reimporta).
 
 ---
 
 ## 1. Dónde estamos
 
-El CRM **está construido, probado y en producción**. Las 14 fases del plan
-original están cerradas, más un rediseño completo pedido después.
+Todo en producción y usado a diario en pruebas reales.
 
 | | |
 |---|---|
-| Producción | **https://laundry-vip.vercel.app** (proyecto Vercel `laundry-vip`) |
-| Base de datos | Supabase `cvdlslltevwxprdktmfu`, región São Paulo |
-| Repo | local en `C:\dev\laundry-vip`, **sin remoto todavía** |
-| Pruebas | **207 en verde** · typecheck, lint y build limpios |
-| Commits | 19, uno por fase más el rediseño |
+| CRM | **https://laundry-vip.vercel.app** · Vercel `bcujanos-projects/laundry-vip` · deploy con `npx vercel --prod --yes` desde `C:\dev\laundry-vip` (el CLI ya tiene sesión) |
+| Base | Supabase `cvdlslltevwxprdktmfu` (São Paulo). **Es la única base: pruebas y producción comparten** |
+| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» (57 nodos, activo) |
+| Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · entrada nueva del número definitivo |
+| WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
+| Repo | local, **sin remoto** · 37 commits · etiqueta **`v1.0`** = estado con el número de prueba |
+| Gate | **215 pruebas en verde** · typecheck, lint y build limpios (se retiraron 30 del workflow obsoleto de la fase 12) |
 
-### Entrar al CRM
+**Entrar al CRM:** `brncjn@gmail.com` (superadmin). La contraseña provisional
+la puso una sesión anterior; el dueño debe cambiarla.
 
-```
-correo:     brncjn@gmail.com
-contraseña: tQTQRBcfVdzFnwUc     ← provisional, la puse yo; hay que cambiarla
-```
-
-Roles: `superadmin` (brncjn@gmail.com) · `admin` (brncjn+admin@gmail.com, alias
-de prueba) · `operador` (dcwacks.89@gmail.com).
-
----
-
-## 2. Qué hay construido
-
-**CRM** — Dashboard con KPIs y panel de «requiere atención», Cola de hoy,
-Pipeline arrastrable, Pedidos con detalle (verificación de conteo, cobros,
-correcciones), Clientes con ficha e historial, Servicios (54 filas), Reportes,
-Configuración y Usuarios. Barra lateral oscura a la izquierda, responsive.
-
-**Backend del agente** — `POST /api/webhook`, un solo endpoint, secreto por
-cabecera comparado con `timingSafeEqual` antes de leer el cuerpo. **15 acciones
-implementadas.** Motor de precios (`src/server/pricing/cotizar.ts`) como fuente
-única de verdad.
-
-**Base** — 14 tablas con RLS negando por defecto, 6 migraciones, catálogo de 54
-filas sembrado de forma idempotente.
-
-### Reglas de negocio que ya están codificadas y probadas
-
-- Todo monto del agente es **estimado pendiente de verificación**. El operador
-  cuenta las prendas en planta antes de lavar.
-- **Discrepancia = bloqueo + notificación.** Un conteo que no cuadra congela el
-  pedido; solo se puede cancelar hasta resolverla. El monto viejo nunca se
-  vuelve a cobrar.
-- Ítems con varios métodos (camisa/blusa, camiseta) **piden el método**, sin dar
-  precio. Los dos peluches viajan como **rango**, sin elegir un extremo.
-- Si varias prendas del catálogo encajan («un edredón»), **pregunta cuál**.
-- Nunca se despacha un tramo «app» sin su pago confirmado. Excepción única:
-  clientes `consolidado_mensual` nunca nacen esperando pago.
-- El agente **nunca rechaza por horario**: ofrece la siguiente ventana válida.
-- Las fundas son solo para elegir vehículo (1 → moto, más → auto). Nunca se
-  mezclan con la lista de prendas.
-
-### Horario sembrado
-
-Lunes a sábado · recolección 08:00–12:00 · margen 30 min · última orden del
-mismo día 11:30 · apertura 08:00, cierre 17:00.
-
-> ⚠️ **Sin resolver:** Google Maps dice que el local abre a las **8:30**, no a
-> las 8:00. Hay que preguntarle al dueño cuál es el bueno y corregir
-> `configuracion` si hace falta.
+**Respaldo v1.0:** `git checkout v1.0` · copia del workflow y prompts en
+`n8n/versiones/v1.0/` · zip en `Downloads\laundry-vip-v1.0.zip` · y el historial
+de versiones de n8n.
 
 ---
 
-## 3. La tarea en curso: el agente en n8n
-
-> **Actualización 2026-09-16 (tarde):** el JSON ya está generado en
-> `n8n/workflows/laundry-vip-agente.json` (36 nodos) con su constitución en
-> `n8n/prompt-agente-laundry.md` y pruebas en
-> `tests/unit/workflow-laundry-agente.test.ts`. El dueño simplificó el triaje:
-> **se borró todo lo posterior al agente** salvo la respuesta a Chatwoot y el
-> escalamiento a humano (sin eso el bot queda mudo). Sin ubicación por pin, sin
-> follow-up, sin nodos de 321. El dueño lo importa a mano: **no se crea nada en
-> n8n desde aquí**. Token de Meta: lo resolvió él (token definitivo). Pendiente:
-> importar, crear credenciales, apuntar el webhook de la cuenta 3 y probar.
-> El `lavanderia-vip-agente.json` de la fase 12 queda obsoleto.
-
-Lo que sigue abajo es el plan original, del que sale lo anterior.
-
-### La decisión que manda sobre todas
-
-**No se clona desde cero: se parte del workflow que ya funciona.**
-
-El dueño entregó `iAgente 321 INMO V2.json` (80 nodos, en su Downloads; también
-está en su n8n con id `kdtUTHuszghCNPQ1`). Su instrucción textual:
-
-> *"el workflow del agente no debe ser generado desde cero, tomamos la
-> referencia agente 321 y solo ajustamos a lavandería vip, no quiero cambiar
-> estructura ni funcionalidad. Se mantiene todo lo que sea útil para laundry,
-> lo que se elimina es lo específico de 321."*
-
-### Regla imperativa
-
-> *"una vez que ejecutemos no tocamos nada de 321, no modificamos nada, hacemos
-> un espacio para laundry vip y que funcione sin pasar ni tocar nada de 321 eso
-> es imperativo."*
-
-**Por qué importa y no es obvio:** en Chatwoot los webhooks se configuran **por
-cuenta, no por inbox**, y el filtro del workflow de 321 es solo
-`event == message_created AND message_type == incoming` — **no filtra por
-inbox**. Si Lavandería VIP viviera en la cuenta 1, cada mensaje de la lavandería
-dispararía también al agente inmobiliario. Por eso se creó la **cuenta 3**.
-Arreglarlo con un filtro en el workflow de 321 significaría modificarlo, que es
-justo lo prohibido.
-
-### Arquitectura (la del 321, que ya funciona)
+## 2. Cómo funciona el agente
 
 ```
-Meta app 321  → Chatwoot cuenta 1 → webhook → workflow 321       (NO TOCAR)
-Meta app LVIP → Chatwoot cuenta 3 → webhook → workflow LVIP      (lo nuevo)
+WhatsApp → Meta (app Laundry VIP) → Chatwoot cuenta 3 → webhook → n8n
+  Filtro Chatwoot → Filtro Humano (etiqueta «humano» apaga el bot)
+  → WhatsApp Inicio → Debounce 30 s → ¿es el último mensaje? → combina textos
+  → texto | audio (gpt-transcribe) | imagen (visión → hechos estructurados)
+  → Verificar Operador (CRM) → ¿Es Operador?
+       sí → Agente Operador (prompt de planta + nivel)
+       no → Agente Laundry VIP (clientes)
+  → Extraer JSON (parser + GUARDIA) → respuesta por Chatwoot
+                                   → ¿escalar? → etiqueta humano + nota
+                                   → Registrar cliente y conversación en el CRM
+Resumen 8:00 (APAGADO) → datos del CRM → un mensaje por admin → plantilla Meta
 ```
 
-El referral de Meta Ads no llega por Chatwoot: lo guarda un workflow aparte en
-Postgres (`meta_referrals`) y el agente lo consulta por teléfono. Son dos apps
-de Meta suscritas a la misma WABA.
+- **Clientes:** 6 tools HTTP contra `POST /api/webhook` (`cotizar_prendas`,
+  `obtener_proxima_ventana`, `calcular_vehiculo`, `find_or_create_client`,
+  `crear_pedido`, `consultar_estado_pedido`). Precios, tarifa del combo y
+  horario **se leen del CRM en cada consulta**: nada de eso está en el prompt.
+- **Cada turno registra en el CRM** (patrón del CRM WEB de 321): cliente y
+  conversación, aunque no compre. El nombre del perfil de WhatsApp no se usa
+  como nombre del cliente. Los operadores no cuentan como leads.
+- **Números autorizados, dos niveles** (tabla `operador_whitelist.nivel`):
+  - `operador`: registrar y corregir órdenes presenciales (texto, voz o foto),
+    buscar pedidos, registrar el conteo en planta y avanzar estados.
+  - `admin`: además `generar_reporte` y `consulta_admin` (resumen, atención,
+    cola de mañana, leads calientes, clientes top) y el resumen de las 8:00.
+  - Los permisos los decide el servidor (`src/server/webhook/handlers/permisos.ts`).
+- **Nada de dinero por WhatsApp** (decisión del dueño): confirmar pagos,
+  corregir montos, cerrar discrepancias, cancelar y borrar se hacen **solo en
+  el CRM**. Esas acciones ya no existen en el webhook.
+- **Guardia anti-alucinación** en `Extraer JSON`: si el agente confirma una
+  escritura sin que la tool haya respondido ok, o escribe un UUID que no salió
+  de una tool, el mensaje se reemplaza. Nació de una orden inventada con ID falso.
 
-### Datos ya confirmados
-
-| Dato | Valor |
-|---|---|
-| Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** |
-| Inbox | «Laundry VIP», canal WhatsApp Cloud |
-| Número de prueba | `+1 555 156 4767` |
-| Phone number ID | `502312282974917` |
-| WABA ID | `499018113304409` |
-| URL de webhook | `https://chatwoot-production-8564.up.railway.app/webhooks/whatsapp/+15551564767` |
-| CRM | `https://laundry-vip.vercel.app/api/webhook` |
-| Local | Laundry Vip · De los Pinos y Pedro Barrios, La Kennedy · `VG69+M8J, 170138 Quito` |
-| Coordenadas | `-0.1382973, -78.4820373` |
-| Fijo del local | (02) 281-0815 |
-
-Los secretos (tokens de Chatwoot, Meta y el verify token) están en `.env.local`,
-que está fuera de git. **Nunca los escribas en el repo ni en el JSON del
-workflow**: van como variables de entorno de la instancia de n8n.
-
-### Triaje acordado: 80 nodos → ~47
-
-**Se queda intacto** (la fontanería probada del 321):
-`Chatwoot Webhook` · `Filtro Chatwoot` · `Filtro Humano` · `WhatsApp Inicio` ·
-`Agregar Referral` · `Debounce` · `Obtener Ultimos Mensajes` ·
-`Es Ultimo Mensaje?` · `Combinar Textos` · `Tipo de Mensaje` · `Espera Texto` ·
-`Preparar Mensaje Final` · `Calculator` · `Necesita Humano?` ·
-los 4 nodos de **recepción de imágenes** · los 3 de **Enviar Ubicación**.
-
-> El debounce del 321 es mejor de lo que parece: espera, **vuelve a leer** los
-> mensajes de Chatwoot y aborta si el suyo ya no es el último entrante. Además
-> junta los mensajes sueltos desde la última respuesta. No lo simplifiques.
-
-> `Extraer Imagen - OLD` es un parser robusto del JSON del modelo (aguanta
-> comillas curvas, BOM, fences de markdown, JSONs pegados). **Se conserva tal
-> cual**, solo se renombra a `Extraer JSON`.
-
-**Se adapta** (mismo nodo, otro dato):
-
-| Nodo | Cambio |
-|---|---|
-| `Chatwoot Webhook` | ruta → `laundry-vip` |
-| 5 nodos de Chatwoot | `accounts/1/` → `accounts/3/` |
-| `Typing Indicator`, audio, imagen, ubicación | phone ID `937260122807094` → `502312282974917` |
-| `Memory Arqui` | credencial → Supabase · tabla → `n8n_laundry_chat_histories` |
-| `Buscar Referral` | credencial → Supabase · **quitar el `pg_sleep(5)`** (hoy no hay referral y añadiría 5 s a cada mensaje) |
-| `Agente Arqui 321` | renombrar + constitución de la lavandería |
-| `Cita Agendada?` | → `¿Pedido creado?`, para avisar al operador |
-| `Notificar WhatsApp` / `Email` | destinatario → operador |
-| `Enviar Ubicación WhatsApp` | coordenadas del local |
-
-**Se borra** (solo lo específico de 321):
-- 13 nodos de envío de fotos y videos de propiedades
-- 11 tools de Google Sheets + 3 de Google Calendar (no hay videollamadas)
-- 3 nodos del cotizador PDF de 321
-- 3 de logs a las hojas de 321
-- 4 del CRM en Sheets
-
-**Se deja deshabilitado**: los 6 nodos de follow-up. Listos para cuando se
-quieran, sin disparar nada hoy.
-
-### Las 6 tools nuevas
-
-Reemplazan a las 11 de Sheets. Todas HTTP contra
-`https://laundry-vip.vercel.app/api/webhook`, con el secreto por cabecera:
-
-`cotizar_prendas` · `obtener_proxima_ventana` · `calcular_vehiculo` ·
-`find_or_create_client` · `crear_pedido` · `consultar_estado_pedido`
-
-Van como HTTP Request Tool colgando del AI Agent, en la misma posición donde
-estaban las de Sheets. El motor de precios aplica las reglas **antes** de
-responder, así que el modelo no tiene un precio que malinterpretar.
-
-### Imágenes: la visión extrae hechos, el agente interpreta
-
-El dueño quiere que el agente entienda imágenes desde el primer día: manchas,
-cantidad de ropa, comprobantes de transferencia, lo que sea, **según el
-contexto de la conversación**.
-
-Problema del 321: `Explicar Imagen` describe la foto **a ciegas**, sin ver la
-conversación. Solución acordada, sin cambiar la estructura: ese nodo deja de
-escribir prosa y devuelve hechos estructurados —
-
-```
-tipo_de_imagen:    prendas | mancha | comprobante | documento | otro
-prendas_visibles:  [...]
-cantidad_estimada: n
-manchas:           [{prenda, zona, aspecto}]
-texto_legible:     monto, fecha, banco, referencia
-```
-
-— y el agente, que sí tiene la memoria completa, decide qué significan.
-
-**Tres reglas duras, aprobadas:**
-
-1. **Un comprobante NUNCA confirma un pago.** Se acusa recibo y queda
-   *pendiente de verificación por el operador*. Con una imagen se engaña a
-   cualquier modelo.
-2. **No se cotiza contando prendas en una foto.** Puede decir «veo unas 7
-   prendas, ¿me confirma la lista?», pero el precio sale de `cotizar_prendas`
-   sobre lo que el cliente declare.
-3. **Una mancha no se promete.** Puede decir qué tratamiento aplica; nunca
-   «sí sale».
-
-### Credenciales de n8n a crear
-
-Tres **nuevas**, nunca reusar las de 321:
-
-- `Chatwoot Laundry VIP API` (httpHeaderAuth, token de la cuenta 3)
-- `Meta WhatsApp Laundry VIP` (httpHeaderAuth, `Bearer <token de Meta>`)
-- `Postgres Laundry VIP` → Supabase, **session pooler** (puerto 5432, IPv4)
-
-La credencial de OpenAI **sí se reusa** por decisión del dueño (el gasto se
-mezcla con el de 321; está anotado como temporal).
-
-El workflow va en una carpeta «Laundry VIP» dentro de su n8n.
-
-### Lo que falta para poder ejecutar
-
-1. **El token de acceso de Meta** — el mismo que pegó en Chatwoot. n8n lo
-   necesita por su cuenta para descargar audios e imágenes por la Graph API y
-   para el indicador de «escribiendo». **Es el único bloqueo real.**
-2. Confirmar que un mensaje de prueba al `+1 555 156 4767` **llega a
-   Conversaciones** de la cuenta 3 (hay que terminar de configurar el webhook
-   en Meta con el verify token).
-3. Resolver el horario: 8:00 u 8:30.
-
-### Prueba de aceptación
-
-- *«5 camisetas»* → **pide el método**, sin dar precio
-- *«en agua»* → **$6,75**
-- foto de una prenda → la lee y la interpreta en contexto
-- nota de voz → la transcribe con `gpt-transcribe`
-- pedirle que borre algo → **se niega** y dice que eso se hace en el CRM
-
-### Fuera de alcance de hoy
-
-Modo operador por voz · follow-up automático · referral de Meta Ads (imposible
-con número de prueba).
+Prompts: `n8n/prompt-agente-laundry.md` y `n8n/prompt-operador-laundry.md`
+(una prueba exige que sean idénticos a los del JSON).
 
 ---
 
-## 4. Decisiones que se apartan del documento original
+## 3. Cómo cambiar el agente
 
-Todas conversadas y aprobadas por el dueño. No las revierta nadie sin
-preguntarle.
+1. **Edita el prompt `.md` o el generador** en `n8n/generador/` y regenera:
+   ```bash
+   node n8n/generador/generar.cjs
+   ```
+   Necesita `iAgente 321 INMO V2.json` en Descargas (o su ruta como argumento).
+   **Ese archivo no se versiona:** trae un secreto literal de 321.
+2. `pnpm biome check --write n8n` y el gate completo.
+3. **Aplica en n8n por MCP** (`update_workflow` sobre `Bleb55WBKPfBdxVg`,
+   operaciones puntuales) y `publish_workflow`. El dueño autorizó el MCP para
+   **este** workflow. Nunca reimportes el JSON entero: cambia el id, apaga el
+   MCP y choca la ruta del webhook con el activo.
+4. Verifica con una ejecución real (`get_workflow_execution` con `includeData`).
+
+El JSON del repo (`n8n/workflows/laundry-vip-agente.json`) es el espejo del
+workflow vivo; si editas en n8n a mano, regenera para que no se desalineen.
+
+---
+
+## 4. Decisiones del dueño (no revertir sin preguntarle)
 
 | Decisión | Por qué |
 |---|---|
-| **Tres roles** (`superadmin`/`admin`/`operador`) en vez de dos | Lo pidió explícitamente. La sección 11 del documento decía dos |
-| **Contraseña en vez de enlace mágico** | El enlace mágico entraba en bucle correo → login → correo |
-| **AI Agent de LangChain en vez de «Tool First»** | Es lo que él ya opera. El catálogo es pequeño y cerrado, los precios salen obligatoriamente de la tool y hay un humano contando antes de cobrar |
-| **`@supabase/ssr` añadido al stack** | `supabase-js` a secas no maneja la sesión por cookies en el App Router |
-| **`lucide-react` añadido** | Iconos de la barra lateral, como el 321 |
-| **No se usó el CLI de shadcn** | Habría sobrescrito `globals.css` y borrado los colores de la marca |
-| **`OPENAI_API_KEY` fuera del entorno del CRM** | El CRM no llama a OpenAI: lo hace n8n. Se valida con `pnpm check:integraciones` |
-| **Session pooler en vez de conexión directa** | La directa solo resuelve a IPv6 y no funciona desde redes sin IPv6 |
-| **El catálogo se ve con cualquier rol** | El operador necesita consultar precios para trabajar. Ver no es editar |
-| **Desambiguación en el motor de precios** | Si «un edredón» encaja con cuatro filas, pregunta en vez de adivinar |
-| **Paquetes cerrados** | 5 cobijas en paquetes de 3 se cobran como 2 paquetes |
+| El agente es el workflow de 321 **clonado y recortado**, no uno nuevo | Instrucción textual del dueño; ver `historia-agente.md` |
+| Tres roles en el CRM (`superadmin`/`admin`/`operador`) | Lo pidió; la spec decía dos |
+| Contraseña en vez de enlace mágico | El enlace entraba en bucle |
+| AI Agent de LangChain, no «Tool First» | Es lo que el dueño ya opera |
+| Registro en el CRM en cada turno | Como el CRM de 321: todo lead queda, compre o no |
+| Dos niveles de WhatsApp autorizado y **nada de dinero por WhatsApp** | Decisión explícita del 2026-09-17 |
+| Resumen diario automático para admins | Aprobado; espera plantilla de Meta |
+| Descargas de clientes/pedidos solo para superadmin y admin | Datos personales (LOPDP) |
+| Tarifa del combo y horario salen de Configuración | El dueño cambió el combo a $2,50 y el prompt tenía $5 escrito |
+| OpenAI compartido con 321 | Temporal, acordado |
+| Session pooler de Supabase | La conexión directa es solo IPv6 |
 
 ---
 
-## 5. Fallos ya encontrados y corregidos
+## 5. Fallos ya encontrados (no reintroducir)
 
-Para que nadie los reintroduzca:
-
-- **El login estaba roto aunque las pruebas pasaban.** Supabase devuelve el
-  token en el *fragmento* de la URL, que nunca llega al servidor.
-- **El proxy confundía una cookie caducada con una sesión válida** → bucle
-  infinito login ↔ panel. Ahora borra las cookies rotas antes de redirigir.
-- **Un pedido congelado por discrepancia no se podía cancelar.** La salida de
-  emergencia estaba tapiada.
-- **«edredón 3 plazas» no se cotizaba**: se filtraban los dígitos, pero en este
-  catálogo el número *es* el nombre. Ahora solo se descarta si va al principio.
-- **El cajón de móvil no abría**: las utilidades `translate-x` de Tailwind no
-  llegaron a generarse. Va por una variable CSS propia.
-- **Biome apagó el linter** al migrar la config (`recommended` → `preset: none`).
-- **La suite era intermitente**: el identificador de corrida era
-  `String(Date.now()).slice(-6)`, que **se repite cada ~16,7 minutos**. Con
-  filas sobrantes de una corrida anterior chocaba contra
-  `clientes_telefono_key` y fallaban 9 pruebas que no tenían nada malo. Ahora
-  el id sale de `tests/util/corrida.ts` con `randomInt`. Si vuelves a ver
-  fallos de clave duplicada, **no toques la lógica**: borra las filas de prueba
-  (`telefono like '+5939%'`) y vuelve a correr.
-- **La suite borraba la conversación real del dueño.** `operador.test.ts`
-  usaba `+593963987124` (número real en la lista blanca) y en `afterAll`
-  borraba su fila de `conversaciones`. Ahora cada corrida crea su propio
-  operador de prueba. Regla: **ninguna prueba escribe ni borra con un número
-  real**; la base de pruebas es la de producción.
-- **Dos veces un servidor zombi** en el puerto 3000 sirvió un build viejo y las
-  mediciones salieron falsas. Por eso `/api/health` reporta la fase compilada:
-  si no coincide, estás midiendo contra otra cosa.
+- **El agente inventó una orden** («✅ Orden registrada», ID y monto falsos) sin
+  llamar a la tool. Por eso existe la guardia de `Extraer JSON` y la regla de
+  oro en el prompt de planta.
+- **Ofreció métodos (agua/seco/planchado) para ternos sin consultar el
+  catálogo.** Regla en el prompt: nunca métodos ni opciones sin `cotizar_prendas`.
+- **La suite borraba datos reales.** `operador.test.ts` usaba el número del
+  dueño y le borraba la conversación. **Regla: ninguna prueba usa ni limpia un
+  número real ni un valor que el dueño edita en el CRM**; cada corrida crea sus
+  propios operadores y admins (`tests/util/corrida.ts`).
+- **Pruebas atadas a la configuración de fábrica** (08:00, combo $5) fallaron
+  cuando el dueño cambió Configuración. Ahora comparan contra la base.
+- **Carrera entre pruebas por el precio del chal** (`servicios.test` lo cambia
+  mientras `cotizar.test` lo usa). `cotizar.test` usa bufanda.
+- Login roto por el token en el fragmento de la URL · bucle login↔panel por
+  cookie caducada · pedido congelado sin poder cancelarse · «edredón 3 plazas»
+  no se cotizaba · cajón móvil sin `translate-x` · Biome apagado al migrar ·
+  corrida repetida cada 16,7 min · servidor zombi en el 3000 (`/api/health`
+  reporta la fase compilada).
+- **Reemplazos con `node -e` y `String.replace`** dañaron JSX (se comieron
+  llaves). Para ediciones de TSX usa la herramienta Edit, no reemplazos masivos.
 
 ---
 
 ## 6. Lo temporal (hay que desmontarlo)
 
-1. **Número de prueba de Meta** — máximo 5 destinatarios registrados a mano, sin
-   anuncios Click-to-WhatsApp.
-2. **Token de Meta de 24 horas** — para producción hace falta uno permanente de
-   System User.
-3. **n8n y Chatwoot compartidos con 321** — acordado por tiempo. Se separa
-   después.
-4. **Credencial de OpenAI compartida con 321** — el gasto se mezcla.
-5. **Sin referral de Meta Ads** mientras sea número de prueba.
-6. **Un solo proyecto Supabase** para desarrollo y pruebas; las pruebas escriben
-   y borran filas ahí.
-7. **La contraseña del superadmin la generé yo** (`tQTQRBcfVdzFnwUc`).
-8. **`brncjn+admin@gmail.com`** es un alias de Gmail para probar el rol admin.
-9. **El token de Vercel quedó escrito en el chat** — hay que rotarlo.
+1. **Datos de ejemplo en la base real:** 24 clientes y 41 pedidos con teléfonos
+   `+5932200…`. Se quitan con `pnpm db:demo --borrar` antes de operar en serio.
+2. **n8n y Chatwoot compartidos con 321**, y la credencial de OpenAI también.
+3. **Una sola base** para pruebas y producción.
+4. **Contraseña provisional del superadmin**; alias `brncjn+admin@gmail.com`
+   para el rol admin.
+5. **Secretos que quedaron a la vista en el chat o en capturas** y conviene
+   rotar: token de Vercel · verify token y secreto del webhook de Chatwoot ·
+   **PIN de verificación en dos pasos del número (123456)**.
+6. **Workflow viejo `ksk8bnj19phzMJHU`** desactivado y la **entrada del número
+   de prueba** en Chatwoot: se pueden archivar.
+7. `n8n/referencia/iAgente-321-INMO-V2.json` (versionado desde antes) trae un
+   secreto literal de 321. No es nuestro para rotar; conviene sacarlo del repo.
 
 ## 7. Lo pendiente
 
-- Instancia propia de n8n y de Chatwoot
-- Número real de WhatsApp y token permanente
-- Modo operador por voz (las 4 acciones del webhook ya existen y están probadas)
-- Follow-up automático (los nodos quedan deshabilitados en el workflow)
-- Repositorio en GitHub `laundry-vip` y CI — el remoto ya está configurado en
-  local, **falta crear el repo vacío en github.com**
-- Segundo proyecto Supabase para producción
-- **Los E2E nunca se ejecutaron**: Playwright no pudo descargar Chromium en esa
-  máquina (timeout del CDN, tres intentos). La suite está escrita y el CI la
-  corre. No digas que están en verde.
-- Tabla `meta_referrals` en Supabase, para cuando llegue el número real
-- Pantalla para cerrar el mes de los clientes `consolidado_mensual`
+**Esperando al dueño**
+- **Plantilla `resumen_diario_admin`** en WhatsApp Manager (categoría Utilidad,
+  idioma `es`, 7 variables; texto en el commit `1d3eff7` y en el chat). Cuando
+  Meta la apruebe: encender el nodo `Resumen 8:00` (MCP `setNodeDisabled`) y
+  publicar.
+- **Su número (+593 963 987 124) ya no está en la lista blanca**; solo Daniel
+  Serrano (operador). Para probar como admin, que se agregue con ese nivel.
+- **Respuesta pendiente:** que nombre del negocio, dirección, teléfono y saludo
+  del agente salgan de Configuración (hoy el prompt dice «Lavandería VIP» y
+  Configuración dice «VIP Laundry»). Recomendado, ~20 min.
+
+**Por hacer**
+- Validar la búsqueda de Chatwoot por teléfono (`src/lib/chatwoot.ts`,
+  `/search?q=`) con la sesión del dueño.
+- Repositorio en GitHub y CI (el remoto está configurado, falta crear el repo).
+- Los E2E de Playwright **nunca se ejecutaron** (Chromium no descargó). No
+  decir que están en verde.
+- Segundo proyecto Supabase para producción; instancias propias de n8n/Chatwoot.
+- `meta_referrals` para el referral de anuncios (ahora que hay número real).
+- Aviso automático al cliente cuando hay discrepancia (hoy es manual).
+- Pantalla para cerrar el mes de clientes `consolidado_mensual`.
 
 ---
 
-## 8. Después de v1.0 (2026-09-17)
+## 8. Mapa del código que más se toca
 
-- **Número definitivo:** +593 98 566 2822 · phone ID `1220603671147410` ·
-  WABA `1755486442349144` (otra WABA que la del número de prueba). Entrada
-  nueva en Chatwoot cuenta 3. v1.0 con el número de prueba = etiqueta `v1.0`.
-- **Niveles de WhatsApp autorizado** (migración 0007): `operador` registra
-  órdenes, cuenta en planta y avanza estados; `admin` además pide reportes y
-  `consulta_admin`. Los permisos se validan en `handlers/permisos.ts`.
-- **Nada de dinero por WhatsApp** (decisión del dueño): confirmar pagos,
-  corregir montos y cerrar discrepancias solo en el CRM. Esas acciones ya no
-  existen en el webhook.
-- **Resumen de las 8:00** para admins: nodos `Resumen 8:00 → … → Enviar
-  Resumen WhatsApp` en el workflow, con el disparador **apagado** hasta que
-  Meta apruebe la plantilla `resumen_diario_admin` (7 variables, idioma `es`).
-- **Guardia anti-alucinación** en `Extraer JSON`: una confirmación de
-  escritura sin tool ok:true o con un UUID inventado se reemplaza.
-- n8n se actualiza por MCP sobre `Bleb55WBKPfBdxVg` con autorización del dueño.
+| Qué | Dónde |
+|---|---|
+| Acciones del agente (webhook) | `src/server/webhook/schemas.ts` y `handlers/` (`cliente`, `pedidos`, `operador`, `planta`, `admin`, `reportes`, `permisos`) |
+| Motor de precios | `src/server/pricing/cotizar.ts` (fuente única de verdad) |
+| Dashboard y leads | `src/server/dashboard/repo.ts`, `leads.ts` · `src/app/(dashboard)/page.tsx` |
+| Descargas CSV | `src/server/exportar/` · rutas `/clientes/exportar`, `/pedidos/exportar` |
+| Lista blanca y niveles | `src/components/configuracion/lista-blanca.tsx` · migración `0007` |
+| Enlaces a Chatwoot | `src/lib/chatwoot.ts` |
+| Workflow n8n | `n8n/generador/*.cjs` → `n8n/workflows/laundry-vip-agente.json` |
+| Datos de ejemplo | `scripts/demo-*.ts` (`pnpm db:demo`) |

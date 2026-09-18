@@ -1,97 +1,61 @@
 # El agente de WhatsApp en n8n
 
-Un solo workflow con las dos ramas dentro:
-[`workflows/lavanderia-vip-agente.json`](workflows/lavanderia-vip-agente.json).
+Workflow vivo: **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» en
+`https://primary-production-ed243.up.railway.app`. Su espejo en el repo es
+[`workflows/laundry-vip-agente.json`](workflows/laundry-vip-agente.json).
 
-Los prompts de las dos ramas viven dentro del JSON, en el nodo
-**Cargar constituciones**. La copia legible para humanos está en
-[`constituciones.md`](constituciones.md); si cambias una, cambia la otra.
+Nace del agente de 321 («iAgente 321 INMO V2»), clonado y recortado: se conservó
+su fontanería (debounce que relee Chatwoot, audio, imagen, memoria, parser
+robusto) y se cambió lo específico del negocio. El estado completo y el flujo
+nodo por nodo están en [`../docs/CONTINUIDAD.md`](../docs/CONTINUIDAD.md).
 
-## Por dónde entra un mensaje
+## Qué hay aquí
 
-El webhook de **WhatsApp Cloud API apunta directo a n8n**, no a Chatwoot.
-
-La razón es concreta: el objeto `referral` de Meta Ads —el que dice de qué
-anuncio vino el lead— solo existe en el payload crudo de WhatsApp. Chatwoot lo
-normaliza y lo pierde. Sin ese objeto no se sabe qué anuncio trae clientes, que
-es justo el puente entre lo que se paga en Meta y lo que factura la lavandería.
-
-Chatwoot queda como **bandeja humana**: n8n le espeja cada mensaje para que una
-persona pueda tomar la conversación cuando haga falta.
-
-```
-WhatsApp Cloud API ──► n8n ──► CRM (/api/webhook) ──► Supabase
-                        │
-                        └────► Chatwoot (espejo para humanos)
-```
-
-## Recorrido del flujo
-
-1. **Verificacion de Meta (GET)** responde el `hub.challenge` al registrar la URL.
-2. **Mensaje entrante (POST)** recibe el mensaje.
-3. **Es un mensaje valido?** descarta entregas, lecturas y ruido.
-4. **Debounce 30s** espera a que la persona termine de escribir.
-5. **Extraer mensaje y referral** saca teléfono, texto, audio y el `referral`.
-6. **Cargar constituciones** inyecta los dos prompts.
-7. **Idempotencia y costo** registra el `message_id`; si ya vino, no se reprocesa.
-   Aquí también se reporta el gasto de OpenAI del turno anterior.
-8. **Es nota de voz?** → **Transcribir nota de voz** con `gpt-transcribe`.
-9. **Es operador?** consulta la lista blanca y **IF operador o cliente** bifurca.
-10. Cada rama hace **Tool First**: planificar → ejecutar en el CRM → redactar.
-11. **Extraer respuesta** con try/catch que nunca tumba el flujo.
-12. **Es un pedido nuevo?** dispara la notificación dual y prepara el despacho.
-13. **Espejar en Chatwoot** y **Responder por WhatsApp**.
-
-## Variables de entorno de la instancia
-
-Ningún secreto va escrito en el JSON. Hay una prueba que falla si alguien mete
-una llave literal. Configura estas en n8n (Settings → Variables):
-
-| Variable | Para qué |
+| Ruta | Qué es |
 |---|---|
-| `CRM_BASE_URL` | URL del CRM, sin barra final |
-| `N8N_WEBHOOK_SECRET` | El mismo valor que tiene el CRM |
-| `WHATSAPP_CLOUD_API_TOKEN` | Token permanente del System User de Meta |
-| `WHATSAPP_PHONE_NUMBER_ID` | Id del número del agente |
-| `WHATSAPP_VERIFY_TOKEN` | El que pones al registrar la URL en Meta |
-| `CHATWOOT_BASE_URL` | URL de tu Chatwoot |
-| `CHATWOOT_API_TOKEN` | Token de acceso de la API |
-| `CHATWOOT_ACCOUNT_ID` | Normalmente `1` |
-| `TELEFONO_OPERADOR_PRINCIPAL` | A quién se avisa de cada pedido nuevo |
+| `workflows/laundry-vip-agente.json` | El workflow generado (57 nodos) |
+| `prompt-agente-laundry.md` | Constitución del agente de clientes |
+| `prompt-operador-laundry.md` | Constitución del agente de planta (operador y admin) |
+| `generador/` | Scripts que producen el JSON a partir de la base de 321 |
+| `versiones/v1.0/` | Respaldo del estado con el número de prueba |
+| `referencia/` | Workflows de 321 de solo lectura. **No se modifican** |
 
-Además hace falta una credencial de n8n tipo **OpenAI** llamada
-`OpenAI Lavanderia VIP`.
+Una prueba (`tests/unit/workflow-laundry-agente.test.ts`) exige que los
+prompts del JSON sean idénticos a los `.md`, que no quede nada de 321, que no
+haya llaves literales, que se transcriba con `gpt-transcribe` y que ninguna
+tool mueva dinero.
 
-## Importar
+## Generar el JSON
 
-1. En n8n: **Workflows → Import from File** y elige el JSON.
-2. Crea la credencial de OpenAI con ese nombre exacto.
-3. Configura las variables de entorno de la tabla.
-4. Copia la URL de producción del nodo **Mensaje entrante (POST)**.
-5. Pégala en Meta → WhatsApp → Configuration → Webhook, con tu
-   `WHATSAPP_VERIFY_TOKEN`, y suscríbete al campo `messages`.
-6. Activa el workflow.
+```bash
+node n8n/generador/generar.cjs
+```
 
-## Decisiones que no son negociables
+Lee `iAgente 321 INMO V2.json` de Descargas (o la ruta que pases como
+argumento). Ese archivo **no se versiona**: trae un secreto de 321.
 
-- **Tool First, dos llamadas por turno.** Nunca se colapsan en una. El modelo
-  que redacta solo ve datos que devolvió el CRM, así que no tiene de dónde
-  inventar un precio ni una fecha.
-- **`temperature: 0`, `top_p: 0.1`, `json_object`** en las cuatro llamadas.
-- **Timeout de 30 segundos, sin reintento.** Si OpenAI falla, se responde con
-  una espera segura y se marca `requiere_escalar_humano`.
-- **El despacho es humano-confirmado.** No existe API de courier en Ecuador: el
-  flujo arma la solicitud y el operador la ejecuta en Uber o con la mensajería
-  local. Es la decisión, no un pendiente.
-- **El canal de operador nunca borra.** Eliminar exige entrar al CRM.
+| Módulo | Aporta |
+|---|---|
+| `generar.cjs` | Recorte de la base, cuenta 3, phone ID, visión, transcripción, conexiones |
+| `herramientas-cliente.cjs` | Las 6 tools del agente de clientes |
+| `operador.cjs` | Verificar Operador, ¿Es Operador?, Agente Operador y sus tools |
+| `guardia.cjs` | Guardia anti-alucinación en `Extraer JSON` |
+| `crm.cjs` | Registro de cliente y conversación en el CRM en cada turno |
+| `resumen.cjs` | Resumen de las 8:00 para admins (disparador apagado) |
 
-## Qué se prueba de esto
+## Aplicar cambios en n8n
 
-`tests/unit/workflow-n8n.test.ts` valida el JSON: que existan los nodos, que
-las cuatro llamadas a OpenAI declaren los parámetros correctos, que la
-transcripción use `gpt-transcribe`, que las constituciones digan lo que tienen
-que decir y que no haya ninguna llave literal.
+Por MCP, sobre el workflow existente: `update_workflow` con operaciones
+puntuales y luego `publish_workflow`. **No reimportes el JSON**: crea otro
+workflow con otro id, apaga el acceso MCP y choca la ruta `laundry-vip` con el
+activo.
 
-**Nunca se prueba con llamadas reales a OpenAI, Chatwoot o WhatsApp.** Ningún
-gate depende de una cuenta externa viva. Del modelo se prueban los parámetros y
-el texto de la constitución, jamás lo que genera.
+## Credenciales (en n8n, nunca en el JSON)
+
+| Nombre | Tipo | Para qué |
+|---|---|---|
+| `Chatwoot Laundry VIP API` | Header `api_access_token` | Leer y responder en la cuenta 3 |
+| `Meta WhatsApp Laundry VIP` | Header `Authorization: Bearer …` | Indicador de escribiendo y plantilla del resumen |
+| `CRM Laundry VIP Webhook` | Header `x-webhook-secret` | Todas las tools contra `/api/webhook` |
+| `Postgres Laundry VIP` | Postgres (session pooler) | Memoria de conversaciones |
+| `OpenAi account` | OpenAI | Compartida con 321, temporal |

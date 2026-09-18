@@ -5,7 +5,8 @@ barrio en La Kennedy, Quito. Capta clientes B2B (clínicas, restaurantes,
 hoteles), cotiza contra el catálogo real, agenda recolección y entrega.
 
 **Antes de tocar nada, lee [`docs/CONTINUIDAD.md`](docs/CONTINUIDAD.md).** Ahí
-está el estado exacto, las decisiones ya tomadas y la tarea en curso.
+está el estado exacto, los IDs de todo, las decisiones ya tomadas, lo pendiente
+y el prompt para abrir la siguiente sesión. Todo está en producción.
 
 ## Cómo trabaja el dueño (Byron)
 
@@ -33,6 +34,14 @@ está el estado exacto, las decisiones ya tomadas y la tarea en curso.
 6. `scripts/` no usa el alias `@/`: tsx no resuelve los paths de tsconfig.
 7. **Ningún secreto en el repo.** Hay una prueba que falla si aparece una llave
    literal en el JSON de n8n.
+8. **La base es una sola** (pruebas y producción). Ninguna prueba usa ni borra
+   un número real ni depende de un valor que el dueño edita en el CRM.
+9. **Nada de dinero por WhatsApp.** Pagos, montos, discrepancias, cancelar y
+   borrar solo en el CRM. Los permisos del agente los decide el servidor.
+10. **n8n se cambia por MCP** sobre el workflow `Bleb55WBKPfBdxVg` (autorizado
+    por el dueño), nunca reimportando. Ver `n8n/README.md`.
+11. Ediciones de TSX con la herramienta Edit, no con reemplazos masivos por
+    script: ya rompieron JSX una vez.
 
 ## Stack
 
@@ -54,6 +63,8 @@ n8n + Chatwoot + WhatsApp Cloud API · OpenAI `gpt-4.1-mini` y `gpt-transcribe`
 | `pnpm db:staff` · `pnpm db:password <correo>` | cuentas del CRM |
 | `pnpm db:demo` · `pnpm db:demo --borrar` | datos de ejemplo (teléfonos `+5932200…`) |
 | `pnpm check:integraciones` | las 9 credenciales de n8n |
+| `node n8n/generador/generar.cjs` | regenera el JSON del workflow |
+| `npx vercel --prod --yes` | deploy del CRM (el CLI ya tiene sesión) |
 
 ## Regla imperativa sobre el CRM 321
 
