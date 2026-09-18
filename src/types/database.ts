@@ -106,6 +106,7 @@ export type OperadorWhitelist = {
   nombre: string
   activo: boolean
   nivel: NivelOperador
+  ultimo_mensaje_en: string | null
   created_at: string
 }
 

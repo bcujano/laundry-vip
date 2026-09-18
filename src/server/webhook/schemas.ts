@@ -79,6 +79,8 @@ export const parametrosPorAccion = {
     nombre_negocio: z.string().optional(),
     tipo_negocio: z.enum(['clinica', 'restaurante', 'hotel', 'otro', 'particular']).optional(),
     canal_origen: z.enum(['whatsapp_agente', 'presencial', 'referral_ads']).optional(),
+    // El nombre del perfil de WhatsApp: provisional hasta que el cliente diga el suyo.
+    nombre_whatsapp: z.string().optional(),
   }),
 
   cotizar_prendas: z.object({ items: z.array(itemCotizable) }),

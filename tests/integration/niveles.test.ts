@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { consultaAdmin, resumenDiario } from '@/server/webhook/handlers/admin'
+import { verificarWhitelistOperador } from '@/server/webhook/handlers/cliente'
 import { registrarClientePresencial } from '@/server/webhook/handlers/operador'
 import {
   avanzarEstadoPlanta,
@@ -143,12 +144,33 @@ describe('administrador', () => {
     }
   })
 
-  it('el resumen de las 8:00 trae a quién mandárselo', async () => {
-    const respuesta = await resumenDiario(undefined)
-    expect(respuesta.ok).toBe(true)
-    if (!respuesta.ok) return
-    const datos = respuesta.data as { admins: { telefono: string }[]; recolecciones_hoy: number }
-    expect(datos.admins.map((a) => a.telefono)).toContain(ADMIN)
-    expect(typeof datos.recolecciones_hoy).toBe('number')
+  it('el resumen de las 8:00 sabe si cada admin está dentro de las 24 h de Meta', async () => {
+    type Datos = {
+      admins: { telefono: string; dentro_de_ventana: boolean }[]
+      recolecciones_hoy: number
+    }
+    const buscar = async () => {
+      const respuesta = await resumenDiario(undefined)
+      if (!respuesta.ok) throw new Error('sin resumen')
+      return (respuesta.data as Datos).admins.find((a) => a.telefono === ADMIN)
+    }
+
+    // Nunca le escribió al agente: solo se le puede mandar la plantilla.
+    await supabaseAdmin()
+      .from('operador_whitelist')
+      .update({ ultimo_mensaje_en: null })
+      .eq('telefono', ADMIN)
+    expect((await buscar())?.dentro_de_ventana).toBe(false)
+
+    // Cada mensaje entrante pasa por Verificar Operador, que anota la hora.
+    await verificarWhitelistOperador({ telefono: ADMIN })
+    expect((await buscar())?.dentro_de_ventana).toBe(true)
+
+    // Hace 30 horas: fuera de la ventana otra vez.
+    await supabaseAdmin()
+      .from('operador_whitelist')
+      .update({ ultimo_mensaje_en: new Date(Date.now() - 30 * 3600_000).toISOString() })
+      .eq('telefono', ADMIN)
+    expect((await buscar())?.dentro_de_ventana).toBe(false)
   })
 })

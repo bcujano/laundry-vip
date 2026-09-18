@@ -97,6 +97,16 @@ export async function verificarWhitelistOperador(
     .maybeSingle()
 
   if (error) return fallo('ERROR_INTERNO', error.message, 500)
+
+  // n8n verifica cada mensaje entrante: es el momento de anotar que este número
+  // escribió, para saber si el resumen de las 8:00 cae dentro de las 24 h de Meta.
+  if (data) {
+    await supabaseAdmin()
+      .from('operador_whitelist')
+      .update({ ultimo_mensaje_en: new Date().toISOString() })
+      .eq('telefono', parametros.telefono)
+  }
+
   return exito({
     es_operador: data !== null,
     nombre: data?.nombre ?? null,
@@ -122,11 +132,17 @@ export async function findOrCreateClient(
   if (existente) {
     let fila = existente as Cliente
 
-    // El agente registra al cliente desde el primer mensaje, sin nombre. Lo que
-    // aprende después solo rellena huecos: nunca pisa lo que editó el operador.
+    // Lo que el agente aprende solo rellena huecos: nunca pisa lo que editó el
+    // operador. La excepción es el nombre provisional del perfil de WhatsApp:
+    // si el cliente dice su nombre real, ese lo reemplaza.
     const huecos: Partial<Cliente> = {}
-    if (!fila.nombre_contacto && parametros.nombre_contacto?.trim()) {
-      huecos.nombre_contacto = parametros.nombre_contacto.trim()
+    const whatsapp = parametros.nombre_whatsapp?.trim()
+    const dicho = parametros.nombre_contacto?.trim()
+    const esProvisional = !fila.nombre_contacto || fila.nombre_contacto === whatsapp
+    if (dicho && esProvisional && dicho !== fila.nombre_contacto) {
+      huecos.nombre_contacto = dicho
+    } else if (!fila.nombre_contacto && whatsapp) {
+      huecos.nombre_contacto = whatsapp
     }
     if (!fila.nombre_negocio && parametros.nombre_negocio?.trim()) {
       huecos.nombre_negocio = parametros.nombre_negocio.trim()
@@ -162,7 +178,8 @@ export async function findOrCreateClient(
     .from('clientes')
     .insert({
       telefono: parametros.telefono,
-      nombre_contacto: parametros.nombre_contacto?.trim() || null,
+      nombre_contacto:
+        parametros.nombre_contacto?.trim() || parametros.nombre_whatsapp?.trim() || null,
       nombre_negocio: parametros.nombre_negocio?.trim() || null,
       tipo_negocio: parametros.tipo_negocio ?? 'particular',
       canal_origen: parametros.canal_origen ?? 'whatsapp_agente',

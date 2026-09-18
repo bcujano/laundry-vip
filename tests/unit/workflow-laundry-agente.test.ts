@@ -231,16 +231,22 @@ describe('niveles y resumen diario', () => {
     expect(opciones.systemMessage).toContain("$('Verificar Operador').first().json.data.nivel")
   })
 
-  it('el resumen de las 8:00 queda apagado hasta que Meta apruebe la plantilla', () => {
+  it('el resumen de las 8:00 va como texto libre dentro de las 24 h y como plantilla fuera', () => {
     const disparador = workflow.nodes.find((n) => n.name === 'Resumen 8:00') as Nodo & {
       disabled?: boolean
     }
-    expect(disparador.disabled).toBe(true)
-    expect(String(porNombre('Enviar Resumen WhatsApp')?.parameters.jsonBody)).toContain(
+    expect(disparador.disabled).toBeFalsy()
+    expect(
+      (workflow.connections['¿Dentro de 24 h?']?.main ?? []).map((s) => s.map((c) => c.node)),
+    ).toEqual([['Enviar Resumen WhatsApp'], ['Enviar Resumen Plantilla']])
+
+    const texto = String(porNombre('Enviar Resumen WhatsApp')?.parameters.jsonBody)
+    expect(texto).toContain('type: "text"')
+    expect(String(porNombre('Enviar Resumen Plantilla')?.parameters.jsonBody)).toContain(
       'resumen_diario_admin',
     )
-    expect(String(porNombre('Enviar Resumen WhatsApp')?.parameters.url)).toContain(
-      '1220603671147410',
-    )
+    for (const nombre of ['Enviar Resumen WhatsApp', 'Enviar Resumen Plantilla']) {
+      expect(String(porNombre(nombre)?.parameters.url)).toContain('1220603671147410')
+    }
   })
 })

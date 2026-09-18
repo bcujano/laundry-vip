@@ -189,6 +189,35 @@ describe('cliente y memoria', () => {
     expect((segunda.sobre.data as { creado: boolean }).creado).toBe(false)
   })
 
+  it('el nombre de WhatsApp entra provisional y el nombre real lo reemplaza', async () => {
+    const telefono = `+5939${CORRIDA}44`
+    const nuevo = await llamar({
+      accion: 'find_or_create_client',
+      parametros: { telefono, nombre_whatsapp: 'Majo 💕' },
+    })
+    expect(
+      (nuevo.sobre.data as { cliente: { nombre_contacto: string } }).cliente.nombre_contacto,
+    ).toBe('Majo 💕')
+
+    const real = await llamar({
+      accion: 'find_or_create_client',
+      parametros: { telefono, nombre_whatsapp: 'Majo 💕', nombre_contacto: 'María José Ortiz' },
+    })
+    expect(
+      (real.sobre.data as { cliente: { nombre_contacto: string } }).cliente.nombre_contacto,
+    ).toBe('María José Ortiz')
+
+    // Ya tiene nombre real: otro nombre dicho después no lo pisa.
+    const otro = await llamar({
+      accion: 'find_or_create_client',
+      parametros: { telefono, nombre_whatsapp: 'Majo 💕', nombre_contacto: 'Otra persona' },
+    })
+    expect(
+      (otro.sobre.data as { cliente: { nombre_contacto: string } }).cliente.nombre_contacto,
+    ).toBe('María José Ortiz')
+    await supabaseAdmin().from('clientes').delete().eq('telefono', telefono)
+  })
+
   it('find_or_create_client rellena huecos sin pisar lo que ya hay', async () => {
     const { sobre } = await llamar({
       accion: 'find_or_create_client',

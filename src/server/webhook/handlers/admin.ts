@@ -160,17 +160,34 @@ export async function consultaAdmin(
   }
 }
 
-/** Para el disparador de las 8:00: a quién mandarle el resumen y qué decirle. */
+/** Margen bajo las 24 h de Meta: el envío tarda y los relojes no son exactos. */
+const VENTANA_META = 23 * 60 * 60 * 1000
+
+/**
+ * Para el disparador de las 8:00: a quién mandarle el resumen, qué decirle y
+ * si puede ir como texto libre (escribió en las últimas 24 h) o necesita la
+ * plantilla aprobada.
+ */
 export async function resumenDiario(
   _parametros: ParametrosDe<'resumen_diario'>,
+  ahora = new Date(),
 ): Promise<ResultadoAccion<unknown>> {
   const [resumen, admins] = await Promise.all([
-    resumenDelDia(),
+    resumenDelDia(ahora),
     supabaseAdmin()
       .from('operador_whitelist')
-      .select('nombre, telefono')
+      .select('nombre, telefono, ultimo_mensaje_en')
       .eq('activo', true)
       .eq('nivel', 'admin'),
   ])
-  return exito({ ...resumen, admins: admins.data ?? [] })
+  return exito({
+    ...resumen,
+    admins: (admins.data ?? []).map((admin) => ({
+      nombre: admin.nombre,
+      telefono: admin.telefono,
+      dentro_de_ventana:
+        admin.ultimo_mensaje_en !== null &&
+        ahora.getTime() - new Date(admin.ultimo_mensaje_en).getTime() < VENTANA_META,
+    })),
+  })
 }

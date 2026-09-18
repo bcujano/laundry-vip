@@ -4,7 +4,7 @@ const CRM_URL = 'https://laundry-vip.vercel.app/api/webhook'
 const CRED = { httpHeaderAuth: { id: '9456EHfb8yxpZOmr', name: 'CRM Laundry VIP Webhook' } }
 
 const jsCode = `// Arma lo que se registra en el CRM de Lavandería VIP en cada turno.
-// Nunca inventa: el nombre solo entra si el cliente lo dijo (no el perfil de WhatsApp).
+// El nombre del perfil de WhatsApp entra como provisional; el que diga el cliente lo reemplaza.
 const wa = $('WhatsApp Inicio').first().json;
 const ext = $('Extraer JSON').first().json;
 const msg = $('Preparar Mensaje Final').first().json;
@@ -14,13 +14,14 @@ let esOperador = false;
 try { esOperador = $('Verificar Operador').first().json.data?.es_operador === true; } catch (e) {}
 if (esOperador) return [];
 
-const telefono = '+' + String(wa.contacts[0].wa_id || '').replace(/D/g, '');
+const telefono = '+' + String(wa.contacts[0].wa_id || '').replace(/\\D/g, '');
 const perfil = (wa.contacts[0].profile && wa.contacts[0].profile.name) || '';
 const nombre = ext.lead_nombre && ext.lead_nombre !== perfil ? String(ext.lead_nombre) : '';
 const tipo = ['clinica', 'restaurante', 'hotel'].includes(ext.metadata_tipo_lead) ? ext.metadata_tipo_lead : null;
 const convId = Number(wa._chatwoot_conversation_id) || null;
 
 const clienteParams = { telefono, canal_origen: 'whatsapp_agente' };
+if (perfil) clienteParams.nombre_whatsapp = perfil;
 if (nombre) clienteParams.nombre_contacto = nombre;
 if (tipo) clienteParams.tipo_negocio = tipo;
 
