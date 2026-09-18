@@ -4,7 +4,12 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { exigirPermiso } from '@/lib/auth'
 import { normalizarTelefono } from '@/lib/telefono'
-import { actualizar, agregarOperador, cambiarActivoOperador } from '@/server/configuracion/repo'
+import {
+  actualizar,
+  agregarOperador,
+  cambiarActivoOperador,
+  eliminarOperador,
+} from '@/server/configuracion/repo'
 
 export type EstadoConfig = { error?: string; ok?: boolean }
 
@@ -90,6 +95,17 @@ export async function alternarOperador(id: string, activo: boolean): Promise<Est
     return { error: 'No tienes permiso para cambiar la lista blanca.' }
   }
   const resultado = await cambiarActivoOperador(id, activo)
+  if (!resultado.ok) return { error: resultado.error }
+
+  revalidatePath('/configuracion')
+  return { ok: true }
+}
+
+export async function eliminarOperadorWhitelist(id: string): Promise<EstadoConfig> {
+  if (!(await exigirPermiso('configuracion'))) {
+    return { error: 'No tienes permiso para cambiar la lista blanca.' }
+  }
+  const resultado = await eliminarOperador(id)
   if (!resultado.ok) return { error: resultado.error }
 
   revalidatePath('/configuracion')

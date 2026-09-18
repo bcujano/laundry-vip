@@ -18,19 +18,32 @@ function Kpi({
   pie,
   icono,
   href,
+  alerta = false,
 }: {
   titulo: string
   valor: string
   pie: string
   icono: React.ReactNode
   href: string
+  /** En rojo cuando hay algo que resolver: un pedido congelado no avanza solo. */
+  alerta?: boolean
 }) {
   return (
     <Link className="group block" href={href}>
-      <Tarjeta className="h-full p-4 transition group-hover:border-[var(--primario)] group-hover:shadow-md">
+      <Tarjeta
+        className={`h-full p-4 transition group-hover:shadow-md ${
+          alerta
+            ? 'border-[var(--peligro)] bg-[var(--peligro-suave)]/40 group-hover:border-[var(--peligro)]'
+            : 'group-hover:border-[var(--primario)]'
+        }`}
+      >
         <div className="flex items-start justify-between gap-2">
           <p className="font-medium text-[var(--texto-suave)] text-sm">{titulo}</p>
-          <span className="rounded-lg bg-[var(--fondo)] p-2 text-[var(--primario)]">{icono}</span>
+          <span
+            className={`rounded-lg bg-[var(--fondo)] p-2 ${alerta ? 'text-[var(--peligro)]' : 'text-[var(--primario)]'}`}
+          >
+            {icono}
+          </span>
         </div>
         <p className="mt-2 font-bold text-2xl tabular-nums">{valor}</p>
         <p className="mt-0.5 text-[var(--texto-suave)] text-xs">{pie}</p>
@@ -98,6 +111,7 @@ export default async function Dashboard() {
 
   const { discrepancias, esperandoPago, sinVerificar } = datos.requierenAtencion
   const totalAtencion = discrepancias.length + esperandoPago.length + sinVerificar.length
+  const montoEnDiscrepancia = discrepancias.reduce((suma, pedido) => suma + (pedido.monto ?? 0), 0)
   const maximoEmbudo = Math.max(1, ...datos.porEstado.map((fila) => fila.total))
 
   return (
@@ -109,7 +123,19 @@ export default async function Dashboard() {
         </p>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
+        <Kpi
+          alerta={discrepancias.length > 0}
+          href="/pedidos?grupo=discrepancia"
+          icono={<AlertTriangle size={18} />}
+          pie={
+            discrepancias.length > 0
+              ? `${moneda(montoEnDiscrepancia)} congelados hasta avisar al cliente`
+              : 'ningún pedido congelado'
+          }
+          titulo="Discrepancias abiertas"
+          valor={String(discrepancias.length)}
+        />
         <Kpi
           href="/cola"
           icono={<ClipboardList size={18} />}

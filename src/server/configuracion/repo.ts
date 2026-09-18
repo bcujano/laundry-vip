@@ -81,6 +81,13 @@ export async function cambiarActivoOperador(
   return error ? { ok: false, error: error.message } : { ok: true }
 }
 
+/** Quita un número de la lista blanca: desde ese momento el agente lo trata como cliente. */
+export async function eliminarOperador(id: string): Promise<ResultadoEscritura> {
+  const { error } = await supabaseAdmin().from('operador_whitelist').delete().eq('id', id)
+
+  return error ? { ok: false, error: error.message } : { ok: true }
+}
+
 /** ¿Este número pertenece a un operador habilitado? Lo usa el agente. */
 export async function esOperadorActivo(telefono: string): Promise<boolean> {
   const { data, error } = await supabaseAdmin()

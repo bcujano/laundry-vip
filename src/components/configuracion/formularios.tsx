@@ -1,9 +1,11 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useState, useTransition } from 'react'
 import {
   agregarOperadorWhitelist,
+  alternarOperador,
   type EstadoConfig,
+  eliminarOperadorWhitelist,
   guardarConfiguracion,
 } from '@/app/(dashboard)/configuracion/actions'
 import { Boton, Campo, Tabla, Td, Th } from '@/components/ui/primitivos'
@@ -180,6 +182,46 @@ export function FormularioConfiguracion({ config }: { config: Configuracion }) {
   )
 }
 
+/** Pausar o quitar un operador. Quitarlo pide confirmación: deja de poder registrar órdenes. */
+function AccionesOperador({ operador }: { operador: OperadorWhitelist }) {
+  const [pendiente, iniciar] = useTransition()
+  const [error, setError] = useState<string | undefined>()
+
+  function ejecutar(accion: () => Promise<EstadoConfig>) {
+    iniciar(async () => setError((await accion()).error))
+  }
+
+  return (
+    <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1 text-sm">
+      <button
+        className="text-[var(--primario)] hover:underline disabled:opacity-50"
+        disabled={pendiente}
+        onClick={() => ejecutar(() => alternarOperador(operador.id, !operador.activo))}
+        type="button"
+      >
+        {operador.activo ? 'Pausar' : 'Activar'}
+      </button>
+      <button
+        className="text-[var(--peligro)] hover:underline disabled:opacity-50"
+        disabled={pendiente}
+        onClick={() => {
+          if (
+            confirm(
+              `¿Quitar a ${operador.nombre} de los operadores? Desde ya el agente lo tratará como cliente.`,
+            )
+          ) {
+            ejecutar(() => eliminarOperadorWhitelist(operador.id))
+          }
+        }}
+        type="button"
+      >
+        Quitar
+      </button>
+      {error ? <span className="text-[var(--peligro)] text-xs">{error}</span> : null}
+    </div>
+  )
+}
+
 export function ListaBlanca({ operadores }: { operadores: OperadorWhitelist[] }) {
   const [estado, accion, pendiente] = useActionState(agregarOperadorWhitelist, INICIAL)
 
@@ -191,6 +233,7 @@ export function ListaBlanca({ operadores }: { operadores: OperadorWhitelist[] })
             <Th>Nombre</Th>
             <Th>Teléfono</Th>
             <Th>Estado</Th>
+            <Th> </Th>
           </tr>
         </thead>
         <tbody>
@@ -199,6 +242,9 @@ export function ListaBlanca({ operadores }: { operadores: OperadorWhitelist[] })
               <Td>{operador.nombre}</Td>
               <Td className="tabular-nums">{telefonoLegible(operador.telefono)}</Td>
               <Td>{operador.activo ? 'Activo' : 'Inactivo'}</Td>
+              <Td>
+                <AccionesOperador operador={operador} />
+              </Td>
             </tr>
           ))}
           {operadores.length === 0 ? (
@@ -206,6 +252,7 @@ export function ListaBlanca({ operadores }: { operadores: OperadorWhitelist[] })
               <Td className="text-[var(--color-texto-apagado)]">
                 Ningún operador habilitado todavía.
               </Td>
+              <Td> </Td>
               <Td> </Td>
               <Td> </Td>
             </tr>

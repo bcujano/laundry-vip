@@ -4,6 +4,7 @@ import { esE164 } from '@/lib/telefono'
 import {
   actualizar,
   agregarOperador,
+  eliminarOperador,
   esOperadorActivo,
   listarWhitelist,
   obtener,
@@ -66,6 +67,16 @@ describe('lista blanca de operadores', () => {
     const coincidencias = (await listarWhitelist()).filter((o) => o.telefono === TELEFONO_PRUEBA)
     expect(coincidencias).toHaveLength(1)
     expect(coincidencias[0]?.nombre).toBe('Prueba renombrada')
+  })
+
+  it('quitar un operador lo saca de la lista y el agente deja de reconocerlo', async () => {
+    await agregarOperador(TELEFONO_PRUEBA, 'Para quitar')
+    const fila = (await listarWhitelist()).find((o) => o.telefono === TELEFONO_PRUEBA)
+    if (!fila) throw new Error('No se agregó el operador de prueba')
+
+    expect((await eliminarOperador(fila.id)).ok).toBe(true)
+    expect((await listarWhitelist()).some((o) => o.telefono === TELEFONO_PRUEBA)).toBe(false)
+    expect(await esOperadorActivo(TELEFONO_PRUEBA)).toBe(false)
   })
 
   it('la base rechaza un teléfono mal formado', async () => {
