@@ -349,3 +349,23 @@ Para que nadie los reintroduzca:
   corre. No digas que están en verde.
 - Tabla `meta_referrals` en Supabase, para cuando llegue el número real
 - Pantalla para cerrar el mes de los clientes `consolidado_mensual`
+
+---
+
+## 8. Después de v1.0 (2026-09-17)
+
+- **Número definitivo:** +593 98 566 2822 · phone ID `1220603671147410` ·
+  WABA `1755486442349144` (otra WABA que la del número de prueba). Entrada
+  nueva en Chatwoot cuenta 3. v1.0 con el número de prueba = etiqueta `v1.0`.
+- **Niveles de WhatsApp autorizado** (migración 0007): `operador` registra
+  órdenes, cuenta en planta y avanza estados; `admin` además pide reportes y
+  `consulta_admin`. Los permisos se validan en `handlers/permisos.ts`.
+- **Nada de dinero por WhatsApp** (decisión del dueño): confirmar pagos,
+  corregir montos y cerrar discrepancias solo en el CRM. Esas acciones ya no
+  existen en el webhook.
+- **Resumen de las 8:00** para admins: nodos `Resumen 8:00 → … → Enviar
+  Resumen WhatsApp` en el workflow, con el disparador **apagado** hasta que
+  Meta apruebe la plantilla `resumen_diario_admin` (7 variables, idioma `es`).
+- **Guardia anti-alucinación** en `Extraer JSON`: una confirmación de
+  escritura sin tool ok:true o con un UUID inventado se reemplaza.
+- n8n se actualiza por MCP sobre `Bleb55WBKPfBdxVg` con autorización del dueño.
