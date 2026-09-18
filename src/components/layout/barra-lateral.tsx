@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  MessageCircle,
   Settings,
   ShieldCheck,
   Shirt,
@@ -18,10 +19,18 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { type CSSProperties, useEffect, useState } from 'react'
 import { salir } from '@/app/(auth)/login/actions'
+import { CHATWOOT_BANDEJA } from '@/lib/chatwoot'
 import { type Area, puede } from '@/lib/permisos'
 import type { RolStaff } from '@/types/database'
 
-type Enlace = { href: string; texto: string; icono: typeof Users; area?: Area }
+type Enlace = {
+  href: string
+  texto: string
+  icono: typeof Users
+  area?: Area
+  /** Se abre en otra pestaña: vive fuera del CRM. */
+  externo?: boolean
+}
 type Seccion = { titulo: string; enlaces: Enlace[] }
 
 const SECCIONES: Seccion[] = [
@@ -36,7 +45,10 @@ const SECCIONES: Seccion[] = [
   },
   {
     titulo: 'Clientes',
-    enlaces: [{ href: '/clientes', texto: 'Clientes', icono: Users, area: 'clientes' }],
+    enlaces: [
+      { href: '/clientes', texto: 'Clientes', icono: Users, area: 'clientes' },
+      { href: CHATWOOT_BANDEJA, texto: 'Chatwoot', icono: MessageCircle, externo: true },
+    ],
   },
   {
     titulo: 'Catálogo',
@@ -98,7 +110,22 @@ function Contenido({ sesion, alNavegar }: { sesion: DatosSesion; alNavegar?: () 
                 {seccion.titulo}
               </p>
               <div className="space-y-0.5">
-                {visibles.map(({ href, texto, icono: Icono }) => {
+                {visibles.map(({ href, texto, icono: Icono, externo }) => {
+                  if (externo) {
+                    return (
+                      <a
+                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-white/60 transition-colors hover:bg-white/5 hover:text-white"
+                        href={href}
+                        key={href}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        <Icono size={18} />
+                        {texto}
+                        <span className="ml-auto text-[10px] text-white/30">↗</span>
+                      </a>
+                    )
+                  }
                   const activo = href === '/' ? ruta === '/' : ruta.startsWith(href)
                   return (
                     <Link

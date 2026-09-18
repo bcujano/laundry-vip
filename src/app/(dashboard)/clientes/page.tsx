@@ -1,4 +1,4 @@
-import { ArrowRight, Search } from 'lucide-react'
+import { ArrowRight, Download, Search } from 'lucide-react'
 import Link from 'next/link'
 import { NuevoCliente } from '@/components/clientes/ficha'
 import {
@@ -10,7 +10,7 @@ import {
   Th,
   Vacio,
 } from '@/components/ui/primitivos'
-import { verifyAuth } from '@/lib/auth'
+import { puede, verifyAuth } from '@/lib/auth'
 import { soloFecha, telefonoLegible, tipoNegocioLegible } from '@/lib/format'
 import { esSegmentoClientes, listar, POR_PAGINA, SEGMENTOS_CLIENTES } from '@/server/clientes/repo'
 import type { TipoNegocio } from '@/types/database'
@@ -60,6 +60,15 @@ export default async function Clientes({ searchParams }: { searchParams: Promise
       <div className="flex flex-wrap items-baseline gap-3">
         <h1 className="font-bold text-2xl tracking-tight">Clientes</h1>
         <span className="text-[var(--texto-suave)] text-sm">{resultado.total} en total</span>
+        {sesion && puede(sesion.staff.rol, 'reportes') ? (
+          <a
+            className="boton boton-suave ml-auto inline-flex items-center gap-1.5 text-sm"
+            download
+            href="/clientes/exportar"
+          >
+            <Download size={15} /> Descargar Excel
+          </a>
+        ) : null}
       </div>
 
       <div className="grid gap-4 xl:grid-cols-3">

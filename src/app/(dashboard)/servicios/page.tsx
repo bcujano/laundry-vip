@@ -1,4 +1,5 @@
 import { FilaPrecio } from '@/components/servicios/fila-precio'
+import { NuevoServicio } from '@/components/servicios/nuevo-servicio'
 import { Tabla, Tarjeta, Th, TituloSeccion, Vacio } from '@/components/ui/primitivos'
 import { puede, verifyAuth } from '@/lib/auth'
 import { contar, listarPorCategoria } from '@/server/servicios/repo'
@@ -16,6 +17,7 @@ export default async function Servicios() {
       <Tarjeta>
         <TituloSeccion>Servicios</TituloSeccion>
         <Vacio mensaje="El catálogo está vacío. Corre la siembra para cargar la lista de la planta." />
+        {editable ? <NuevoServicio categorias={[]} /> : null}
       </Tarjeta>
     )
   }
@@ -33,6 +35,8 @@ export default async function Servicios() {
           </span>
         ) : null}
       </div>
+
+      {editable ? <NuevoServicio categorias={categorias.map((grupo) => grupo.categoria)} /> : null}
 
       {categorias.map((grupo) => (
         <Tarjeta key={grupo.categoria}>

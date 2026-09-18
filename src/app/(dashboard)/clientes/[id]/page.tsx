@@ -1,4 +1,4 @@
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ConversacionAgente } from '@/components/clientes/conversacion'
@@ -7,6 +7,7 @@ import { ReportarDiscrepancia } from '@/components/clientes/reportar-discrepanci
 import { EtiquetaEstado } from '@/components/pedidos/etiquetas'
 import { CabeceraTarjeta, Tabla, Tarjeta, Td, Th, Vacio } from '@/components/ui/primitivos'
 import { verifyAuth } from '@/lib/auth'
+import { chatwootBuscar, chatwootConversacion } from '@/lib/chatwoot'
 import { fechaHora, moneda, soloFecha, telefonoLegible, tipoNegocioLegible } from '@/lib/format'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { conversacionDe, obtener } from '@/server/clientes/repo'
@@ -52,13 +53,29 @@ export default async function DetalleCliente({ params }: { params: Promise<{ id:
         <ArrowLeft size={14} /> Clientes
       </Link>
 
-      <div>
-        <h1 className="font-bold text-2xl tracking-tight">
-          {cliente.nombre_negocio || cliente.nombre_contacto || telefonoLegible(cliente.telefono)}
-        </h1>
-        <p className="text-[var(--texto-suave)] text-sm">
-          {tipoNegocioLegible(cliente.tipo_negocio)} · cliente desde {soloFecha(cliente.created_at)}
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="font-bold text-2xl tracking-tight">
+            {cliente.nombre_negocio || cliente.nombre_contacto || telefonoLegible(cliente.telefono)}
+          </h1>
+          <p className="text-[var(--texto-suave)] text-sm">
+            {tipoNegocioLegible(cliente.tipo_negocio)} · cliente desde{' '}
+            {soloFecha(cliente.created_at)}
+          </p>
+        </div>
+        <a
+          className="boton boton-suave inline-flex items-center gap-1.5 text-sm"
+          href={
+            conversacion?.chatwoot_conversation_id
+              ? chatwootConversacion(conversacion.chatwoot_conversation_id)
+              : chatwootBuscar(cliente.telefono)
+          }
+          rel="noreferrer"
+          target="_blank"
+        >
+          <MessageCircle size={15} />
+          {conversacion?.chatwoot_conversation_id ? 'Abrir chat en Chatwoot' : 'Buscar en Chatwoot'}
+        </a>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-3">

@@ -45,14 +45,33 @@ export async function guardarPrecio(
   return { ok: true }
 }
 
-const esquemaNuevo = z.object({
-  categoria: z.string().min(1, 'La categoría es obligatoria.'),
-  nombre_item: z.string().min(1, 'El nombre es obligatorio.'),
-  metodo: z.enum(['unico', 'agua', 'seco', 'planchado']),
-  unidad: z.enum(['pieza', 'm2', 'kilo', 'libra', 'paquete', 'par']),
-  precio_min: precio,
-  precio_max: precio,
-})
+const esquemaNuevo = z
+  .object({
+    categoria: z.string().trim().min(1, 'La categoría es obligatoria.'),
+    nombre_item: z.string().trim().min(1, 'El nombre es obligatorio.'),
+    metodo: z.enum(['unico', 'agua', 'seco', 'planchado']),
+    unidad: z.enum(['pieza', 'm2', 'kilo', 'libra', 'paquete', 'par']),
+    precio_min: precio,
+    precio_max: z.union([z.literal(''), precio]).optional(),
+    cantidad_por_paquete: z.union([z.literal(''), z.coerce.number().int().positive()]).optional(),
+  })
+  .transform((v) => ({
+    ...v,
+    // Sin máximo es precio fijo: mínimo y máximo iguales.
+    precio_max: v.precio_max === '' || v.precio_max === undefined ? v.precio_min : v.precio_max,
+    cantidad_por_paquete:
+      v.unidad === 'paquete' &&
+      v.cantidad_por_paquete !== '' &&
+      v.cantidad_por_paquete !== undefined
+        ? v.cantidad_por_paquete
+        : null,
+  }))
+  .refine((v) => v.precio_max >= v.precio_min, {
+    message: 'El precio máximo no puede ser menor que el mínimo.',
+  })
+  .refine((v) => v.unidad !== 'paquete' || v.cantidad_por_paquete !== null, {
+    message: 'Un servicio por paquete necesita cuántas prendas trae el paquete.',
+  })
 
 export async function crearServicio(
   _previo: EstadoServicio,
@@ -69,8 +88,9 @@ export async function crearServicio(
 
   const resultado = await crear({
     ...analisis.data,
-    cantidad_por_paquete: null,
-    requiere_seleccion_metodo: false,
+    // Un método distinto de «único» significa que la prenda se lava de varias
+    // formas: el agente tiene que preguntar cuál antes de dar precio.
+    requiere_seleccion_metodo: analisis.data.metodo !== 'unico',
   })
   if (!resultado.ok) return { error: resultado.error }
 

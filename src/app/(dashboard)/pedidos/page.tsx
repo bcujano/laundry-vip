@@ -1,9 +1,10 @@
+import { Download } from 'lucide-react'
 import Link from 'next/link'
 import { estadoLegible } from '@/components/pedidos/etiquetas'
 import { NuevoPedido } from '@/components/pedidos/nuevo-pedido'
 import { TablaPedidos } from '@/components/pedidos/tabla-pedidos'
 import { Tarjeta, TituloSeccion, Vacio } from '@/components/ui/primitivos'
-import { verifyAuth } from '@/lib/auth'
+import { puede, verifyAuth } from '@/lib/auth'
 import { listar as listarClientes } from '@/server/clientes/repo'
 import { esGrupoPedidos, GRUPOS_PEDIDOS, listar, POR_PAGINA } from '@/server/pedidos/repo'
 import { type CanalPedido, ESTADOS_PEDIDO, type EstadoPedido } from '@/types/database'
@@ -44,11 +45,20 @@ export default async function Pedidos({ searchParams }: { searchParams: Promise<
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-baseline gap-3">
+      <div className="flex flex-wrap items-baseline gap-3">
         <h1 className="font-semibold text-2xl">Pedidos</h1>
         <span className="text-[var(--color-texto-apagado)] text-sm">
           {resultado.total} en total
         </span>
+        {sesion && puede(sesion.staff.rol, 'reportes') ? (
+          <a
+            className="boton boton-suave ml-auto inline-flex items-center gap-1.5 text-sm"
+            download
+            href="/pedidos/exportar"
+          >
+            <Download size={15} /> Descargar Excel
+          </a>
+        ) : null}
       </div>
 
       {filtroDashboard ? (
