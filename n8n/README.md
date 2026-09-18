@@ -13,7 +13,7 @@ nodo por nodo están en [`../docs/CONTINUIDAD.md`](../docs/CONTINUIDAD.md).
 
 | Ruta | Qué es |
 |---|---|
-| `workflows/laundry-vip-agente.json` | El workflow generado (57 nodos) |
+| `workflows/laundry-vip-agente.json` | El workflow generado (59 nodos) |
 | `prompt-agente-laundry.md` | Constitución del agente de clientes |
 | `prompt-operador-laundry.md` | Constitución del agente de planta (operador y admin) |
 | `generador/` | Scripts que producen el JSON a partir de la base de 321 |
@@ -41,7 +41,7 @@ argumento). Ese archivo **no se versiona**: trae un secreto de 321.
 | `operador.cjs` | Verificar Operador, ¿Es Operador?, Agente Operador y sus tools |
 | `guardia.cjs` | Guardia anti-alucinación en `Extraer JSON` |
 | `crm.cjs` | Registro de cliente y conversación en el CRM en cada turno |
-| `resumen.cjs` | Resumen de las 8:00 para admins (disparador apagado) |
+| `resumen.cjs` | Resumen de las 8:00 para admins: texto libre o plantilla según la ventana de 24 h |
 
 ## Aplicar cambios en n8n
 

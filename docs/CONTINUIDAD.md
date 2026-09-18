@@ -40,11 +40,11 @@ Todo en producción y usado a diario en pruebas reales.
 |---|---|
 | CRM | **https://laundry-vip.vercel.app** · Vercel `bcujanos-projects/laundry-vip` · deploy con `npx vercel --prod --yes` desde `C:\dev\laundry-vip` (el CLI ya tiene sesión) |
 | Base | Supabase `cvdlslltevwxprdktmfu` (São Paulo). **Es la única base: pruebas y producción comparten** |
-| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» (57 nodos, activo) |
+| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» (59 nodos, activo) |
 | Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · entrada nueva del número definitivo |
 | WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
-| Repo | local, **sin remoto** · 37 commits · etiqueta **`v1.0`** = estado con el número de prueba |
-| Gate | **215 pruebas en verde** · typecheck, lint y build limpios (se retiraron 30 del workflow obsoleto de la fase 12) |
+| Repo | local, **sin remoto** · 39 commits · etiqueta **`v1.0`** = estado con el número de prueba |
+| Gate | **216 pruebas en verde** · typecheck, lint y build limpios (se retiraron 30 del workflow obsoleto de la fase 12) |
 
 **Entrar al CRM:** `brncjn@gmail.com` (superadmin). La contraseña provisional
 la puso una sesión anterior; el dueño debe cambiarla.
@@ -68,7 +68,8 @@ WhatsApp → Meta (app Laundry VIP) → Chatwoot cuenta 3 → webhook → n8n
   → Extraer JSON (parser + GUARDIA) → respuesta por Chatwoot
                                    → ¿escalar? → etiqueta humano + nota
                                    → Registrar cliente y conversación en el CRM
-Resumen 8:00 (APAGADO) → datos del CRM → un mensaje por admin → plantilla Meta
+Resumen 8:00 (L-S) → datos del CRM → un mensaje por admin → ¿escribió en < 23 h?
+       sí → texto libre · no → plantilla resumen_diario_admin (si Meta la aprobó)
 ```
 
 - **Clientes:** 6 tools HTTP contra `POST /api/webhook` (`cotizar_prendas`,
@@ -76,8 +77,9 @@ Resumen 8:00 (APAGADO) → datos del CRM → un mensaje por admin → plantilla 
   `crear_pedido`, `consultar_estado_pedido`). Precios, tarifa del combo y
   horario **se leen del CRM en cada consulta**: nada de eso está en el prompt.
 - **Cada turno registra en el CRM** (patrón del CRM WEB de 321): cliente y
-  conversación, aunque no compre. El nombre del perfil de WhatsApp no se usa
-  como nombre del cliente. Los operadores no cuentan como leads.
+  conversación, aunque no compre. El nombre del perfil de WhatsApp entra como
+  nombre **provisional**; el que diga el cliente lo reemplaza y lo editado en
+  el CRM nunca se pisa. Los operadores no cuentan como leads.
 - **Números autorizados, dos niveles** (tabla `operador_whitelist.nivel`):
   - `operador`: registrar y corregir órdenes presenciales (texto, voz o foto),
     buscar pedidos, registrar el conteo en planta y avanzar estados.
@@ -126,7 +128,8 @@ workflow vivo; si editas en n8n a mano, regenera para que no se desalineen.
 | AI Agent de LangChain, no «Tool First» | Es lo que el dueño ya opera |
 | Registro en el CRM en cada turno | Como el CRM de 321: todo lead queda, compre o no |
 | Dos niveles de WhatsApp autorizado y **nada de dinero por WhatsApp** | Decisión explícita del 2026-09-17 |
-| Resumen diario automático para admins | Aprobado; espera plantilla de Meta |
+| Resumen diario automático para admins, **texto libre** dentro de las 24 h de Meta | El CRM anota la hora del último mensaje de cada autorizado (migración 0008); la plantilla es solo respaldo. Meta acepta el texto fuera de ventana y falla después, por eso se decide antes |
+| Nombre de WhatsApp como nombre provisional del lead | El dueño no quiere leads «Sin nombre» |
 | Descargas de clientes/pedidos solo para superadmin y admin | Datos personales (LOPDP) |
 | Tarifa del combo y horario salen de Configuración | El dueño cambió el combo a $2,50 y el prompt tenía $5 escrito |
 | OpenAI compartido con 321 | Temporal, acordado |
@@ -178,12 +181,13 @@ workflow vivo; si editas en n8n a mano, regenera para que no se desalineen.
 ## 7. Lo pendiente
 
 **Esperando al dueño**
-- **Plantilla `resumen_diario_admin`** en WhatsApp Manager (categoría Utilidad,
-  idioma `es`, 7 variables; texto en el commit `1d3eff7` y en el chat). Cuando
-  Meta la apruebe: encender el nodo `Resumen 8:00` (MCP `setNodeDisabled`) y
-  publicar.
-- **Su número (+593 963 987 124) ya no está en la lista blanca**; solo Daniel
-  Serrano (operador). Para probar como admin, que se agregue con ese nivel.
+- **Plantilla `resumen_diario_admin`** (respaldo del resumen de las 8:00 para
+  admins que no escribieron en 24 h): categoría Utilidad, idioma `es`, 7
+  variables. El resumen ya está encendido; sin la plantilla, a quien esté
+  fuera de ventana simplemente no le llega.
+- **No hay ningún admin en la lista blanca** (solo Daniel Serrano, operador):
+  hoy el resumen de las 8:00 no le llega a nadie. El dueño debe agregarse como
+  Administrador y escribirle al agente al menos una vez al día.
 - **Respuesta pendiente:** que nombre del negocio, dirección, teléfono y saludo
   del agente salgan de Configuración (hoy el prompt dice «Lavandería VIP» y
   Configuración dice «VIP Laundry»). Recomendado, ~20 min.
