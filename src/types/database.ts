@@ -98,11 +98,14 @@ export type Configuracion = {
   updated_at: string
 }
 
+export type NivelOperador = 'operador' | 'admin'
+
 export type OperadorWhitelist = {
   id: string
   telefono: string
   nombre: string
   activo: boolean
+  nivel: NivelOperador
   created_at: string
 }
 

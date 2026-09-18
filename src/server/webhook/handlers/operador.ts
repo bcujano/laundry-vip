@@ -1,35 +1,26 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { confirmarPago, corregirCotizacion } from '@/server/pedidos/cobros'
 import { crearPedido } from '@/server/pedidos/crear'
 import { cotizarPrendas } from '@/server/pricing/cotizar'
 import type { Cliente, Conversacion } from '@/types/database'
 import { exito, fallo, noEncontrado, type ResultadoAccion } from '../respuesta'
 import type { ParametrosDe } from '../schemas'
+import { exigirNivel } from './permisos'
 
 /**
  * Modo operador. Todo lo de aquí exige que el número esté en la lista blanca:
- * el canal de WhatsApp puede registrar, corregir y consultar, pero NUNCA
- * borra nada. Eliminar obliga a entrar al CRM.
+ * el canal de WhatsApp registra, corrige y consulta, pero NUNCA borra nada ni
+ * mueve dinero. Pagos, montos y discrepancias se resuelven en el CRM.
  */
-async function exigirOperador(telefono: string): Promise<ResultadoAccion<never> | null> {
-  const { data } = await supabaseAdmin()
-    .from('operador_whitelist')
-    .select('id')
-    .eq('telefono', telefono)
-    .eq('activo', true)
-    .maybeSingle()
-
-  return data
-    ? null
-    : fallo('OPERADOR_NO_AUTORIZADO', 'Ese número no está autorizado como operador.', 403)
-}
 
 /**
  * El último pedido que tocó este operador, guardado en su conversación.
  * Es lo que permite que "corrige: eran 4, no 5" actualice el mismo registro
  * en vez de crear uno nuevo.
  */
-async function recordarUltimoPedido(telefonoOperador: string, pedidoId: string): Promise<void> {
+export async function recordarUltimoPedido(
+  telefonoOperador: string,
+  pedidoId: string,
+): Promise<void> {
   const cliente = supabaseAdmin()
   const { data } = await cliente
     .from('conversaciones')
@@ -50,7 +41,7 @@ async function recordarUltimoPedido(telefonoOperador: string, pedidoId: string):
     )
 }
 
-async function ultimoPedidoDe(telefonoOperador: string): Promise<string | null> {
+export async function ultimoPedidoDe(telefonoOperador: string): Promise<string | null> {
   const { data } = await supabaseAdmin()
     .from('conversaciones')
     .select('contexto')
@@ -66,8 +57,8 @@ async function ultimoPedidoDe(telefonoOperador: string): Promise<string | null> 
 export async function registrarClientePresencial(
   parametros: ParametrosDe<'registrar_cliente_presencial'>,
 ): Promise<ResultadoAccion<unknown>> {
-  const rechazo = await exigirOperador(parametros.telefono_operador)
-  if (rechazo) return rechazo
+  const permiso = await exigirNivel(parametros.telefono_operador, 'operador')
+  if (!permiso.ok) return permiso.rechazo
 
   if (!parametros.telefono_cliente) {
     return fallo(
@@ -142,8 +133,8 @@ export async function registrarClientePresencial(
 export async function actualizarRegistro(
   parametros: ParametrosDe<'actualizar_registro'>,
 ): Promise<ResultadoAccion<unknown>> {
-  const rechazo = await exigirOperador(parametros.telefono_operador)
-  if (rechazo) return rechazo
+  const permiso = await exigirNivel(parametros.telefono_operador, 'operador')
+  if (!permiso.ok) return permiso.rechazo
 
   const pedidoId = parametros.pedido_id ?? (await ultimoPedidoDe(parametros.telefono_operador))
   if (!pedidoId) {
@@ -208,65 +199,5 @@ export async function actualizarRegistro(
     actualizado: true,
     duplicado: false,
     monto_estimado_lavado: montoEstimado,
-  })
-}
-
-export async function confirmarPagoOperador(
-  parametros: ParametrosDe<'confirmar_pago'>,
-): Promise<ResultadoAccion<unknown>> {
-  const rechazo = await exigirOperador(parametros.telefono_operador)
-  if (rechazo) return rechazo
-
-  const resultado = await confirmarPago(parametros.pedido_id, parametros.tramo, {
-    actor: 'operador',
-  })
-
-  if (!resultado.ok) {
-    const esInexistente = resultado.error.includes('no existe')
-    return fallo(
-      esInexistente ? 'NO_ENCONTRADO' : 'ESTADO_INVALIDO',
-      resultado.error,
-      esInexistente ? 404 : 400,
-    )
-  }
-
-  return exito({
-    pedido_id: parametros.pedido_id,
-    tramo: parametros.tramo,
-    estado: resultado.datos.estado,
-    despacho_liberado: resultado.datos.despachoLiberado,
-  })
-}
-
-export async function corregirCotizacionOperador(
-  parametros: ParametrosDe<'corregir_cotizacion'>,
-): Promise<ResultadoAccion<unknown>> {
-  const rechazo = await exigirOperador(parametros.telefono_operador)
-  if (rechazo) return rechazo
-
-  const resultado = await corregirCotizacion(
-    parametros.pedido_id,
-    parametros.monto_corregido,
-    parametros.motivo,
-    { actor: 'operador' },
-  )
-
-  if (!resultado.ok) {
-    const esInexistente = resultado.error.includes('no existe')
-    return fallo(
-      esInexistente ? 'NO_ENCONTRADO' : 'PARAMETROS_INVALIDOS',
-      resultado.error,
-      esInexistente ? 404 : 400,
-    )
-  }
-
-  return exito({
-    pedido_id: parametros.pedido_id,
-    monto_anterior: resultado.datos.montoAnterior,
-    monto_corregido: resultado.datos.montoCorregido,
-    motivo: parametros.motivo,
-    // n8n avisa el motivo al cliente ANTES de pedirle el pago.
-    notificar_cliente: true,
-    pedido_congelado: true,
   })
 }

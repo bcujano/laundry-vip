@@ -1,16 +1,9 @@
 'use client'
 
-import { useActionState, useState, useTransition } from 'react'
-import {
-  agregarOperadorWhitelist,
-  alternarOperador,
-  type EstadoConfig,
-  eliminarOperadorWhitelist,
-  guardarConfiguracion,
-} from '@/app/(dashboard)/configuracion/actions'
-import { Boton, Campo, Tabla, Td, Th } from '@/components/ui/primitivos'
-import { telefonoLegible } from '@/lib/format'
-import type { Configuracion, OperadorWhitelist } from '@/types/database'
+import { useActionState } from 'react'
+import { type EstadoConfig, guardarConfiguracion } from '@/app/(dashboard)/configuracion/actions'
+import { Boton, Campo } from '@/components/ui/primitivos'
+import type { Configuracion } from '@/types/database'
 
 const INICIAL: EstadoConfig = {}
 
@@ -24,7 +17,7 @@ const DIAS = [
   { valor: 7, nombre: 'Dom' },
 ]
 
-function Aviso({ estado }: { estado: EstadoConfig }) {
+export function Aviso({ estado }: { estado: EstadoConfig }) {
   if (estado.error) {
     return (
       <p className="text-[var(--color-destructivo)] text-sm" role="alert">
@@ -43,7 +36,7 @@ function Aviso({ estado }: { estado: EstadoConfig }) {
 }
 
 /** `para` apunta al id del control: WCAG exige la asociación explícita. */
-function Etiquetado({
+export function Etiquetado({
   texto,
   para,
   children,
@@ -179,99 +172,5 @@ export function FormularioConfiguracion({ config }: { config: Configuracion }) {
         <Aviso estado={estado} />
       </div>
     </form>
-  )
-}
-
-/** Pausar o quitar un operador. Quitarlo pide confirmación: deja de poder registrar órdenes. */
-function AccionesOperador({ operador }: { operador: OperadorWhitelist }) {
-  const [pendiente, iniciar] = useTransition()
-  const [error, setError] = useState<string | undefined>()
-
-  function ejecutar(accion: () => Promise<EstadoConfig>) {
-    iniciar(async () => setError((await accion()).error))
-  }
-
-  return (
-    <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1 text-sm">
-      <button
-        className="text-[var(--primario)] hover:underline disabled:opacity-50"
-        disabled={pendiente}
-        onClick={() => ejecutar(() => alternarOperador(operador.id, !operador.activo))}
-        type="button"
-      >
-        {operador.activo ? 'Pausar' : 'Activar'}
-      </button>
-      <button
-        className="text-[var(--peligro)] hover:underline disabled:opacity-50"
-        disabled={pendiente}
-        onClick={() => {
-          if (
-            confirm(
-              `¿Quitar a ${operador.nombre} de los operadores? Desde ya el agente lo tratará como cliente.`,
-            )
-          ) {
-            ejecutar(() => eliminarOperadorWhitelist(operador.id))
-          }
-        }}
-        type="button"
-      >
-        Quitar
-      </button>
-      {error ? <span className="text-[var(--peligro)] text-xs">{error}</span> : null}
-    </div>
-  )
-}
-
-export function ListaBlanca({ operadores }: { operadores: OperadorWhitelist[] }) {
-  const [estado, accion, pendiente] = useActionState(agregarOperadorWhitelist, INICIAL)
-
-  return (
-    <div className="flex flex-col gap-3 p-4">
-      <Tabla>
-        <thead>
-          <tr>
-            <Th>Nombre</Th>
-            <Th>Teléfono</Th>
-            <Th>Estado</Th>
-            <Th> </Th>
-          </tr>
-        </thead>
-        <tbody>
-          {operadores.map((operador) => (
-            <tr key={operador.id}>
-              <Td>{operador.nombre}</Td>
-              <Td className="tabular-nums">{telefonoLegible(operador.telefono)}</Td>
-              <Td>{operador.activo ? 'Activo' : 'Inactivo'}</Td>
-              <Td>
-                <AccionesOperador operador={operador} />
-              </Td>
-            </tr>
-          ))}
-          {operadores.length === 0 ? (
-            <tr>
-              <Td className="text-[var(--color-texto-apagado)]">
-                Ningún operador habilitado todavía.
-              </Td>
-              <Td> </Td>
-              <Td> </Td>
-              <Td> </Td>
-            </tr>
-          ) : null}
-        </tbody>
-      </Tabla>
-
-      <form action={accion} className="flex flex-wrap items-end gap-2">
-        <Etiquetado para="campo-nombre" texto="Nombre">
-          <Campo id="campo-nombre" name="nombre" placeholder="Operador de planta" required />
-        </Etiquetado>
-        <Etiquetado para="campo-telefono" texto="Teléfono">
-          <Campo id="campo-telefono" name="telefono" placeholder="0963987124" required />
-        </Etiquetado>
-        <Boton disabled={pendiente} type="submit" variante="suave">
-          {pendiente ? 'Agregando…' : 'Agregar'}
-        </Boton>
-        <Aviso estado={estado} />
-      </form>
-    </div>
   )
 }

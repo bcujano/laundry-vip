@@ -56,7 +56,8 @@ describe('lista blanca de operadores', () => {
   })
 
   it('reconoce al operador de planta y rechaza a un desconocido', async () => {
-    expect(await esOperadorActivo('+593963987124')).toBe(true)
+    await agregarOperador(TELEFONO_PRUEBA, 'Prueba')
+    expect(await esOperadorActivo(TELEFONO_PRUEBA)).toBe(true)
     expect(await esOperadorActivo('+593000111222')).toBe(false)
   })
 

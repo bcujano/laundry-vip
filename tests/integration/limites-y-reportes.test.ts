@@ -13,7 +13,8 @@ import { corrida } from '../util/corrida.ts'
 const SECRETO = process.env.N8N_WEBHOOK_SECRET as string
 const CORRIDA = corrida()
 const PREFIJO = `+5939${CORRIDA}`
-const OPERADOR = '+593963987124'
+// Operador propio de la corrida: la lista blanca real la edita el dueño.
+const OPERADOR = `${PREFIJO}96`
 
 let limiteOriginal = 0
 const clientesCreados: string[] = []
@@ -97,6 +98,9 @@ describe('tope diario de mensajes', () => {
   })
 
   it('los operadores no consumen cuota', async () => {
+    await supabaseAdmin()
+      .from('operador_whitelist')
+      .insert({ telefono: OPERADOR, nombre: `Operador ${CORRIDA}` })
     await actualizar({ limite_mensajes_diarios_por_telefono: 1 })
 
     for (let i = 0; i < 4; i++) {
@@ -107,6 +111,7 @@ describe('tope diario de mensajes', () => {
       })
       expect(estado).toBe(200)
     }
+    await supabaseAdmin().from('operador_whitelist').delete().eq('telefono', OPERADOR)
   })
 
   it('el contador es por teléfono y por día de Quito', async () => {
@@ -228,19 +233,30 @@ describe('reporte de ingresos', () => {
     expect(fila).toBeUndefined()
   })
 
-  it('el reporte por WhatsApp exige ser operador', async () => {
+  it('el reporte por WhatsApp exige ser administrador', async () => {
     const intruso = await llamar({
       accion: 'generar_reporte',
       parametros: { telefono_operador: '+593999888777' },
     })
     expect(intruso.estado).toBe(403)
 
-    const operador = await llamar({
-      accion: 'generar_reporte',
-      parametros: { telefono_operador: OPERADOR },
-    })
-    expect(operador.estado).toBe(200)
-    expect((operador.sobre.data as { por_tipo_negocio: unknown[] }).por_tipo_negocio).toBeDefined()
+    // Un admin propio de la corrida: la lista blanca real no se toca.
+    const admin = `${PREFIJO}97`
+    await supabaseAdmin()
+      .from('operador_whitelist')
+      .insert({ telefono: admin, nombre: `Admin ${CORRIDA}`, nivel: 'admin' })
+    try {
+      const respuesta = await llamar({
+        accion: 'generar_reporte',
+        parametros: { telefono_operador: admin },
+      })
+      expect(respuesta.estado).toBe(200)
+      expect(
+        (respuesta.sobre.data as { por_tipo_negocio: unknown[] }).por_tipo_negocio,
+      ).toBeDefined()
+    } finally {
+      await supabaseAdmin().from('operador_whitelist').delete().eq('telefono', admin)
+    }
   })
 })
 

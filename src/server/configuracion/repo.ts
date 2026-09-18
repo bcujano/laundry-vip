@@ -1,6 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import type { ParametrosVentana } from '@/server/scheduling/ventana'
-import type { Configuracion, OperadorWhitelist } from '@/types/database'
+import type { Configuracion, NivelOperador, OperadorWhitelist } from '@/types/database'
 
 export type ResultadoEscritura = { ok: true } | { ok: false; error: string }
 
@@ -64,10 +64,11 @@ export async function listarWhitelist(): Promise<OperadorWhitelist[]> {
 export async function agregarOperador(
   telefono: string,
   nombre: string,
+  nivel: NivelOperador = 'operador',
 ): Promise<ResultadoEscritura> {
   const { error } = await supabaseAdmin()
     .from('operador_whitelist')
-    .upsert({ telefono, nombre, activo: true }, { onConflict: 'telefono' })
+    .upsert({ telefono, nombre, nivel, activo: true }, { onConflict: 'telefono' })
 
   return error ? { ok: false, error: error.message } : { ok: true }
 }
@@ -77,6 +78,16 @@ export async function cambiarActivoOperador(
   activo: boolean,
 ): Promise<ResultadoEscritura> {
   const { error } = await supabaseAdmin().from('operador_whitelist').update({ activo }).eq('id', id)
+
+  return error ? { ok: false, error: error.message } : { ok: true }
+}
+
+/** Sube o baja de nivel: admin pide reportes; operador solo trabaja en planta. */
+export async function cambiarNivelOperador(
+  id: string,
+  nivel: NivelOperador,
+): Promise<ResultadoEscritura> {
+  const { error } = await supabaseAdmin().from('operador_whitelist').update({ nivel }).eq('id', id)
 
   return error ? { ok: false, error: error.message } : { ok: true }
 }

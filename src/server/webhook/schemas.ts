@@ -23,8 +23,11 @@ export const ACCIONES = [
   'consultar_estado_pedido',
   'registrar_cliente_presencial',
   'actualizar_registro',
-  'confirmar_pago',
-  'corregir_cotizacion',
+  'buscar_pedidos',
+  'avanzar_estado',
+  'registrar_conteo',
+  'consulta_admin',
+  'resumen_diario',
   'generar_reporte',
   'consultar_pedido',
 ] as const
@@ -117,18 +120,35 @@ export const parametrosPorAccion = {
     nombre_negocio: z.string().optional(),
   }),
 
-  confirmar_pago: z.object({
+  // ── Planta (operador y admin) ─────────────────────────────────────────
+  buscar_pedidos: z.object({
     telefono_operador: telefono,
-    pedido_id: z.uuid(),
-    tramo: z.enum(['recoleccion', 'entrega', 'lavado']),
+    texto: z.string().trim().min(2, 'Escribe al menos 2 letras del cliente o del teléfono.'),
   }),
 
-  corregir_cotizacion: z.object({
+  avanzar_estado: z.object({
     telefono_operador: telefono,
-    pedido_id: z.uuid(),
-    monto_corregido: z.number(),
-    motivo: z.string().min(1),
+    pedido_id: z.uuid().optional(),
+    // Solo el avance normal de planta. Cancelar y todo lo que toca dinero es del CRM.
+    estado: z.enum(['recolectado', 'en_proceso', 'listo_para_entrega', 'entregado']),
   }),
+
+  registrar_conteo: z.object({
+    telefono_operador: telefono,
+    pedido_id: z.uuid().optional(),
+    conteos: z
+      .array(z.object({ descripcion: z.string().min(1), cantidad: z.number().int().min(0) }))
+      .min(1, 'Falta el conteo de las prendas.'),
+  }),
+
+  // ── Solo admin ────────────────────────────────────────────────────────
+  consulta_admin: z.object({
+    telefono_operador: telefono,
+    consulta: z.enum(['resumen', 'atencion', 'cola_manana', 'leads_calientes', 'clientes_top']),
+  }),
+
+  // Lo llama el disparador de las 8:00 de n8n, no una persona.
+  resumen_diario: z.object({}).optional(),
 
   generar_reporte: z.object({
     telefono_operador: telefono,

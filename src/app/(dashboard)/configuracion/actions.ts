@@ -8,6 +8,7 @@ import {
   actualizar,
   agregarOperador,
   cambiarActivoOperador,
+  cambiarNivelOperador,
   eliminarOperador,
 } from '@/server/configuracion/repo'
 
@@ -83,7 +84,8 @@ export async function agregarOperadorWhitelist(
   const telefono = normalizarTelefono(crudo)
   if (!telefono) return { error: `"${crudo}" no parece un número de teléfono.` }
 
-  const resultado = await agregarOperador(telefono, nombre)
+  const nivel = datos.get('nivel') === 'admin' ? 'admin' : 'operador'
+  const resultado = await agregarOperador(telefono, nombre, nivel)
   if (!resultado.ok) return { error: resultado.error }
 
   revalidatePath('/configuracion')
@@ -106,6 +108,20 @@ export async function eliminarOperadorWhitelist(id: string): Promise<EstadoConfi
     return { error: 'No tienes permiso para cambiar la lista blanca.' }
   }
   const resultado = await eliminarOperador(id)
+  if (!resultado.ok) return { error: resultado.error }
+
+  revalidatePath('/configuracion')
+  return { ok: true }
+}
+
+export async function cambiarNivelOperadorAccion(
+  id: string,
+  nivel: 'operador' | 'admin',
+): Promise<EstadoConfig> {
+  if (!(await exigirPermiso('configuracion'))) {
+    return { error: 'No tienes permiso para cambiar la lista blanca.' }
+  }
+  const resultado = await cambiarNivelOperador(id, nivel)
   if (!resultado.ok) return { error: resultado.error }
 
   revalidatePath('/configuracion')

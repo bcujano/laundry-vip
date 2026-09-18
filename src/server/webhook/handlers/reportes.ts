@@ -1,22 +1,15 @@
-import { supabaseAdmin } from '@/lib/supabase/admin'
 import { generar, periodoDesdeNombre } from '@/server/reportes/repo'
 import { exito, fallo, type ResultadoAccion } from '../respuesta'
 import type { ParametrosDe } from '../schemas'
+import { exigirNivel } from './permisos'
 
 /** Reporte pedido por el operador desde WhatsApp. */
 export async function generarReporte(
   parametros: ParametrosDe<'generar_reporte'>,
 ): Promise<ResultadoAccion<unknown>> {
-  const { data } = await supabaseAdmin()
-    .from('operador_whitelist')
-    .select('id')
-    .eq('telefono', parametros.telefono_operador)
-    .eq('activo', true)
-    .maybeSingle()
-
-  if (!data) {
-    return fallo('OPERADOR_NO_AUTORIZADO', 'Ese número no está autorizado como operador.', 403)
-  }
+  // Los reportes son de administrador: un operador de planta no ve la facturación.
+  const permiso = await exigirNivel(parametros.telefono_operador, 'admin')
+  if (!permiso.ok) return permiso.rechazo
 
   const periodo =
     parametros.desde || parametros.hasta

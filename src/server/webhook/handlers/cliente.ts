@@ -88,16 +88,20 @@ export async function sincronizarMemoria(
 /** ¿Este número puede hablarle al agente en modo operador? */
 export async function verificarWhitelistOperador(
   parametros: ParametrosDe<'verificar_whitelist_operador'>,
-): Promise<ResultadoAccion<{ es_operador: boolean; nombre: string | null }>> {
+): Promise<ResultadoAccion<{ es_operador: boolean; nombre: string | null; nivel: string | null }>> {
   const { data, error } = await supabaseAdmin()
     .from('operador_whitelist')
-    .select('nombre')
+    .select('nombre, nivel')
     .eq('telefono', parametros.telefono)
     .eq('activo', true)
     .maybeSingle()
 
   if (error) return fallo('ERROR_INTERNO', error.message, 500)
-  return exito({ es_operador: data !== null, nombre: data?.nombre ?? null })
+  return exito({
+    es_operador: data !== null,
+    nombre: data?.nombre ?? null,
+    nivel: data?.nivel ?? null,
+  })
 }
 
 export async function findOrCreateClient(

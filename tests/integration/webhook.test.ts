@@ -244,12 +244,17 @@ describe('cliente y memoria', () => {
     expect((segunda.sobre.data as { ya_procesado: boolean }).ya_procesado).toBe(true)
   })
 
-  it('verificar_whitelist_operador distingue operador de cliente', async () => {
+  it('verificar_whitelist_operador distingue operador de cliente y dice su nivel', async () => {
+    const telefonoAdmin = `+5939${CORRIDA}33`
+    await supabaseAdmin()
+      .from('operador_whitelist')
+      .insert({ telefono: telefonoAdmin, nombre: `Admin ${CORRIDA}`, nivel: 'admin' })
     const operador = await llamar({
       accion: 'verificar_whitelist_operador',
-      parametros: { telefono: '+593963987124' },
+      parametros: { telefono: telefonoAdmin },
     })
-    expect((operador.sobre.data as { es_operador: boolean }).es_operador).toBe(true)
+    await supabaseAdmin().from('operador_whitelist').delete().eq('telefono', telefonoAdmin)
+    expect(operador.sobre.data).toMatchObject({ es_operador: true, nivel: 'admin' })
 
     const cliente = await llamar({
       accion: 'verificar_whitelist_operador',

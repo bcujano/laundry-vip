@@ -1,5 +1,6 @@
 import { fallo, type ResultadoAccion } from '../respuesta'
 import { type Accion, parametrosPorAccion } from '../schemas'
+import { consultaAdmin, resumenDiario } from './admin'
 import {
   cotizar,
   findOrCreateClient,
@@ -9,13 +10,9 @@ import {
   vehiculo,
   verificarWhitelistOperador,
 } from './cliente'
-import {
-  actualizarRegistro,
-  confirmarPagoOperador,
-  corregirCotizacionOperador,
-  registrarClientePresencial,
-} from './operador'
+import { actualizarRegistro, registrarClientePresencial } from './operador'
 import { consultarEstadoPorTelefono, consultarPedidoPorId, crear } from './pedidos'
+import { avanzarEstadoPlanta, buscarPedidos, registrarConteo } from './planta'
 import { generarReporte } from './reportes'
 
 /**
@@ -36,8 +33,11 @@ const MANEJADORES: Record<Accion, Manejador> = {
   consultar_estado_pedido: consultarEstadoPorTelefono,
   registrar_cliente_presencial: registrarClientePresencial,
   actualizar_registro: actualizarRegistro,
-  confirmar_pago: confirmarPagoOperador,
-  corregir_cotizacion: corregirCotizacionOperador,
+  buscar_pedidos: buscarPedidos,
+  avanzar_estado: avanzarEstadoPlanta,
+  registrar_conteo: registrarConteo,
+  consulta_admin: consultaAdmin,
+  resumen_diario: resumenDiario,
   generar_reporte: generarReporte,
   consultar_pedido: consultarPedidoPorId,
 }

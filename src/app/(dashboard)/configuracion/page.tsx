@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
-import { FormularioConfiguracion, ListaBlanca } from '@/components/configuracion/formularios'
+import { FormularioConfiguracion } from '@/components/configuracion/formularios'
+import { ListaBlanca } from '@/components/configuracion/lista-blanca'
 import { Tarjeta, TituloSeccion } from '@/components/ui/primitivos'
 import { exigirPermiso } from '@/lib/auth'
 import { fechaHora } from '@/lib/format'

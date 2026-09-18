@@ -1,11 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import {
-  actualizarRegistro,
-  confirmarPagoOperador,
-  corregirCotizacionOperador,
-  registrarClientePresencial,
-} from '@/server/webhook/handlers/operador'
+import { actualizarRegistro, registrarClientePresencial } from '@/server/webhook/handlers/operador'
 import { corrida } from '../util/corrida.ts'
 
 const INTRUSO = '+593999888777'
@@ -48,23 +43,6 @@ describe('lista blanca', () => {
       items: ITEMS,
     })
     expect(resultado).toMatchObject({ ok: false, codigo: 'OPERADOR_NO_AUTORIZADO' })
-  })
-
-  it('tampoco puede confirmar pagos ni corregir cotizaciones', async () => {
-    const pago = await confirmarPagoOperador({
-      telefono_operador: INTRUSO,
-      pedido_id: '11111111-1111-4111-8111-111111111111',
-      tramo: 'lavado',
-    })
-    expect(pago).toMatchObject({ ok: false, codigo: 'OPERADOR_NO_AUTORIZADO' })
-
-    const correccion = await corregirCotizacionOperador({
-      telefono_operador: INTRUSO,
-      pedido_id: '11111111-1111-4111-8111-111111111111',
-      monto_corregido: 10,
-      motivo: 'porque sí',
-    })
-    expect(correccion).toMatchObject({ ok: false, codigo: 'OPERADOR_NO_AUTORIZADO' })
   })
 })
 
@@ -193,101 +171,5 @@ describe('corrección del registro', () => {
       .eq('id', cliente_id)
       .single()
     expect(data?.nombre_contacto).toBe('Rosa Elena Pérez')
-  })
-})
-
-describe('pagos y correcciones desde WhatsApp', () => {
-  it('confirmar_pago saca al pedido del estado de espera', async () => {
-    const telefonoCliente = nuevoTelefono()
-    const { data: cliente } = await supabaseAdmin()
-      .from('clientes')
-      .insert({ telefono: telefonoCliente, canal_origen: 'whatsapp_agente' })
-      .select('id')
-      .single()
-
-    const { data: pedido } = await supabaseAdmin()
-      .from('pedidos')
-      .insert({
-        cliente_id: cliente?.id,
-        canal: 'whatsapp_agente',
-        tipo_entrega: 'a_la_carta',
-        estado: 'esperando_pago_para_recoleccion',
-        metodo_transporte_recoleccion: 'app',
-        pago_recoleccion: 'pendiente',
-        monto_recoleccion: 3.5,
-      })
-      .select('id')
-      .single()
-
-    const resultado = await confirmarPagoOperador({
-      telefono_operador: OPERADOR,
-      pedido_id: pedido?.id as string,
-      tramo: 'recoleccion',
-    })
-
-    expect(resultado.ok).toBe(true)
-    if (!resultado.ok) return
-    const datos = resultado.data as { estado: string; despacho_liberado: boolean }
-    expect(datos.estado).toBe('nuevo')
-    expect(datos.despacho_liberado).toBe(true)
-  })
-
-  it('corregir_cotizacion pide notificar y el monto viejo ya no se cobra', async () => {
-    const telefonoCliente = nuevoTelefono()
-    const alta = await registrarClientePresencial({
-      telefono_operador: OPERADOR,
-      telefono_cliente: telefonoCliente,
-      items: ITEMS,
-    })
-    if (!alta.ok) throw new Error('no se creó')
-    const { pedido_id } = alta.data as { pedido_id: string }
-
-    const resultado = await corregirCotizacionOperador({
-      telefono_operador: OPERADOR,
-      pedido_id,
-      monto_corregido: 15.5,
-      motivo: 'Vinieron 2 chompas que no estaban en la lista',
-    })
-
-    expect(resultado.ok).toBe(true)
-    if (!resultado.ok) return
-
-    const datos = resultado.data as {
-      monto_anterior: number
-      monto_corregido: number
-      notificar_cliente: boolean
-      pedido_congelado: boolean
-    }
-    expect(datos.monto_anterior).toBe(11.25)
-    expect(datos.monto_corregido).toBe(15.5)
-    expect(datos.notificar_cliente).toBe(true)
-    expect(datos.pedido_congelado).toBe(true)
-
-    const { data: pedido } = await supabaseAdmin()
-      .from('pedidos')
-      .select('*')
-      .eq('id', pedido_id)
-      .single()
-
-    // El monto que manda es el corregido, y el pedido queda congelado.
-    expect(Number(pedido?.monto_confirmado_lavado)).toBe(15.5)
-    expect(pedido?.discrepancia_detectada).toBe(true)
-    expect(pedido?.estado).toBe('discrepancia_detectada')
-
-    const { data: auditoria } = await supabaseAdmin()
-      .from('correcciones_cotizacion')
-      .select('*')
-      .eq('pedido_id', pedido_id)
-    expect(auditoria).toHaveLength(1)
-    expect(auditoria?.[0]?.notificado_cliente).toBe(false)
-  })
-
-  it('un pedido inexistente devuelve NO_ENCONTRADO', async () => {
-    const resultado = await confirmarPagoOperador({
-      telefono_operador: OPERADOR,
-      pedido_id: '11111111-1111-4111-8111-111111111111',
-      tramo: 'lavado',
-    })
-    expect(resultado).toMatchObject({ ok: false, codigo: 'NO_ENCONTRADO' })
   })
 })

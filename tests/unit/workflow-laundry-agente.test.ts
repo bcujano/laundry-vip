@@ -158,12 +158,14 @@ describe('modo operador (lista blanca de planta)', () => {
     expect(tools).toEqual(
       [
         'actualizar_registro',
-        'confirmar_pago',
+        'avanzar_estado',
+        'buscar_pedidos',
+        'consulta_admin',
         'consultar_pedido',
-        'corregir_cotizacion',
         'cotizar_prendas_operador',
         'generar_reporte',
         'registrar_cliente_presencial',
+        'registrar_conteo',
       ].sort(),
     )
     expect(String(porNombre('Memory Operador')?.parameters.sessionKey)).toContain('operador_')
@@ -176,7 +178,9 @@ describe('modo operador (lista blanca de planta)', () => {
     for (const nombre of [
       'registrar_cliente_presencial',
       'actualizar_registro',
-      'confirmar_pago',
+      'avanzar_estado',
+      'registrar_conteo',
+      'consulta_admin',
     ]) {
       const cuerpo = String(porNombre(nombre)?.parameters.jsonBody)
       expect(cuerpo).toContain('telefono_operador')
@@ -210,5 +214,33 @@ describe('guardia anti-alucinación', () => {
     expect(codigo).toContain('idInventado')
     expect(codigo).toContain('escrituraFantasma')
     expect(codigo).toContain('La orden NO quedó registrada')
+  })
+})
+
+describe('niveles y resumen diario', () => {
+  it('ninguna herramienta del agente mueve dinero', () => {
+    for (const nombre of ['confirmar_pago', 'corregir_cotizacion']) {
+      expect(porNombre(nombre), nombre).toBeUndefined()
+    }
+    expect(crudo).not.toContain('"accion":"confirmar_pago"')
+    expect(crudo).not.toContain('"accion":"corregir_cotizacion"')
+  })
+
+  it('el agente de planta conoce el nivel de quien escribe', () => {
+    const opciones = porNombre('Agente Operador')?.parameters.options as { systemMessage: string }
+    expect(opciones.systemMessage).toContain("$('Verificar Operador').first().json.data.nivel")
+  })
+
+  it('el resumen de las 8:00 queda apagado hasta que Meta apruebe la plantilla', () => {
+    const disparador = workflow.nodes.find((n) => n.name === 'Resumen 8:00') as Nodo & {
+      disabled?: boolean
+    }
+    expect(disparador.disabled).toBe(true)
+    expect(String(porNombre('Enviar Resumen WhatsApp')?.parameters.jsonBody)).toContain(
+      'resumen_diario_admin',
+    )
+    expect(String(porNombre('Enviar Resumen WhatsApp')?.parameters.url)).toContain(
+      '1220603671147410',
+    )
   })
 })
