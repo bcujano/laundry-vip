@@ -90,13 +90,20 @@ describe('cuando varias prendas encajan', () => {
 })
 
 describe('unidades que no son piezas', () => {
-  it('cobra las cobijas por paquete cerrado de 3', async () => {
+  it('una cobija suelta cuesta 5.00, no el paquete entero', async () => {
+    const { lineas } = await cotizarPrendas([{ descripcion: 'cobijas pequeñas', cantidad: 1 }])
+
+    expect(lineas[0]?.paquetes_cobrados).toBe(0)
+    expect(lineas[0]?.subtotal).toBe(5)
+  })
+
+  it('aplica la promoción 3 x 12.00 y cobra el sobrante suelto', async () => {
     const { lineas } = await cotizarPrendas([{ descripcion: 'cobijas pequeñas', cantidad: 5 }])
 
-    expect(lineas[0]?.unidad).toBe('paquete')
-    expect(lineas[0]?.paquetes_cobrados).toBe(2)
-    expect(lineas[0]?.subtotal).toBe(24)
-    expect(lineas[0]?.nota).toContain('paquete de 3')
+    expect(lineas[0]?.paquetes_cobrados).toBe(1)
+    // 3 por 12.00 más 2 sueltas a 5.00.
+    expect(lineas[0]?.subtotal).toBe(22)
+    expect(lineas[0]?.nota).toContain('paquete(s) de 3')
   })
 
   it('cobra la ropa suelta por libra', async () => {

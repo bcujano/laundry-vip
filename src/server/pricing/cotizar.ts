@@ -160,15 +160,37 @@ function cotizarGrupo(item: ItemPedido, grupo: Grupo): LineaCotizada {
     }
   }
 
-  // Se cobra por paquete cerrado: 5 cobijas en paquetes de 3 son 2 paquetes.
-  if (fila.unidad === 'paquete' && fila.cantidad_por_paquete && fila.cantidad_por_paquete > 1) {
-    const paquetes = Math.ceil(item.cantidad / fila.cantidad_por_paquete)
+  const porPaquete = fila.cantidad_por_paquete ?? 0
+  const precioPaquete = fila.precio_paquete === null ? null : Number(fila.precio_paquete)
+
+  // Promoción por cantidad: 4 cobijas son un paquete de 3 a $12,00 más una
+  // suelta a $5,00. El sobrante nunca se redondea hacia arriba a otro paquete.
+  if (precioPaquete !== null && porPaquete > 1) {
+    const paquetes = Math.floor(item.cantidad / porPaquete)
+    const sueltas = item.cantidad % porPaquete
+    const subtotal = paquetes * precioPaquete + sueltas * precioMin
+    return {
+      ...comun,
+      precio_unitario: precioMin,
+      paquetes_cobrados: paquetes,
+      subtotal: redondear(subtotal),
+      nota:
+        paquetes > 0
+          ? `${paquetes} paquete(s) de ${porPaquete} a ${precioPaquete.toFixed(2)}` +
+            (sueltas > 0 ? ` y ${sueltas} suelta(s) a ${precioMin.toFixed(2)}.` : '.')
+          : `Sueltas a ${precioMin.toFixed(2)}; ${porPaquete} salen en ${precioPaquete.toFixed(2)}.`,
+    }
+  }
+
+  // Se cobra por paquete cerrado: 5 prendas en paquetes de 3 son 2 paquetes.
+  if (fila.unidad === 'paquete' && porPaquete > 1) {
+    const paquetes = Math.ceil(item.cantidad / porPaquete)
     return {
       ...comun,
       precio_unitario: precioMin,
       paquetes_cobrados: paquetes,
       subtotal: redondear(paquetes * precioMin),
-      nota: `Se cobra por paquete de ${fila.cantidad_por_paquete}: ${paquetes} paquete(s).`,
+      nota: `Se cobra por paquete de ${porPaquete}: ${paquetes} paquete(s).`,
     }
   }
 

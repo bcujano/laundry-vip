@@ -50,7 +50,7 @@ describe('editar precios', () => {
     const resultado = await crearServicio(
       {},
       formulario({
-        categoria: 'Hogar y otros',
+        categoria: 'Ropa de cama',
         nombre_item: 'Cosa nueva',
         metodo: 'unico',
         unidad: 'pieza',
@@ -70,7 +70,8 @@ describe('editar precios', () => {
     const resultado = await guardarPrecio({}, formulario(PRECIO_VALIDO))
 
     expect(resultado.ok).toBe(true)
-    expect(actualizarPrecio).toHaveBeenCalledWith(PRECIO_VALIDO.id, 5, 5)
+    // Sin campo de promoción en el formulario, el precio del paquete no se toca.
+    expect(actualizarPrecio).toHaveBeenCalledWith(PRECIO_VALIDO.id, 5, 5, undefined)
   })
 
   it('valida antes de escribir aunque tenga permiso', async () => {

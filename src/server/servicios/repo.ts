@@ -54,6 +54,7 @@ export async function actualizarPrecio(
   id: string,
   precioMin: number,
   precioMax: number,
+  precioPaquete?: number | null,
 ): Promise<ResultadoEscritura> {
   if (precioMin < 0 || precioMax < 0) {
     return { ok: false, error: 'Un precio no puede ser negativo.' }
@@ -61,11 +62,17 @@ export async function actualizarPrecio(
   if (precioMax < precioMin) {
     return { ok: false, error: 'El precio máximo no puede ser menor que el mínimo.' }
   }
+  if (typeof precioPaquete === 'number' && precioPaquete < 0) {
+    return { ok: false, error: 'El precio del paquete no puede ser negativo.' }
+  }
 
-  const { error } = await supabaseAdmin()
-    .from('servicios')
-    .update({ precio_min: precioMin, precio_max: precioMax })
-    .eq('id', id)
+  // `undefined` significa «no vino en el formulario»: la promoción no se toca.
+  const cambios =
+    precioPaquete === undefined
+      ? { precio_min: precioMin, precio_max: precioMax }
+      : { precio_min: precioMin, precio_max: precioMax, precio_paquete: precioPaquete }
+
+  const { error } = await supabaseAdmin().from('servicios').update(cambios).eq('id', id)
 
   return error ? { ok: false, error: error.message } : { ok: true }
 }
@@ -83,6 +90,7 @@ export type NuevoServicio = {
   precio_min: number
   precio_max: number
   cantidad_por_paquete: number | null
+  precio_paquete: number | null
   requiere_seleccion_metodo: boolean
 }
 

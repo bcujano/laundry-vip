@@ -25,12 +25,21 @@ export function FilaPrecio({
 }) {
   const [estado, accion, pendiente] = useActionState(guardarPrecio, INICIAL)
   const esRango = Number(servicio.precio_min) !== Number(servicio.precio_max)
+  // Promoción por cantidad: «3 x $12,00» junto al precio de la unidad suelta.
+  const promocion = servicio.precio_paquete === null ? null : Number(servicio.precio_paquete)
 
   return (
     <tr className={servicio.activo ? '' : 'opacity-50'}>
       <Td>{servicio.nombre_item}</Td>
       <Td className="text-[var(--color-texto-apagado)]">{metodoLegible(servicio.metodo)}</Td>
-      <Td className="text-[var(--color-texto-apagado)]">{unidadLegible(servicio.unidad)}</Td>
+      <Td className="text-[var(--color-texto-apagado)]">
+        {unidadLegible(servicio.unidad)}
+        {promocion ? (
+          <span className="block text-xs">
+            {servicio.cantidad_por_paquete} x {moneda(promocion)}
+          </span>
+        ) : null}
+      </Td>
 
       {editable ? (
         <Td>
@@ -54,6 +63,18 @@ export function FilaPrecio({
               step="0.01"
               type="number"
             />
+            {servicio.cantidad_por_paquete && servicio.cantidad_por_paquete > 1 ? (
+              <Campo
+                aria-label={`Precio del paquete de ${servicio.cantidad_por_paquete} de ${servicio.nombre_item}`}
+                className="w-20"
+                defaultValue={promocion === null ? '' : promocion.toFixed(2)}
+                min="0"
+                name="precio_paquete"
+                placeholder={`x${servicio.cantidad_por_paquete}`}
+                step="0.01"
+                type="number"
+              />
+            ) : null}
             <Boton disabled={pendiente} type="submit" variante="suave">
               {pendiente ? '…' : 'Guardar'}
             </Boton>

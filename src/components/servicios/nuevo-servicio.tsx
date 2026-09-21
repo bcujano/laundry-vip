@@ -39,7 +39,7 @@ export function NuevoServicio({ categorias }: { categorias: string[] }) {
             id="nuevo-categoria"
             list="categorias-existentes"
             name="categoria"
-            placeholder="Hogar y otros"
+            placeholder="Ropa de cama"
             required
           />
           <datalist id="categorias-existentes">
@@ -82,12 +82,31 @@ export function NuevoServicio({ categorias }: { categorias: string[] }) {
           </select>
         </label>
 
-        {unidad === 'paquete' ? (
-          <label className="flex flex-col gap-1 text-sm" htmlFor="nuevo-paquete">
-            <span className="font-medium">Prendas por paquete</span>
-            <Campo id="nuevo-paquete" min="1" name="cantidad_por_paquete" required type="number" />
-          </label>
-        ) : null}
+        <label className="flex flex-col gap-1 text-sm" htmlFor="nuevo-paquete">
+          <span className="font-medium">
+            Prendas por paquete {unidad === 'paquete' ? '' : 'o promoción (opcional)'}
+          </span>
+          <Campo
+            id="nuevo-paquete"
+            min="1"
+            name="cantidad_por_paquete"
+            placeholder="3"
+            required={unidad === 'paquete'}
+            type="number"
+          />
+        </label>
+
+        <label className="flex flex-col gap-1 text-sm" htmlFor="nuevo-precio-paquete">
+          <span className="font-medium">Precio del paquete (solo si hay promoción)</span>
+          <Campo
+            id="nuevo-precio-paquete"
+            min="0"
+            name="precio_paquete"
+            placeholder="12.00"
+            step="0.01"
+            type="number"
+          />
+        </label>
 
         <label className="flex flex-col gap-1 text-sm" htmlFor="nuevo-precio-min">
           <span className="font-medium">Precio (USD)</span>

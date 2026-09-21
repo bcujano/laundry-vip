@@ -23,6 +23,7 @@ export async function sembrar(sql: Sql): Promise<ResultadoSiembra> {
       'precio_min',
       'precio_max',
       'cantidad_por_paquete',
+      'precio_paquete',
       'requiere_seleccion_metodo',
       'activo',
     )}
@@ -32,6 +33,7 @@ export async function sembrar(sql: Sql): Promise<ResultadoSiembra> {
       precio_min = excluded.precio_min,
       precio_max = excluded.precio_max,
       cantidad_por_paquete = excluded.cantidad_por_paquete,
+      precio_paquete = excluded.precio_paquete,
       requiere_seleccion_metodo = excluded.requiere_seleccion_metodo,
       activo = true
   `

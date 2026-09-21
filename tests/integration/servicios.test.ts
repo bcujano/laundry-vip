@@ -7,13 +7,21 @@ import {
   obtener,
 } from '@/server/servicios/repo'
 
+// Las categorías de la lista física del dueño (`catalogo_lavanderia.xlsx`).
 const CATEGORIAS_ESPERADAS = [
   'Alfombras',
+  'Calzado',
+  'Camisas y blusas',
   'Cortinas',
-  'Doble y triple método',
-  'Hogar y otros',
-  'Lavado en seco',
-  'Ropa suelta',
+  'Lavado en agua',
+  'Mantelería',
+  'Mochilas',
+  'Otros',
+  'Peluches',
+  'Prendas de vestir',
+  'Ropa de cama',
+  'Trajes y abrigos',
+  'Vestidos especiales',
 ]
 
 let precioOriginal: { id: string; min: number; max: number } | null = null
@@ -35,10 +43,21 @@ describe('catálogo en pantalla', () => {
     expect(grupos.map((g) => g.categoria).sort()).toEqual(CATEGORIAS_ESPERADAS)
   })
 
-  it('agrupa las 24 prendas de lavado en seco', async () => {
+  it('agrupa las 9 prendas de vestir', async () => {
     const grupos = await listarPorCategoria()
-    const seco = grupos.find((g) => g.categoria === 'Lavado en seco')
-    expect(seco?.items).toHaveLength(24)
+    const vestir = grupos.find((g) => g.categoria === 'Prendas de vestir')
+    expect(vestir?.items).toHaveLength(9)
+  })
+
+  it('las cobijas pequeñas llevan la promoción 3 x 12.00', async () => {
+    const grupos = await listarPorCategoria()
+    const cobijas = grupos
+      .flatMap((g) => g.items)
+      .find((item) => item.nombre_item === 'Cobijas pequeñas')
+
+    expect(Number(cobijas?.precio_min)).toBe(5)
+    expect(cobijas?.cantidad_por_paquete).toBe(3)
+    expect(Number(cobijas?.precio_paquete)).toBe(12)
   })
 })
 
@@ -90,6 +109,7 @@ describe('alta de servicios', () => {
       precio_min: 7,
       precio_max: 7,
       cantidad_por_paquete: null,
+      precio_paquete: null,
       requiere_seleccion_metodo: false,
     })
 

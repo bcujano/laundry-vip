@@ -74,6 +74,8 @@ export type Servicio = {
   precio_min: number
   precio_max: number
   cantidad_por_paquete: number | null
+  /** Precio del paquete completo cuando la lista trae promoción. */
+  precio_paquete: number | null
   requiere_seleccion_metodo: boolean
   activo: boolean
   created_at: string

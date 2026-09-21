@@ -10,10 +10,20 @@ export type EstadoServicio = { error?: string; aviso?: string; ok?: boolean }
 
 const precio = z.coerce.number().min(0, 'El precio no puede ser negativo.')
 
+/** Vacío o ausente = el ítem no tiene promoción por cantidad. */
+const precioOpcional = z.union([z.literal(''), precio]).optional()
+
+/** `undefined` = no vino el campo (no se toca); `''` = se quita la promoción. */
+function promocion(valor: number | '' | undefined): number | null | undefined {
+  if (valor === undefined) return undefined
+  return valor === '' ? null : valor
+}
+
 const esquemaPrecio = z.object({
   id: z.uuid(),
   precio_min: precio,
   precio_max: precio,
+  precio_paquete: precioOpcional,
 })
 
 /** Editar precios es solo del superadmin: se rechaza en el servidor. */
@@ -29,6 +39,8 @@ export async function guardarPrecio(
     id: datos.get('id'),
     precio_min: datos.get('precio_min'),
     precio_max: datos.get('precio_max'),
+    // Sin el campo en el formulario queda `undefined` y la promoción no se toca.
+    precio_paquete: datos.get('precio_paquete') ?? undefined,
   })
   if (!analisis.success) {
     return { error: analisis.error.issues[0]?.message ?? 'Datos inválidos.' }
@@ -38,6 +50,7 @@ export async function guardarPrecio(
     analisis.data.id,
     analisis.data.precio_min,
     analisis.data.precio_max,
+    promocion(analisis.data.precio_paquete),
   )
   if (!resultado.ok) return { error: resultado.error }
 
@@ -54,18 +67,23 @@ const esquemaNuevo = z
     precio_min: precio,
     precio_max: z.union([z.literal(''), precio]).optional(),
     cantidad_por_paquete: z.union([z.literal(''), z.coerce.number().int().positive()]).optional(),
+    precio_paquete: precioOpcional,
   })
-  .transform((v) => ({
-    ...v,
-    // Sin máximo es precio fijo: mínimo y máximo iguales.
-    precio_max: v.precio_max === '' || v.precio_max === undefined ? v.precio_min : v.precio_max,
-    cantidad_por_paquete:
-      v.unidad === 'paquete' &&
-      v.cantidad_por_paquete !== '' &&
-      v.cantidad_por_paquete !== undefined
-        ? v.cantidad_por_paquete
-        : null,
-  }))
+  .transform((v) => {
+    const porPaquete =
+      v.cantidad_por_paquete === '' || v.cantidad_por_paquete === undefined
+        ? null
+        : v.cantidad_por_paquete
+    const paquete = promocion(v.precio_paquete) ?? null
+    return {
+      ...v,
+      // Sin máximo es precio fijo: mínimo y máximo iguales.
+      precio_max: v.precio_max === '' || v.precio_max === undefined ? v.precio_min : v.precio_max,
+      cantidad_por_paquete: porPaquete,
+      // Una promoción sin cuántas prendas la arman no significa nada.
+      precio_paquete: porPaquete === null ? null : paquete,
+    }
+  })
   .refine((v) => v.precio_max >= v.precio_min, {
     message: 'El precio máximo no puede ser menor que el mínimo.',
   })

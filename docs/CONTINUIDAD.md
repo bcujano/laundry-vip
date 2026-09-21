@@ -1,6 +1,6 @@
 # Estado y continuidad
 
-Última actualización: **2026-09-17**. Traspaso entre sesiones: léelo entero
+Última actualización: **2026-09-21**. Traspaso entre sesiones: léelo entero
 antes de tocar nada. La historia del plan original del agente está en
 [`historia-agente.md`](historia-agente.md).
 
@@ -44,7 +44,8 @@ Todo en producción y usado a diario en pruebas reales.
 | Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · entrada nueva del número definitivo |
 | WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
 | Repo | local, **sin remoto** · 39 commits · etiqueta **`v1.0`** = estado con el número de prueba |
-| Gate | **216 pruebas en verde** · typecheck, lint y build limpios (se retiraron 30 del workflow obsoleto de la fase 12) |
+| Gate | **218 pruebas en verde** · typecheck, lint y build limpios (se retiraron 30 del workflow obsoleto de la fase 12) |
+| Catálogo | 54 filas, iguales a la lista física del dueño: [`catalogo-lavanderia.xlsx`](catalogo-lavanderia.xlsx) (hoja «Base de Datos (sistema)»). Se siembra con `pnpm db:seed` |
 
 **Entrar al CRM:** `brncjn@gmail.com` (superadmin). La contraseña provisional
 la puso una sesión anterior; el dueño debe cambiarla.
@@ -89,6 +90,12 @@ Resumen 8:00 (L-S) → datos del CRM → un mensaje por admin → ¿escribió en
 - **Nada de dinero por WhatsApp** (decisión del dueño): confirmar pagos,
   corregir montos, cerrar discrepancias, cancelar y borrar se hacen **solo en
   el CRM**. Esas acciones ya no existen en el webhook.
+- **El catálogo no se toca en n8n.** Precios, categorías y promociones viven en
+  la tabla `servicios`; el agente los lee en cada consulta. Cambiar un precio en
+  el CRM o correr `pnpm db:seed` basta: no hay nada que republicar en n8n.
+- **Promociones por cantidad** (`cantidad_por_paquete` + `precio_paquete`,
+  migración 0009): las cobijas pequeñas son $5,00 sueltas y 3 por $12,00. El
+  sobrante se cobra suelto, nunca se redondea a otro paquete.
 - **Guardia anti-alucinación** en `Extraer JSON`: si el agente confirma una
   escritura sin que la tool haya respondido ok, o escribe un UUID que no salió
   de una tool, el mensaje se reemplaza. Nació de una orden inventada con ID falso.
@@ -131,6 +138,7 @@ workflow vivo; si editas en n8n a mano, regenera para que no se desalineen.
 | Resumen diario automático para admins, **texto libre** dentro de las 24 h de Meta | El CRM anota la hora del último mensaje de cada autorizado (migración 0008); la plantilla es solo respaldo. Meta acepta el texto fuera de ventana y falla después, por eso se decide antes |
 | Nombre de WhatsApp como nombre provisional del lead | El dueño no quiere leads «Sin nombre» |
 | Descargas de clientes/pedidos solo para superadmin y admin | Datos personales (LOPDP) |
+| Las categorías del catálogo son las de la lista física del dueño (13, por prenda) | Entregó `catalogo_lavanderia.xlsx` el 2026-09-21. Los `nombre_item` no se tocaron: el agente empareja contra ellos y el índice único es (nombre_item, metodo) |
 | Tarifa del combo y horario salen de Configuración | El dueño cambió el combo a $2,50 y el prompt tenía $5 escrito |
 | OpenAI compartido con 321 | Temporal, acordado |
 | Session pooler de Supabase | La conexión directa es solo IPv6 |
@@ -142,6 +150,10 @@ workflow vivo; si editas en n8n a mano, regenera para que no se desalineen.
 - **El agente inventó una orden** («✅ Orden registrada», ID y monto falsos) sin
   llamar a la tool. Por eso existe la guardia de `Extraer JSON` y la regla de
   oro en el prompt de planta.
+- **Una sola cobija se cotizaba a $12,00** (2026-09-21). El catálogo solo sabía
+  cobrar por paquete cerrado y la lista del dueño dice «$5,00 c/u, 3 por
+  $12,00». Se arregló con `precio_paquete` (migración 0009). Si vuelve a
+  aparecer una promoción, va en esas dos columnas, nunca en el prompt.
 - **Ofreció métodos (agua/seco/planchado) para ternos sin consultar el
   catálogo.** Regla en el prompt: nunca métodos ni opciones sin `cotizar_prendas`.
 - **La suite borraba datos reales.** `operador.test.ts` usaba el número del
