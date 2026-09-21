@@ -1,3 +1,4 @@
+import { Download } from 'lucide-react'
 import { FilaPrecio } from '@/components/servicios/fila-precio'
 import { NuevoServicio } from '@/components/servicios/nuevo-servicio'
 import { Tabla, Tarjeta, Th, TituloSeccion, Vacio } from '@/components/ui/primitivos'
@@ -34,6 +35,13 @@ export default async function Servicios() {
             · solo lectura para tu rol
           </span>
         ) : null}
+        <a
+          className="boton boton-suave ml-auto inline-flex items-center gap-1.5 text-sm"
+          download
+          href="/servicios/exportar"
+        >
+          <Download size={15} /> Descargar lista de precios
+        </a>
       </div>
 
       {editable ? <NuevoServicio categorias={categorias.map((grupo) => grupo.categoria)} /> : null}

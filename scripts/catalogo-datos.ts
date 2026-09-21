@@ -1,7 +1,10 @@
 /**
- * Catálogo real de la planta: 54 filas, transcritas de la lista física de
+ * Carga inicial del catálogo: 54 filas, transcritas de la lista física de
  * precios (`catalogo_lavanderia.xlsx`, hoja «Base de Datos (sistema)»).
  * No se redondea, no se completa y no se "limpia".
+ *
+ * **Esto no es la fuente de verdad: lo es el CRM.** Lo que el dueño cambia en
+ * pantalla manda, y `pnpm db:seed` ya no lo pisa (ver `db-seed.ts`).
  *
  * precio_min y precio_max son iguales salvo en los dos peluches con rango.
  * precio_paquete solo existe donde la lista trae una promoción por cantidad
@@ -164,5 +167,8 @@ export const CATALOGO: FilaCatalogo[] = [
   ...OTROS,
 ]
 
-/** La lista física tiene 54 filas. Si este número cambia, algo se perdió. */
-export const TOTAL_ESPERADO = 54
+/**
+ * Cuántas filas trae la lista inicial. NO es cuántas debe tener la base: el
+ * dueño agrega y quita ítems desde el CRM, y el CRM es la fuente de verdad.
+ */
+export const TOTAL_LISTA_INICIAL = 54

@@ -96,10 +96,11 @@ test('la cola de hoy muestra el pedido con su hora', async ({ page }) => {
   await expect(page.getByText(`Hotel E2E ${CORRIDA}`)).toBeVisible()
 })
 
-test('el catálogo lista las 54 filas de la planta', async ({ page }) => {
+test('el catálogo lista los ítems de la planta', async ({ page }) => {
   await page.goto('/servicios')
-  await expect(page.getByText('54 ítems del catálogo')).toBeVisible()
-  await expect(page.getByText('Prendas de vestir')).toBeVisible()
+  // Cuántos hay lo decide el dueño en esta misma pantalla.
+  await expect(page.getByText(/\d+ ítems del catálogo/)).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Servicios' })).toBeVisible()
 })
 
 test('confirmar el pago actualiza la pantalla sin recargar', async ({ page }) => {

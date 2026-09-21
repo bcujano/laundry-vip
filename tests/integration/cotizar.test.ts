@@ -1,8 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { calcularVehiculo, cotizarPrendas, ErrorCotizacion } from '@/server/pricing/cotizar'
+import { centavos, precioDe, servicioDe } from '../util/catalogo'
 
-/** Se cotiza contra el catálogo real de la planta, no contra uno de mentira. */
+/**
+ * Se cotiza contra el catálogo real de la planta, no contra uno de mentira, y
+ * los precios esperados se leen de la base: el dueño los cambia en el CRM
+ * cuando quiere y ninguna prueba puede quedarse con un número viejo escrito.
+ */
 
 describe('método obligatorio', () => {
   it('"3 camisetas" sin método pide el método y NO da precio', async () => {
@@ -18,26 +23,28 @@ describe('método obligatorio', () => {
     expect(resumen.subtotal).toBe(0)
   })
 
-  it('"3 camisetas" en agua cuesta 6.75', async () => {
+  it('"3 camisetas" en agua cobra 3 veces el precio en agua', async () => {
+    const precio = await precioDe('Camiseta', 'agua')
     const { lineas, resumen } = await cotizarPrendas([
       { descripcion: '3 camisetas', cantidad: 3, metodo: 'agua' },
     ])
 
-    expect(lineas[0]?.precio_unitario).toBe(2.25)
-    expect(lineas[0]?.subtotal).toBe(6.75)
-    expect(resumen.subtotal).toBe(6.75)
+    expect(lineas[0]?.precio_unitario).toBe(precio)
+    expect(lineas[0]?.subtotal).toBe(centavos(3 * precio))
+    expect(resumen.subtotal).toBe(centavos(3 * precio))
     expect(resumen.requiere_respuesta_del_cliente).toBe(false)
   })
 
-  it('camisa o blusa también exige método, y en seco son 2.50', async () => {
+  it('camisa o blusa también exige método, y con método cobra el de ese método', async () => {
     const sinMetodo = await cotizarPrendas([{ descripcion: '2 camisas', cantidad: 2 }])
     expect(sinMetodo.lineas[0]?.requiere_metodo).toBe(true)
     expect(sinMetodo.lineas[0]?.metodos_disponibles?.sort()).toEqual(['agua', 'planchado', 'seco'])
 
+    const precio = await precioDe('Camisa o blusa', 'seco')
     const conMetodo = await cotizarPrendas([
       { descripcion: '2 camisas', cantidad: 2, metodo: 'seco' },
     ])
-    expect(conMetodo.lineas[0]?.subtotal).toBe(5)
+    expect(conMetodo.lineas[0]?.subtotal).toBe(centavos(2 * precio))
   })
 })
 
@@ -57,18 +64,20 @@ describe('lo que no está en el catálogo', () => {
 
 describe('precios con rango', () => {
   it('el peluche grande informa los dos límites y no calcula subtotal', async () => {
+    const servicio = await servicioDe('Peluche grande')
     const { lineas } = await cotizarPrendas([{ descripcion: 'peluche grande', cantidad: 1 }])
 
     expect(lineas[0]?.es_rango).toBe(true)
-    expect(lineas[0]?.precio_min).toBe(5)
-    expect(lineas[0]?.precio_max).toBe(7)
+    expect(lineas[0]?.precio_min).toBe(Number(servicio.precio_min))
+    expect(lineas[0]?.precio_max).toBe(Number(servicio.precio_max))
     expect(lineas[0]?.subtotal).toBeUndefined()
   })
 
   it('el peluche mediano tiene precio único y sí calcula', async () => {
+    const precio = await precioDe('Peluche mediano')
     const { lineas } = await cotizarPrendas([{ descripcion: 'peluche mediano', cantidad: 2 }])
     expect(lineas[0]?.es_rango).toBeUndefined()
-    expect(lineas[0]?.subtotal).toBe(6)
+    expect(lineas[0]?.subtotal).toBe(centavos(2 * precio))
   })
 })
 
@@ -82,44 +91,54 @@ describe('cuando varias prendas encajan', () => {
     expect(resumen.requiere_respuesta_del_cliente).toBe(true)
   })
 
-  it('"edredón 3 plazas" ya es inequívoco: 7.00', async () => {
+  it('"edredón 3 plazas" ya es inequívoco', async () => {
+    const precio = await precioDe('Edredón 3 plazas')
     const { lineas } = await cotizarPrendas([{ descripcion: 'edredon 3 plazas', cantidad: 1 }])
     expect(lineas[0]?.nombre_item).toBe('Edredón 3 plazas')
-    expect(lineas[0]?.subtotal).toBe(7)
+    expect(lineas[0]?.subtotal).toBe(precio)
   })
 })
 
 describe('unidades que no son piezas', () => {
-  it('una cobija suelta cuesta 5.00, no el paquete entero', async () => {
+  it('una prenda con promoción, suelta, cuesta el precio suelto y no el paquete', async () => {
+    const cobijas = await servicioDe('Cobijas pequeñas')
     const { lineas } = await cotizarPrendas([{ descripcion: 'cobijas pequeñas', cantidad: 1 }])
 
     expect(lineas[0]?.paquetes_cobrados).toBe(0)
-    expect(lineas[0]?.subtotal).toBe(5)
+    expect(lineas[0]?.subtotal).toBe(Number(cobijas.precio_min))
   })
 
-  it('aplica la promoción 3 x 12.00 y cobra el sobrante suelto', async () => {
-    const { lineas } = await cotizarPrendas([{ descripcion: 'cobijas pequeñas', cantidad: 5 }])
+  it('aplica la promoción por cantidad y cobra el sobrante suelto', async () => {
+    const cobijas = await servicioDe('Cobijas pequeñas')
+    const porPaquete = cobijas.cantidad_por_paquete ?? 0
+    const precioPaquete = Number(cobijas.precio_paquete)
+    if (porPaquete < 2 || !precioPaquete) throw new Error('Las cobijas ya no tienen promoción')
+
+    // Un paquete completo más una prenda suelta: el sobrante nunca se redondea.
+    const cantidad = porPaquete + 1
+    const { lineas } = await cotizarPrendas([{ descripcion: 'cobijas pequeñas', cantidad }])
 
     expect(lineas[0]?.paquetes_cobrados).toBe(1)
-    // 3 por 12.00 más 2 sueltas a 5.00.
-    expect(lineas[0]?.subtotal).toBe(22)
-    expect(lineas[0]?.nota).toContain('paquete(s) de 3')
+    expect(lineas[0]?.subtotal).toBe(centavos(precioPaquete + Number(cobijas.precio_min)))
+    expect(lineas[0]?.nota).toContain(`paquete(s) de ${porPaquete}`)
   })
 
   it('cobra la ropa suelta por libra', async () => {
+    const precio = await precioDe('Lavado, secado y doblado')
     const { lineas } = await cotizarPrendas([
       { descripcion: 'lavado secado y doblado', cantidad: 10 },
     ])
     expect(lineas[0]?.unidad).toBe('libra')
-    expect(lineas[0]?.subtotal).toBe(7)
+    expect(lineas[0]?.subtotal).toBe(centavos(10 * precio))
   })
 
   it('cobra la alfombra por metro cuadrado', async () => {
+    const precio = await precioDe('Alfombra de pelo corto')
     const { lineas } = await cotizarPrendas([
       { descripcion: 'alfombra de pelo corto', cantidad: 4.5 },
     ])
     expect(lineas[0]?.unidad).toBe('m2')
-    expect(lineas[0]?.subtotal).toBe(31.5)
+    expect(lineas[0]?.subtotal).toBe(centavos(4.5 * precio))
   })
 })
 
@@ -135,11 +154,12 @@ describe('el resumen', () => {
 
   it('suma solo las líneas que tienen precio', async () => {
     // Bufanda y no chal: servicios.test.ts cambia el precio del chal mientras corre.
+    const precio = await precioDe('Bufanda')
     const { resumen } = await cotizarPrendas([
       { descripcion: 'bufanda', cantidad: 2 },
       { descripcion: 'un kayak inflable', cantidad: 1 },
     ])
-    expect(resumen.subtotal).toBe(6)
+    expect(resumen.subtotal).toBe(centavos(2 * precio))
     expect(resumen.lineas_con_precio).toBe(1)
     expect(resumen.lineas_sin_precio).toBe(1)
   })

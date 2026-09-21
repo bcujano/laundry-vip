@@ -35,12 +35,16 @@ y el prompt para abrir la siguiente sesión. Todo está en producción.
 7. **Ningún secreto en el repo.** Hay una prueba que falla si aparece una llave
    literal en el JSON de n8n.
 8. **La base es una sola** (pruebas y producción). Ninguna prueba usa ni borra
-   un número real ni depende de un valor que el dueño edita en el CRM.
-9. **Nada de dinero por WhatsApp.** Pagos, montos, discrepancias, cancelar y
-   borrar solo en el CRM. Los permisos del agente los decide el servidor.
-10. **n8n se cambia por MCP** sobre el workflow `Bleb55WBKPfBdxVg` (autorizado
+   un número real ni depende de un valor que el dueño edita en el CRM. Los
+   precios esperados se leen de la base (`tests/util/catalogo.ts`), nunca van
+   escritos en la prueba.
+9. **El CRM es la fuente de verdad del catálogo y de la configuración.** Ningún
+   script, siembra ni prueba revierte lo que el dueño cambió en pantalla.
+10. **Nada de dinero por WhatsApp.** Pagos, montos, discrepancias, cancelar y
+    borrar solo en el CRM. Los permisos del agente los decide el servidor.
+11. **n8n se cambia por MCP** sobre el workflow `Bleb55WBKPfBdxVg` (autorizado
     por el dueño), nunca reimportando. Ver `n8n/README.md`.
-11. Ediciones de TSX con la herramienta Edit, no con reemplazos masivos por
+12. Ediciones de TSX con la herramienta Edit, no con reemplazos masivos por
     script: ya rompieron JSX una vez.
 
 ## Stack
@@ -59,7 +63,7 @@ n8n + Chatwoot + WhatsApp Cloud API · OpenAI `gpt-4.1-mini` y `gpt-transcribe`
 |---|---|
 | `pnpm dev` / `pnpm build` / `pnpm start` | desarrollo y producción |
 | `pnpm typecheck` · `pnpm lint` · `pnpm test` | el gate |
-| `pnpm db:migrate` · `pnpm db:seed` | esquema y catálogo (idempotentes) |
+| `pnpm db:migrate` · `pnpm db:seed` | esquema y carga inicial del catálogo. La siembra **no pisa** lo que el dueño cambió en el CRM; `pnpm db:seed --forzar` sí |
 | `pnpm db:staff` · `pnpm db:password <correo>` | cuentas del CRM |
 | `pnpm db:demo` · `pnpm db:demo --borrar` | datos de ejemplo (teléfonos `+5932200…`) |
 | `pnpm check:integraciones` | las 9 credenciales de n8n |

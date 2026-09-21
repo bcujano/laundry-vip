@@ -63,33 +63,49 @@ describe('las 14 tablas', () => {
 })
 
 describe('catálogo', () => {
-  it('queda en 54 filas exactas y es idempotente', async () => {
+  it('con el catálogo ya cargado, sembrar no escribe nada', async () => {
+    // El CRM es la fuente de verdad: una siembra de rutina no puede revertir
+    // un precio que el dueño acaba de cambiar en pantalla.
+    const antes = await sql<{ total: number }[]>`select count(*)::int as total from servicios`
+
     const primera = await sembrar(sql)
-    expect(primera.filasCatalogo).toBe(54)
+    expect(primera.cargadas).toBe(0)
+    expect(primera.filasCatalogo).toBe(antes[0]?.total)
+
     const segunda = await sembrar(sql)
-    expect(segunda.filasCatalogo).toBe(54)
+    expect(segunda.cargadas).toBe(0)
+    expect(segunda.filasCatalogo).toBe(primera.filasCatalogo)
   })
 
-  it('marca requiere_seleccion_metodo solo en camisa/blusa y camiseta', async () => {
-    const filas = await sql<{ nombre_item: string }[]>`
-      select distinct nombre_item from servicios where requiere_seleccion_metodo = true
+  it('un ítem que se lava de varias formas exige elegir el método', async () => {
+    const incoherentes = await sql<{ nombre_item: string }[]>`
+      select nombre_item from servicios
+      group by nombre_item
+      having count(*) > 1 and bool_and(requiere_seleccion_metodo) = false
     `
-    expect(filas.map((f) => f.nombre_item).sort()).toEqual(['Camisa o blusa', 'Camiseta'])
-  })
-
-  it('guarda los dos peluches como rango y el resto con precio único', async () => {
-    const rangos = await sql<{ nombre_item: string }[]>`
-      select nombre_item from servicios where precio_min <> precio_max order by nombre_item
-    `
-    expect(rangos.map((f) => f.nombre_item)).toEqual(['Peluche grande', 'Peluche pequeño'])
+    expect(incoherentes).toEqual([])
   })
 
   it('el índice único rechaza un (nombre_item, metodo) duplicado', async () => {
+    const [existente] = await sql<{ nombre_item: string; metodo: string }[]>`
+      select nombre_item, metodo from servicios limit 1
+    `
+    if (!existente) throw new Error('catálogo vacío')
+
     await expect(
       sql`
         insert into servicios (categoria, nombre_item, metodo, unidad, precio_min, precio_max)
-        values ('Alfombras', 'Alfombra de pelo corto', 'unico', 'm2', 7.00, 7.00)
+        values ('Prueba', ${existente.nombre_item}, ${existente.metodo}, 'pieza', 1.00, 1.00)
       `,
     ).rejects.toThrow(/duplicate key|servicios_item_metodo_idx/i)
+  })
+
+  it('el check rechaza un rango con máximo menor que el mínimo', async () => {
+    await expect(
+      sql`
+        insert into servicios (categoria, nombre_item, metodo, unidad, precio_min, precio_max)
+        values ('Prueba', ${`Rango imposible ${Date.now()}`}, 'unico', 'pieza', 9.00, 1.00)
+      `,
+    ).rejects.toThrow(/servicios_rango_coherente/i)
   })
 })

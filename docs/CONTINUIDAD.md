@@ -45,7 +45,7 @@ Todo en producción y usado a diario en pruebas reales.
 | WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
 | Repo | local, **sin remoto** · 39 commits · etiqueta **`v1.0`** = estado con el número de prueba |
 | Gate | **218 pruebas en verde** · typecheck, lint y build limpios (se retiraron 30 del workflow obsoleto de la fase 12) |
-| Catálogo | 54 filas, iguales a la lista física del dueño: [`catalogo-lavanderia.xlsx`](catalogo-lavanderia.xlsx) (hoja «Base de Datos (sistema)»). Se siembra con `pnpm db:seed` |
+| Catálogo | **Manda el CRM.** Nació de [`catalogo-lavanderia.xlsx`](catalogo-lavanderia.xlsx) (54 filas) pero lo que vale es lo que está en la tabla `servicios`. `pnpm db:seed` ya no lo pisa; la lista de precios de hoy se baja en Servicios → «Descargar lista de precios» |
 
 **Entrar al CRM:** `brncjn@gmail.com` (superadmin). La contraseña provisional
 la puso una sesión anterior; el dueño debe cambiarla.
@@ -91,8 +91,13 @@ Resumen 8:00 (L-S) → datos del CRM → un mensaje por admin → ¿escribió en
   corregir montos, cerrar discrepancias, cancelar y borrar se hacen **solo en
   el CRM**. Esas acciones ya no existen en el webhook.
 - **El catálogo no se toca en n8n.** Precios, categorías y promociones viven en
-  la tabla `servicios`; el agente los lee en cada consulta. Cambiar un precio en
-  el CRM o correr `pnpm db:seed` basta: no hay nada que republicar en n8n.
+  la tabla `servicios`; el agente los lee en cada consulta. Lo que el dueño
+  cambia en el CRM rige en el siguiente mensaje: no hay nada que republicar.
+- **Nada revierte al CRM.** `pnpm db:seed` solo carga el catálogo si la tabla
+  está vacía; si ya hay datos no escribe nada y reporta en qué se diferencia de
+  la lista del archivo. Para reimponer el archivo hace falta `--forzar`.
+  Las pruebas leen los precios de la base (`tests/util/catalogo.ts`) y no
+  exigen un número fijo de ítems: el dueño agrega y quita desde el CRM.
 - **Promociones por cantidad** (`cantidad_por_paquete` + `precio_paquete`,
   migración 0009): las cobijas pequeñas son $5,00 sueltas y 3 por $12,00. El
   sobrante se cobra suelto, nunca se redondea a otro paquete.

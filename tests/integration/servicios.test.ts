@@ -7,23 +7,6 @@ import {
   obtener,
 } from '@/server/servicios/repo'
 
-// Las categorías de la lista física del dueño (`catalogo_lavanderia.xlsx`).
-const CATEGORIAS_ESPERADAS = [
-  'Alfombras',
-  'Calzado',
-  'Camisas y blusas',
-  'Cortinas',
-  'Lavado en agua',
-  'Mantelería',
-  'Mochilas',
-  'Otros',
-  'Peluches',
-  'Prendas de vestir',
-  'Ropa de cama',
-  'Trajes y abrigos',
-  'Vestidos especiales',
-]
-
 let precioOriginal: { id: string; min: number; max: number } | null = null
 
 afterAll(async () => {
@@ -34,30 +17,25 @@ afterAll(async () => {
 })
 
 describe('catálogo en pantalla', () => {
-  it('lista las 54 filas agrupadas por categoría', async () => {
+  // Cuántos ítems hay y cómo se llaman las categorías lo decide el dueño en el
+  // CRM: la prueba verifica que la pantalla muestre lo que haya en la base.
+  it('muestra todos los ítems de la base, agrupados por categoría', async () => {
     const grupos = await listarPorCategoria()
     const total = grupos.reduce((suma, grupo) => suma + grupo.items.length, 0)
 
-    expect(total).toBe(54)
-    expect(await contar()).toBe(54)
-    expect(grupos.map((g) => g.categoria).sort()).toEqual(CATEGORIAS_ESPERADAS)
+    expect(total).toBe(await contar())
+    expect(grupos.length).toBeGreaterThan(0)
+    expect(grupos.every((grupo) => grupo.items.length > 0)).toBe(true)
+    // Una categoría por grupo: nada se lista dos veces.
+    const categorias = grupos.map((g) => g.categoria)
+    expect(new Set(categorias).size).toBe(categorias.length)
   })
 
-  it('agrupa las 9 prendas de vestir', async () => {
+  it('cada ítem cae en su propia categoría', async () => {
     const grupos = await listarPorCategoria()
-    const vestir = grupos.find((g) => g.categoria === 'Prendas de vestir')
-    expect(vestir?.items).toHaveLength(9)
-  })
-
-  it('las cobijas pequeñas llevan la promoción 3 x 12.00', async () => {
-    const grupos = await listarPorCategoria()
-    const cobijas = grupos
-      .flatMap((g) => g.items)
-      .find((item) => item.nombre_item === 'Cobijas pequeñas')
-
-    expect(Number(cobijas?.precio_min)).toBe(5)
-    expect(cobijas?.cantidad_por_paquete).toBe(3)
-    expect(Number(cobijas?.precio_paquete)).toBe(12)
+    for (const grupo of grupos) {
+      expect(grupo.items.every((item) => item.categoria === grupo.categoria)).toBe(true)
+    }
   })
 })
 
@@ -101,16 +79,23 @@ describe('edición de precios', () => {
 
 describe('alta de servicios', () => {
   it('rechaza un duplicado con un mensaje entendible', async () => {
+    // Se duplica un ítem que exista hoy, sea cual sea: el catálogo lo maneja
+    // el dueño desde el CRM y esta prueba no puede depender de uno concreto.
+    const grupos = await listarPorCategoria()
+    const existente = grupos[0]?.items[0]
+    if (!existente) throw new Error('catálogo vacío')
+    const antes = await contar()
+
     const resultado = await crear({
-      categoria: 'Alfombras',
-      nombre_item: 'Alfombra de pelo corto',
-      metodo: 'unico',
-      unidad: 'm2',
-      precio_min: 7,
-      precio_max: 7,
-      cantidad_por_paquete: null,
-      precio_paquete: null,
-      requiere_seleccion_metodo: false,
+      categoria: existente.categoria,
+      nombre_item: existente.nombre_item,
+      metodo: existente.metodo,
+      unidad: existente.unidad,
+      precio_min: Number(existente.precio_min),
+      precio_max: Number(existente.precio_max),
+      cantidad_por_paquete: existente.cantidad_por_paquete,
+      precio_paquete: existente.precio_paquete,
+      requiere_seleccion_metodo: existente.requiere_seleccion_metodo,
     })
 
     expect(resultado.ok).toBe(false)
@@ -118,6 +103,6 @@ describe('alta de servicios', () => {
       expect(resultado.error).toContain('Ya existe')
       expect(resultado.error).not.toContain('duplicate key')
     }
-    expect(await contar()).toBe(54)
+    expect(await contar()).toBe(antes)
   })
 })
