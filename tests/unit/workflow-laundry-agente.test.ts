@@ -112,8 +112,9 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(systemMessage).toContain('datos_lead.nombre')
     // Siempre un estimado, nunca solo «se confirma en planta».
     expect(systemMessage).toContain('SIEMPRE DA UN ESTIMADO EN DÓLARES')
-    // Peso en libras y solo para ropa suelta.
-    expect(systemMessage).toContain('SIEMPRE EN LIBRAS')
+    // Peso en libras y solo para ropa suelta; las cortinas siguen por kilo.
+    expect(systemMessage).toContain('EL PESO SE HABLA EN LIBRAS')
+    expect(systemMessage).toContain('las cortinas se cobran\n   POR KILO')
     expect(systemMessage).toContain('POR PESO (por libra)')
     // El lapso de entrega y la tarifa salen del CRM, no del prompt.
     expect(systemMessage).toContain('horas_entrega_min')
@@ -125,6 +126,14 @@ describe('agente Laundry VIP (clon del 321)', () => {
     // El método lo manda el catálogo.
     expect(systemMessage).toContain('metodo_unico')
     expect(systemMessage).toContain('advertencia')
+  })
+
+  it('el nombre del negocio lo lee del CRM, no lo lleva escrito', () => {
+    // Si el dueño lo cambia en Configuración, el agente se presenta distinto.
+    expect(systemMessage).toContain("$('Verificar Operador')")
+    expect(systemMessage).toContain('negocio?.nombre')
+    // El nombre viejo no puede quedar como texto fijo en la presentación.
+    expect(systemMessage.split('\n')[0]).not.toContain('Lavandería VIP')
   })
 
   it('no hay ninguna llave literal', () => {

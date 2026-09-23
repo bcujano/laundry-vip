@@ -326,4 +326,16 @@ describe('cliente y memoria', () => {
     })
     expect((cliente.sobre.data as { es_operador: boolean }).es_operador).toBe(false)
   })
+
+  it('cada mensaje trae el nombre del negocio con el que se presenta el agente', async () => {
+    const { sobre } = await llamar({
+      accion: 'verificar_whitelist_operador',
+      parametros: { telefono: TELEFONO },
+    })
+    const data = sobre.data as { negocio: { nombre: string; saludo: string } }
+
+    // El prompt lo lee de aquí: lo que diga Configuración es como se presenta.
+    expect(data.negocio.nombre).toBe((await obtenerConfig()).nombre_negocio)
+    expect(data.negocio.nombre.trim()).not.toBe('')
+  })
 })

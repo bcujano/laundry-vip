@@ -85,16 +85,33 @@ export async function sincronizarMemoria(
   })
 }
 
-/** ¿Este número puede hablarle al agente en modo operador? */
+/**
+ * ¿Este número puede hablarle al agente en modo operador?
+ *
+ * n8n llama esto en CADA mensaje entrante, antes de los dos agentes, así que
+ * también devuelve cómo se llama el negocio: el prompt lo lee de aquí y nunca
+ * lleva el nombre escrito. Si el dueño lo cambia en Configuración, el agente
+ * se presenta distinto en el siguiente mensaje.
+ */
 export async function verificarWhitelistOperador(
   parametros: ParametrosDe<'verificar_whitelist_operador'>,
-): Promise<ResultadoAccion<{ es_operador: boolean; nombre: string | null; nivel: string | null }>> {
-  const { data, error } = await supabaseAdmin()
-    .from('operador_whitelist')
-    .select('nombre, nivel')
-    .eq('telefono', parametros.telefono)
-    .eq('activo', true)
-    .maybeSingle()
+): Promise<
+  ResultadoAccion<{
+    es_operador: boolean
+    nombre: string | null
+    nivel: string | null
+    negocio: { nombre: string; saludo: string }
+  }>
+> {
+  const [{ data, error }, negocio] = await Promise.all([
+    supabaseAdmin()
+      .from('operador_whitelist')
+      .select('nombre, nivel')
+      .eq('telefono', parametros.telefono)
+      .eq('activo', true)
+      .maybeSingle(),
+    obtenerConfig(),
+  ])
 
   if (error) return fallo('ERROR_INTERNO', error.message, 500)
 
@@ -111,6 +128,7 @@ export async function verificarWhitelistOperador(
     es_operador: data !== null,
     nombre: data?.nombre ?? null,
     nivel: data?.nivel ?? null,
+    negocio: { nombre: negocio.nombre_negocio, saludo: negocio.saludo_agente },
   })
 }
 
