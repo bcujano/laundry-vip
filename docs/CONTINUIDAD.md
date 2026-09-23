@@ -43,7 +43,7 @@ Todo en producción y usado a diario en pruebas reales.
 | Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» (59 nodos, activo) |
 | Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · entrada nueva del número definitivo |
 | WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
-| Repo | local, **sin remoto** · 39 commits · etiqueta **`v1.0`** = estado con el número de prueba |
+| Repo | local · 45 commits (historial reescrito el 2026-09-23 para sacar un secreto de 321: los SHA cambiaron) · etiqueta **`v1.0`** intacta · remoto `github.com/bcujano/laundry-vip` configurado, **el repositorio todavía no existe en GitHub** |
 | Gate | **231 pruebas en verde** · typecheck, lint y build limpios · **los 10 E2E de Playwright ya corren** (se arreglaron el 2026-09-23: la preparación de sesión seguía en el login por enlace mágico) |
 | Catálogo | **Manda el CRM.** Nació de [`catalogo-lavanderia.xlsx`](catalogo-lavanderia.xlsx) (54 filas) pero lo que vale es lo que está en la tabla `servicios`. `pnpm db:seed` ya no lo pisa; la lista de precios de hoy se baja en Servicios → «Descargar lista de precios» |
 
@@ -219,17 +219,22 @@ workflow vivo; si editas en n8n a mano, regenera para que no se desalineen.
    (`pnpm db:demo`) ya no están: **no los cargues sin pedírselo al dueño.**
 2. **n8n y Chatwoot compartidos con 321**, y la credencial de OpenAI también.
 3. **Una sola base** para pruebas y producción.
-4. **Contraseña provisional del superadmin**; alias `brncjn+admin@gmail.com`
-   para el rol admin.
-5. **Secretos que quedaron a la vista en el chat o en capturas** y conviene
-   rotar: token de Vercel · verify token y secreto del webhook de Chatwoot ·
-   **PIN de verificación en dos pasos del número (123456)**.
-6. **La entrada del número de prueba** en Chatwoot: se puede archivar.
-7. **El JSON de referencia de 321 ya salió del repo** (2026-09-23), pero
-   **sigue en el historial de git** con su credencial literal dentro. Antes de
-   subir esto a GitHub hay que reescribir el historial (`git filter-repo`) o
-   empezar el repositorio remoto sin historial. Una prueba
-   (`tests/unit/sin-secretos.test.ts`) impide que vuelva a entrar.
+4. ~~Contraseña provisional del superadmin~~ **cambiada por el dueño el
+   2026-09-23**; alias `brncjn+admin@gmail.com` para el rol admin.
+5. ~~Secretos a la vista (token de Vercel, webhook de Chatwoot, PIN 123456)~~
+   **rotados por el dueño el 2026-09-23**.
+6. **Chatwoot sin limpiar**: quedan las conversaciones de las pruebas, la
+   entrada del número viejo y un contacto de la cuenta 3 con el nombre «321
+   Soluciones Inmobiliarias». El dueño decidió el 2026-09-23 dejarlo para
+   más adelante; no es bloqueante para operar.
+7. ~~El JSON de referencia de 321 en el historial~~ **RESUELTO el 2026-09-23**:
+   se purgó de los 45 commits con `git filter-repo` (los SHA cambiaron, la
+   etiqueta `v1.0` sobrevivió) y se verificó en un clon limpio que ni el
+   archivo ni la credencial quedan en ningún commit. Una prueba
+   (`tests/unit/sin-secretos.test.ts`) recorre todo lo rastreado e impide que
+   vuelva a entrar. **El respaldo del historial viejo
+   (`Descargas\laundry-vip-respaldo-antes-de-limpiar-historial.bundle`) SÍ
+   contiene el secreto: bórralo cuando ya no haga falta.**
 8. **Workflow viejo `ksk8bnj19phzMJHU`**: sigue sin archivar y reclama la misma
    ruta `/webhook/laundry-vip` que el activo. Está desactivado, pero si alguien
    lo enciende por error se roba los mensajes. Archivarlo en n8n es un clic.
@@ -241,16 +246,26 @@ workflow vivo; si editas en n8n a mano, regenera para que no se desalineen.
   admins que no escribieron en 24 h): categoría Utilidad, idioma `es`, 7
   variables. El resumen ya está encendido; sin la plantilla, a quien esté
   fuera de ventana simplemente no le llega.
-- **No hay ningún admin en la lista blanca** (solo Daniel Serrano, operador):
-  hoy el resumen de las 8:00 no le llega a nadie. El dueño debe agregarse como
-  Administrador y escribirle al agente al menos una vez al día.
+- **El admin de la lista blanca nunca le ha escrito al agente.** Ya hay una
+  Administradora (María Sol Játiva) y un operador (Daniel Serrano), pero su
+  `ultimo_mensaje_en` está vacío: Meta solo deja mandar texto libre dentro de
+  las 24 h del último mensaje del usuario, así que el resumen de las 8:00
+  sigue sin llegarle. Tiene que escribirle al agente una vez al día, o hay
+  que aprobar la plantilla.
+- **El límite de mensajes sigue en 15 por teléfono al día.** El dueño lo dio
+  por subido el 2026-09-23 pero en Configuración sigue en 15; una conversación
+  real con cotización y agenda lo alcanza y el agente se queda mudo. Subirlo
+  a 40 es un campo en Configuración.
 **Por hacer**
 - La dirección, el fijo y el saludo del agente siguen escritos en el prompt; el
   nombre del negocio ya sale de Configuración. Faltan campos en `configuracion`
   para los otros tres (el `saludo_agente` existe y está vacío).
 - Validar la búsqueda de Chatwoot por teléfono (`src/lib/chatwoot.ts`,
   `/search?q=`) con la sesión del dueño.
-- Repositorio en GitHub y CI (el remoto está configurado, falta crear el repo).
+- **Repositorio en GitHub y CI**: el historial ya está limpio y el remoto
+  configurado (`github.com/bcujano/laundry-vip`), pero el repositorio **no
+  existe todavía en GitHub** y aquí no hay `gh` instalado. Hay que crearlo
+  **privado** y después `git push -u origin agente-n8n-laundry --tags`.
 - Segundo proyecto Supabase para producción; instancias propias de n8n/Chatwoot.
 - `meta_referrals` para el referral de anuncios (ahora que hay número real).
 - Aviso automático al cliente cuando hay discrepancia (hoy es manual).
