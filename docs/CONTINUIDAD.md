@@ -44,7 +44,7 @@ Todo en producción y usado a diario en pruebas reales.
 | Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · entrada nueva del número definitivo |
 | WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
 | Repo | local, **sin remoto** · 39 commits · etiqueta **`v1.0`** = estado con el número de prueba |
-| Gate | **223 pruebas en verde** · typecheck, lint y build limpios (se retiraron 30 del workflow obsoleto de la fase 12) |
+| Gate | **231 pruebas en verde** · typecheck, lint y build limpios · **los 10 E2E de Playwright ya corren** (se arreglaron el 2026-09-23: la preparación de sesión seguía en el login por enlace mágico) |
 | Catálogo | **Manda el CRM.** Nació de [`catalogo-lavanderia.xlsx`](catalogo-lavanderia.xlsx) (54 filas) pero lo que vale es lo que está en la tabla `servicios`. `pnpm db:seed` ya no lo pisa; la lista de precios de hoy se baja en Servicios → «Descargar lista de precios» |
 
 **Entrar al CRM:** `brncjn@gmail.com` (superadmin). La contraseña provisional
@@ -224,10 +224,15 @@ workflow vivo; si editas en n8n a mano, regenera para que no se desalineen.
 5. **Secretos que quedaron a la vista en el chat o en capturas** y conviene
    rotar: token de Vercel · verify token y secreto del webhook de Chatwoot ·
    **PIN de verificación en dos pasos del número (123456)**.
-6. **Workflow viejo `ksk8bnj19phzMJHU`** desactivado y la **entrada del número
-   de prueba** en Chatwoot: se pueden archivar.
-7. `n8n/referencia/iAgente-321-INMO-V2.json` (versionado desde antes) trae un
-   secreto literal de 321. No es nuestro para rotar; conviene sacarlo del repo.
+6. **La entrada del número de prueba** en Chatwoot: se puede archivar.
+7. **El JSON de referencia de 321 ya salió del repo** (2026-09-23), pero
+   **sigue en el historial de git** con su credencial literal dentro. Antes de
+   subir esto a GitHub hay que reescribir el historial (`git filter-repo`) o
+   empezar el repositorio remoto sin historial. Una prueba
+   (`tests/unit/sin-secretos.test.ts`) impide que vuelva a entrar.
+8. **Workflow viejo `ksk8bnj19phzMJHU`**: sigue sin archivar y reclama la misma
+   ruta `/webhook/laundry-vip` que el activo. Está desactivado, pero si alguien
+   lo enciende por error se roba los mensajes. Archivarlo en n8n es un clic.
 
 ## 7. Lo pendiente
 
@@ -246,8 +251,6 @@ workflow vivo; si editas en n8n a mano, regenera para que no se desalineen.
 - Validar la búsqueda de Chatwoot por teléfono (`src/lib/chatwoot.ts`,
   `/search?q=`) con la sesión del dueño.
 - Repositorio en GitHub y CI (el remoto está configurado, falta crear el repo).
-- Los E2E de Playwright **nunca se ejecutaron** (Chromium no descargó). No
-  decir que están en verde.
 - Segundo proyecto Supabase para producción; instancias propias de n8n/Chatwoot.
 - `meta_referrals` para el referral de anuncios (ahora que hay número real).
 - Aviso automático al cliente cuando hay discrepancia (hoy es manual).

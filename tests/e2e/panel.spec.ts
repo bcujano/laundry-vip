@@ -85,7 +85,9 @@ test('la lista de pedidos carga sin errores de consola', async ({ page }) => {
 
   await page.goto('/pedidos')
   await expect(page.getByRole('heading', { name: 'Pedidos' })).toBeVisible()
-  await expect(page.getByText(`Hotel E2E ${CORRIDA}`)).toBeVisible()
+  // El nombre también sale en el selector de cliente del alta: se busca el
+  // enlace de la fila, no cualquier texto que coincida.
+  await expect(page.getByRole('link', { name: `Hotel E2E ${CORRIDA}` }).first()).toBeVisible()
 
   expect(errores, `errores en consola: ${errores.join(' | ')}`).toEqual([])
 })
@@ -93,7 +95,10 @@ test('la lista de pedidos carga sin errores de consola', async ({ page }) => {
 test('la cola de hoy muestra el pedido con su hora', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByRole('heading', { name: 'Cola de hoy' })).toBeVisible()
-  await expect(page.getByText(`Hotel E2E ${CORRIDA}`)).toBeVisible()
+  // Aparece en la cola y en los leads del día: basta con que esté en pantalla.
+  await expect(
+    page.getByRole('link', { name: new RegExp(`Hotel E2E ${CORRIDA}`) }).first(),
+  ).toBeVisible()
 })
 
 test('el catálogo lista los ítems de la planta', async ({ page }) => {
