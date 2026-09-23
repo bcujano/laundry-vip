@@ -205,6 +205,20 @@ describe('modo operador (lista blanca de planta)', () => {
     expect(opciones.systemMessage).toContain('NUNCA borra')
   })
 
+  it('a la dueña la trata de usted y la acompaña con datos, no con opiniones', () => {
+    // Al admin (la dueña) no se le habla como al operador de planta.
+    expect(promptOperador).toContain('SECCIÓN 1: TONO (DEPENDE DEL NIVEL)')
+    expect(promptOperador).toContain('DUEÑA DEL NEGOCIO')
+    expect(promptOperador).toContain('Trato de USTED y por su nombre')
+    expect(promptOperador).toContain('ACOMPAÑAR A LA DUEÑA')
+    expect(promptOperador).toContain('RESPONDE CON DATOS, NUNCA CON OPINIÓN SUELTA')
+    expect(promptOperador).toContain('SIEMPRE OFRECE EL SIGUIENTE PASO ÚTIL')
+    expect(promptOperador).toContain('No inventes tendencias')
+    // Y sabe qué preguntarle al CRM para responder «¿cómo vamos?».
+    expect(promptOperador).toContain('como_vamos')
+    expect(String(porNombre('consulta_admin')?.parameters.jsonBody)).toContain('como_vamos')
+  })
+
   it('las acciones de operador llevan el teléfono del que escribe, no uno que invente el modelo', () => {
     for (const nombre of [
       'registrar_cliente_presencial',

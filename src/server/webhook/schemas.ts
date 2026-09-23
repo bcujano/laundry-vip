@@ -146,7 +146,14 @@ export const parametrosPorAccion = {
   // ── Solo admin ────────────────────────────────────────────────────────
   consulta_admin: z.object({
     telefono_operador: telefono,
-    consulta: z.enum(['resumen', 'atencion', 'cola_manana', 'leads_calientes', 'clientes_top']),
+    consulta: z.enum([
+      'resumen',
+      'atencion',
+      'cola_manana',
+      'leads_calientes',
+      'clientes_top',
+      'como_vamos',
+    ]),
   }),
 
   // Lo llama el disparador de las 8:00 de n8n, no una persona.

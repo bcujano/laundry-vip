@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { embudoLeads } from '@/server/dashboard/leads'
 import { tablero } from '@/server/dashboard/repo'
+import { comoVamos } from '@/server/reportes/negocio'
 import { generar } from '@/server/reportes/repo'
 import { limitesDelDia } from '@/server/scheduling/ventana'
 import { exito, type ResultadoAccion } from '../respuesta'
@@ -157,6 +158,10 @@ export async function consultaAdmin(
     }
     case 'clientes_top':
       return exito(await clientesTop(ahora))
+    case 'como_vamos':
+      // La pregunta de la dueña: cómo va el mes contra el anterior, qué deja
+      // la plata y cuántos de los que escriben terminan comprando.
+      return exito(await comoVamos(ahora))
   }
 }
 

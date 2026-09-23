@@ -55,8 +55,8 @@ const TOOLS = [
   [
     'consulta_admin',
     'consulta_admin',
-    'SOLO ADMIN. Lectura del negocio: resumen, atencion, cola_manana, leads_calientes o clientes_top.',
-    `{"telefono_operador": "${OP}", "consulta": ${fromAI('consulta', 'Una de: resumen, atencion, cola_manana, leads_calientes, clientes_top')}}`,
+    'SOLO ADMIN. Lectura del negocio: como_vamos (mes contra mes, prendas que mas facturan, conversion de leads y recurrencia), resumen (el dia), atencion (lo que esta trabado), cola_manana, leads_calientes o clientes_top.',
+    `{"telefono_operador": "${OP}", "consulta": ${fromAI('consulta', 'Una de: como_vamos, resumen, atencion, cola_manana, leads_calientes, clientes_top')}}`,
   ],
   [
     'generar_reporte',

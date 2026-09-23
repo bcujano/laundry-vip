@@ -44,7 +44,7 @@ Todo en producción y usado a diario en pruebas reales.
 | Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · entrada nueva del número definitivo |
 | WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
 | Repo | local · 45 commits (historial reescrito el 2026-09-23 para sacar un secreto de 321: los SHA cambiaron) · etiqueta **`v1.0`** intacta · remoto `github.com/bcujano/laundry-vip` configurado, **el repositorio todavía no existe en GitHub** |
-| Gate | **231 pruebas en verde** · typecheck, lint y build limpios · **los 10 E2E de Playwright ya corren** (se arreglaron el 2026-09-23: la preparación de sesión seguía en el login por enlace mágico) |
+| Gate | **241 pruebas en verde** · typecheck, lint y build limpios · **los 10 E2E de Playwright ya corren** (se arreglaron el 2026-09-23: la preparación de sesión seguía en el login por enlace mágico) |
 | Catálogo | **Manda el CRM.** Nació de [`catalogo-lavanderia.xlsx`](catalogo-lavanderia.xlsx) (54 filas) pero lo que vale es lo que está en la tabla `servicios`. `pnpm db:seed` ya no lo pisa; la lista de precios de hoy se baja en Servicios → «Descargar lista de precios» |
 
 **Entrar al CRM:** `brncjn@gmail.com` (superadmin). La contraseña provisional
@@ -82,6 +82,13 @@ Resumen 8:00 (L-S) → datos del CRM → un mensaje por admin → ¿escribió en
   conversación, aunque no compre. El nombre del perfil de WhatsApp entra como
   nombre **provisional**; el que diga el cliente lo reemplaza y lo editado en
   el CRM nunca se pisa. Los operadores no cuentan como leads.
+- **A la dueña (nivel admin) el agente la trata distinto**: de usted, por su
+  nombre, servicial y con iniciativa, y responde SIEMPRE con datos del CRM más
+  una lectura corta y el siguiente paso útil. La consulta `como_vamos` le da
+  el mes en curso contra el anterior (facturado, pedidos, ticket promedio y
+  variación), las 5 prendas que más facturan, cuántos clientes nuevos llegaron,
+  cuántos compraron y cuántos repiten (`src/server/reportes/negocio.ts`).
+  Hoy la admin es **María Sol Játiva** (`+593 98 509 1860`).
 - **Números autorizados, dos niveles** (tabla `operador_whitelist.nivel`):
   - `operador`: registrar y corregir órdenes presenciales (texto, voz o foto),
     buscar pedidos, registrar el conteo en planta y avanzar estados.
