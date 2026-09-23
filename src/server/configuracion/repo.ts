@@ -39,7 +39,9 @@ export type CambiosConfiguracion = Partial<
     | 'hora_apertura'
     | 'hora_cierre'
     | 'margen_minimo_minutos'
-    | 'tarifa_combo'
+    | 'tarifa_recoleccion_entrega'
+    | 'horas_entrega_min'
+    | 'horas_entrega_max'
     | 'limite_mensajes_diarios_por_telefono'
     | 'limite_costo_diario_openai_usd'
   >

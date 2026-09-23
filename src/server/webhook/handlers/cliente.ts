@@ -132,17 +132,19 @@ export async function findOrCreateClient(
   if (existente) {
     let fila = existente as Cliente
 
-    // Lo que el agente aprende solo rellena huecos: nunca pisa lo que editó el
-    // operador. La excepción es el nombre provisional del perfil de WhatsApp:
-    // si el cliente dice su nombre real, ese lo reemplaza.
+    // Lo que el agente aprende solo rellena huecos: nunca pisa lo que el equipo
+    // escribió en el CRM. El nombre que dice el propio cliente sí manda sobre
+    // el del perfil de WhatsApp y sobre uno anterior que él mismo haya dado:
+    // si se corrige («Juan Carlos, no Juan»), el CRM se corrige con él.
     const huecos: Partial<Cliente> = {}
     const whatsapp = parametros.nombre_whatsapp?.trim()
     const dicho = parametros.nombre_contacto?.trim()
-    const esProvisional = !fila.nombre_contacto || fila.nombre_contacto === whatsapp
-    if (dicho && esProvisional && dicho !== fila.nombre_contacto) {
+    if (dicho && dicho !== fila.nombre_contacto && fila.nombre_contacto_origen !== 'crm') {
       huecos.nombre_contacto = dicho
+      huecos.nombre_contacto_origen = 'cliente'
     } else if (!fila.nombre_contacto && whatsapp) {
       huecos.nombre_contacto = whatsapp
+      huecos.nombre_contacto_origen = 'whatsapp'
     }
     if (!fila.nombre_negocio && parametros.nombre_negocio?.trim()) {
       huecos.nombre_negocio = parametros.nombre_negocio.trim()
@@ -180,6 +182,8 @@ export async function findOrCreateClient(
       telefono: parametros.telefono,
       nombre_contacto:
         parametros.nombre_contacto?.trim() || parametros.nombre_whatsapp?.trim() || null,
+      // El nombre del perfil es provisional; el que diga el cliente lo reemplaza.
+      nombre_contacto_origen: parametros.nombre_contacto?.trim() ? 'cliente' : 'whatsapp',
       nombre_negocio: parametros.nombre_negocio?.trim() || null,
       tipo_negocio: parametros.tipo_negocio ?? 'particular',
       canal_origen: parametros.canal_origen ?? 'whatsapp_agente',
@@ -226,7 +230,9 @@ export async function proximaVentana(parametros: ParametrosDe<'obtener_proxima_v
     ultima_hora_del_dia: string
     hora_apertura: string
     hora_cierre: string
-    tarifa_combo: number
+    tarifa_recoleccion_entrega: number
+    horas_entrega_min: number
+    horas_entrega_max: number
   }>
 > {
   // Horario y tarifa salen de Configuración: el dueño los cambia en el CRM y el
@@ -246,6 +252,9 @@ export async function proximaVentana(parametros: ParametrosDe<'obtener_proxima_v
     ultima_hora_del_dia: ultimaHoraDelDia(config),
     hora_apertura: negocio.hora_apertura.slice(0, 5),
     hora_cierre: negocio.hora_cierre.slice(0, 5),
-    tarifa_combo: Number(negocio.tarifa_combo),
+    tarifa_recoleccion_entrega: Number(negocio.tarifa_recoleccion_entrega),
+    // El lapso de entrega también sale del CRM: el prompt no lleva números.
+    horas_entrega_min: negocio.horas_entrega_min,
+    horas_entrega_max: negocio.horas_entrega_max,
   })
 }

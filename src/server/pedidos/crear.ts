@@ -35,7 +35,7 @@ type Logistica = {
   pago_entrega: 'pagado' | 'pendiente' | 'n_a'
   monto_recoleccion: number | null
   monto_entrega: number | null
-  monto_combo: number | null
+  monto_recoleccion_entrega: number | null
 }
 
 /**
@@ -60,7 +60,7 @@ function resolverLogistica(entrada: EntradaPedido, tarifaCombo: number): Logisti
       pago_entrega: 'n_a',
       monto_recoleccion: null,
       monto_entrega: null,
-      monto_combo: null,
+      monto_recoleccion_entrega: null,
     }
   }
 
@@ -73,7 +73,7 @@ function resolverLogistica(entrada: EntradaPedido, tarifaCombo: number): Logisti
       pago_entrega: 'n_a',
       monto_recoleccion: null,
       monto_entrega: null,
-      monto_combo: tarifaCombo,
+      monto_recoleccion_entrega: tarifaCombo,
     }
   }
 
@@ -91,7 +91,7 @@ function resolverLogistica(entrada: EntradaPedido, tarifaCombo: number): Logisti
     pago_entrega: pagoEntrega,
     monto_recoleccion: recoleccion === 'app' ? (entrada.montoRecoleccion ?? null) : null,
     monto_entrega: entrega === 'app' ? (entrada.montoEntrega ?? null) : null,
-    monto_combo: null,
+    monto_recoleccion_entrega: null,
   }
 }
 
@@ -127,7 +127,7 @@ export async function crearPedido(entrada: EntradaPedido): Promise<ResultadoCrea
 
   const config = await obtenerConfig()
   const cotizacion = await cotizarPrendas(entrada.items)
-  const logistica = resolverLogistica(entrada, Number(config.tarifa_combo))
+  const logistica = resolverLogistica(entrada, Number(config.tarifa_recoleccion_entrega))
 
   // Excepción que manda sobre todo lo anterior: un cliente que factura al mes
   // nunca se bloquea por el pago de un pedido suelto.

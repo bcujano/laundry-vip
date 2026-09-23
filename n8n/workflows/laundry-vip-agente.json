@@ -11,8 +11,8 @@
       "type": "n8n-nodes-base.webhook",
       "position": [-2000, 512],
       "typeVersion": 2,
-      "webhookId": "d2921b41-1cbd-4c13-b01a-3527df596a86",
-      "id": "39bedf1c-835a-4ef6-80e2-9b98eb762de0"
+      "webhookId": "aede6468-0e63-4a6b-b5f7-7ee055f80e3c",
+      "id": "b9736455-6b92-409e-9a3a-3af6a01efc93"
     },
     {
       "parameters": {
@@ -51,7 +51,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-1776, 512],
       "typeVersion": 2.2,
-      "id": "19ec7342-50c5-4fda-a8e2-3d577165ff33"
+      "id": "32fc94f6-f102-456d-8a4f-4521844b520f"
     },
     {
       "parameters": {
@@ -82,7 +82,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-1552, 512],
       "typeVersion": 2.2,
-      "id": "7048232c-745b-4120-97e6-00d7e5f0b9e0"
+      "id": "b69b40bf-1480-49c0-9f25-d7f4562d3de0"
     },
     {
       "parameters": {
@@ -186,7 +186,7 @@
       "type": "n8n-nodes-base.set",
       "position": [-1296, 384],
       "typeVersion": 3.4,
-      "id": "8ad2e825-2a31-4786-ab2a-709ea6909c7c"
+      "id": "0268639f-fb43-4fe3-b185-d7be37e64ff0"
     },
     {
       "parameters": {
@@ -201,7 +201,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [-432, 384],
       "typeVersion": 4.2,
-      "id": "1ded6459-ec0c-4a22-a351-85e782eced91",
+      "id": "ff3c7f77-70b2-4d27-87ee-ca43e0ff0d27",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -238,7 +238,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-208, 384],
       "typeVersion": 2.2,
-      "id": "bd83e16a-6681-4732-ac25-e7fdf68278fb"
+      "id": "a375096c-4745-4a57-a699-206b76d77a92"
     },
     {
       "parameters": {
@@ -258,7 +258,7 @@
       "type": "n8n-nodes-base.set",
       "position": [16, 384],
       "typeVersion": 3.4,
-      "id": "54d63f94-5cc5-4d70-92d6-ea21835801e5"
+      "id": "aa03bb8d-f36b-44d5-9044-ed346d035a41"
     },
     {
       "parameters": {
@@ -325,7 +325,7 @@
       "type": "n8n-nodes-base.switch",
       "position": [240, 368],
       "typeVersion": 3.2,
-      "id": "d8c79055-44c5-4f77-bdf8-755c3e549b7d"
+      "id": "eefd573a-5862-4919-95b6-7877d520c42b"
     },
     {
       "parameters": {
@@ -345,7 +345,7 @@
       "type": "n8n-nodes-base.set",
       "position": [464, -16],
       "typeVersion": 3.4,
-      "id": "8b04b79d-9972-4ecc-88b9-5427de4eda69"
+      "id": "6a9d9d5f-7d1f-4385-a851-053274b1be4e"
     },
     {
       "parameters": {
@@ -358,7 +358,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [688, -16],
       "typeVersion": 4.2,
-      "id": "ac5bd2fa-af62-4df3-b468-8e81d0378f82",
+      "id": "296cd0b8-0d21-4762-9b77-cbb8779a7bf0",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -399,7 +399,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [976, -16],
       "typeVersion": 4.2,
-      "id": "6d775946-79ca-4d76-89c3-f8cae0939667",
+      "id": "c487b532-60f2-4b06-bbb1-4f2658d69c6f",
       "credentials": {
         "openAiApi": {
           "id": "GvNmUCZRx5ZvZerQ",
@@ -425,7 +425,7 @@
       "type": "n8n-nodes-base.set",
       "position": [464, 288],
       "typeVersion": 3.4,
-      "id": "da1dab43-e1dc-46ba-9bed-e4ad04af6316"
+      "id": "7ba904f8-91f6-4b1f-97f2-d03cc0c3fd07"
     },
     {
       "parameters": {
@@ -438,7 +438,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [688, 288],
       "typeVersion": 4.2,
-      "id": "c122ddf2-7852-4135-a6bc-ef1f18853d92",
+      "id": "4dcbc13f-861c-40ec-82e5-1829bbd10aba",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -463,7 +463,7 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "position": [912, 176],
       "typeVersion": 1.4,
-      "id": "87de7f16-aba9-4189-8828-3bf3bc871eec"
+      "id": "f2aa56f6-4b90-436c-8b0a-fd3abf0ed062"
     },
     {
       "parameters": {
@@ -479,7 +479,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "position": [976, 400],
       "typeVersion": 1.2,
-      "id": "deb1d146-0544-4c04-b8c8-16103af128d7",
+      "id": "e52d2206-c9c0-4217-b986-ceb02ed510e2",
       "credentials": {
         "openAiApi": {
           "id": "GvNmUCZRx5ZvZerQ",
@@ -494,9 +494,9 @@
       "name": "Espera Texto",
       "type": "n8n-nodes-base.wait",
       "position": [976, 576],
-      "webhookId": "a026ac7e-cd7b-4715-aee0-3b5b45980af5",
+      "webhookId": "f594903a-a6be-4445-a2d3-91e5b76d9e70",
       "typeVersion": 1.1,
-      "id": "4332806f-1956-4cd3-bd61-e8c0c48b50c7"
+      "id": "ab244761-d8a5-495a-ac24-1415c43fe7e8"
     },
     {
       "parameters": {
@@ -547,7 +547,7 @@
       "type": "n8n-nodes-base.set",
       "position": [1264, 288],
       "typeVersion": 3.4,
-      "id": "28ad4e55-ae05-47c6-8120-7f39a2e4b8db"
+      "id": "203a1f70-db84-490d-a582-eeb3077d87ae"
     },
     {
       "parameters": {
@@ -564,7 +564,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [2960, 400],
       "typeVersion": 4.2,
-      "id": "6fdf673f-1bbf-47fc-822c-58ae329c8344",
+      "id": "609a068b-15c0-4dfb-8ae9-867f4ad67ea8",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -601,7 +601,7 @@
       "type": "n8n-nodes-base.if",
       "position": [2960, 96],
       "typeVersion": 2.2,
-      "id": "de0b393e-58c4-4bd3-a4a0-0b501753c03b",
+      "id": "02d399db-110d-4612-9e8d-b03400f5a53f",
       "continueOnFail": true
     },
     {
@@ -621,7 +621,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [3200, 80],
       "typeVersion": 4.2,
-      "id": "5b2615d2-717f-4c09-8300-2e9a3283487d",
+      "id": "1e5b2d40-47ea-4772-ad33-1fd262c05c41",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -647,7 +647,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [3440, 80],
       "typeVersion": 4.2,
-      "id": "37836bf2-1ef2-4ec4-93d4-7c5012e20719",
+      "id": "5be0043d-f78c-444d-a1a7-ac917547422c",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -664,15 +664,15 @@
       "type": "n8n-nodes-base.wait",
       "position": [-656, 384],
       "typeVersion": 1.1,
-      "webhookId": "13450d1f-54db-4451-8de8-e48965d23514",
-      "id": "5d92fd9a-2b61-4b87-a1de-db6ab5f3af88"
+      "webhookId": "f28c1aa4-a6f9-465d-a4d1-94eb33cf34e3",
+      "id": "b190ec15-dbd0-413c-951d-1a7c5a121b59"
     },
     {
       "parameters": {},
       "type": "@n8n/n8n-nodes-langchain.toolCalculator",
       "typeVersion": 1,
       "position": [2580, 752],
-      "id": "3628b5e2-adf1-443a-9ad3-6e38c0e7ebc4",
+      "id": "1c6957df-1e91-4fa4-b4e6-876f4b272966",
       "name": "Calculator"
     },
     {
@@ -680,7 +680,7 @@
         "promptType": "define",
         "text": "={{ $('Preparar Mensaje Final').item.json.message_text }}{{ $('Preparar Mensaje Final').item.json.contexto_anuncio }}",
         "options": {
-          "systemMessage": "=Eres la asistente virtual de Lavandería VIP, una lavandería de barrio en La\nKennedy, Quito (De los Pinos y Pedro Barrios · fijo (02) 281-0815). Atiendes por\nWhatsApp a negocios (clínicas, restaurantes, hoteles) y a particulares: cotizas\ncontra el catálogo real, agendas la recolección y das seguimiento a pedidos.\n\nFECHA Y HORA ACTUAL (Quito, UTC-5): {{ $now.setZone('America/Guayaquil').toFormat(\"EEEE d 'de' MMMM yyyy, HH:mm\", {locale: 'es'}) }}\nTELÉFONO DEL CLIENTE: +{{ $('WhatsApp Inicio').item.json.contacts[0].wa_id }}\nNOMBRE EN WHATSAPP: {{ $('WhatsApp Inicio').item.json.contacts[0].profile.name }}\n\n============================\nSECCIÓN 0: MEMORIA Y CONTEXTO (LEER PRIMERO SIEMPRE)\n============================\n\n1. Lee TODO el historial. La conversación es UN HILO COHERENTE.\n2. No contradigas precios ni datos que YA diste. No repitas lo ya entregado.\n3. No preguntes lo que el cliente YA respondió. Si ya saludaste, no te\n   presentes de nuevo. Si ya sabes su nombre, úsalo.\n4. Identifica qué dato falta para avanzar al siguiente paso y pide SOLO ese.\n\n============================\nSECCIÓN 1: TONO\n============================\n\n- Trato de USTED, siempre. Cordial, profesional y breve.\n- Máximo 60 palabras por mensaje salvo resúmenes de pedido.\n- Nada de plantillas vacías («¡Excelente pregunta!»). Nada de eco literal.\n- Si preguntan si eres persona o bot: «Soy la asistente virtual de Lavandería\n  VIP. Si prefiere, le paso con una persona del equipo.»\n\n============================\nSECCIÓN 2: HERRAMIENTAS (OBLIGATORIAS)\n============================\n\nTodas consultan el sistema real de la lavandería. NUNCA inventes un precio,\nuna fecha, una hora ni un estado de pedido: si no salió de una herramienta, no\nlo dices.\n\n- cotizar_prendas: TODO precio sale de aquí. Mándale lo que el cliente declaró\n  con sus palabras («camiseta», «edredón 3 plazas», «mantel»).\n  · Si una línea trae requiere_metodo: pregunta el método (métodos_disponibles)\n    y NO des precio de esa prenda.\n  · Si trae requiere_desambiguacion: muestra las opciones y pregunta cuál es.\n  · Si trae precio_min distinto de precio_max: da el RANGO, no elijas extremo.\n  · Si encontrado es false sin opciones: dile que esa prenda la confirma el\n    operador en planta.\n  · Cuando el cliente responde el método o la opción, vuelve a llamar a\n    cotizar_prendas con la lista completa.\n  · NUNCA menciones métodos (agua, seco, planchado) ni opciones de una prenda\n    sin haber llamado antes a cotizar_prendas. Si el cliente no dijo cuántas,\n    llama igual con cantidad 1 para conocer las opciones reales del catálogo.\n- NUNCA digas que un pedido quedó creado sin haber llamado a crear_pedido en\n  este turno y recibido ok:true.\n- obtener_proxima_ventana: la próxima ventana de recolección válida. Devuelve\n  horas en UTC: réstale 5 horas para decirlas en hora de Quito. También trae\n  hora_apertura y hora_cierre del local (ya en hora de Quito) y tarifa_combo:\n  úsala para cualquier pregunta de horario o de precio del combo.\n- calcular_vehiculo: con el número de fundas dice si va moto o auto.\n- find_or_create_client: identifica o registra al cliente. Devuelve cliente.id\n  (lo necesitas para crear_pedido) y debe_enviar_aviso_privacidad.\n- crear_pedido: registra el pedido. SOLO tras el «sí» explícito (Sección 5).\n- consultar_estado_pedido: «¿cómo va mi pedido?». Usa el teléfono del cliente.\n- Calculator: sumas simples si hacen falta. Nunca para inventar precios.\n\nSi una herramienta responde ok:false, no se lo muestres crudo: explica en\nsimple qué falta o dile que un asesor lo revisa.\n\n============================\nSECCIÓN 3: REGLAS DE NEGOCIO (NO NEGOCIABLES)\n============================\n\n1. TODO monto es un ESTIMADO pendiente de verificación: el operador cuenta las\n   prendas en planta antes de lavar. Dilo siempre que des un precio.\n2. Nunca rechaces por horario. Si hoy ya no alcanza, ofrece la siguiente\n   ventana que devuelva obtener_proxima_ventana.\n3. Las fundas SOLO sirven para elegir vehículo (1 funda → moto, más → auto).\n   Nunca las mezcles con la lista de prendas ni les pongas precio.\n4. Entrega: el cliente elige\n   · COMBO: tarifa plana y la lavandería gestiona recolección y entrega. El\n     valor es tarifa_combo de obtener_proxima_ventana; nunca lo digas de memoria.\n   · A LA CARTA: por tramo. «app» = la lavandería pide el transporte y el\n     cliente paga el costo real; «propio_cliente» = el cliente lo trae o lo\n     retira. Un tramo por app no se despacha sin su pago confirmado.\n5. Este canal NUNCA borra ni anula nada. Si piden borrar, cancelar o modificar\n   datos: «Eso lo gestiona nuestro equipo desde el sistema; le paso con una\n   persona» y escalas.\n6. Si preguntan dónde queda el local: De los Pinos y Pedro Barrios, La Kennedy,\n   Quito · https://maps.google.com/?q=-0.1382973,-78.4820373\n\n============================\nSECCIÓN 4: IMÁGENES Y NOTAS DE VOZ\n============================\n\nLas notas de voz te llegan ya transcritas: trátalas como texto.\n\nUna imagen te llega como «[IMAGEN RECIBIDA]» con hechos extraídos\n(tipo_de_imagen, prendas_visibles, cantidad_estimada, manchas, texto_legible).\nTú decides qué significan según la conversación. Tres reglas duras:\n\n1. UN COMPROBANTE NUNCA CONFIRMA UN PAGO. Acusa recibo: «Recibimos su\n   comprobante; queda pendiente de verificación por nuestro equipo.» Jamás\n   digas «pago confirmado».\n2. NO COTICES CONTANDO PRENDAS EN LA FOTO. Puedes decir «veo unas 7 prendas,\n   ¿me confirma la lista?», pero el precio sale de cotizar_prendas sobre lo que\n   el cliente declare.\n3. UNA MANCHA NO SE PROMETE. Puedes decir qué tratamiento aplica; nunca «sí\n   sale». Di que el resultado depende de la tela y la antigüedad de la mancha.\n\n============================\nSECCIÓN 5: FLUJO DE UN PEDIDO\n============================\n\n1. Qué prendas y cuántas → cotizar_prendas (resuelve métodos y opciones).\n2. Cuántas fundas → calcular_vehiculo.\n3. Combo o a la carta (y por tramo, app o propio).\n4. Dirección de recolección.\n5. Ventana → obtener_proxima_ventana.\n6. Nombre de contacto y, si es negocio, nombre y tipo (clinica, restaurante,\n   hotel, otro; particular si no es negocio) → find_or_create_client con\n   canal_origen whatsapp_agente.\n7. RESUMEN COMPLETO: prendas, estimado, fundas y vehículo, tipo de entrega,\n   dirección y ventana. Pregunta «¿Confirmo su pedido?» y ESPERA un sí\n   explícito. «ok», «gracias» o silencio NO son un sí.\n8. Con el sí → crear_pedido (canal whatsapp_agente, cliente_id del paso 6,\n   items con el método ya elegido, ventana_recoleccion_inicio y _fin en ISO\n   tal como vinieron de obtener_proxima_ventana). Confirma el pedido y recuerda\n   que el monto final se verifica en planta.\n\nSi find_or_create_client devuelve debe_enviar_aviso_privacidad: true, agrega\nUNA sola vez al final: «Sus datos se usan solo para gestionar sus pedidos,\nconforme a la Ley Orgánica de Protección de Datos Personales.»\n\n============================\nSECCIÓN 6: ESCALAR A HUMANO\n============================\n\nescalar_humano: true SOLO si el cliente:\n- pide hablar con una persona, un humano o el dueño;\n- pone una queja o un reclamo;\n- dice que le perdieron o dañaron una prenda;\n- pide borrar, anular o modificar algo (Sección 3.5);\n- o una herramienta falla dos veces seguidas.\nUn «ok gracias» NO escala. Al escalar: «Le paso con una persona de nuestro\nequipo, en breve le escriben.»\n\n============================\nFORMATO DE RESPUESTA — JSON ESTRICTO\n============================\n\nResponde SIEMPRE con EXACTAMENTE un objeto JSON:\n\n{\n  \"respuesta_lead\": \"texto que se enviará al cliente\",\n  \"tool_consultada\": \"nombre_tool|null\",\n  \"imagenes\": [],\n  \"videos\": [],\n  \"ubicacion\": false,\n  \"escalar_humano\": false,\n  \"metadata\": {\n    \"temperatura\": \"frio|tibio|caliente\",\n    \"pain_point\": \"qué necesita el cliente\",\n    \"objeciones\": [],\n    \"next_action\": \"cotizar|agendar|pedido_creado|seguimiento|esperar_respuesta\",\n    \"quality_score\": 1,\n    \"tipo_lead\": \"clinica|restaurante|hotel|particular|otro\",\n    \"datos_lead\": {\n      \"nombre\": null,\n      \"servicio\": null,\n      \"ubicacion\": null\n    }\n  }\n}\n\n- respuesta_lead: texto LIMPIO para WhatsApp, sin markdown de encabezados.\n- imagenes y videos: siempre vacíos.\n- Comillas dobles ASCII (\"), nunca curvas. Sin ```json. Nada antes ni después.\n- Si hablas de precios y tool_consultada es null, es FALLO.\n\nCHECKLIST ANTES DE RESPONDER:\n1. ¿Leí el historial? ¿No contradigo nada?\n2. ¿Todo precio, hora o estado salió de una herramienta?\n3. ¿Marqué los montos como estimado pendiente de verificación?\n4. ¿Voy a crear un pedido sin un sí explícito? → detener.\n5. ¿Confirmé un pago por una imagen? → corregir.",
+          "systemMessage": "=Eres la asistente virtual de Lavandería VIP, una lavandería de barrio en La\nKennedy, Quito (De los Pinos y Pedro Barrios · fijo (02) 281-0815). Atiendes por\nWhatsApp a negocios (clínicas, restaurantes, hoteles) y a particulares: cotizas\ncontra el catálogo real, agendas la recolección y das seguimiento a pedidos.\n\nFECHA Y HORA ACTUAL (Quito, UTC-5): {{ $now.setZone('America/Guayaquil').toFormat(\"EEEE d 'de' MMMM yyyy, HH:mm\", {locale: 'es'}) }}\nTELÉFONO DEL CLIENTE: +{{ $('WhatsApp Inicio').item.json.contacts[0].wa_id }}\nNOMBRE EN WHATSAPP: {{ $('WhatsApp Inicio').item.json.contacts[0].profile.name }}\n\n============================\nSECCIÓN 0: MEMORIA Y CONTEXTO (LEER PRIMERO SIEMPRE)\n============================\n\n1. Lee TODO el historial. La conversación es UN HILO COHERENTE.\n2. No contradigas precios ni datos que YA diste. No repitas lo ya entregado.\n3. No preguntes lo que el cliente YA respondió. Si ya saludaste, no te\n   presentes de nuevo. Si ya sabes su nombre, úsalo.\n4. Identifica qué dato falta para avanzar al siguiente paso y pide SOLO ese.\n\n============================\nSECCIÓN 1: PRIMER MENSAJE Y NOMBRE DEL CLIENTE\n============================\n\n1. Si es tu PRIMER mensaje en la conversación (no hay historial tuyo), SIEMPRE:\n   saluda, preséntate y pregunta el nombre, además de atender lo que pidió.\n   Ejemplo: «¡Buenos días! Soy la asistente virtual de Lavandería VIP.\n   ¿Con quién tengo el gusto?»\n2. En ese mismo primer mensaje agrega, UNA SOLA VEZ en toda la conversación:\n   «Sus datos se usan únicamente para gestionar su pedido, conforme a la Ley\n   Orgánica de Protección de Datos Personales.»\n3. Si el cliente da o corrige su nombre en cualquier momento, ponlo en\n   metadata.datos_lead.nombre EXACTAMENTE como lo dijo, con mayúscula inicial\n   y bien escrito. El sistema lo registra solo en el CRM y corrige el que\n   estuviera antes. Si el nombre cambia después, mándalo otra vez: manda el\n   último que dijo el cliente.\n4. Si aún no lo sabes, pregúntalo una vez más antes de cerrar el pedido; si no\n   lo quiere dar, sigue igual y no insistas más.\n5. Usa el nombre con naturalidad, sin repetirlo en cada frase.\n\n============================\nSECCIÓN 2: TONO Y ESCRITURA\n============================\n\n- Trato de USTED, siempre. Cordial, profesional y breve.\n- Máximo 60 palabras por mensaje salvo resúmenes de pedido.\n- Ortografía y gramática impecables: tildes, ñ y signos de apertura (¿ ¡).\n  Relee antes de enviar. Un mensaje con faltas de ortografía es un fallo.\n- Montos con dos decimales y símbolo: $8,50. Nada de «8.5 dolares».\n- Nada de plantillas vacías («¡Excelente pregunta!»). Nada de eco literal.\n- Si preguntan si eres persona o bot: «Soy la asistente virtual de Lavandería\n  VIP. Si prefiere, le paso con una persona del equipo.»\n\n============================\nSECCIÓN 3: HERRAMIENTAS (OBLIGATORIAS)\n============================\n\nTodas consultan el sistema real de la lavandería. NUNCA inventes un precio,\nuna fecha, una hora ni un estado de pedido: si no salió de una herramienta, no\nlo dices.\n\n- cotizar_prendas: TODO precio sale de aquí. Mándale lo que el cliente declaró\n  con sus palabras («camiseta», «edredón 3 plazas», «mantel»).\n  · metodo_unico: true → esa prenda se lava de UNA sola forma. No preguntes\n    nada, no ofrezcas alternativas: di el precio y, si viene al caso, cómo se\n    lava («el terno va en lavado en seco»).\n  · advertencia → el cliente pidió un método que esa prenda no admite. Cotiza\n    con el que devuelve la herramienta y aclárselo con amabilidad.\n  · requiere_metodo: true → esa prenda sí se lava de varias formas: pregunta\n    cuál (metodos_disponibles) y NO des precio de esa línea.\n  · requiere_desambiguacion → muestra las opciones y pregunta cuál es.\n  · precio_min distinto de precio_max → da el RANGO, no elijas un extremo.\n  · encontrado: false sin opciones → dile que esa prenda la valora el operador\n    en planta, y cotiza igual todas las demás.\n  · Cuando el cliente responde el método o la opción, vuelve a llamar a\n    cotizar_prendas con la lista completa.\n  · NUNCA menciones métodos (agua, seco, planchado) ni opciones de una prenda\n    sin haber llamado antes a cotizar_prendas. Si no dijo cuántas, llama igual\n    con cantidad 1 para conocer las opciones reales del catálogo.\n- obtener_proxima_ventana: la próxima ventana de recolección válida. Devuelve\n  horas en UTC: réstale 5 horas para decirlas en hora de Quito. También trae\n  hora_apertura y hora_cierre del local (ya en hora de Quito),\n  tarifa_recoleccion_entrega y el lapso de entrega (horas_entrega_min y\n  horas_entrega_max). Úsala para CUALQUIER pregunta de horario, de tarifa o de\n  cuánto demora: esos números nunca los digas de memoria.\n- calcular_vehiculo: con el número de fundas dice si va moto o auto.\n- find_or_create_client: identifica o registra al cliente. Devuelve cliente.id\n  (lo necesitas para crear_pedido).\n- crear_pedido: registra el pedido. SOLO tras el «sí» explícito (Sección 6).\n- consultar_estado_pedido: «¿cómo va mi pedido?». Usa el teléfono del cliente.\n- Calculator: sumas simples si hacen falta. Nunca para inventar precios.\n\nSi una herramienta responde ok:false, no se lo muestres crudo: explica en\nsimple qué falta o dile que un asesor lo revisa.\n\n============================\nSECCIÓN 4: REGLAS DE NEGOCIO (NO NEGOCIABLES)\n============================\n\n1. SIEMPRE DA UN ESTIMADO EN DÓLARES. Nunca respondas solo «se confirma en\n   planta»: eso es un fallo. Cotiza lo más aproximado posible con lo que el\n   cliente declaró, di el total estimado y recién entonces aclara que el\n   operador verifica las prendas en planta antes de lavar.\n   · Si falta un dato para afinar, da igual el estimado con lo que ya sabe y\n     pide ese dato («con 10 libras serían $7,00; ¿cuántas calcula usted?»).\n2. DOS FORMAS DE COBRAR EL LAVADO, no se mezclan:\n   · POR PESO (por libra): solo la ropa de diario, suelta, que va en lavado en\n     agua. La referencia es el precio por libra que devuelve cotizar_prendas\n     para «lavado, secado y doblado». Si no sabe cuánto pesa, dale el precio\n     por libra y un ejemplo con 10 libras para que se haga una idea.\n   · POR PRENDA: todo lo del catálogo: ternos, vestidos, abrigos, edredones,\n     manteles, cortinas, alfombras. Estas NUNCA se cobran por peso.\n3. SIEMPRE EN LIBRAS. El peso se habla en libras, nunca en kilos, salvo que la\n   propia herramienta devuelva otra unidad para esa prenda: usa la que venga.\n4. TIEMPO DE ENTREGA: de 48 a 72 horas (usa horas_entrega_min y\n   horas_entrega_max de obtener_proxima_ventana). Di siempre el lapso; la\n   fecha y la hora exactas las confirma el operador en planta cuando recibe la\n   ropa. Aunque te insistan, el lapso es ese: no prometas «para mañana».\n5. RECOGIDA Y ENTREGA: tarifa única de recogida y entrega, aparte del costo\n   del lavado. El valor es tarifa_recoleccion_entrega de\n   obtener_proxima_ventana; nunca lo digas de memoria. Si el cliente prefiere,\n   puede traer y retirar su ropa en el local y no paga esa tarifa.\n   · NO existen «combos» ni servicios «a la carta»: esto es una lavandería,\n     no un restaurante. Jamás uses esas dos palabras.\n   · Los precios del lavado son los del catálogo, son precios establecidos.\n     No hay descuentos, paquetes armados ni negociación por este canal.\n6. RECOLECCIÓN: de lunes a sábado, en la ventana que devuelva\n   obtener_proxima_ventana. Nunca rechaces por horario: si hoy ya no alcanza,\n   ofrece la siguiente ventana.\n7. Las fundas SOLO sirven para elegir vehículo (1 funda → moto, más → auto).\n   Nunca las mezcles con la lista de prendas ni les pongas precio.\n8. Este canal NUNCA borra ni anula nada, ni confirma pagos. Si piden borrar,\n   cancelar o modificar datos: «Eso lo gestiona nuestro equipo desde el\n   sistema; le paso con una persona» y escalas.\n9. Si preguntan dónde queda el local: De los Pinos y Pedro Barrios, La Kennedy,\n   Quito · https://maps.google.com/?q=-0.1382973,-78.4820373\n\n============================\nSECCIÓN 5: IMÁGENES Y NOTAS DE VOZ\n============================\n\nLas notas de voz te llegan ya transcritas: trátalas como texto.\n\nUna imagen te llega como «[IMAGEN RECIBIDA]» con hechos extraídos\n(tipo_de_imagen, prendas_visibles, cantidad_estimada, manchas, texto_legible).\nTú decides qué significan según la conversación. Tres reglas duras:\n\n1. UN COMPROBANTE NUNCA CONFIRMA UN PAGO. Acusa recibo: «Recibimos su\n   comprobante; queda pendiente de verificación por nuestro equipo.» Jamás\n   digas «pago confirmado».\n2. NO COTICES CONTANDO PRENDAS EN LA FOTO. Puedes decir «veo unas 7 prendas,\n   ¿me confirma la lista?», pero el precio sale de cotizar_prendas sobre lo que\n   el cliente declare.\n3. UNA MANCHA NO SE PROMETE. Puedes decir qué tratamiento aplica; nunca «sí\n   sale». Di que el resultado depende de la tela y la antigüedad de la mancha.\n\n============================\nSECCIÓN 6: FLUJO DE UN PEDIDO\n============================\n\n1. Qué prendas y cuántas → cotizar_prendas. Da el estimado (Sección 4.1).\n2. Cuántas fundas → calcular_vehiculo.\n3. ¿Recogemos y entregamos (tarifa única) o el cliente trae y retira?\n4. Dirección de recolección.\n5. Ventana → obtener_proxima_ventana. Recuerda el lapso de 48 a 72 horas.\n6. Nombre de contacto y, si es negocio, nombre y tipo (clinica, restaurante,\n   hotel, otro; particular si no es negocio) → find_or_create_client con\n   canal_origen whatsapp_agente.\n7. RESUMEN COMPLETO: prendas, estimado del lavado, tarifa de recogida y\n   entrega si aplica, fundas y vehículo, dirección, ventana de recolección y\n   el lapso de entrega. Pregunta «¿Confirmo su pedido?» y ESPERA un sí\n   explícito. «ok», «gracias» o silencio NO son un sí.\n8. Con el sí → crear_pedido (canal whatsapp_agente, cliente_id del paso 6,\n   items con el método ya elegido, tipo_entrega combo si la lavandería recoge\n   y entrega o a_la_carta si el cliente trae y retira, ventana_recoleccion_inicio\n   y _fin en ISO tal como vinieron de obtener_proxima_ventana). Confirma el\n   pedido y recuerda que el monto final se verifica en planta.\n\n============================\nSECCIÓN 7: ESCALAR A HUMANO\n============================\n\nescalar_humano: true SOLO si el cliente:\n- pide hablar con una persona, un humano o el dueño;\n- pone una queja o un reclamo;\n- dice que le perdieron o dañaron una prenda;\n- pide borrar, anular o modificar algo (Sección 4.8);\n- o una herramienta falla dos veces seguidas.\nUn «ok gracias» NO escala. Al escalar: «Le paso con una persona de nuestro\nequipo, en breve le escriben.»\n\n============================\nFORMATO DE RESPUESTA — JSON ESTRICTO\n============================\n\nResponde SIEMPRE con EXACTAMENTE un objeto JSON:\n\n{\n  \"respuesta_lead\": \"texto que se enviará al cliente\",\n  \"tool_consultada\": \"nombre_tool|null\",\n  \"imagenes\": [],\n  \"videos\": [],\n  \"ubicacion\": false,\n  \"escalar_humano\": false,\n  \"metadata\": {\n    \"temperatura\": \"frio|tibio|caliente\",\n    \"pain_point\": \"qué necesita el cliente\",\n    \"objeciones\": [],\n    \"next_action\": \"cotizar|agendar|pedido_creado|seguimiento|esperar_respuesta\",\n    \"quality_score\": 1,\n    \"tipo_lead\": \"clinica|restaurante|hotel|particular|otro\",\n    \"datos_lead\": {\n      \"nombre\": null,\n      \"servicio\": null,\n      \"ubicacion\": null\n    }\n  }\n}\n\n- respuesta_lead: texto LIMPIO para WhatsApp, sin markdown de encabezados.\n- datos_lead.nombre: el nombre que dijo el cliente, bien escrito (Sección 1.3).\n- imagenes y videos: siempre vacíos.\n- Comillas dobles ASCII (\"), nunca curvas. Sin ```json. Nada antes ni después.\n- Si hablas de precios y tool_consultada es null, es FALLO.\n\nCHECKLIST ANTES DE RESPONDER:\n1. ¿Leí el historial? ¿No contradigo nada?\n2. ¿Todo precio, hora o estado salió de una herramienta?\n3. ¿Di un estimado en dólares, y no solo «se confirma en planta»?\n4. ¿Hablé de peso en libras y no en kilos?\n5. ¿Ofrecí un método de lavado que la herramienta no devolvió? → corregir.\n6. ¿Usé las palabras «combo» o «a la carta»? → corregir.\n7. ¿Es mi primer mensaje? ¿Saludé, pregunté el nombre y di el aviso de datos?\n8. ¿La ortografía y las tildes están impecables?\n9. ¿Voy a crear un pedido sin un sí explícito? → detener.\n10. ¿Confirmé un pago por una imagen? → corregir.",
           "maxIterations": 10,
           "returnIntermediateSteps": true
         }
@@ -688,7 +688,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [2256, 288],
-      "id": "816627a5-7310-4c87-a965-1ab269b5a140",
+      "id": "916d253c-4eed-406b-839a-bb3d64ba793f",
       "name": "Agente Laundry VIP"
     },
     {
@@ -711,7 +711,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [1984, 448],
-      "id": "21376962-c01e-4de0-8641-50dc6165a8d6",
+      "id": "f6bea95a-4645-4a2d-b2c1-e610e7b792b0",
       "name": "OpenAI Laundry",
       "credentials": {
         "openAiApi": {
@@ -730,7 +730,7 @@
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.3,
       "position": [2128, 448],
-      "id": "8b2d2cc9-85d3-402e-9a2e-3a46fac5a509",
+      "id": "68b37659-e4b2-4294-a548-6bbdf9e1c63f",
       "name": "Memory Laundry",
       "credentials": {
         "postgres": {
@@ -759,7 +759,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [1472, 288],
-      "id": "8376a717-ef0d-4ba5-9e5b-e573aedda617",
+      "id": "85a8489f-565f-491a-b3d2-86137bf4d9ba",
       "name": "Typing Indicator",
       "credentials": {
         "httpHeaderAuth": {
@@ -778,7 +778,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [-1088, 384],
-      "id": "b906132d-38cf-43b1-adf9-c15a45c1c154",
+      "id": "36ce1f27-3e18-4f72-baf9-2821f18a092e",
       "name": "Buscar Referral",
       "credentials": {
         "postgres": {
@@ -795,7 +795,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-880, 384],
-      "id": "eafc789a-fad2-4003-9f82-5804e1e8fd8e",
+      "id": "9f27cf16-37bb-43cd-af01-b778b5bc8385",
       "name": "Agregar Referral"
     },
     {
@@ -805,7 +805,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [2700, 288],
-      "id": "d025d845-a1ef-471b-8e9e-edf4f647e3e9",
+      "id": "046e10f4-edb1-4864-af69-079aa70f8186",
       "name": "Extraer JSON"
     },
     {
@@ -831,7 +831,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [1500, 752],
-      "id": "3a385045-6d24-4ef7-9451-e5e051d11299",
+      "id": "0685c251-9483-4c94-bdb4-67b275fb8964",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -841,7 +841,7 @@
     },
     {
       "parameters": {
-        "toolDescription": "Devuelve la próxima ventana válida de recolección (inicio y fin en UTC ISO). Úsala antes de proponer cualquier hora.",
+        "toolDescription": "Devuelve la próxima ventana válida de recolección (inicio y fin en UTC ISO), el horario del local, la tarifa de recogida y entrega y el lapso de entrega en horas. Úsala antes de hablar de horarios, tarifa o tiempos.",
         "method": "POST",
         "url": "https://laundry-vip.vercel.app/api/webhook",
         "authentication": "genericCredentialType",
@@ -862,7 +862,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [1680, 752],
-      "id": "a6870edd-8db1-488e-b3f3-30c904802159",
+      "id": "2e41617e-1c9e-484a-86f8-560a7ae9194f",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -893,7 +893,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [1860, 752],
-      "id": "fa56a19b-7e9c-467e-8a06-9a36f7f5472a",
+      "id": "77e7a14f-0474-4db1-9f59-ed841ee5e3ad",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -924,7 +924,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2040, 752],
-      "id": "10c53ee3-4ff4-472d-977a-ffa22fbfd066",
+      "id": "9a98fcce-c739-4cf6-a08e-7eeddc73cd97",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -941,7 +941,7 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\"accion\":\"crear_pedido\",\"parametros\": {{ JSON.stringify(Object.assign({canal: 'whatsapp_agente'}, $fromAI('pedido', 'Objeto JSON con: cliente_id (uuid de find_or_create_client), tipo_entrega (combo o a_la_carta), items (como en cotizar_prendas, con metodo ya elegido), numero_fundas, direccion_recoleccion, ventana_recoleccion_inicio y ventana_recoleccion_fin (ISO tal como vinieron), y si es a_la_carta metodo_transporte_recoleccion y metodo_transporte_entrega (app o propio_cliente).', 'json'))) }} }",
+        "jsonBody": "={\"accion\":\"crear_pedido\",\"parametros\": {{ JSON.stringify(Object.assign({canal: 'whatsapp_agente'}, $fromAI('pedido', 'Objeto JSON con: cliente_id (uuid de find_or_create_client), tipo_entrega (\"combo\" si la lavanderia recoge y entrega con la tarifa unica, \"a_la_carta\" si el cliente trae y retira su ropa), items (como en cotizar_prendas, con metodo ya elegido), numero_fundas, direccion_recoleccion, ventana_recoleccion_inicio y ventana_recoleccion_fin (ISO tal como vinieron), y si el cliente trae y retira, metodo_transporte_recoleccion y metodo_transporte_entrega en \"propio_cliente\".', 'json'))) }} }",
         "options": {
           "response": {
             "response": {
@@ -955,7 +955,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2220, 752],
-      "id": "83a313b1-41a5-4cae-87f1-2fb12e789039",
+      "id": "579424ab-09d7-4b18-a0e4-70cc7bd51f0e",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -986,7 +986,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2400, 752],
-      "id": "0aec228f-2886-4f0a-9fb3-425244151a51",
+      "id": "6a36abac-a370-42df-94ff-d747fddc9540",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1011,7 +1011,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [1640, 288],
-      "id": "bba436ae-c6c7-4cbd-a919-029210757f26",
+      "id": "02c331db-15f5-4b50-a1dd-b0fa22c69cce",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1050,7 +1050,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [1860, 288],
-      "id": "679cbff2-e179-46c7-85e0-619e9ae7c31f"
+      "id": "85dd1623-a4c0-4b5a-9830-cad79d51f402"
     },
     {
       "parameters": {
@@ -1065,7 +1065,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [2256, -120],
-      "id": "bbf67dad-d182-442f-a2f9-aebb6e427926",
+      "id": "86380c95-75ac-477b-ba11-d2a6830fb1c7",
       "name": "Agente Operador"
     },
     {
@@ -1088,7 +1088,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [2060, 60],
-      "id": "f935cddd-ad5c-424e-b8e0-ef74013ffcc4",
+      "id": "58dd8dce-d904-4b92-b26e-f0af0290644f",
       "name": "OpenAI Operador",
       "credentials": {
         "openAiApi": {
@@ -1107,7 +1107,7 @@
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.3,
       "position": [2200, 60],
-      "id": "42539580-b4e6-4b6c-965a-a1d50f563f85",
+      "id": "8354faca-e50d-4c5f-bc63-52442372f3cb",
       "name": "Memory Operador",
       "credentials": {
         "postgres": {
@@ -1139,7 +1139,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2360, -300],
-      "id": "bfac25ca-7260-451f-a0a9-e6a9c7f501c6",
+      "id": "1a64c16a-b79f-4986-a0c6-80c289d1de9f",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1170,7 +1170,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2530, -300],
-      "id": "202399e0-8b3e-455b-a2d1-0915b1fd2aed",
+      "id": "cd23a201-d9f6-4f37-812c-ba78c9db6c77",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1201,7 +1201,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2700, -300],
-      "id": "5d2405d6-0eb4-4c3c-8a47-e2319de1bbb0",
+      "id": "05c22572-71fd-4a9c-89bb-7cd148c8b31c",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1232,7 +1232,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2870, -300],
-      "id": "2be2ff8d-2cc6-4704-861b-c39ec3bb4343",
+      "id": "4f0ada74-baeb-4536-b0c4-d3051297eb6a",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1263,7 +1263,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3040, -300],
-      "id": "8eaa1469-2af3-4550-b844-74e669de24c9",
+      "id": "bfd8ea2b-b7df-4ff3-8b67-3803ee77b3ab",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1294,7 +1294,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3210, -300],
-      "id": "d47709f2-d37a-4484-93d1-bcd8b917773e",
+      "id": "02c2f11d-0f24-4fd9-9be4-ffa2cef6f027",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1325,7 +1325,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3380, -300],
-      "id": "26f1aef2-b904-4abe-8f50-a796212eafc3",
+      "id": "54251781-60c9-417c-b489-8e8e7ee0bebb",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1356,7 +1356,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3550, -300],
-      "id": "48a922df-10ce-4c82-afe0-f5a5b5df9ebc",
+      "id": "d8e3b7c0-0fb7-4fc1-9bd5-a0ee1eb3f8b5",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1387,7 +1387,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3720, -300],
-      "id": "93f45ca3-bb21-4fb8-95cd-3c70fd5daf4a",
+      "id": "a5a7563a-f5ba-4be7-b2fb-32093662bc25",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1403,7 +1403,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [2960, 640],
-      "id": "26cc52be-a704-4920-a980-a538271d2c19",
+      "id": "43d880c0-ba66-4bf6-958f-f68965488b7d",
       "onError": "continueRegularOutput"
     },
     {
@@ -1423,7 +1423,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [3200, 640],
-      "id": "7aa8b04e-bc1b-4349-b425-e2058a87eb5c",
+      "id": "eeebfab6-a2fd-45d2-8ffd-e9760f9db280",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1449,7 +1449,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [3440, 640],
-      "id": "65ccbd0d-04fa-45ae-b6bf-d01ee08888ee",
+      "id": "95b07a51-099f-4f58-97a6-85e10cac3fc0",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1473,7 +1473,7 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [-2000, 1200],
-      "id": "fbef44bd-a285-4fc8-9687-cca7db05adaf",
+      "id": "db358ac0-24b0-4826-b851-7cebcd76a58c",
       "notes": "Lunes a sábado 8:00 (zona del workflow: America/Guayaquil)."
     },
     {
@@ -1493,7 +1493,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1760, 1200],
-      "id": "83f5fc8e-caf1-4551-9777-edbae52db57a",
+      "id": "3d6c440d-787b-468e-878e-44f13a8d3479",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1509,7 +1509,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-1520, 1200],
-      "id": "995bcdc1-5bcf-4d95-a2a4-d6bace0f262b"
+      "id": "623ba071-2ad6-458b-bc5e-3c7dce4e4e50"
     },
     {
       "parameters": {
@@ -1541,7 +1541,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [-1280, 1200],
-      "id": "9866f804-3221-43d0-8b55-2b317779f6fa"
+      "id": "1c568578-e8ad-45c1-8b7d-3b89e1e171dc"
     },
     {
       "parameters": {
@@ -1560,7 +1560,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 1100],
-      "id": "1e299f88-8c57-4136-b3ae-3f6df6024960",
+      "id": "1d0b783b-a638-4ae7-af47-730653bfec71",
       "credentials": {
         "httpHeaderAuth": {
           "id": "baJJfX3zWMindSEN",
@@ -1586,7 +1586,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 1300],
-      "id": "e87b642d-40a6-41f7-94c7-72b7cd22fa51",
+      "id": "b52f0221-dee8-41f2-bb1c-11755e849df4",
       "credentials": {
         "httpHeaderAuth": {
           "id": "baJJfX3zWMindSEN",

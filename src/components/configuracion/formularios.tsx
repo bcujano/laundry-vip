@@ -141,13 +141,34 @@ export function FormularioConfiguracion({ config }: { config: Configuracion }) {
             type="number"
           />
         </Etiquetado>
-        <Etiquetado para="campo-tarifa_combo" texto="Tarifa combo (USD)">
+        <Etiquetado
+          para="campo-tarifa_recoleccion_entrega"
+          texto="Tarifa de recogida y entrega (USD)"
+        >
           <Campo
-            defaultValue={Number(config.tarifa_combo).toFixed(2)}
+            defaultValue={Number(config.tarifa_recoleccion_entrega).toFixed(2)}
             min="0"
-            id="campo-tarifa_combo"
-            name="tarifa_combo"
+            id="campo-tarifa_recoleccion_entrega"
+            name="tarifa_recoleccion_entrega"
             step="0.01"
+            type="number"
+          />
+        </Etiquetado>
+        <Etiquetado para="campo-horas_entrega_min" texto="Entrega, mínimo (horas)">
+          <Campo
+            defaultValue={config.horas_entrega_min}
+            min="1"
+            id="campo-horas_entrega_min"
+            name="horas_entrega_min"
+            type="number"
+          />
+        </Etiquetado>
+        <Etiquetado para="campo-horas_entrega_max" texto="Entrega, máximo (horas)">
+          <Campo
+            defaultValue={config.horas_entrega_max}
+            min="1"
+            id="campo-horas_entrega_max"
+            name="horas_entrega_max"
             type="number"
           />
         </Etiquetado>

@@ -56,7 +56,9 @@ describe('matriz de pagos', () => {
     expect(resultado.ok).toBe(true)
     if (!resultado.ok) return
 
-    expect(Number(resultado.pedido.monto_combo)).toBe(Number(config.tarifa_combo))
+    expect(Number(resultado.pedido.monto_recoleccion_entrega)).toBe(
+      Number(config.tarifa_recoleccion_entrega),
+    )
     expect(resultado.pedido.estado).toBe('nuevo')
     expect(resultado.pedido.vehiculo_sugerido).toBe('auto')
     expect(Number(resultado.montoEstimadoLavado)).toBe(6.75)

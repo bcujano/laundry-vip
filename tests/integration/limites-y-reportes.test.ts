@@ -209,7 +209,9 @@ describe('reporte de ingresos', () => {
     expect(filaHotel?.estimado_usd).toBe(9)
 
     // El transporte se suma aparte del lavado.
-    expect(filaHotel?.transporte_usd).toBe(Number((await obtenerConfig()).tarifa_combo))
+    expect(filaHotel?.transporte_usd).toBe(
+      Number((await obtenerConfig()).tarifa_recoleccion_entrega),
+    )
     expect(reporte.pedidos_sin_verificar).toBeGreaterThanOrEqual(2)
   })
 

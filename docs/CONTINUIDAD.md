@@ -1,6 +1,6 @@
 # Estado y continuidad
 
-Última actualización: **2026-09-21**. Traspaso entre sesiones: léelo entero
+Última actualización: **2026-09-23**. Traspaso entre sesiones: léelo entero
 antes de tocar nada. La historia del plan original del agente está en
 [`historia-agente.md`](historia-agente.md).
 
@@ -44,7 +44,7 @@ Todo en producción y usado a diario en pruebas reales.
 | Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · entrada nueva del número definitivo |
 | WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
 | Repo | local, **sin remoto** · 39 commits · etiqueta **`v1.0`** = estado con el número de prueba |
-| Gate | **218 pruebas en verde** · typecheck, lint y build limpios (se retiraron 30 del workflow obsoleto de la fase 12) |
+| Gate | **223 pruebas en verde** · typecheck, lint y build limpios (se retiraron 30 del workflow obsoleto de la fase 12) |
 | Catálogo | **Manda el CRM.** Nació de [`catalogo-lavanderia.xlsx`](catalogo-lavanderia.xlsx) (54 filas) pero lo que vale es lo que está en la tabla `servicios`. `pnpm db:seed` ya no lo pisa; la lista de precios de hoy se baja en Servicios → «Descargar lista de precios» |
 
 **Entrar al CRM:** `brncjn@gmail.com` (superadmin). La contraseña provisional
@@ -75,8 +75,9 @@ Resumen 8:00 (L-S) → datos del CRM → un mensaje por admin → ¿escribió en
 
 - **Clientes:** 6 tools HTTP contra `POST /api/webhook` (`cotizar_prendas`,
   `obtener_proxima_ventana`, `calcular_vehiculo`, `find_or_create_client`,
-  `crear_pedido`, `consultar_estado_pedido`). Precios, tarifa del combo y
-  horario **se leen del CRM en cada consulta**: nada de eso está en el prompt.
+  `crear_pedido`, `consultar_estado_pedido`). Precios, tarifa de recogida y
+  entrega, horario y lapso de entrega **se leen del CRM en cada consulta**:
+  nada de eso está en el prompt.
 - **Cada turno registra en el CRM** (patrón del CRM WEB de 321): cliente y
   conversación, aunque no compre. El nombre del perfil de WhatsApp entra como
   nombre **provisional**; el que diga el cliente lo reemplaza y lo editado en
@@ -98,6 +99,23 @@ Resumen 8:00 (L-S) → datos del CRM → un mensaje por admin → ¿escribió en
   la lista del archivo. Para reimponer el archivo hace falta `--forzar`.
   Las pruebas leen los precios de la base (`tests/util/catalogo.ts`) y no
   exigen un número fijo de ítems: el dueño agrega y quita desde el CRM.
+- **Lo que el agente promete** (todo sale del CRM, nada del prompt): entrega de
+  48 a 72 horas (`horas_entrega_min/max`, la fecha exacta la acuerda el operador
+  en planta), tarifa única de recogida y entrega (`tarifa_recoleccion_entrega`,
+  aparte del lavado) y recolección de lunes a sábado. En el primer mensaje
+  saluda, pregunta el nombre y da el aviso de uso de datos (LOPDP).
+- **El nombre del cliente se corrige solo.** El del perfil de WhatsApp es
+  provisional; el que diga el cliente lo reemplaza, incluso si él mismo se
+  corrige después. Lo que el equipo escribe en el CRM no se pisa nunca
+  (`clientes.nombre_contacto_origen`, migración 0010).
+- **El método de lavado lo manda el catálogo** (migración 0010): cada prenda
+  declara si va en agua o en seco. Si el cliente pide lavar un terno en agua,
+  `cotizar_prendas` lo cotiza en seco y devuelve `advertencia`. `metodo_unico`
+  le dice al agente que no hay alternativas que ofrecer.
+- **Ni «combo» ni «a la carta».** Es una lavandería: o se recoge y entrega con
+  la tarifa única, o el cliente trae y retira. Los valores `combo` y
+  `a_la_carta` siguen en la base porque hay pedidos viejos con ellos; lo que se
+  lee en pantalla sale de `entregaLegible` en `src/lib/format.ts`.
 - **Promociones por cantidad** (`cantidad_por_paquete` + `precio_paquete`,
   migración 0009): las cobijas pequeñas son $5,00 sueltas y 3 por $12,00. El
   sobrante se cobra suelto, nunca se redondea a otro paquete.
@@ -144,7 +162,10 @@ workflow vivo; si editas en n8n a mano, regenera para que no se desalineen.
 | Nombre de WhatsApp como nombre provisional del lead | El dueño no quiere leads «Sin nombre» |
 | Descargas de clientes/pedidos solo para superadmin y admin | Datos personales (LOPDP) |
 | Las categorías del catálogo son las de la lista física del dueño (13, por prenda) | Entregó `catalogo_lavanderia.xlsx` el 2026-09-21. Los `nombre_item` no se tocaron: el agente empareja contra ellos y el índice único es (nombre_item, metodo) |
-| Tarifa del combo y horario salen de Configuración | El dueño cambió el combo a $2,50 y el prompt tenía $5 escrito |
+| Saludo, nombre y aviso de datos en el primer mensaje; siempre un estimado en dólares | Pedido el 2026-09-23. «A todo dice que en planta se confirma pero no da ni un valor aproximado» |
+| Entrega 48-72 h · tarifa única de recogida y entrega $2,50 · recolección L-S · peso en libras | Pedido el 2026-09-23. Todo vive en Configuración, no en el prompt |
+| Cada prenda declara su método (agua/seco) | El agente proponía lavar un terno en agua. La lista del dueño ya traía el método de cada prenda |
+| Tarifa de recogida y entrega y horario salen de Configuración | El dueño cambió el combo a $2,50 y el prompt tenía $5 escrito |
 | OpenAI compartido con 321 | Temporal, acordado |
 | Session pooler de Supabase | La conexión directa es solo IPv6 |
 
@@ -198,6 +219,14 @@ workflow vivo; si editas en n8n a mano, regenera para que no se desalineen.
 ## 7. Lo pendiente
 
 **Esperando al dueño**
+- **¿Las cortinas se cobran por kilo o por libra?** Su lista dice «por kilo»
+  ($3,00 visillos, $3,50 pesadas) y el 2026-09-23 dijo que la unidad es la
+  libra. Hoy el catálogo las mantiene por kilo tal como el archivo. Si van por
+  libra, hace falta el precio por libra: convertir sin su número sería
+  inventarlo.
+- **El nombre del negocio no cuadra:** Configuración dice «VIP Laundry» y el
+  agente se presenta como «Lavandería VIP». Falta decidir cuál es y que el
+  prompt lo tome de Configuración.
 - **Plantilla `resumen_diario_admin`** (respaldo del resumen de las 8:00 para
   admins que no escribieron en 24 h): categoría Utilidad, idioma `es`, 7
   variables. El resumen ya está encendido; sin la plantilla, a quien esté

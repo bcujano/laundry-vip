@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import { canalLegible, EtiquetaEstado, estadoLegible } from '@/components/pedidos/etiquetas'
 import { ChecklistConteo, Cobros, CorreccionCotizacion } from '@/components/pedidos/panel-acciones'
 import { Tabla, Tarjeta, Td, Th, TituloSeccion } from '@/components/ui/primitivos'
-import { fechaHora, moneda, telefonoLegible } from '@/lib/format'
+import { entregaLegible, fechaHora, moneda, telefonoLegible } from '@/lib/format'
 import { obtener } from '@/server/pedidos/repo'
 
 export const dynamic = 'force-dynamic'
@@ -41,11 +41,10 @@ export default async function DetallePedido({ params }: { params: Promise<{ id: 
           <div>
             <dt className="text-[var(--color-texto-apagado)]">Tipo de entrega</dt>
             <dd>
-              {pedido.tipo_entrega === 'combo'
-                ? `Combo (${moneda(pedido.monto_combo)})`
-                : pedido.tipo_entrega === 'a_la_carta'
-                  ? 'A la carta'
-                  : '—'}
+              {entregaLegible(pedido.tipo_entrega)}
+              {pedido.monto_recoleccion_entrega
+                ? ` (${moneda(pedido.monto_recoleccion_entrega)})`
+                : ''}
             </dd>
           </div>
           <div>

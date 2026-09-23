@@ -81,8 +81,8 @@ export function NuevoPedido({ clientes }: { clientes: OpcionCliente[] }) {
           <>
             <Etiquetado para="pedido-entrega" texto="Tipo de entrega">
               <Seleccion defaultValue="combo" id="pedido-entrega" name="tipo_entrega">
-                <option value="combo">Combo (tarifa plana)</option>
-                <option value="a_la_carta">A la carta</option>
+                <option value="combo">Recogida y entrega (tarifa única)</option>
+                <option value="a_la_carta">El cliente trae y retira</option>
               </Seleccion>
             </Etiquetado>
 

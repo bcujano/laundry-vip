@@ -40,7 +40,7 @@ export async function generar(periodo: Periodo): Promise<Reporte> {
   const { data, error } = await supabaseAdmin()
     .from('pedidos')
     .select(
-      'id, estado, monto_confirmado_lavado, monto_estimado_lavado, monto_combo, monto_recoleccion, monto_entrega, cliente:clientes(tipo_negocio)',
+      'id, estado, monto_confirmado_lavado, monto_estimado_lavado, monto_recoleccion_entrega, monto_recoleccion, monto_entrega, cliente:clientes(tipo_negocio)',
     )
     .gte('created_at', periodo.desde.toISOString())
     .lt('created_at', periodo.hasta.toISOString())
@@ -74,7 +74,7 @@ export async function generar(periodo: Periodo): Promise<Reporte> {
     }
 
     actual.transporte_usd +=
-      Number(fila.monto_combo ?? 0) +
+      Number(fila.monto_recoleccion_entrega ?? 0) +
       Number(fila.monto_recoleccion ?? 0) +
       Number(fila.monto_entrega ?? 0)
 

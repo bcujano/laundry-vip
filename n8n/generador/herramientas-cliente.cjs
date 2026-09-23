@@ -17,7 +17,7 @@ function agregar(nodes) {
     ],
     [
       'obtener_proxima_ventana',
-      'Devuelve la próxima ventana válida de recolección (inicio y fin en UTC ISO). Úsala antes de proponer cualquier hora.',
+      'Devuelve la próxima ventana válida de recolección (inicio y fin en UTC ISO), el horario del local, la tarifa de recogida y entrega y el lapso de entrega en horas. Úsala antes de hablar de horarios, tarifa o tiempos.',
       '{}',
     ],
     [
@@ -33,7 +33,7 @@ function agregar(nodes) {
     [
       'crear_pedido',
       'Crea el pedido. SOLO después de que el cliente confirmó el resumen con un sí explícito.',
-      `={{ JSON.stringify(Object.assign({canal: 'whatsapp_agente'}, $fromAI('pedido', 'Objeto JSON con: cliente_id (uuid de find_or_create_client), tipo_entrega (combo o a_la_carta), items (como en cotizar_prendas, con metodo ya elegido), numero_fundas, direccion_recoleccion, ventana_recoleccion_inicio y ventana_recoleccion_fin (ISO tal como vinieron), y si es a_la_carta metodo_transporte_recoleccion y metodo_transporte_entrega (app o propio_cliente).', 'json'))) }}`,
+      `={{ JSON.stringify(Object.assign({canal: 'whatsapp_agente'}, $fromAI('pedido', 'Objeto JSON con: cliente_id (uuid de find_or_create_client), tipo_entrega ("combo" si la lavanderia recoge y entrega con la tarifa unica, "a_la_carta" si el cliente trae y retira su ropa), items (como en cotizar_prendas, con metodo ya elegido), numero_fundas, direccion_recoleccion, ventana_recoleccion_inicio y ventana_recoleccion_fin (ISO tal como vinieron), y si el cliente trae y retira, metodo_transporte_recoleccion y metodo_transporte_entrega en "propio_cliente".', 'json'))) }}`,
     ],
     [
       'consultar_estado_pedido',

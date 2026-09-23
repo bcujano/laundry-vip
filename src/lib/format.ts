@@ -91,6 +91,20 @@ export function metodoLegible(metodo: string): string {
   return METODOS[metodo] ?? metodo
 }
 
+/**
+ * Aquí no hay combos ni carta: esto es una lavandería. O la recogemos y la
+ * entregamos por una tarifa única, o el cliente la trae y la retira.
+ */
+const ENTREGAS: Record<string, string> = {
+  combo: 'Recogida y entrega',
+  a_la_carta: 'El cliente trae y retira',
+}
+
+export function entregaLegible(tipo: string | null | undefined): string {
+  if (!tipo) return '—'
+  return ENTREGAS[tipo] ?? tipo
+}
+
 const TIPOS_NEGOCIO: Record<string, string> = {
   clinica: 'Clínica',
   restaurante: 'Restaurante',

@@ -104,12 +104,9 @@ export async function crearServicio(
     return { error: analisis.error.issues[0]?.message ?? 'Datos inválidos.' }
   }
 
-  const resultado = await crear({
-    ...analisis.data,
-    // Un método distinto de «único» significa que la prenda se lava de varias
-    // formas: el agente tiene que preguntar cuál antes de dar precio.
-    requiere_seleccion_metodo: analisis.data.metodo !== 'unico',
-  })
+  // El alta no decide si hay que preguntar el método: lo decide si la prenda
+  // ya existe con otro método. `crear` lo recalcula para todas sus filas.
+  const resultado = await crear({ ...analisis.data, requiere_seleccion_metodo: false })
   if (!resultado.ok) return { error: resultado.error }
 
   revalidatePath('/servicios')

@@ -15,7 +15,7 @@ function resumirPedido(pedido: Pedido) {
     tipo_entrega: pedido.tipo_entrega,
     monto_estimado_lavado: pedido.monto_estimado_lavado,
     monto_confirmado_lavado: pedido.monto_confirmado_lavado,
-    monto_combo: pedido.monto_combo,
+    monto_recoleccion_entrega: pedido.monto_recoleccion_entrega,
     monto_recoleccion: pedido.monto_recoleccion,
     monto_entrega: pedido.monto_entrega,
     pago_recoleccion: pedido.pago_recoleccion,

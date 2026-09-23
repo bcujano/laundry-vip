@@ -4,6 +4,7 @@ import { POST } from '@/app/api/webhook/route'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { obtener as obtenerConfig, parametrosVentana } from '@/server/configuracion/repo'
 import { ultimaHoraDelDia } from '@/server/scheduling/ventana'
+import { centavos, precioDe } from '../util/catalogo.ts'
 import { corrida } from '../util/corrida.ts'
 
 const SECRETO = process.env.N8N_WEBHOOK_SECRET as string
@@ -112,7 +113,8 @@ describe('cotizar_prendas por el webhook', () => {
     expect(sobre.ok).toBe(true)
 
     const data = sobre.data as { resumen: { estado: string; subtotal: number } }
-    expect(data.resumen.subtotal).toBe(6.75)
+    // El precio lo edita el dueño en el CRM: se compara contra el catálogo.
+    expect(data.resumen.subtotal).toBe(centavos(3 * (await precioDe('Camiseta', 'agua'))))
     expect(data.resumen.estado).toBe('estimado_pendiente_verificacion')
   })
 
@@ -151,14 +153,27 @@ describe('acciones de logística', () => {
     const data = sobre.data as {
       inicio: string
       ultima_hora_del_dia: string
-      tarifa_combo: number
+      tarifa_recoleccion_entrega: number
       hora_apertura: string
     }
     expect(new Date(data.inicio).getTime()).toBeGreaterThan(Date.now())
     // Sale de Configuración, que el dueño edita: se compara contra la base, no contra un fijo.
     expect(data.ultima_hora_del_dia).toBe(ultimaHoraDelDia(await parametrosVentana()))
-    expect(data.tarifa_combo).toBe(Number((await obtenerConfig()).tarifa_combo))
+    expect(data.tarifa_recoleccion_entrega).toBe(
+      Number((await obtenerConfig()).tarifa_recoleccion_entrega),
+    )
     expect(data.hora_apertura).toMatch(/^\d{2}:\d{2}$/)
+  })
+
+  it('la ventana trae el lapso de entrega que el agente promete', async () => {
+    const { sobre } = await llamar({ accion: 'obtener_proxima_ventana', parametros: {} })
+    const data = sobre.data as { horas_entrega_min: number; horas_entrega_max: number }
+    const config = await obtenerConfig()
+
+    // El lapso también lo edita el dueño en Configuración.
+    expect(data.horas_entrega_min).toBe(config.horas_entrega_min)
+    expect(data.horas_entrega_max).toBe(config.horas_entrega_max)
+    expect(data.horas_entrega_max).toBeGreaterThanOrEqual(data.horas_entrega_min)
   })
 
   it('un domingo de madrugada ofrece el lunes, nunca rechaza', async () => {
@@ -207,14 +222,28 @@ describe('cliente y memoria', () => {
       (real.sobre.data as { cliente: { nombre_contacto: string } }).cliente.nombre_contacto,
     ).toBe('María José Ortiz')
 
-    // Ya tiene nombre real: otro nombre dicho después no lo pisa.
-    const otro = await llamar({
+    // Si el cliente se corrige, el CRM se corrige con él.
+    const corregido = await llamar({
+      accion: 'find_or_create_client',
+      parametros: { telefono, nombre_whatsapp: 'Majo 💕', nombre_contacto: 'María José Ortiz Paz' },
+    })
+    expect(
+      (corregido.sobre.data as { cliente: { nombre_contacto: string } }).cliente.nombre_contacto,
+    ).toBe('María José Ortiz Paz')
+
+    // Pero lo que escribe el equipo en el CRM es intocable para el agente.
+    await supabaseAdmin()
+      .from('clientes')
+      .update({ nombre_contacto: 'Nombre del CRM', nombre_contacto_origen: 'crm' })
+      .eq('telefono', telefono)
+
+    const tras = await llamar({
       accion: 'find_or_create_client',
       parametros: { telefono, nombre_whatsapp: 'Majo 💕', nombre_contacto: 'Otra persona' },
     })
     expect(
-      (otro.sobre.data as { cliente: { nombre_contacto: string } }).cliente.nombre_contacto,
-    ).toBe('María José Ortiz')
+      (tras.sobre.data as { cliente: { nombre_contacto: string } }).cliente.nombre_contacto,
+    ).toBe('Nombre del CRM')
     await supabaseAdmin().from('clientes').delete().eq('telefono', telefono)
   })
 
@@ -233,12 +262,18 @@ describe('cliente y memoria', () => {
     expect(cliente.nombre_negocio).toBe(`Clínica ${CORRIDA}`)
     expect(cliente.tipo_negocio).toBe('hotel')
 
+    // El nombre sí se corrige (lo dice el cliente); el resto no se pisa.
     const otra = await llamar({
       accion: 'find_or_create_client',
-      parametros: { telefono: TELEFONO, nombre_contacto: 'Otra persona', tipo_negocio: 'clinica' },
+      parametros: {
+        telefono: TELEFONO,
+        nombre_contacto: 'Ana Pérez Mora',
+        tipo_negocio: 'clinica',
+      },
     })
     const igual = (otra.sobre.data as { cliente: Record<string, string> }).cliente
-    expect(igual.nombre_contacto).toBe('Ana Pérez')
+    expect(igual.nombre_contacto).toBe('Ana Pérez Mora')
+    expect(igual.nombre_negocio).toBe(`Clínica ${CORRIDA}`)
     expect(igual.tipo_negocio).toBe('hotel')
   })
 

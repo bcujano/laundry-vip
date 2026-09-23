@@ -120,7 +120,7 @@ export async function csvPedidos(): Promise<string> {
     { titulo: 'Entrega', valor: (p) => legible(p.tipo_entrega) },
     { titulo: 'Estimado lavado USD', valor: (p) => p.monto_estimado_lavado },
     { titulo: 'Confirmado lavado USD', valor: (p) => p.monto_confirmado_lavado },
-    { titulo: 'Combo USD', valor: (p) => p.monto_combo },
+    { titulo: 'Combo USD', valor: (p) => p.monto_recoleccion_entrega },
     { titulo: 'Recolección USD', valor: (p) => p.monto_recoleccion },
     { titulo: 'Entrega USD', valor: (p) => p.monto_entrega },
     { titulo: 'Pago lavado', valor: (p) => legible(p.pago_lavado) },

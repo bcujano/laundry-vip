@@ -27,7 +27,7 @@ describe('configuración del negocio', () => {
     expect(config.hora_recoleccion_inicio).toMatch(/^\d{2}:\d{2}/)
     expect(config.hora_recoleccion_fin > config.hora_recoleccion_inicio).toBe(true)
     expect(config.margen_minimo_minutos).toBeGreaterThanOrEqual(0)
-    expect(Number(config.tarifa_combo)).toBeGreaterThanOrEqual(0)
+    expect(Number(config.tarifa_recoleccion_entrega)).toBeGreaterThanOrEqual(0)
   })
 
   it('los parámetros de la base alimentan el cálculo de ventanas', async () => {

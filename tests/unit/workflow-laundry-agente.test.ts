@@ -105,6 +105,28 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(systemMessage).toContain('sí explícito')
   })
 
+  it('trae las reglas que pidió el dueño el 2026-09-23', () => {
+    // Saludo, nombre y aviso de datos en el primer mensaje.
+    expect(systemMessage).toContain('PRIMER MENSAJE Y NOMBRE DEL CLIENTE')
+    expect(systemMessage).toContain('Protección de Datos Personales')
+    expect(systemMessage).toContain('datos_lead.nombre')
+    // Siempre un estimado, nunca solo «se confirma en planta».
+    expect(systemMessage).toContain('SIEMPRE DA UN ESTIMADO EN DÓLARES')
+    // Peso en libras y solo para ropa suelta.
+    expect(systemMessage).toContain('SIEMPRE EN LIBRAS')
+    expect(systemMessage).toContain('POR PESO (por libra)')
+    // El lapso de entrega y la tarifa salen del CRM, no del prompt.
+    expect(systemMessage).toContain('horas_entrega_min')
+    expect(systemMessage).toContain('tarifa_recoleccion_entrega')
+    expect(systemMessage).not.toMatch(/48 a 72 horas.{0,40}\$/)
+    // Ni combos ni carta: esto es una lavandería.
+    expect(systemMessage).toContain('no un restaurante')
+    expect(systemMessage).toContain('Jamás uses esas dos palabras')
+    // El método lo manda el catálogo.
+    expect(systemMessage).toContain('metodo_unico')
+    expect(systemMessage).toContain('advertencia')
+  })
+
   it('no hay ninguna llave literal', () => {
     expect(crudo).not.toMatch(/sk-[A-Za-z0-9_-]{20,}/)
     expect(crudo).not.toMatch(/EAA[A-Za-z0-9]{20,}/)

@@ -9,9 +9,17 @@ export type EstadoStaff = 'activo' | 'inactivo'
 export type TipoNegocio = 'clinica' | 'restaurante' | 'hotel' | 'otro' | 'particular'
 export type CanalOrigen = 'whatsapp_agente' | 'presencial' | 'referral_ads'
 export type ModeloFacturacion = 'por_pedido' | 'consolidado_mensual'
+export type OrigenNombre = 'whatsapp' | 'cliente' | 'crm'
 export type MetodoServicio = 'unico' | 'agua' | 'seco' | 'planchado'
 export type UnidadServicio = 'pieza' | 'm2' | 'kilo' | 'libra' | 'paquete' | 'par'
 export type CanalPedido = 'whatsapp_agente' | 'presencial'
+/**
+ * Cómo se mueve la ropa. Los dos valores son históricos y no se renombran
+ * porque hay pedidos reales guardados con ellos; lo que el cliente y el
+ * equipo leen sale de `entregaLegible` en `lib/format.ts`:
+ *   combo      → la lavandería recoge y entrega, tarifa única de $2,50.
+ *   a_la_carta → el cliente trae y retira su ropa en el local (sin tarifa).
+ */
 export type TipoEntrega = 'combo' | 'a_la_carta'
 export type MetodoTransporte = 'app' | 'propio_cliente' | 'n_a'
 export type EstadoPagoTramo = 'pagado' | 'pendiente' | 'n_a'
@@ -55,6 +63,8 @@ export type Cliente = {
   id: string
   telefono: string
   nombre_contacto: string | null
+  /** De dónde salió el nombre: perfil de WhatsApp, el propio cliente o el CRM. */
+  nombre_contacto_origen: OrigenNombre
   nombre_negocio: string | null
   tipo_negocio: TipoNegocio
   canal_origen: CanalOrigen
@@ -93,7 +103,11 @@ export type Configuracion = {
   hora_apertura: string
   hora_cierre: string
   margen_minimo_minutos: number
-  tarifa_combo: number
+  /** Tarifa única de recogida y entrega, aparte del costo del lavado. */
+  tarifa_recoleccion_entrega: number
+  /** El lapso de entrega que promete el agente: hoy, de 48 a 72 horas. */
+  horas_entrega_min: number
+  horas_entrega_max: number
   limite_mensajes_diarios_por_telefono: number
   limite_costo_diario_openai_usd: number
   created_at: string
@@ -125,7 +139,7 @@ export type Pedido = {
   pago_lavado: EstadoPagoLavado
   monto_recoleccion: number | null
   monto_entrega: number | null
-  monto_combo: number | null
+  monto_recoleccion_entrega: number | null
   monto_estimado_lavado: number | null
   monto_confirmado_lavado: number | null
   numero_fundas: number | null

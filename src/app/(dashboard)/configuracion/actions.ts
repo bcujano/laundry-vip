@@ -16,18 +16,24 @@ export type EstadoConfig = { error?: string; ok?: boolean }
 
 const hora = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Usa el formato HH:MM.')
 
-const esquema = z.object({
-  nombre_negocio: z.string().min(1, 'El nombre del negocio es obligatorio.'),
-  saludo_agente: z.string(),
-  dias_operacion: z.array(z.coerce.number().int().min(1).max(7)).min(1, 'Elige al menos un día.'),
-  hora_apertura: hora,
-  hora_cierre: hora,
-  hora_recoleccion_inicio: hora,
-  hora_recoleccion_fin: hora,
-  margen_minimo_minutos: z.coerce.number().int().min(0).max(720),
-  tarifa_combo: z.coerce.number().min(0),
-  limite_mensajes_diarios_por_telefono: z.coerce.number().int().min(1),
-})
+const esquema = z
+  .object({
+    nombre_negocio: z.string().min(1, 'El nombre del negocio es obligatorio.'),
+    saludo_agente: z.string(),
+    dias_operacion: z.array(z.coerce.number().int().min(1).max(7)).min(1, 'Elige al menos un día.'),
+    hora_apertura: hora,
+    hora_cierre: hora,
+    hora_recoleccion_inicio: hora,
+    hora_recoleccion_fin: hora,
+    margen_minimo_minutos: z.coerce.number().int().min(0).max(720),
+    tarifa_recoleccion_entrega: z.coerce.number().min(0),
+    horas_entrega_min: z.coerce.number().int().min(1).max(720),
+    horas_entrega_max: z.coerce.number().int().min(1).max(720),
+    limite_mensajes_diarios_por_telefono: z.coerce.number().int().min(1),
+  })
+  .refine((v) => v.horas_entrega_max >= v.horas_entrega_min, {
+    message: 'El máximo de horas de entrega no puede ser menor que el mínimo.',
+  })
 
 export async function guardarConfiguracion(
   _previo: EstadoConfig,

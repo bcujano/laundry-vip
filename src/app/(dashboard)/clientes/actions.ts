@@ -42,6 +42,8 @@ export async function crearCliente(
       tipo_negocio: analisis.data.tipo_negocio,
       modelo_facturacion: analisis.data.modelo_facturacion,
       canal_origen: 'presencial',
+      // Escrito por el equipo: el agente no lo pisa nunca.
+      nombre_contacto_origen: 'crm',
     })
 
   if (error) {
@@ -79,6 +81,8 @@ export async function editarCliente(
       nombre_contacto: analisis.data.nombre_contacto || null,
       tipo_negocio: analisis.data.tipo_negocio,
       modelo_facturacion: analisis.data.modelo_facturacion,
+      // Desde que el equipo lo edita, el nombre es suyo: el agente no lo pisa.
+      nombre_contacto_origen: 'crm',
     })
     .eq('id', clienteId)
 

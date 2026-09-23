@@ -94,13 +94,30 @@ export type NuevoServicio = {
   requiere_seleccion_metodo: boolean
 }
 
+/**
+ * Preguntar el método solo tiene sentido si la prenda existe con varios. Un
+ * terno es 'seco' y punto: el agente no debe preguntar nada.
+ */
+async function sincronizarSeleccionMetodo(nombre_item: string): Promise<void> {
+  const cliente = supabaseAdmin()
+  const { data } = await cliente.from('servicios').select('id').eq('nombre_item', nombre_item)
+  const varios = (data ?? []).length > 1
+  await cliente
+    .from('servicios')
+    .update({ requiere_seleccion_metodo: varios })
+    .eq('nombre_item', nombre_item)
+}
+
 /** Crea un ítem. El índice único (nombre_item, metodo) impide el duplicado. */
 export async function crear(nuevo: NuevoServicio): Promise<ResultadoEscritura> {
   const { error } = await supabaseAdmin()
     .from('servicios')
     .insert({ ...nuevo, activo: true })
 
-  if (!error) return { ok: true }
+  if (!error) {
+    await sincronizarSeleccionMetodo(nuevo.nombre_item)
+    return { ok: true }
+  }
 
   // 23505 = unique_violation. Se traduce porque el mensaje de Postgres no le
   // dice nada a quien está mirando la pantalla.

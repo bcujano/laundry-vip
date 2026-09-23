@@ -8,7 +8,14 @@ import { EtiquetaEstado } from '@/components/pedidos/etiquetas'
 import { CabeceraTarjeta, Tabla, Tarjeta, Td, Th, Vacio } from '@/components/ui/primitivos'
 import { verifyAuth } from '@/lib/auth'
 import { chatwootBuscar, chatwootConversacion } from '@/lib/chatwoot'
-import { fechaHora, moneda, soloFecha, telefonoLegible, tipoNegocioLegible } from '@/lib/format'
+import {
+  entregaLegible,
+  fechaHora,
+  moneda,
+  soloFecha,
+  telefonoLegible,
+  tipoNegocioLegible,
+} from '@/lib/format'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { conversacionDe, obtener } from '@/server/clientes/repo'
 import type { EstadoPedido, Pedido } from '@/types/database'
@@ -135,11 +142,7 @@ export default async function DetalleCliente({ params }: { params: Promise<{ id:
                       <EtiquetaEstado estado={pedido.estado} />
                     </Td>
                     <Td className="hidden text-[var(--texto-suave)] sm:table-cell">
-                      {pedido.tipo_entrega === 'combo'
-                        ? 'Combo'
-                        : pedido.tipo_entrega === 'a_la_carta'
-                          ? 'A la carta'
-                          : 'Presencial'}
+                      {pedido.tipo_entrega ? entregaLegible(pedido.tipo_entrega) : 'Presencial'}
                     </Td>
                     <Td className="tabular-nums">
                       {pedido.monto_confirmado_lavado !== null

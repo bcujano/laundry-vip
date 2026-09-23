@@ -48,6 +48,33 @@ describe('método obligatorio', () => {
   })
 })
 
+describe('el método lo manda el catálogo', () => {
+  it('un terno pedido «en agua» se cotiza en seco y se avisa', async () => {
+    const terno = await servicioDe('Terno 3 piezas')
+    const { lineas } = await cotizarPrendas([
+      { descripcion: 'terno de 3 piezas', cantidad: 1, metodo: 'agua' },
+    ])
+
+    // Antes se quedaba sin precio; ahora cotiza con el método real.
+    expect(lineas[0]?.metodo).toBe(terno.metodo)
+    expect(lineas[0]?.subtotal).toBe(Number(terno.precio_min))
+    expect(lineas[0]?.advertencia).toContain(terno.metodo)
+  })
+
+  it('una prenda de un solo método viaja marcada como método único', async () => {
+    const { lineas } = await cotizarPrendas([{ descripcion: 'mantel grande', cantidad: 1 }])
+    expect(lineas[0]?.metodo_unico).toBe(true)
+  })
+
+  it('una prenda de varios métodos no se marca como única', async () => {
+    const { lineas } = await cotizarPrendas([
+      { descripcion: 'camiseta', cantidad: 1, metodo: 'agua' },
+    ])
+    expect(lineas[0]?.metodo_unico).toBe(false)
+    expect(lineas[0]?.advertencia).toBeUndefined()
+  })
+})
+
 describe('lo que no está en el catálogo', () => {
   it('va sin precio y con la nota, nunca con un precio inventado', async () => {
     const { lineas, resumen } = await cotizarPrendas([
