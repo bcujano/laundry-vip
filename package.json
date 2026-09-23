@@ -18,6 +18,7 @@
     "db:migrate": "tsx scripts/db-migrate.ts",
     "db:seed": "tsx scripts/db-seed.ts",
     "db:demo": "tsx scripts/demo-datos.ts",
+    "db:reset-clientes": "tsx scripts/reset-clientes.ts",
     "db:staff": "tsx scripts/crear-staff.ts",
     "check:integraciones": "tsx scripts/check-integraciones-env.ts",
     "test:e2e": "playwright test",

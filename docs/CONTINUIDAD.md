@@ -210,8 +210,13 @@ workflow vivo; si editas en n8n a mano, regenera para que no se desalineen.
 
 ## 6. Lo temporal (hay que desmontarlo)
 
-1. **Datos de ejemplo en la base real:** 24 clientes y 41 pedidos con teléfonos
-   `+5932200…`. Se quitan con `pnpm db:demo --borrar` antes de operar en serio.
+1. **La base de clientes está en cero desde el 2026-09-23** (traspaso a VIP):
+   se borraron 532 filas — 30 clientes, 42 pedidos con sus ítems y eventos, 24
+   conversaciones y la memoria del agente en n8n. Quedaron intactos el
+   catálogo, Configuración, las cuentas del CRM y la lista blanca (Daniel
+   Serrano). Se rehace con `pnpm db:reset-clientes` (simula) y
+   `--confirmar` (borra de verdad, sin vuelta atrás). Los datos de ejemplo
+   (`pnpm db:demo`) ya no están: **no los cargues sin pedírselo al dueño.**
 2. **n8n y Chatwoot compartidos con 321**, y la credencial de OpenAI también.
 3. **Una sola base** para pruebas y producción.
 4. **Contraseña provisional del superadmin**; alias `brncjn+admin@gmail.com`

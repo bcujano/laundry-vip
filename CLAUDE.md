@@ -65,7 +65,8 @@ n8n + Chatwoot + WhatsApp Cloud API · OpenAI `gpt-4.1-mini` y `gpt-transcribe`
 | `pnpm typecheck` · `pnpm lint` · `pnpm test` | el gate |
 | `pnpm db:migrate` · `pnpm db:seed` | esquema y carga inicial del catálogo. La siembra **no pisa** lo que el dueño cambió en el CRM; `pnpm db:seed --forzar` sí |
 | `pnpm db:staff` · `pnpm db:password <correo>` | cuentas del CRM |
-| `pnpm db:demo` · `pnpm db:demo --borrar` | datos de ejemplo (teléfonos `+5932200…`) |
+| `pnpm db:demo` · `pnpm db:demo --borrar` | datos de ejemplo (teléfonos `+5932200…`). **La base está entregada en cero: no los cargues sin permiso del dueño** |
+| `pnpm db:reset-clientes` · `--confirmar` | deja la base de clientes como de fábrica. Sin `--confirmar` solo simula; con él no hay vuelta atrás |
 | `pnpm check:integraciones` | las 9 credenciales de n8n |
 | `node n8n/generador/generar.cjs` | regenera el JSON del workflow |
 | `npx vercel --prod --yes` | deploy del CRM (el CLI ya tiene sesión) |
