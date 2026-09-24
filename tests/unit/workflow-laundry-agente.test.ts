@@ -105,6 +105,23 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(systemMessage).toContain('sí explícito')
   })
 
+  it('suena a persona del local, no a robot (2026-09-24)', () => {
+    // El saludo se escribe cada vez; nunca sale de una plantilla fija.
+    expect(systemMessage).toContain('EL SALUDO NUNCA ES EL MISMO')
+    expect(systemMessage).toContain('VARÍA SIEMPRE')
+    // Jamás se anuncia como asistente virtual: eso asusta al cliente.
+    expect(systemMessage).toContain('NUNCA DIGAS QUÉ ERES')
+    expect(systemMessage).not.toContain('Soy la asistente virtual')
+    expect(systemMessage.split('\n')[0]).not.toContain('asistente virtual')
+    // Pero si se lo preguntan de frente, no miente.
+    expect(systemMessage).toContain('NO\n   MIENTA')
+    // Lee el tono del cliente y se ajusta.
+    expect(systemMessage).toContain('LEE EL TONO Y AJÚSTATE')
+    // Y tiene prohibido el repertorio de call center.
+    expect(systemMessage).toContain('Estoy para servirle')
+    expect(systemMessage).toContain('quedo atenta a su pronta')
+  })
+
   it('trae las reglas que pidió el dueño el 2026-09-23', () => {
     // Saludo, nombre y aviso de datos en el primer mensaje.
     expect(systemMessage).toContain('PRIMER MENSAJE Y NOMBRE DEL CLIENTE')

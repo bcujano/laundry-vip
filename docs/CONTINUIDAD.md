@@ -82,6 +82,15 @@ Resumen 8:00 (L-S) → datos del CRM → un mensaje por admin → ¿escribió en
   conversación, aunque no compre. El nombre del perfil de WhatsApp entra como
   nombre **provisional**; el que diga el cliente lo reemplaza y lo editado en
   el CRM nunca se pisa. Los operadores no cuentan como leads.
+- **Habla como una persona del local, no como un bot** (decisión del
+  2026-09-24). El saludo se escribe cada vez y nunca se repite; jamás se
+  anuncia como «asistente virtual» (asusta al cliente de barrio); lee el tono
+  del cliente y se ajusta —corto si escribe corto, sin entusiasmo si viene
+  molesto, un emoji solo si él usa—; y tiene prohibida la lista de frases de
+  call center («estoy para servirle», «quedo atenta a su pronta respuesta»…).
+  **Si le preguntan de frente si es una persona o un sistema, no miente**: lo
+  dice y ofrece pasar con alguien del equipo. Mentir ahí es lo que de verdad
+  quema al negocio, y el cliente ya lo sospecha cuando pregunta.
 - **A la dueña (nivel admin) el agente la trata distinto**: de usted, por su
   nombre, servicial y con iniciativa, y responde SIEMPRE con datos del CRM más
   una lectura corta y el siguiente paso útil. La consulta `como_vamos` le da
@@ -155,7 +164,12 @@ Prompts: `n8n/prompt-agente-laundry.md` y `n8n/prompt-operador-laundry.md`
    operaciones puntuales) y `publish_workflow`. El dueño autorizó el MCP para
    **este** workflow. Nunca reimportes el JSON entero: cambia el id, apaga el
    MCP y choca la ruta del webhook con el activo.
-4. Verifica con una ejecución real (`get_workflow_execution` con `includeData`).
+4. **Verifica que lo que quedó en n8n sea idéntico al repo.** Transcribir un
+   prompt a mano en la llamada MCP se come tildes (ya pasó con «propón»). Pide
+   `get_workflow_versions_diff` entre la versión anterior y la nueva: el
+   resultado se guarda en un archivo, y con un script comparas el `__new` de
+   cada agente contra su `.md`. Tiene que dar idéntico, carácter por carácter.
+5. Verifica con una ejecución real (`get_workflow_execution` con `includeData`).
 
 El JSON del repo (`n8n/workflows/laundry-vip-agente.json`) es el espejo del
 workflow vivo; si editas en n8n a mano, regenera para que no se desalineen.
