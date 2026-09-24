@@ -1,6 +1,6 @@
 # Estado y continuidad
 
-Última actualización: **2026-09-23**. Traspaso entre sesiones: léelo entero
+Última actualización: **2026-09-24**. Traspaso entre sesiones: léelo entero
 antes de tocar nada. La historia del plan original del agente está en
 [`historia-agente.md`](historia-agente.md).
 
