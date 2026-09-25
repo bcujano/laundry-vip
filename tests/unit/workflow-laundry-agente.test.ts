@@ -122,6 +122,13 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(systemMessage).toContain('quedo atenta a su pronta')
   })
 
+  it('nunca le niega un servicio al cliente y el aviso de datos va al cierre', () => {
+    // Dijo «no ofrecemos tinturado» teniendo tinturado en el catálogo.
+    expect(systemMessage).toContain('JAMÁS DIGAS QUE NO SE OFRECE UN SERVICIO')
+    expect(systemMessage).toContain('sugerencias')
+    expect(systemMessage).toContain('EL AVISO DE DATOS NO VA EN EL SALUDO')
+  })
+
   it('trae las reglas que pidió el dueño el 2026-09-23', () => {
     // Saludo, nombre y aviso de datos en el primer mensaje.
     expect(systemMessage).toContain('PRIMER MENSAJE Y NOMBRE DEL CLIENTE')

@@ -96,6 +96,7 @@ describe('alta de servicios', () => {
       cantidad_por_paquete: existente.cantidad_por_paquete,
       precio_paquete: existente.precio_paquete,
       requiere_seleccion_metodo: existente.requiere_seleccion_metodo,
+      sinonimos: existente.sinonimos,
     })
 
     expect(resultado.ok).toBe(false)

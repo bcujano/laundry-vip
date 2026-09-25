@@ -54,6 +54,15 @@ export function NuevoServicio({ categorias }: { categorias: string[] }) {
           <Campo id="nuevo-nombre" name="nombre_item" placeholder="Toalla de baño" required />
         </label>
 
+        <label className="flex flex-col gap-1 text-sm lg:col-span-2" htmlFor="nuevo-sinonimos">
+          <span className="font-medium">Cómo lo piden los clientes (separado por comas)</span>
+          <Campo
+            id="nuevo-sinonimos"
+            name="sinonimos"
+            placeholder="toalla, toallon, toalla grande"
+          />
+        </label>
+
         <label className="flex flex-col gap-1 text-sm" htmlFor="nuevo-metodo">
           <span className="font-medium">Método</span>
           <select className="campo" defaultValue="unico" id="nuevo-metodo" name="metodo">
@@ -148,6 +157,7 @@ export function NuevoServicio({ categorias }: { categorias: string[] }) {
           ) : null}
           <span className="text-[var(--texto-suave)] text-xs">
             Si eliges agua, seco o planchado, el agente preguntará el método antes de dar precio.
+            Los sinónimos son con los que el agente lo reconoce cuando el cliente escribe.
           </span>
         </div>
       </form>

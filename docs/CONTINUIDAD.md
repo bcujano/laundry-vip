@@ -82,6 +82,16 @@ Resumen 8:00 (L-S) → datos del CRM → un mensaje por admin → ¿escribió en
   conversación, aunque no compre. El nombre del perfil de WhatsApp entra como
   nombre **provisional**; el que diga el cliente lo reemplaza y lo editado en
   el CRM nunca se pisa. Los operadores no cuentan como leads.
+- **El agente NUNCA niega un servicio** (fallo real del 2026-09-24: dijo «no
+  ofrecemos tinturado» y «no lavamos zapatos» teniendo los dos en el catálogo).
+  Tres arreglos: las palabras con las que se pregunta («lavado de…», «hacen…»)
+  ya no tapan la prenda; cada ítem tiene **sinónimos** con los que el cliente
+  lo nombra (`servicios.sinonimos`, migración 0011, editables en la pantalla
+  de Servicios); y cuando nada encaja, `cotizar_prendas` devuelve
+  `sugerencias` para preguntar. El prompt prohíbe el «no ofrecemos»: si no
+  aparece, se confirma con planta.
+- **El aviso de la ley de datos NO va en el saludo**: va al final del mensaje
+  en que se piden los datos para cerrar el pedido.
 - **Habla como una persona del local, no como un bot** (decisión del
   2026-09-24). El saludo se escribe cada vez y nunca se repite; jamás se
   anuncia como «asistente virtual» (asusta al cliente de barrio); lee el tono

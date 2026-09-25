@@ -24,6 +24,81 @@ export type FilaCatalogo = {
   cantidad_por_paquete: number | null
   precio_paquete: number | null
   requiere_seleccion_metodo: boolean
+  /** Cómo lo nombra el cliente. El dueño los edita en el CRM. */
+  sinonimos: string[]
+}
+
+/**
+ * Con qué palabras pide el cliente cada prenda. Sin esto, «¿hacen tintura?»
+ * no encontraba «Tinturado» y el agente respondía que no se ofrecía.
+ */
+const SINONIMOS: Record<string, string[]> = {
+  'Lavado, secado y doblado': [
+    'ropa',
+    'ropa suelta',
+    'ropa de diario',
+    'por libra',
+    'por peso',
+    'lavado por peso',
+    'canasta de ropa',
+  ],
+  'Solo lavado': ['solo lavar', 'unicamente lavado'],
+  'Solo secado': ['solo secar', 'secado de ropa'],
+  'Cortinas visillos': ['visillo', 'cortina delgada', 'cortina liviana'],
+  'Cortinas pesadas': ['cortina gruesa', 'blackout', 'cortina de sala'],
+  'Mochila pequeña': ['mochila chica', 'morral'],
+  'Mochila grande': ['mochila de viaje'],
+  Almohada: ['almohadon'],
+  Cojín: ['cojines decorativos'],
+  'Edredón 2 plazas': ['cubrecama 2 plazas', 'edredon matrimonial', 'matrimonial'],
+  'Edredón 2 plazas y media': ['edredon queen', 'queen'],
+  'Edredón 3 plazas': ['edredon king', 'king'],
+  'Edredón de plumas o en seco': ['plumon', 'edredon de plumas', 'edredon de pluma'],
+  Duvet: ['cobertor duvet'],
+  'Cobijas pequeñas': ['cobija', 'frazada', 'manta', 'cobertor'],
+  'Juego de sábanas más 2 fundas': ['sabana', 'juego de sabanas', 'sabanas y fundas'],
+  'Zapatos deportivos': [
+    'zapato',
+    'zapatilla',
+    'tenis',
+    'calzado',
+    'deportivos',
+    'zapatos de lona',
+  ],
+  'Peluche grande': ['muneco grande', 'oso de peluche grande'],
+  'Peluche mediano': ['muneco mediano'],
+  'Peluche pequeño': ['muneco pequeno', 'peluche chico'],
+  'Alfombra de pelo corto': ['tapete de pelo corto', 'alfombra corta'],
+  'Alfombra de pelo alto': ['tapete de pelo alto', 'alfombra peluda', 'alfombra alta'],
+  'Terno 3 piezas': ['traje 3 piezas', 'terno completo', 'terno de 3'],
+  'Terno 2 piezas': ['traje', 'terno', 'traje 2 piezas'],
+  'Saco de terno': ['saco', 'blazer'],
+  'Pantalón de terno': ['pantalon de vestir'],
+  'Abrigo liviano o gabardina': ['gabardina', 'abrigo liviano', 'sobretodo'],
+  'Abrigo pesado': ['abrigo', 'abrigo grueso'],
+  'Camisa o blusa': ['camisa', 'blusa'],
+  Camiseta: ['polo', 'playera', 'camiseta de algodon'],
+  Chal: ['pashmina'],
+  Chaleco: ['chaleco de plumon', 'chaleco de lana'],
+  Chompa: ['casaca', 'chaqueta', 'chompa de lana'],
+  'Chompa de cuero': ['casaca de cuero', 'chaqueta de cuero', 'cuero'],
+  'Falda corta': ['falda', 'minifalda'],
+  'Falda larga': ['falda hasta el piso'],
+  'Pantalón que no es de terno': ['pantalon', 'jean', 'jeans', 'bluyin'],
+  'Suéter de lana': ['sueter', 'sweater', 'pullover'],
+  Gorro: ['gorra'],
+  Bufanda: ['chalina'],
+  Mandil: ['delantal'],
+  'Mantel pequeño': ['mantel chico'],
+  'Mantel mediano': ['mantel'],
+  'Mantel grande': ['mantel de banquete'],
+  'Vestido corto': ['vestido'],
+  'Vestido largo de fiesta': ['vestido de fiesta', 'vestido largo', 'vestido de gala'],
+  'Vestido de primera comunión': ['vestido de comunion', 'comunion'],
+  'Vestido de novia sencillo': ['vestido de novia', 'novia'],
+  'Vestido de novia con cola': ['novia con cola', 'vestido de novia con cola'],
+  Enterizo: ['overol', 'jumpsuit'],
+  Tinturado: ['tintura', 'tinturar', 'tenido', 'tenir', 'tinte', 'cambio de color'],
 }
 
 function fila(
@@ -43,6 +118,7 @@ function fila(
     cantidad_por_paquete: null,
     precio_paquete: null,
     requiere_seleccion_metodo: false,
+    sinonimos: SINONIMOS[nombre_item] ?? [],
   }
 }
 

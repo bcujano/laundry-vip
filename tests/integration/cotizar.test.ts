@@ -75,6 +75,38 @@ describe('el método lo manda el catálogo', () => {
   })
 })
 
+describe('nunca se le niega un servicio al cliente', () => {
+  it('lo que no encaja llega con sugerencias, no con un no', async () => {
+    const { lineas } = await cotizarPrendas([
+      { descripcion: 'una manta de bebe muy suave', cantidad: 1 },
+    ])
+
+    expect(lineas[0]?.encontrado).toBe(false)
+    expect(lineas[0]?.sugerencias?.length ?? 0).toBeGreaterThan(0)
+    expect(lineas[0]?.nota).toContain('nunca digas que no se ofrece')
+  })
+
+  it('y cuando no hay ni parecidos, la nota manda confirmar con planta', async () => {
+    const { lineas } = await cotizarPrendas([{ descripcion: 'un kayak inflable', cantidad: 1 }])
+
+    expect(lineas[0]?.encontrado).toBe(false)
+    expect(lineas[0]?.nota).toContain('NO digas que no se ofrece')
+  })
+
+  it('las palabras con las que se pregunta ya no esconden la prenda', async () => {
+    // Los dos casos exactos que fallaron con clientes reales.
+    const { lineas } = await cotizarPrendas([
+      { descripcion: 'hacen tintura', cantidad: 1 },
+      { descripcion: 'lavado de zapatos', cantidad: 1 },
+    ])
+
+    expect(lineas[0]?.nombre_item).toBe('Tinturado')
+    expect(lineas[0]?.subtotal).toBeGreaterThan(0)
+    expect(lineas[1]?.nombre_item).toBe('Zapatos deportivos')
+    expect(lineas[1]?.subtotal).toBeGreaterThan(0)
+  })
+})
+
 describe('lo que no está en el catálogo', () => {
   it('va sin precio y con la nota, nunca con un precio inventado', async () => {
     const { lineas, resumen } = await cotizarPrendas([
@@ -83,7 +115,7 @@ describe('lo que no está en el catálogo', () => {
 
     expect(lineas[0]?.encontrado).toBe(false)
     expect(lineas[0]?.subtotal).toBeUndefined()
-    expect(lineas[0]?.nota).toBe('a confirmar por el operador')
+    expect(lineas[0]?.nota).toContain('a confirmar por el operador')
     expect(resumen.lineas_sin_precio).toBe(1)
     expect(resumen.subtotal).toBe(0)
   })

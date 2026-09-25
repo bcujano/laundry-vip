@@ -83,6 +83,51 @@ export function tokens(texto: string): string[] {
   return sinCantidad.filter((palabra) => !VACIAS.has(palabra)).map(singularizar)
 }
 
+/**
+ * Palabras con las que se PREGUNTA, no prendas. Un cliente escribe «lavado de
+ * zapatos» o «¿hacen tintura?»: el zapato y la tintura son lo que importa, el
+ * resto es cómo se pregunta.
+ *
+ * No se borran —«solo lavado» y «secado» son ítems del catálogo— sino que no
+ * cuentan para la cobertura. Si coinciden, suman en la precisión y desempatan.
+ */
+const DE_PREGUNTA = new Set([
+  'lavado',
+  'lavar',
+  'lavan',
+  'lava',
+  'limpiar',
+  'limpian',
+  'servicio',
+  'precio',
+  'valor',
+  'costo',
+  'cuesta',
+  'cuestan',
+  'cobran',
+  'cobra',
+  'cuanto',
+  'vale',
+  'valen',
+  'hacen',
+  'hace',
+  'tienen',
+  'tiene',
+  'ofrecen',
+  'ofrece',
+  'manejan',
+  'aceptan',
+  'reciben',
+  'quiero',
+  'necesito',
+  'quisiera',
+  'favor',
+  'porfa',
+  'hola',
+  'buenas',
+  'ustedes',
+])
+
 export type Puntaje = {
   /** Cuánto de lo que dijo el cliente quedó cubierto por el nombre del ítem. */
   cobertura: number
@@ -90,18 +135,49 @@ export type Puntaje = {
   precision: number
 }
 
-export function puntuar(descripcion: string, nombreItem: string): Puntaje {
-  const dichos = tokens(descripcion)
-  const delItem = tokens(nombreItem)
-  if (dichos.length === 0 || delItem.length === 0) return { cobertura: 0, precision: 0 }
+const VACIO: Puntaje = { cobertura: 0, precision: 0 }
+
+function puntuarContra(dichos: string[], nombre: string): Puntaje {
+  const delItem = tokens(nombre)
+  if (dichos.length === 0 || delItem.length === 0) return VACIO
 
   const enItem = new Set(delItem)
-  const coincidencias = dichos.filter((palabra) => enItem.has(palabra)).length
+  const coinciden = (lista: string[]) => lista.filter((palabra) => enItem.has(palabra)).length
+
+  // La cobertura mide solo lo que nombra una prenda. Si TODO lo que dijo el
+  // cliente son palabras de pregunta («solo lavado»), entonces esas mandan.
+  const fuertes = dichos.filter((palabra) => !DE_PREGUNTA.has(palabra))
+  const debiles = dichos.filter((palabra) => DE_PREGUNTA.has(palabra))
+  const base = fuertes.length > 0 ? fuertes : debiles
 
   return {
-    cobertura: coincidencias / dichos.length,
-    precision: coincidencias / delItem.length,
+    cobertura: coinciden(base) / base.length,
+    // La precisión sí las cuenta: entre «Solo lavado» y «Solo secado», ante
+    // «solo lavado», gana el primero.
+    precision: (coinciden(fuertes) + coinciden(debiles)) / delItem.length,
   }
+}
+
+/**
+ * Puntúa contra el nombre del ítem y contra cada sinónimo, y se queda con el
+ * mejor: «tenis» tiene que encontrar «Zapatos deportivos».
+ */
+export function puntuar(
+  descripcion: string,
+  nombreItem: string,
+  sinonimos: string[] = [],
+): Puntaje {
+  const dichos = tokens(descripcion)
+
+  let mejor = VACIO
+  for (const nombre of [nombreItem, ...sinonimos]) {
+    const puntaje = puntuarContra(dichos, nombre)
+    const gana =
+      puntaje.cobertura > mejor.cobertura ||
+      (puntaje.cobertura === mejor.cobertura && puntaje.precision > mejor.precision)
+    if (gana) mejor = puntaje
+  }
+  return mejor
 }
 
 /** Por debajo de esto no se considera que el cliente haya nombrado el ítem. */

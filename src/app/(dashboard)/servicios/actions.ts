@@ -3,8 +3,14 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { exigirPermiso } from '@/lib/auth'
+import { listaDeSinonimos } from '@/lib/sinonimos'
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { actualizarPrecio, alternarActivo, crear } from '@/server/servicios/repo'
+import {
+  actualizarPrecio,
+  actualizarSinonimos,
+  alternarActivo,
+  crear,
+} from '@/server/servicios/repo'
 
 export type EstadoServicio = { error?: string; aviso?: string; ok?: boolean }
 
@@ -53,6 +59,13 @@ export async function guardarPrecio(
     promocion(analisis.data.precio_paquete),
   )
   if (!resultado.ok) return { error: resultado.error }
+
+  // Con qué palabras lo pide el cliente. Viene en el mismo formulario.
+  const sinonimos = datos.get('sinonimos')
+  if (typeof sinonimos === 'string') {
+    const guardado = await actualizarSinonimos(analisis.data.id, listaDeSinonimos(sinonimos))
+    if (!guardado.ok) return { error: guardado.error }
+  }
 
   revalidatePath('/servicios')
   return { ok: true }
@@ -106,7 +119,11 @@ export async function crearServicio(
 
   // El alta no decide si hay que preguntar el método: lo decide si la prenda
   // ya existe con otro método. `crear` lo recalcula para todas sus filas.
-  const resultado = await crear({ ...analisis.data, requiere_seleccion_metodo: false })
+  const resultado = await crear({
+    ...analisis.data,
+    requiere_seleccion_metodo: false,
+    sinonimos: listaDeSinonimos(String(datos.get('sinonimos') ?? '')),
+  })
   if (!resultado.ok) return { error: resultado.error }
 
   revalidatePath('/servicios')

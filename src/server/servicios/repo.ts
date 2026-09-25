@@ -77,6 +77,15 @@ export async function actualizarPrecio(
   return error ? { ok: false, error: error.message } : { ok: true }
 }
 
+/** Con qué palabras lo pide el cliente. Lo edita el dueño en el CRM. */
+export async function actualizarSinonimos(
+  id: string,
+  sinonimos: string[],
+): Promise<ResultadoEscritura> {
+  const { error } = await supabaseAdmin().from('servicios').update({ sinonimos }).eq('id', id)
+  return error ? { ok: false, error: error.message } : { ok: true }
+}
+
 export async function alternarActivo(id: string, activo: boolean): Promise<ResultadoEscritura> {
   const { error } = await supabaseAdmin().from('servicios').update({ activo }).eq('id', id)
   return error ? { ok: false, error: error.message } : { ok: true }
@@ -92,6 +101,7 @@ export type NuevoServicio = {
   cantidad_por_paquete: number | null
   precio_paquete: number | null
   requiere_seleccion_metodo: boolean
+  sinonimos: string[]
 }
 
 /**

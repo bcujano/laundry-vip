@@ -87,6 +87,7 @@ export async function sembrar(sql: Sql, { forzar = false } = {}): Promise<Result
     'precio_max',
     'cantidad_por_paquete',
     'precio_paquete',
+    'sinonimos',
     'requiere_seleccion_metodo',
     'activo',
   ] as const
@@ -103,6 +104,7 @@ export async function sembrar(sql: Sql, { forzar = false } = {}): Promise<Result
             precio_max = excluded.precio_max,
             cantidad_por_paquete = excluded.cantidad_por_paquete,
             precio_paquete = excluded.precio_paquete,
+            sinonimos = excluded.sinonimos,
             requiere_seleccion_metodo = excluded.requiere_seleccion_metodo,
             activo = true
         `

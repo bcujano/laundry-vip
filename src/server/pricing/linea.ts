@@ -25,6 +25,8 @@ export type LineaCotizada = {
   metodo_unico?: boolean
   /** El cliente pidió un método que esa prenda no admite; se cotizó con el suyo. */
   advertencia?: string
+  /** Nada encajó, pero esto se le parece: se pregunta, no se niega. */
+  sugerencias?: string[]
   /** Varios ítems del catálogo encajan con lo que dijo: hay que preguntar. */
   requiere_desambiguacion?: boolean
   opciones?: { nombre_item: string; precio_min: number; precio_max: number; unidad: string }[]
@@ -37,7 +39,7 @@ export type LineaCotizada = {
   nota?: string
 }
 
-export type Grupo = { nombre_item: string; filas: Servicio[] }
+export type Grupo = { nombre_item: string; sinonimos: string[]; filas: Servicio[] }
 
 export const NOTA_SIN_PRECIO = 'a confirmar por el operador'
 
@@ -52,7 +54,12 @@ export function agrupar(catalogo: Servicio[]): Grupo[] {
     filas.push(fila)
     porNombre.set(fila.nombre_item, filas)
   }
-  return [...porNombre.entries()].map(([nombre_item, filas]) => ({ nombre_item, filas }))
+  return [...porNombre.entries()].map(([nombre_item, filas]) => ({
+    nombre_item,
+    // Los sinónimos de todas las variantes del ítem, sin repetir.
+    sinonimos: [...new Set(filas.flatMap((fila) => fila.sinonimos ?? []))],
+    filas,
+  }))
 }
 
 /**
@@ -65,7 +72,7 @@ export function emparejar(
   grupos: Grupo[],
 ): { ganador?: Grupo; finalistas: Grupo[] } {
   const puntuados = grupos
-    .map((grupo) => ({ grupo, puntaje: puntuar(descripcion, grupo.nombre_item) }))
+    .map((grupo) => ({ grupo, puntaje: puntuar(descripcion, grupo.nombre_item, grupo.sinonimos) }))
     .filter((candidato) => candidato.puntaje.cobertura >= UMBRAL)
 
   if (puntuados.length === 0) return { finalistas: [] }
@@ -82,6 +89,23 @@ export function emparejar(
     ganador: ganadores.length === 1 ? ganadores[0]?.grupo : undefined,
     finalistas: finalistas.map((c) => c.grupo),
   }
+}
+
+/**
+ * Cuando nada supera el umbral, lo que más se acercó. Sirve para preguntar
+ * («¿se refiere a…?») en vez de decirle al cliente que no se ofrece algo que
+ * sí está en el catálogo, que es como se pierden clientes.
+ */
+export function parecidos(descripcion: string, grupos: Grupo[], cuantos = 3): string[] {
+  return grupos
+    .map((grupo) => ({ grupo, puntaje: puntuar(descripcion, grupo.nombre_item, grupo.sinonimos) }))
+    .filter((c) => c.puntaje.cobertura > 0)
+    .sort(
+      (a, b) =>
+        b.puntaje.cobertura - a.puntaje.cobertura || b.puntaje.precision - a.puntaje.precision,
+    )
+    .slice(0, cuantos)
+    .map((c) => c.grupo.nombre_item)
 }
 
 export function cotizarGrupo(item: ItemPedido, grupo: Grupo): LineaCotizada {

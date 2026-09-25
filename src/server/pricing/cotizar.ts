@@ -7,6 +7,7 @@ import {
   type ItemPedido,
   type LineaCotizada,
   NOTA_SIN_PRECIO,
+  parecidos,
   redondear,
 } from './linea'
 
@@ -72,13 +73,19 @@ export async function cotizarPrendas(items: ItemPedido[]): Promise<Cotizacion> {
   const lineas = items.map((item): LineaCotizada => {
     const { ganador, finalistas } = emparejar(item.descripcion, grupos)
 
-    // Nada se parece: nunca se inventa un precio.
+    // Nada se parece: nunca se inventa un precio, pero TAMPOCO se niega el
+    // servicio. Se devuelven los parecidos para que el agente pregunte.
     if (finalistas.length === 0) {
+      const sugerencias = parecidos(item.descripcion, grupos)
       return {
         descripcion: item.descripcion,
         cantidad: item.cantidad,
         encontrado: false,
-        nota: NOTA_SIN_PRECIO,
+        ...(sugerencias.length > 0 ? { sugerencias } : {}),
+        nota:
+          sugerencias.length > 0
+            ? 'No es exacto. Pregúntale si se refiere a alguna de las sugerencias; nunca digas que no se ofrece.'
+            : `${NOTA_SIN_PRECIO}. NO digas que no se ofrece: el operador confirma en planta.`,
       }
     }
 

@@ -30,7 +30,16 @@ export function FilaPrecio({
 
   return (
     <tr className={servicio.activo ? '' : 'opacity-50'}>
-      <Td>{servicio.nombre_item}</Td>
+      <Td>
+        {servicio.nombre_item}
+        {/* Con qué palabras lo pide el cliente: es lo que usa el agente para
+            reconocerlo. Sin esto respondía que no se ofrecía. */}
+        {servicio.sinonimos.length > 0 ? (
+          <span className="block text-[var(--color-texto-apagado)] text-xs">
+            {servicio.sinonimos.join(', ')}
+          </span>
+        ) : null}
+      </Td>
       <Td className="text-[var(--color-texto-apagado)]">{metodoLegible(servicio.metodo)}</Td>
       <Td className="text-[var(--color-texto-apagado)]">
         {unidadLegible(servicio.unidad)}
@@ -75,6 +84,14 @@ export function FilaPrecio({
                 type="number"
               />
             ) : null}
+            <Campo
+              aria-label={`Cómo llaman los clientes a ${servicio.nombre_item}`}
+              className="w-44"
+              defaultValue={servicio.sinonimos.join(', ')}
+              name="sinonimos"
+              placeholder="tintura, teñido, tinte"
+              type="text"
+            />
             <Boton disabled={pendiente} type="submit" variante="suave">
               {pendiente ? '…' : 'Guardar'}
             </Boton>
