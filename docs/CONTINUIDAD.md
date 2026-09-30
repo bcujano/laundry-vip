@@ -68,8 +68,7 @@ blanca: sus pruebas con el número de 321 entran como cliente.
 **Configuración hoy (la edita el dueño en el CRM):** «VIP Laundry» · lunes a
 sábado · 9:00–19:00, sábados hasta 17:00 · recolección a **2,5 km** del local ·
 tarifa de recogida y entrega **$2,50** · entrega **48–72 h** · tope de mensajes
-40/teléfono/día (**hoy no se aplica, ver §4 B2**) · tope de gasto OpenAI $5/día
-(**hoy no se aplica**).
+40/teléfono/día y tope de gasto OpenAI $5/día (**conectados el 2026-09-30, pendientes de verse con tráfico real, §4 B2**).
 
 **Datos hoy:** base entregada en cero el 2026-09-23 y desde entonces entraron
 clientes reales: 14 clientes, 15 conversaciones, **1 pedido** (defectuoso, ver
@@ -101,26 +100,7 @@ Scripts sueltos contra la base: `scripts/` no usa el alias `@/`; en Windows los
 ## 3. Acciones al arrancar (el dueño las autoriza al pegar el prompt)
 
 1. **Verificación de 1 minuto** (§0). Si algo está rojo, arréglalo antes de seguir.
-2. **Devolverle la palabra al agente con María Sol.** Su conversación
-   (Chatwoot cuenta 3, **conversación 5**, teléfono de María Sol) tiene la
-   etiqueta `humano` desde el 2026-09-22, cuando probó al agente escribiéndole
-   «Mal servicio»: con esa etiqueta el agente **no le contesta**, su mensaje del
-   23/09 («¿me atienden?») quedó sin respuesta y por eso el modo dueña nunca
-   funcionó para ella. Quita **solo esa** etiqueta:
-   ```bash
-   # bash no carga .env.local solo, y el archivo puede traer \r de Windows:
-   B=$(grep -m1 '^CHATWOOT_BASE_URL=' .env.local | cut -d= -f2- | tr -d '\r"')
-   T=$(grep -m1 '^CHATWOOT_API_TOKEN=' .env.local | cut -d= -f2- | tr -d '\r"')
-   curl -s -X POST "$B/api/v1/accounts/3/conversations/5/labels" \
-     -H "api_access_token: $T" -H "Content-Type: application/json" -d '{"labels":[]}'
-   ```
-   La API **reemplaza** el conjunto de etiquetas y la 5 solo tiene `humano`.
-   **No toques la conversación 12** (Cristian Verdezoto): ahí `humano` es
-   correcto, el cliente pidió que lo dejaran en paz. Verifica con
-   `pnpm chatwoot:revisar` que la 5 quedó sin etiquetas. **Plan B:** si sigue
-   con `humano` (Chatwoot a veces ignora un arreglo vacío), no insistas por otras
-   vías: pídele al dueño en el reporte final que la quite a mano
-   (conversación 5 → etiquetas → quitar «humano»).
+2. **Conversación 5 de María Sol — RESUELTO (2026-09-30).** La etiqueta `humano` ya no está (Byron la quitó a las 21:11Z); con B1 ahora, si ella responde a mano en un chat de cliente, el agente se calla solo en ese chat. Comprobar que el agente le contesta cuando ella le escribe al número del negocio.
 3. **Revisar lo que pasó con clientes reales desde la última revisión** (cubrió
    hasta 2026-09-30 18:12Z): `pnpm chatwoot:revisar --desde 2026-09-30`. Busca
    lo de `DECISIONES.md` §2: negaciones de servicio, promesas fuera de
@@ -149,9 +129,7 @@ actualizar esta sección.
 
 **B4 · Cobertura verificable — ESTRUCTURA HECHA (2026-09-30), INERTE hasta que el dueño dé la lista (E3).** Migración `0015` (`configuracion.sectores_cobertura text[]`, vacía), pantalla de Configuración con un sector por línea, `src/server/pedidos/cobertura.ts` (`verificarSector`, con el normalizador de precios), `crear_pedido` acepta `sector` y, con lista cargada, rechaza `FUERA_DE_COBERTURA` o pide el sector; el prompt y la tool de n8n ya lo mandan. Con la lista vacía todo se comporta como antes. **Cuando E3 llegue:** cargar los barrios en Configuración y probar un pedido real con un sector fuera de la lista.
 
-**B5 · Validar la búsqueda de Chatwoot por teléfono** (`src/lib/chatwoot.ts`,
-`/search?q=`): es lo que usan los botones «abrir en Chatwoot» del CRM. Pruébala
-contra la cuenta 3 real, solo lectura, con un teléfono que ya tenga conversación.
+**B5 · Búsqueda de Chatwoot por teléfono — VERIFICADA POR API (2026-09-30).** `contacts/search?q=` de la cuenta 3 encuentra al contacto con el teléfono con o sin `+` y con el número local sin prefijo; `conversations/search` por teléfono no devuelve nada (busca en el contenido de los mensajes). El enlace del CRM (`/search?q=<dígitos>`) es de la pantalla de Chatwoot y **no se pudo probar en el navegador** (pide sesión): el dueño puede comprobar un botón «abrir en Chatwoot» de un cliente sin conversación registrada.
 
 **B6 · GitHub y CI** — cuando el repositorio exista (§5 E5): `git push -u origin
 agente-n8n-laundry --tags`. `.github/workflows/ci.yml` ya existe; revisa que
