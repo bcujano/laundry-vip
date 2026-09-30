@@ -241,6 +241,12 @@ nodes.push(...persona.nodos)
 Object.assign(connections, persona.conexiones)
 connections['Chatwoot Webhook'].main[0].push({ node: 'Respondio Persona?', type: 'main', index: 0 })
 
+// Protecciones del CRM: tope de mensajes, deduplicación y tope de gasto (B2).
+const protecciones = require('./protecciones.cjs')
+nodes.push(...protecciones.nodos)
+Object.assign(connections, protecciones.conexiones)
+connections['Extraer JSON'].main[0].push({ node: 'Estimar Uso', type: 'main', index: 0 })
+
 const nombres = new Set(nodes.map((n) => n.name))
 for (const [origen, tipos] of Object.entries(connections)) {
   if (!nombres.has(origen)) throw new Error(`Conexión desde nodo inexistente: ${origen}`)

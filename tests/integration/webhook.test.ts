@@ -340,6 +340,10 @@ describe('cliente y memoria', () => {
       parametros: { dedupe_key: clave, tipo: 'message_created' },
     })
     expect((primera.sobre.data as { ya_procesado: boolean }).ya_procesado).toBe(false)
+    // n8n corta el turno si el gasto del día ya pasó el techo: el campo siempre viene.
+    expect(typeof (primera.sobre.data as { costo_excedido: boolean }).costo_excedido).toBe(
+      'boolean',
+    )
 
     const segunda = await llamar({
       accion: 'registrar_evento_entrante',

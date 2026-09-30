@@ -11,8 +11,8 @@
       "type": "n8n-nodes-base.webhook",
       "position": [-2000, 512],
       "typeVersion": 2,
-      "webhookId": "c31bda55-5bd6-4482-b1b2-14e2265cbe0c",
-      "id": "3cd24f39-9af8-4656-86f3-f769f282cbac"
+      "webhookId": "4ec8b552-de56-4e4d-a220-06854f9a21a5",
+      "id": "1dc938be-b2d7-4834-8749-8614928b892d"
     },
     {
       "parameters": {
@@ -51,7 +51,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-1776, 512],
       "typeVersion": 2.2,
-      "id": "a7231129-ece2-4003-bcd8-c57c411f14c0"
+      "id": "e99b4f9c-5c4f-41c7-8982-c9a9255d5ad8"
     },
     {
       "parameters": {
@@ -82,7 +82,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-1552, 512],
       "typeVersion": 2.2,
-      "id": "2ef7fe60-8ae7-41fa-a921-d5fff7cb0f63"
+      "id": "7d4deee1-9d6a-445f-9ffa-11e2c00beecd"
     },
     {
       "parameters": {
@@ -186,7 +186,7 @@
       "type": "n8n-nodes-base.set",
       "position": [-1296, 384],
       "typeVersion": 3.4,
-      "id": "32c920bc-98a5-4038-b599-32bb136c1964"
+      "id": "11941b4a-4a05-4979-85dc-45f59bcdf452"
     },
     {
       "parameters": {
@@ -201,7 +201,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [-432, 384],
       "typeVersion": 4.2,
-      "id": "9fa78b63-450d-4eea-b94d-22a61014cddb",
+      "id": "6911e3da-463c-46b5-a388-07bc15a62e60",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -238,7 +238,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-208, 384],
       "typeVersion": 2.2,
-      "id": "3ff39595-9db1-42bf-8efb-d095bc964e07"
+      "id": "78ea5599-ec26-43c1-a1a7-04c14b4c353a"
     },
     {
       "parameters": {
@@ -258,7 +258,7 @@
       "type": "n8n-nodes-base.set",
       "position": [16, 384],
       "typeVersion": 3.4,
-      "id": "e95e5d8b-d8ef-4d95-8c26-ef43cb656141"
+      "id": "2dd9862e-4655-4986-b706-5f8d3a4a2c7a"
     },
     {
       "parameters": {
@@ -325,7 +325,7 @@
       "type": "n8n-nodes-base.switch",
       "position": [240, 368],
       "typeVersion": 3.2,
-      "id": "3a82fb0e-8dc4-4715-843b-f070e2fa3763"
+      "id": "839bb806-0cfa-4d69-8088-c32f45890b63"
     },
     {
       "parameters": {
@@ -345,7 +345,7 @@
       "type": "n8n-nodes-base.set",
       "position": [464, -16],
       "typeVersion": 3.4,
-      "id": "8e3a983f-d289-4e4d-88f5-8e5033fdb83e"
+      "id": "23605110-31fa-45e9-be48-8625fa4e432d"
     },
     {
       "parameters": {
@@ -358,7 +358,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [688, -16],
       "typeVersion": 4.2,
-      "id": "0266026e-0373-44c7-821c-aa2e192482b7",
+      "id": "f81320bb-21d2-43f8-9f09-196ca93ff1be",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -399,7 +399,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [976, -16],
       "typeVersion": 4.2,
-      "id": "8d36620e-664d-48e4-b2b6-0c776caeb6c2",
+      "id": "766104b9-ca84-4aa8-b3de-1f28034d52cf",
       "credentials": {
         "openAiApi": {
           "id": "GvNmUCZRx5ZvZerQ",
@@ -425,7 +425,7 @@
       "type": "n8n-nodes-base.set",
       "position": [464, 288],
       "typeVersion": 3.4,
-      "id": "11470ef4-7a80-487b-99e3-8e5172c3e7c4"
+      "id": "df7396ce-df48-4240-b103-d8edff95fe49"
     },
     {
       "parameters": {
@@ -438,7 +438,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [688, 288],
       "typeVersion": 4.2,
-      "id": "673a1066-5879-4b8d-84fa-728667e37253",
+      "id": "2c807b40-e188-41f6-95a9-1d86c2d0b715",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -463,7 +463,7 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "position": [912, 176],
       "typeVersion": 1.4,
-      "id": "a73420d4-6ea5-4a72-aa2a-8918660f183f"
+      "id": "8ae40468-c14e-47fd-a2d2-4746bbbb54f5"
     },
     {
       "parameters": {
@@ -479,7 +479,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "position": [976, 400],
       "typeVersion": 1.2,
-      "id": "ad83fc60-da22-40b9-88b0-4fecb4b14873",
+      "id": "7275c5b4-c44d-4378-a8e2-97e7c55143fc",
       "credentials": {
         "openAiApi": {
           "id": "GvNmUCZRx5ZvZerQ",
@@ -494,9 +494,9 @@
       "name": "Espera Texto",
       "type": "n8n-nodes-base.wait",
       "position": [976, 576],
-      "webhookId": "ecfb014b-2165-4f65-b9c8-af4e9c93ead1",
+      "webhookId": "8d71885f-6a1a-458c-9000-acb989d3c174",
       "typeVersion": 1.1,
-      "id": "367be115-b725-4f11-8875-bff2c108be32"
+      "id": "d57e1178-cd61-4341-9407-363acdba5d90"
     },
     {
       "parameters": {
@@ -547,7 +547,7 @@
       "type": "n8n-nodes-base.set",
       "position": [1264, 288],
       "typeVersion": 3.4,
-      "id": "b463d23c-2037-489c-9162-c72b0e6153ea"
+      "id": "6a9be162-040f-42c4-88a9-db849fa016e0"
     },
     {
       "parameters": {
@@ -564,7 +564,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [2960, 400],
       "typeVersion": 4.2,
-      "id": "6062ce44-81a3-4f9e-80fc-a1624df21cb8",
+      "id": "aded15a8-253e-48ba-9c01-a0fdbc115cdc",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -601,7 +601,7 @@
       "type": "n8n-nodes-base.if",
       "position": [2960, 96],
       "typeVersion": 2.2,
-      "id": "1872d9c0-f1c3-4cc4-a3df-67baecf93538",
+      "id": "bb4f545e-7db8-42d0-90e1-41bf2569b28a",
       "continueOnFail": true
     },
     {
@@ -621,7 +621,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [3200, 80],
       "typeVersion": 4.2,
-      "id": "37982400-79e7-45ac-8cb8-48e9c719cbc8",
+      "id": "4c8a18f4-36c7-42d5-9dba-442994d16b54",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -647,7 +647,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [3440, 80],
       "typeVersion": 4.2,
-      "id": "03ba5eff-bb63-4cfa-b13a-bf893b4e7459",
+      "id": "34124d80-d21c-4d64-9147-316bfd9e6954",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -664,15 +664,15 @@
       "type": "n8n-nodes-base.wait",
       "position": [-656, 384],
       "typeVersion": 1.1,
-      "webhookId": "a1d2f4f0-3cb1-4af8-9816-6403219289a1",
-      "id": "f07426fd-7688-4bcc-ab17-1080bbec6d0d"
+      "webhookId": "62e81906-e7bb-4aa0-891d-390c87764fd3",
+      "id": "de83692c-8c4a-4355-a3eb-d5681e8cff31"
     },
     {
       "parameters": {},
       "type": "@n8n/n8n-nodes-langchain.toolCalculator",
       "typeVersion": 1,
       "position": [2580, 752],
-      "id": "09d2ebdb-b1c5-4093-a060-8ed8be743477",
+      "id": "db1a367b-04fc-4fd7-be2a-ebe0ac72039f",
       "name": "Calculator"
     },
     {
@@ -688,7 +688,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [2256, 288],
-      "id": "0b54e5ca-fa57-4f17-8b85-95a02b1213da",
+      "id": "8b3f1ac8-05c6-47b8-82a8-d3dd77c8062e",
       "name": "Agente Laundry VIP"
     },
     {
@@ -711,7 +711,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [1984, 448],
-      "id": "d11ebe97-0cfa-4752-976d-cd9b338f2689",
+      "id": "337a417f-c6e5-4462-b998-b2c3cf7b60d8",
       "name": "OpenAI Laundry",
       "credentials": {
         "openAiApi": {
@@ -730,7 +730,7 @@
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.3,
       "position": [2128, 448],
-      "id": "80918473-66b6-45ca-8b75-22beeffa5024",
+      "id": "f1bb2cc8-2427-4096-91b9-bf56df86b149",
       "name": "Memory Laundry",
       "credentials": {
         "postgres": {
@@ -759,7 +759,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [1472, 288],
-      "id": "e348aada-3e71-420b-89eb-cac0018ccdf9",
+      "id": "7ee056f1-3982-4cfc-9610-d3da170381b1",
       "name": "Typing Indicator",
       "credentials": {
         "httpHeaderAuth": {
@@ -778,7 +778,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [-1088, 384],
-      "id": "9b4bdcb9-d9b4-49b8-8dc1-c14562103a5d",
+      "id": "5289ee50-13b2-41dd-b5f7-79a57272a128",
       "name": "Buscar Referral",
       "credentials": {
         "postgres": {
@@ -795,7 +795,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-880, 384],
-      "id": "d9b85e58-153b-498f-afec-acef16f8e3c8",
+      "id": "8ad2b487-cb91-49b4-829d-3e1b156203d6",
       "name": "Agregar Referral"
     },
     {
@@ -805,7 +805,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [2700, 288],
-      "id": "f6128c5a-0cca-483f-b250-3c8ef11f69e2",
+      "id": "23b9e72f-3b1a-4ca7-be82-dc3a6aa0dbee",
       "name": "Extraer JSON"
     },
     {
@@ -831,7 +831,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [1500, 752],
-      "id": "98912490-2fd3-4bb3-a7a5-4fda8ee50998",
+      "id": "65e9bbbf-6935-4ea4-aa6d-3e0e26d912e8",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -862,7 +862,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [1680, 752],
-      "id": "a80d58c3-18d9-4b06-a3a6-0831847ed69b",
+      "id": "f066293e-6dc0-4886-be09-d66cb8cf370d",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -893,7 +893,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [1860, 752],
-      "id": "da51732d-d8e7-4da2-9e25-cb71821bc03d",
+      "id": "27590b0a-766d-4a84-81a2-8eeb6fbde050",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -924,7 +924,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2040, 752],
-      "id": "333f1ad1-a909-487b-bba7-0416ebff1c0f",
+      "id": "e161ab51-00fd-4401-bab2-978e4af65bb1",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -955,7 +955,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2220, 752],
-      "id": "c7ef39e2-2cc3-47cc-a87a-58217796e2c4",
+      "id": "044eb64b-5ece-4b47-980c-b1777811eaec",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -986,7 +986,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2400, 752],
-      "id": "51112c59-58e2-4b16-86bb-175cedf053ae",
+      "id": "d805c4ac-b26c-49b9-b8c6-82be8128bfb6",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1011,7 +1011,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [1640, 288],
-      "id": "491b4b85-eba0-4e6b-85fb-4e58c1624011",
+      "id": "74a1d869-8505-45c3-a1b1-fc712da3130d",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1050,7 +1050,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [1860, 288],
-      "id": "39a94b84-da8d-4842-812d-0d475299d1e8"
+      "id": "ffe41fb4-ff76-41ac-bf09-523a1589e591"
     },
     {
       "parameters": {
@@ -1065,7 +1065,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [2256, -120],
-      "id": "e89eafd8-4920-4d7f-85fa-eac5fe926d11",
+      "id": "ad02c012-735a-4522-8929-e007a8401f12",
       "name": "Agente Operador"
     },
     {
@@ -1088,7 +1088,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [2060, 60],
-      "id": "e958f8e9-c071-4178-ab4b-4c71391fb48c",
+      "id": "1603ae40-d694-4049-9ec2-7a755a0b3e7e",
       "name": "OpenAI Operador",
       "credentials": {
         "openAiApi": {
@@ -1107,7 +1107,7 @@
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.3,
       "position": [2200, 60],
-      "id": "71019766-25c1-43ae-8ec0-e2e1f6774577",
+      "id": "4c77649c-f0a8-413c-b665-bf1be4171228",
       "name": "Memory Operador",
       "credentials": {
         "postgres": {
@@ -1139,7 +1139,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2360, -300],
-      "id": "9111143b-01b6-4431-a989-6773737a10ce",
+      "id": "f84f6ba1-9b23-46f9-b5d3-ab0bdc4bd5df",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1170,7 +1170,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2530, -300],
-      "id": "055d4ec3-2b2c-4806-a9ce-9921b7e50be7",
+      "id": "ad41852b-17dc-4710-add8-e0719199cdf7",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1201,7 +1201,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2700, -300],
-      "id": "bfbd97e5-f369-4e6b-8a4f-f22bac023c1d",
+      "id": "6456d077-3999-4a8e-bd6e-b144c3c75930",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1232,7 +1232,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2870, -300],
-      "id": "40a14df9-b79f-4b51-b8ec-2cb47b5e0864",
+      "id": "80392497-4ec2-48b3-91d3-21f61c22cd44",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1263,7 +1263,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3040, -300],
-      "id": "71b7eb0f-8ede-47b2-8ce4-502d7ce40b2a",
+      "id": "7351c3d4-8859-4608-933b-5c5575ffdf0f",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1294,7 +1294,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3210, -300],
-      "id": "11e636c8-5a2b-465a-881d-9f16690e9485",
+      "id": "b1ce9007-52ed-4764-8a8d-8a64341bcbbe",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1325,7 +1325,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3380, -300],
-      "id": "d5f19d7a-4dd1-4294-90e2-81507554d985",
+      "id": "05b063d2-cc7b-448b-b4ef-98b901795e4d",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1356,7 +1356,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3550, -300],
-      "id": "fc1e9a4b-3f0b-4283-b836-d715fd0083b2",
+      "id": "13af709a-31aa-430b-95c7-80c69f4c2f1e",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1387,7 +1387,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3720, -300],
-      "id": "47ce6559-9ec4-4b17-a7aa-f08004084e92",
+      "id": "82f0e526-803e-4c24-b37b-ab7b061b057e",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1403,7 +1403,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [2960, 640],
-      "id": "80fd20b7-f582-46ee-ac81-5297ff4f3d53",
+      "id": "b8030688-4607-4f78-8727-39e70a88f664",
       "onError": "continueRegularOutput"
     },
     {
@@ -1423,7 +1423,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [3200, 640],
-      "id": "1db32a81-c9b2-4c11-af07-cc467d69f381",
+      "id": "090eb0ee-fcf9-4a41-a66e-691563410086",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1449,7 +1449,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [3440, 640],
-      "id": "634e3d4c-4fed-4daf-b7d1-e80b0ee34bd7",
+      "id": "ce23d47c-961c-4a41-adc6-fc5549ab3d88",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1473,7 +1473,7 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [-2000, 1200],
-      "id": "77e83566-ef17-4e48-9e63-ff5421faf81a",
+      "id": "09dae5c2-591f-465d-8f1f-26b62faa9523",
       "notes": "Lunes a sábado 8:00 (zona del workflow: America/Guayaquil)."
     },
     {
@@ -1493,7 +1493,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1760, 1200],
-      "id": "2bfb9f1c-98d8-4d09-b890-976e00955fa1",
+      "id": "2c58afa4-6ce3-4eee-a5ce-a38c3c540275",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1509,7 +1509,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-1520, 1200],
-      "id": "3b85b71c-72f7-4f9c-9c49-3bdd93e30ae4"
+      "id": "213259a9-9f34-4113-a950-e4dc2c78eb9f"
     },
     {
       "parameters": {
@@ -1541,7 +1541,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [-1280, 1200],
-      "id": "3491fd2e-48e8-423c-8775-d7c6463f1f71"
+      "id": "ca59ff0b-cc61-4aff-8008-26bcfe11998d"
     },
     {
       "parameters": {
@@ -1560,7 +1560,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 1100],
-      "id": "76463714-9db9-4b8f-a083-ee945263b68a",
+      "id": "e46c9394-4d6d-4dac-bebb-4ccc9e6c48ab",
       "credentials": {
         "httpHeaderAuth": {
           "id": "baJJfX3zWMindSEN",
@@ -1586,7 +1586,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 1300],
-      "id": "4e5e1a0d-4236-48c8-b50e-3d9eb34324d2",
+      "id": "5d65bf40-2ff1-44bb-9540-fceca3343d22",
       "credentials": {
         "httpHeaderAuth": {
           "id": "baJJfX3zWMindSEN",
@@ -1660,7 +1660,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-1776, 160],
       "typeVersion": 2.2,
-      "id": "02a5fade-e7dd-4d56-9b00-7c1500c9d27d"
+      "id": "f78e09e5-5d30-4806-9595-c3c2ebce9989"
     },
     {
       "parameters": {
@@ -1679,7 +1679,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1552, 160],
-      "id": "9c271ec2-0afd-434a-8f94-a671e1d9c1dc",
+      "id": "be7badc9-3c0a-41b3-be78-f639119f7f06",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -1705,7 +1705,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1328, 160],
-      "id": "0ef7fc94-3f69-4c4e-8c4b-dfa2a809e066",
+      "id": "87536c72-8ec2-4c6d-a1f0-e0d8884f22cd",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -1713,6 +1713,147 @@
         }
       },
       "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  accion: 'registrar_evento_entrante',\n  telefono: (() => { const d = String($('WhatsApp Inicio').item.json.contacts[0].wa_id || '').replace(/\\D/g, ''); return /^[1-9]\\d{7,14}$/.test(d) ? '+' + d : undefined })(),\n  parametros: { dedupe_key: 'chatwoot-' + String($('WhatsApp Inicio').item.json._chatwoot_message_id), tipo: 'message_created' },\n}) }}",
+        "options": {
+          "timeout": 15000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "name": "Registrar Entrante",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-96, 384],
+      "id": "cb930279-6fdc-4863-8e84-f9939c89b299",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "puede-continuar",
+              "leftValue": "={{ (() => {\n  const j = $json;\n  if (j.ok === true) return j.data.ya_procesado !== true && j.data.costo_excedido !== true;\n  // Solo el tope diario corta; cualquier otro fallo del CRM deja pasar al cliente.\n  return !(j.error && j.error.code === 'LIMITE_DIARIO_ALCANZADO');\n})() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Puede Continuar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [128, 384],
+      "id": "e0d15f04-8265-415f-9b81-a70b90466d85"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Por qué no se atiende este mensaje. Un mensaje repetido se descarta en silencio.\nconst j = $input.first().json;\nif (j.ok === true && j.data.ya_procesado === true) return [];\nconst limite = !(j.ok === true);\nreturn [{ json: limite\n  ? { privado: true, texto: '🚦 Este número llegó al tope diario de mensajes: el agente no le contesta más hoy. Revise la conversación y atiéndalo a mano si hace falta.' }\n  : { privado: false, texto: 'Hoy ya no puedo seguir atendiendo por este medio. Mañana con gusto le sigo ayudando; si es urgente, puede llamarnos por teléfono.' } }];"
+      },
+      "name": "Motivo de Corte",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [352, 560],
+      "id": "53dcc6f2-9228-45bd-a620-ad49cfa25247",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chatwoot-production-8564.up.railway.app/api/v1/accounts/3/conversations/{{ $('WhatsApp Inicio').item.json._chatwoot_conversation_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ content: $json.texto, message_type: \"outgoing\", private: $json.privado }) }}",
+        "options": {
+          "timeout": 5000
+        }
+      },
+      "name": "Aviso de Corte",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [576, 560],
+      "id": "611e3e4d-f12c-4621-a4a8-fe1a0a25b7e1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3W2BykSid0f9dMTV",
+          "name": "Chatwoot Laundry VIP API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "let agente = null;\nfor (const n of ['Agente Laundry VIP', 'Agente Operador']) {\n  try { agente = { nombre: n, json: $(n).first().json }; break; } catch (e) {}\n}\nif (!agente) return [];\nconst pasos = Array.isArray(agente.json.intermediateSteps) ? agente.json.intermediateSteps : [];\nconst promptCaracteres = agente.nombre === 'Agente Operador' ? 10000 : 19500;\nconst entrada = String($('Preparar Mensaje Final').first().json.message_text || '').length;\nconst observaciones = pasos.reduce((s, p) => s + String((p && p.observation) || '').length, 0);\nconst salida = String(agente.json.output || '').length;\nconst llamadas = 1 + pasos.length;\nconst tokensEntrada = Math.ceil(llamadas * (promptCaracteres + entrada + 4000) / 4) + Math.ceil(observaciones / 4);\nconst tokensSalida = Math.ceil((salida + pasos.length * 200) / 4);\nconst costo = tokensEntrada * 0.4e-6 + tokensSalida * 1.6e-6;\nreturn [{ json: { tokens: tokensEntrada + tokensSalida, costo_estimado_usd: Number(costo.toFixed(5)) } }];"
+      },
+      "name": "Estimar Uso",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2960, 880],
+      "id": "4f5e0de6-0243-4e79-9dc8-453bc946620e",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  accion: 'registrar_evento_entrante',\n  parametros: {\n    dedupe_key: 'uso-' + String($('WhatsApp Inicio').item.json._chatwoot_message_id),\n    tipo: 'uso_openai',\n    uso_openai: { tokens: $json.tokens, costo_estimado_usd: $json.costo_estimado_usd },\n  },\n}) }}",
+        "options": {
+          "timeout": 15000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "name": "Registrar Uso",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3200, 880],
+      "id": "35e9b44b-0377-41e5-813f-132a08685a9c",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "pinData": {},
@@ -1814,7 +1955,7 @@
       "main": [
         [
           {
-            "node": "Combinar Textos",
+            "node": "Registrar Entrante",
             "type": "main",
             "index": 0
           }
@@ -2026,6 +2167,11 @@
           },
           {
             "node": "Preparar CRM Body",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Estimar Uso",
             "type": "main",
             "index": 0
           }
@@ -2370,6 +2516,57 @@
         [
           {
             "node": "Nota Persona",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar Entrante": {
+      "main": [
+        [
+          {
+            "node": "Puede Continuar?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puede Continuar?": {
+      "main": [
+        [
+          {
+            "node": "Combinar Textos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Motivo de Corte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Motivo de Corte": {
+      "main": [
+        [
+          {
+            "node": "Aviso de Corte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Estimar Uso": {
+      "main": [
+        [
+          {
+            "node": "Registrar Uso",
             "type": "main",
             "index": 0
           }

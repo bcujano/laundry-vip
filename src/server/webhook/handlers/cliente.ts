@@ -3,7 +3,7 @@ import { horarioLegible } from '@/server/configuracion/horario'
 import { obtener as obtenerConfig } from '@/server/configuracion/repo'
 import { cotizarPrendas, ErrorCotizacion } from '@/server/pricing/cotizar'
 import type { Cliente, Conversacion } from '@/types/database'
-import { type ResultadoUso, registrarUso } from '../cost-tracking'
+import { type ResultadoUso, registrarUso, usoDeHoy } from '../cost-tracking'
 import { exito, fallo, type ResultadoAccion } from '../respuesta'
 import type { ParametrosDe } from '../schemas'
 
@@ -18,7 +18,14 @@ import type { ParametrosDe } from '../schemas'
  */
 export async function registrarEventoEntrante(
   parametros: ParametrosDe<'registrar_evento_entrante'>,
-): Promise<ResultadoAccion<{ ya_procesado: boolean; alerta_costo?: ResultadoUso }>> {
+): Promise<
+  ResultadoAccion<{
+    ya_procesado: boolean
+    /** El gasto de hoy ya pasó el techo: n8n deja de contestar hasta mañana. */
+    costo_excedido: boolean
+    alerta_costo?: ResultadoUso
+  }>
+> {
   const { error } = await supabaseAdmin()
     .from('eventos_procesados')
     .insert({
@@ -36,8 +43,11 @@ export async function registrarEventoEntrante(
     ? await registrarUso(parametros.uso_openai.tokens, parametros.uso_openai.costo_estimado_usd)
     : undefined
 
+  const hoy = uso ?? (await usoDeHoy())
+
   return exito({
     ya_procesado: yaProcesado,
+    costo_excedido: hoy.costo_dia_usd > hoy.limite_usd,
     ...(uso?.debe_alertar ? { alerta_costo: uso } : {}),
   })
 }

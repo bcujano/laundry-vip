@@ -51,11 +51,11 @@ activarlo en la tarjeta del workflow.
 |---|---|
 | CRM | **https://laundry-vip.vercel.app** · Vercel `bcujanos-projects/laundry-vip` · deploy: `npx vercel --prod --yes` desde `C:\dev\laundry-vip` (el CLI ya tiene sesión) |
 | Base | Supabase `cvdlslltevwxprdktmfu` (São Paulo). **Una sola base: pruebas y producción comparten.** Migraciones `0001`–`0013` aplicadas |
-| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · 62 nodos · activo · versión activa `e1847d00-0972-4eef-8473-7e4f3aa1aef9` (2026-09-30) |
+| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · 68 nodos · activo · versión activa `0eb000f9-eb94-499b-a291-afb706ee367e` (2026-09-30) |
 | Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · bandeja «Vip Laundry». La cuenta 1 es de 321: **no se toca ni para leer** |
 | WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
 | Repo | local, rama `agente-n8n-laundry`, etiqueta `v1.0` (estado con el número de prueba). Historial reescrito el 2026-09-23 (los SHA cambiaron). Remoto `github.com/bcujano/laundry-vip` configurado pero **el repositorio no existe en GitHub** |
-| Gate | typecheck, lint, build y **273 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
+| Gate | typecheck, lint, build y **276 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
 | Credenciales en n8n | `CRM Laundry VIP Webhook` (id `9456EHfb8yxpZOmr`), `Chatwoot Laundry VIP API`, `Meta WhatsApp Laundry VIP`, `Postgres Laundry VIP`, `OpenAi account` (compartida con 321). Nunca en el JSON |
 | Variables (`.env.local`) | Solo nombres aquí: `SUPABASE_*`, `N8N_WEBHOOK_SECRET`, `CHATWOOT_*`, `WHATSAPP_*`, `OPENAI_API_KEY`, `LOCAL_LATITUD/LONGITUD/DIRECCION` |
 
@@ -143,30 +143,7 @@ actualizar esta sección.
 
 **B1 · Coexistencia persona–agente — HECHO (2026-09-30).** Rama paralela del webhook (`n8n/generador/persona.cjs`): mensaje saliente público de un usuario de Chatwoot distinto de «Byron ADMIN» → etiqueta `humano` (conserva las otras) + nota interna. Verificado en producción simulando el webhook sobre la conversación 5 (etiquetó; «Byron ADMIN» no dispara). Limitación: las respuestas manuales de Byron desde Chatwoot no apagan al agente hasta que exista el usuario del agente (E10). La etiqueta se queda hasta que alguien la quite. Falta verlo con María Sol real.
 
-**B2 · Conectar las protecciones que hoy no funcionan (ALTA, hay clientes
-reales).** Verificado el 2026-09-30: n8n manda el `telefono` **dentro de
-`parametros`**, nunca en el sobre que lee `route.ts` → el tope diario de
-mensajes **nunca se aplica** (`mensajes_diarios` vacía); y n8n **nunca llama**
-a `registrar_evento_entrante` → **no hay tope de gasto de OpenAI ni
-deduplicación** (`uso_openai_diario` y `eventos_procesados` vacías). Las
-pruebas pasan porque llaman al webhook directo con el sobre correcto. Diseño:
-- **Trampa a evitar:** si solo pones `telefono` en el sobre de las tools, el tope
-  contaría **llamadas a tools**, no mensajes (un turno son 3–6 llamadas) y 40
-  serían ~8 turnos. Cuenta **una vez por mensaje entrante**: en
-  `verificar_whitelist_operador` (se llama una vez por mensaje) y que devuelva
-  `limite: { excedido }`; en n8n, un IF que corte con un mensaje amable
-  («por hoy llegamos al límite, le escribe una persona») cuando `excedido`.
-- **Tope de gasto:** reportar el uso con `registrar_evento_entrante`
-  (`dedupe_key` = id del mensaje de Chatwoot, `uso_openai: { tokens,
-  costo_estimado_usd }`) y cortar/alertar cuando llegue `alerta_costo`;
-  `src/server/webhook/cost-tracking.ts` ya lo soporta. **No está comprobado
-  cómo expone los tokens esta versión de n8n:** míralo en una ejecución real
-  (`get_workflow_execution` con `includeData`, nodo del modelo de OpenAI); si no
-  los expone, estima el costo por la longitud del texto enviado y recibido.
-- **Deduplicación:** el mismo `registrar_evento_entrante` devuelve
-  `ya_procesado: true` si Chatwoot reentrega el webhook; en ese caso el flujo
-  debe terminar sin responder.
-- Pruebas de extremo a extremo de cada protección contra el webhook real.
+**B2 · Protecciones conectadas — PUBLICADO (2026-09-30), PENDIENTE DE VER CON TRÁFICO REAL.** `n8n/generador/protecciones.cjs`: tras el debounce, `Registrar Entrante` llama a `registrar_evento_entrante` con el teléfono en el sobre (cuenta **un mensaje por turno**, deduplica por id de mensaje de Chatwoot, y devuelve `costo_excedido`); `Puede Continuar?` corta si es repetido, si pasó el tope diario (nota interna para el equipo, sin responder al cliente) o si el gasto del día pasó el techo (aviso al cliente). Un fallo del CRM deja pasar al cliente. Al final del turno `Estimar Uso` → `Registrar Uso` reporta un costo **estimado** (n8n no expone los tokens del agente; la estimación va por encima de lo real). **Primera acción de la próxima sesión:** con un mensaje real, comprobar que `mensajes_diarios`, `eventos_procesados` (claves `chatwoot-…` y `uso-…`) y `uso_openai_diario` dejan de estar vacías, y que el costo estimado por turno es razonable frente a la factura de OpenAI.
 
 **B3 · Dirección, fijo, enlace de mapa y saludo a Configuración.** Hoy siguen
 escritos en el prompt (`De los Pinos y Pedro Barrios`, `(02) 281-0815`, el enlace
@@ -248,7 +225,7 @@ y rotar la contraseña de la base al estrenar la de producción.
 | Qué | Dónde |
 |---|---|
 | Acciones del agente (webhook) | `src/app/api/webhook/route.ts` · `src/server/webhook/schemas.ts` · `handlers/` (`cliente`, `logistica`, `pedidos`, `operador`, `planta`, `admin`, `reportes`, `permisos`, `index`) |
-| Tope de mensajes, gasto y deduplicación | `src/server/webhook/rate-limit.ts`, `cost-tracking.ts` (**sin conectar desde n8n**, B2) |
+| Tope de mensajes, gasto y deduplicación | `src/server/webhook/rate-limit.ts`, `cost-tracking.ts` (conectados desde n8n, B2) |
 | Motor de precios y emparejador | `src/server/pricing/cotizar.ts`, `linea.ts`, `normalizar.ts` |
 | Horario, ventana, cobertura | `src/server/configuracion/` (`repo`, `horario`) · `src/server/scheduling/ventana.ts` |
 | Crear pedido | `src/server/pedidos/crear.ts` |

@@ -104,6 +104,33 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(etiqueta).toContain('conversation?.labels')
   })
 
+  it('cada mensaje pasa por el tope diario y la deduplicación del CRM antes de llegar al agente (B2)', () => {
+    const c = workflow.connections
+    expect(c['Es Ultimo Mensaje?']?.main?.[0]?.map((x) => x.node)).toEqual(['Registrar Entrante'])
+    expect(c['Registrar Entrante']?.main?.[0]?.[0]?.node).toBe('Puede Continuar?')
+    expect(c['Puede Continuar?']?.main?.[0]?.[0]?.node).toBe('Combinar Textos')
+    expect(c['Puede Continuar?']?.main?.[1]?.[0]?.node).toBe('Motivo de Corte')
+    const entrante = String(porNombre('Registrar Entrante')?.parameters.jsonBody)
+    expect(entrante).toContain('registrar_evento_entrante')
+    // el teléfono va en el sobre (no en parametros): es lo que lee el tope
+    expect(entrante).toMatch(/telefono: /)
+    expect(entrante).toContain('dedupe_key')
+    const condicion = JSON.stringify(porNombre('Puede Continuar?')?.parameters)
+    expect(condicion).toContain('ya_procesado')
+    expect(condicion).toContain('costo_excedido')
+    expect(condicion).toContain('LIMITE_DIARIO_ALCANZADO')
+  })
+
+  it('el gasto de OpenAI de cada turno se reporta al CRM, sin contar un mensaje más (B2)', () => {
+    const destinos = workflow.connections['Extraer JSON']?.main?.[0]?.map((x) => x.node)
+    expect(destinos).toContain('Estimar Uso')
+    expect(workflow.connections['Estimar Uso']?.main?.[0]?.[0]?.node).toBe('Registrar Uso')
+    const uso = String(porNombre('Registrar Uso')?.parameters.jsonBody)
+    expect(uso).toContain('uso_openai')
+    // sin teléfono en el sobre: si no, el reporte gastaría cuota de mensajes
+    expect(uso).not.toContain('telefono')
+  })
+
   it('la memoria va en su propia tabla', () => {
     expect(porNombre('Memory Laundry')?.parameters.tableName).toBe('n8n_laundry_chat_histories')
   })
