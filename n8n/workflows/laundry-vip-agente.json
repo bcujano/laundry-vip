@@ -11,8 +11,8 @@
       "type": "n8n-nodes-base.webhook",
       "position": [-2000, 512],
       "typeVersion": 2,
-      "webhookId": "f52d4957-e348-42a4-b46e-106e5de40e09",
-      "id": "61566263-6bf4-4a2b-bc65-859432dd0077"
+      "webhookId": "c31bda55-5bd6-4482-b1b2-14e2265cbe0c",
+      "id": "3cd24f39-9af8-4656-86f3-f769f282cbac"
     },
     {
       "parameters": {
@@ -51,7 +51,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-1776, 512],
       "typeVersion": 2.2,
-      "id": "be0379ea-79a1-4b9c-ab08-0f119353bd79"
+      "id": "a7231129-ece2-4003-bcd8-c57c411f14c0"
     },
     {
       "parameters": {
@@ -82,7 +82,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-1552, 512],
       "typeVersion": 2.2,
-      "id": "8a0ca442-5501-4250-b082-d81fc04921a5"
+      "id": "2ef7fe60-8ae7-41fa-a921-d5fff7cb0f63"
     },
     {
       "parameters": {
@@ -186,7 +186,7 @@
       "type": "n8n-nodes-base.set",
       "position": [-1296, 384],
       "typeVersion": 3.4,
-      "id": "a2b32a97-76a2-4cd9-8e16-acbc2985f3d8"
+      "id": "32c920bc-98a5-4038-b599-32bb136c1964"
     },
     {
       "parameters": {
@@ -201,7 +201,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [-432, 384],
       "typeVersion": 4.2,
-      "id": "34b1783e-56ba-4d03-9ec7-24da2c20af4e",
+      "id": "9fa78b63-450d-4eea-b94d-22a61014cddb",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -238,7 +238,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-208, 384],
       "typeVersion": 2.2,
-      "id": "22b5ed57-ff0a-4243-8831-19fece1562c7"
+      "id": "3ff39595-9db1-42bf-8efb-d095bc964e07"
     },
     {
       "parameters": {
@@ -258,7 +258,7 @@
       "type": "n8n-nodes-base.set",
       "position": [16, 384],
       "typeVersion": 3.4,
-      "id": "aeeca4ea-d448-4494-a61e-0b71811e8d9d"
+      "id": "e95e5d8b-d8ef-4d95-8c26-ef43cb656141"
     },
     {
       "parameters": {
@@ -325,7 +325,7 @@
       "type": "n8n-nodes-base.switch",
       "position": [240, 368],
       "typeVersion": 3.2,
-      "id": "e18cdda2-8b1f-4004-b6bb-e2d0a99e7a59"
+      "id": "3a82fb0e-8dc4-4715-843b-f070e2fa3763"
     },
     {
       "parameters": {
@@ -345,7 +345,7 @@
       "type": "n8n-nodes-base.set",
       "position": [464, -16],
       "typeVersion": 3.4,
-      "id": "19a23b8b-4b39-446a-bed2-9e1e88edab69"
+      "id": "8e3a983f-d289-4e4d-88f5-8e5033fdb83e"
     },
     {
       "parameters": {
@@ -358,7 +358,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [688, -16],
       "typeVersion": 4.2,
-      "id": "535a98ec-413a-4573-9325-b787abc94cdf",
+      "id": "0266026e-0373-44c7-821c-aa2e192482b7",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -399,7 +399,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [976, -16],
       "typeVersion": 4.2,
-      "id": "3542c766-2190-471a-8d1c-0ee70dd48f22",
+      "id": "8d36620e-664d-48e4-b2b6-0c776caeb6c2",
       "credentials": {
         "openAiApi": {
           "id": "GvNmUCZRx5ZvZerQ",
@@ -425,7 +425,7 @@
       "type": "n8n-nodes-base.set",
       "position": [464, 288],
       "typeVersion": 3.4,
-      "id": "68d89312-f217-433f-9543-b3c7a6be3c85"
+      "id": "11470ef4-7a80-487b-99e3-8e5172c3e7c4"
     },
     {
       "parameters": {
@@ -438,7 +438,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [688, 288],
       "typeVersion": 4.2,
-      "id": "ec37a46b-0b22-4c9c-8fe0-251dcf914920",
+      "id": "673a1066-5879-4b8d-84fa-728667e37253",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -463,7 +463,7 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "position": [912, 176],
       "typeVersion": 1.4,
-      "id": "bfb3bf72-2f63-49b7-bef1-a8d3ff7332e4"
+      "id": "a73420d4-6ea5-4a72-aa2a-8918660f183f"
     },
     {
       "parameters": {
@@ -479,7 +479,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "position": [976, 400],
       "typeVersion": 1.2,
-      "id": "590cd370-9559-4330-a446-8734ff4fadb5",
+      "id": "ad83fc60-da22-40b9-88b0-4fecb4b14873",
       "credentials": {
         "openAiApi": {
           "id": "GvNmUCZRx5ZvZerQ",
@@ -494,9 +494,9 @@
       "name": "Espera Texto",
       "type": "n8n-nodes-base.wait",
       "position": [976, 576],
-      "webhookId": "a2691648-ce5a-4bb8-b597-7eff4a12c3f2",
+      "webhookId": "ecfb014b-2165-4f65-b9c8-af4e9c93ead1",
       "typeVersion": 1.1,
-      "id": "5744bf81-9525-430d-9178-b2d2b4ca2110"
+      "id": "367be115-b725-4f11-8875-bff2c108be32"
     },
     {
       "parameters": {
@@ -547,7 +547,7 @@
       "type": "n8n-nodes-base.set",
       "position": [1264, 288],
       "typeVersion": 3.4,
-      "id": "2abb3be5-b98f-4f41-abec-c92999768187"
+      "id": "b463d23c-2037-489c-9162-c72b0e6153ea"
     },
     {
       "parameters": {
@@ -564,7 +564,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [2960, 400],
       "typeVersion": 4.2,
-      "id": "3a66c411-3472-4c27-8451-bd6f3ff45eae",
+      "id": "6062ce44-81a3-4f9e-80fc-a1624df21cb8",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -601,7 +601,7 @@
       "type": "n8n-nodes-base.if",
       "position": [2960, 96],
       "typeVersion": 2.2,
-      "id": "3c6ce00a-4434-4745-9622-5ed80fa5a864",
+      "id": "1872d9c0-f1c3-4cc4-a3df-67baecf93538",
       "continueOnFail": true
     },
     {
@@ -621,7 +621,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [3200, 80],
       "typeVersion": 4.2,
-      "id": "8b957eb3-5233-4924-b6a2-fc8f1226b533",
+      "id": "37982400-79e7-45ac-8cb8-48e9c719cbc8",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -647,7 +647,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [3440, 80],
       "typeVersion": 4.2,
-      "id": "cb134182-de87-41ce-9e84-cb2e2a735dbe",
+      "id": "03ba5eff-bb63-4cfa-b13a-bf893b4e7459",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -664,15 +664,15 @@
       "type": "n8n-nodes-base.wait",
       "position": [-656, 384],
       "typeVersion": 1.1,
-      "webhookId": "9c61313e-a4c9-42f1-a545-082e746f09c0",
-      "id": "c3ef0de1-daba-45a2-83f2-d6fa5fbc1c81"
+      "webhookId": "a1d2f4f0-3cb1-4af8-9816-6403219289a1",
+      "id": "f07426fd-7688-4bcc-ab17-1080bbec6d0d"
     },
     {
       "parameters": {},
       "type": "@n8n/n8n-nodes-langchain.toolCalculator",
       "typeVersion": 1,
       "position": [2580, 752],
-      "id": "90efd077-1e37-4f19-bf90-f8c480230488",
+      "id": "09d2ebdb-b1c5-4093-a060-8ed8be743477",
       "name": "Calculator"
     },
     {
@@ -688,7 +688,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [2256, 288],
-      "id": "c6fecb68-938a-4b5a-818f-49194979c94c",
+      "id": "0b54e5ca-fa57-4f17-8b85-95a02b1213da",
       "name": "Agente Laundry VIP"
     },
     {
@@ -711,7 +711,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [1984, 448],
-      "id": "2b4b9e6c-2a9e-49f6-b57f-2e4203f9cbef",
+      "id": "d11ebe97-0cfa-4752-976d-cd9b338f2689",
       "name": "OpenAI Laundry",
       "credentials": {
         "openAiApi": {
@@ -730,7 +730,7 @@
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.3,
       "position": [2128, 448],
-      "id": "748edf3e-bab3-43e8-b83c-49b47e8682bf",
+      "id": "80918473-66b6-45ca-8b75-22beeffa5024",
       "name": "Memory Laundry",
       "credentials": {
         "postgres": {
@@ -759,7 +759,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [1472, 288],
-      "id": "5d0512d5-841b-46fc-b837-dd07019c5fb5",
+      "id": "e348aada-3e71-420b-89eb-cac0018ccdf9",
       "name": "Typing Indicator",
       "credentials": {
         "httpHeaderAuth": {
@@ -778,7 +778,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [-1088, 384],
-      "id": "608a342d-75c7-4b1f-8978-90f5cb921043",
+      "id": "9b4bdcb9-d9b4-49b8-8dc1-c14562103a5d",
       "name": "Buscar Referral",
       "credentials": {
         "postgres": {
@@ -795,7 +795,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-880, 384],
-      "id": "c78b81d5-8755-4508-b8e2-b7c66eeecb02",
+      "id": "d9b85e58-153b-498f-afec-acef16f8e3c8",
       "name": "Agregar Referral"
     },
     {
@@ -805,7 +805,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [2700, 288],
-      "id": "4426812e-86f3-4131-877a-7f4430be5e54",
+      "id": "f6128c5a-0cca-483f-b250-3c8ef11f69e2",
       "name": "Extraer JSON"
     },
     {
@@ -831,7 +831,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [1500, 752],
-      "id": "562d0da8-aa3f-4e21-999a-c4416a6d4bb1",
+      "id": "98912490-2fd3-4bb3-a7a5-4fda8ee50998",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -862,7 +862,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [1680, 752],
-      "id": "902df3f9-959e-419a-bea7-a042eb8dec5e",
+      "id": "a80d58c3-18d9-4b06-a3a6-0831847ed69b",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -893,7 +893,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [1860, 752],
-      "id": "ce708e71-a0b2-4f84-b96f-f834cadec08b",
+      "id": "da51732d-d8e7-4da2-9e25-cb71821bc03d",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -924,7 +924,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2040, 752],
-      "id": "02d63b82-4ada-4a8f-b0ad-151cf76595d1",
+      "id": "333f1ad1-a909-487b-bba7-0416ebff1c0f",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -955,7 +955,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2220, 752],
-      "id": "17a13c22-f1db-4489-a11e-9f2d2dc4c439",
+      "id": "c7ef39e2-2cc3-47cc-a87a-58217796e2c4",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -986,7 +986,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2400, 752],
-      "id": "8351b869-3f27-46f6-bdca-7c69b7b67d81",
+      "id": "51112c59-58e2-4b16-86bb-175cedf053ae",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1011,7 +1011,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [1640, 288],
-      "id": "a2e48acd-5c09-4894-b2d3-b5c901ff71c3",
+      "id": "491b4b85-eba0-4e6b-85fb-4e58c1624011",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1050,7 +1050,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [1860, 288],
-      "id": "2e9975c6-b44a-43ef-988e-8ad5d8ad6c09"
+      "id": "39a94b84-da8d-4842-812d-0d475299d1e8"
     },
     {
       "parameters": {
@@ -1065,7 +1065,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [2256, -120],
-      "id": "9f1b9b72-50e2-4b03-96dc-1d9dcfb82070",
+      "id": "e89eafd8-4920-4d7f-85fa-eac5fe926d11",
       "name": "Agente Operador"
     },
     {
@@ -1088,7 +1088,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [2060, 60],
-      "id": "7fb223ed-fd63-4509-b3cc-bc8f669086a3",
+      "id": "e958f8e9-c071-4178-ab4b-4c71391fb48c",
       "name": "OpenAI Operador",
       "credentials": {
         "openAiApi": {
@@ -1107,7 +1107,7 @@
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.3,
       "position": [2200, 60],
-      "id": "182f8be4-8bce-48fb-a4ba-f614388ee91f",
+      "id": "71019766-25c1-43ae-8ec0-e2e1f6774577",
       "name": "Memory Operador",
       "credentials": {
         "postgres": {
@@ -1139,7 +1139,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2360, -300],
-      "id": "fb96f1d8-bef7-4643-878e-bd80590345df",
+      "id": "9111143b-01b6-4431-a989-6773737a10ce",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1170,7 +1170,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2530, -300],
-      "id": "b5af8996-62ff-4bbb-af54-f981244eb9fa",
+      "id": "055d4ec3-2b2c-4806-a9ce-9921b7e50be7",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1201,7 +1201,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2700, -300],
-      "id": "811e9f52-6251-4299-87b2-2b4f2d78c205",
+      "id": "bfbd97e5-f369-4e6b-8a4f-f22bac023c1d",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1232,7 +1232,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2870, -300],
-      "id": "8db08a29-9c76-4a11-a758-26efa5cf6012",
+      "id": "40a14df9-b79f-4b51-b8ec-2cb47b5e0864",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1263,7 +1263,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3040, -300],
-      "id": "1ee00cfb-1036-42bc-aa7c-db3beda341c0",
+      "id": "71b7eb0f-8ede-47b2-8ce4-502d7ce40b2a",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1294,7 +1294,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3210, -300],
-      "id": "be403dcc-f8b2-47e0-aa53-c43b60ff6cf3",
+      "id": "11e636c8-5a2b-465a-881d-9f16690e9485",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1325,7 +1325,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3380, -300],
-      "id": "bdb57375-20c6-4afd-81d2-8ab0cd760c7d",
+      "id": "d5f19d7a-4dd1-4294-90e2-81507554d985",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1356,7 +1356,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3550, -300],
-      "id": "ff347201-e4f6-406c-b6b9-a79dea8fdee0",
+      "id": "fc1e9a4b-3f0b-4283-b836-d715fd0083b2",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1387,7 +1387,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3720, -300],
-      "id": "035601f9-f8c8-48a1-95fb-b3dba53be030",
+      "id": "47ce6559-9ec4-4b17-a7aa-f08004084e92",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1403,7 +1403,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [2960, 640],
-      "id": "7e5441fd-ec3c-4a8f-a22a-a03010cb86fe",
+      "id": "80fd20b7-f582-46ee-ac81-5297ff4f3d53",
       "onError": "continueRegularOutput"
     },
     {
@@ -1423,7 +1423,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [3200, 640],
-      "id": "2bccb051-1a90-41a5-adba-efa4c99a89a2",
+      "id": "1db32a81-c9b2-4c11-af07-cc467d69f381",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1449,7 +1449,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [3440, 640],
-      "id": "fd0a16fe-5007-49ea-97f6-37c3e2cee54b",
+      "id": "634e3d4c-4fed-4daf-b7d1-e80b0ee34bd7",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1473,7 +1473,7 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [-2000, 1200],
-      "id": "c74f5f96-97d0-4495-8652-8279b373f2c0",
+      "id": "77e83566-ef17-4e48-9e63-ff5421faf81a",
       "notes": "Lunes a sábado 8:00 (zona del workflow: America/Guayaquil)."
     },
     {
@@ -1493,7 +1493,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1760, 1200],
-      "id": "27bcc2a5-3874-4411-8994-692fd64e38e4",
+      "id": "2bfb9f1c-98d8-4d09-b890-976e00955fa1",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1509,7 +1509,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-1520, 1200],
-      "id": "03472655-4988-48e7-a888-d7dc20027b66"
+      "id": "3b85b71c-72f7-4f9c-9c49-3bdd93e30ae4"
     },
     {
       "parameters": {
@@ -1541,7 +1541,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [-1280, 1200],
-      "id": "255ab3bf-ad44-465a-a5aa-9e0c31992bff"
+      "id": "3491fd2e-48e8-423c-8775-d7c6463f1f71"
     },
     {
       "parameters": {
@@ -1560,7 +1560,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 1100],
-      "id": "4524eb75-3c99-4c5f-9ffc-13ba837e80f4",
+      "id": "76463714-9db9-4b8f-a083-ee945263b68a",
       "credentials": {
         "httpHeaderAuth": {
           "id": "baJJfX3zWMindSEN",
@@ -1586,7 +1586,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 1300],
-      "id": "497b91c5-fccd-4aba-b21b-e36307b32ed2",
+      "id": "4e5e1a0d-4236-48c8-b50e-3d9eb34324d2",
       "credentials": {
         "httpHeaderAuth": {
           "id": "baJJfX3zWMindSEN",
@@ -1595,6 +1595,124 @@
       },
       "onError": "continueRegularOutput",
       "notes": "Solo funciona cuando Meta apruebe la plantilla resumen_diario_admin."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "p001",
+              "leftValue": "={{ $json.body.event }}",
+              "rightValue": "message_created",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "p002",
+              "leftValue": "={{ $json.body.message_type }}",
+              "rightValue": "outgoing",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "p003",
+              "leftValue": "={{ String($json.body.private) }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "p004",
+              "leftValue": "={{ $json.body.sender?.type }}",
+              "rightValue": "user",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "p005",
+              "leftValue": "={{ $json.body.sender?.name }}",
+              "rightValue": "Byron ADMIN",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Respondio Persona?",
+      "type": "n8n-nodes-base.if",
+      "position": [-1776, 160],
+      "typeVersion": 2.2,
+      "id": "02a5fade-e7dd-4d56-9b00-7c1500c9d27d"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chatwoot-production-8564.up.railway.app/api/v1/accounts/3/conversations/{{ $('Chatwoot Webhook').item.json.body.conversation.id }}/labels",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ labels: [...new Set([...($('Chatwoot Webhook').item.json.body.conversation?.labels || []), 'humano'])] }) }}",
+        "options": {
+          "timeout": 5000
+        }
+      },
+      "name": "Etiqueta Humano Persona",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-1552, 160],
+      "id": "9c271ec2-0afd-434a-8f94-a671e1d9c1dc",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3W2BykSid0f9dMTV",
+          "name": "Chatwoot Laundry VIP API"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chatwoot-production-8564.up.railway.app/api/v1/accounts/3/conversations/{{ $('Chatwoot Webhook').item.json.body.conversation.id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ content: '🙋 ' + $('Chatwoot Webhook').item.json.body.sender.name + ' tomó esta conversación; el agente se retiró. Para devolverle el control, quita la etiqueta *humano*.', message_type: 'outgoing', private: true }) }}",
+        "options": {
+          "timeout": 5000
+        }
+      },
+      "name": "Nota Persona",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-1328, 160],
+      "id": "0ef7fc94-3f69-4c4e-8c4b-dfa2a809e066",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3W2BykSid0f9dMTV",
+          "name": "Chatwoot Laundry VIP API"
+        }
+      },
+      "continueOnFail": true
     }
   ],
   "pinData": {},
@@ -1604,6 +1722,11 @@
         [
           {
             "node": "Filtro Chatwoot",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Respondio Persona?",
             "type": "main",
             "index": 0
           }
@@ -2225,6 +2348,28 @@
         [
           {
             "node": "Enviar Resumen Plantilla",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respondio Persona?": {
+      "main": [
+        [
+          {
+            "node": "Etiqueta Humano Persona",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Etiqueta Humano Persona": {
+      "main": [
+        [
+          {
+            "node": "Nota Persona",
             "type": "main",
             "index": 0
           }

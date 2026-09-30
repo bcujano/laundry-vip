@@ -51,7 +51,7 @@ activarlo en la tarjeta del workflow.
 |---|---|
 | CRM | **https://laundry-vip.vercel.app** · Vercel `bcujanos-projects/laundry-vip` · deploy: `npx vercel --prod --yes` desde `C:\dev\laundry-vip` (el CLI ya tiene sesión) |
 | Base | Supabase `cvdlslltevwxprdktmfu` (São Paulo). **Una sola base: pruebas y producción comparten.** Migraciones `0001`–`0013` aplicadas |
-| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · 59 nodos · activo · versión activa `7c0c9f81-ace2-4092-b0df-5a126be7eacd` (2026-09-30) |
+| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · 62 nodos · activo · versión activa `e1847d00-0972-4eef-8473-7e4f3aa1aef9` (2026-09-30) |
 | Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · bandeja «Vip Laundry». La cuenta 1 es de 321: **no se toca ni para leer** |
 | WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
 | Repo | local, rama `agente-n8n-laundry`, etiqueta `v1.0` (estado con el número de prueba). Historial reescrito el 2026-09-23 (los SHA cambiaron). Remoto `github.com/bcujano/laundry-vip` configurado pero **el repositorio no existe en GitHub** |
@@ -141,26 +141,7 @@ Cada punto termina con: gate verde → deploy → verificación contra producci�
 commit → si tocó el agente, publicación en n8n + `verificar-prompts.cjs` →
 actualizar esta sección.
 
-**B1 · Coexistencia persona–agente (ALTA, se ve en cada chat).** Hoy el
-`Filtro Chatwoot` descarta todo mensaje saliente; cuando María Sol le contesta
-a un cliente a mano, el agente **sigue contestando encima** (precios
-contradictorios: ella $3,75, el agente $7,50). Diseño:
-- En `n8n/generador/generar.cjs` agrega una rama al `Filtro Chatwoot` para
-  `message_created` + `outgoing` + `sender.type == "user"` + `private == false`
-  cuyo remitente **no sea el agente** → añade la etiqueta `humano` a esa
-  conversación (lee las etiquetas actuales y agrega; `POST …/labels`
-  reemplaza) y deja una nota interna.
-- **Cómo distinguir al agente de una persona:** el agente publica con el token
-  de «Byron ADMIN» (usuario 1). Por defecto: persona = remitente con nombre
-  distinto de «Byron ADMIN» (hoy María Sol). Limitación: las respuestas
-  manuales de Byron desde Chatwoot no apagan al agente (puede poner la etiqueta
-  a mano). La solución limpia es un usuario de Chatwoot propio para el agente
-  (ver §5 E10); cuando exista, la regla pasa a «remitente ≠ usuario del agente».
-- La etiqueta se queda hasta que alguien la quite (igual que al escalar). Deja
-  esa decisión escrita en `AGENTE.md`.
-- Prueba estructural en `tests/unit/workflow-laundry-agente.test.ts` (la rama
-  existe y conecta al nodo que etiqueta) y verificación real: que María Sol
-  responda un chat de prueba y el agente calle.
+**B1 · Coexistencia persona–agente — HECHO (2026-09-30).** Rama paralela del webhook (`n8n/generador/persona.cjs`): mensaje saliente público de un usuario de Chatwoot distinto de «Byron ADMIN» → etiqueta `humano` (conserva las otras) + nota interna. Verificado en producción simulando el webhook sobre la conversación 5 (etiquetó; «Byron ADMIN» no dispara). Limitación: las respuestas manuales de Byron desde Chatwoot no apagan al agente hasta que exista el usuario del agente (E10). La etiqueta se queda hasta que alguien la quite. Falta verlo con María Sol real.
 
 **B2 · Conectar las protecciones que hoy no funcionan (ALTA, hay clientes
 reales).** Verificado el 2026-09-30: n8n manda el `telefono` **dentro de

@@ -235,6 +235,12 @@ const resumen = require('./resumen.cjs')
 nodes.push(...resumen.nodos)
 Object.assign(connections, resumen.conexiones)
 
+// Coexistencia persona–agente: si una persona contesta a mano, el agente se calla.
+const persona = require('./persona.cjs')
+nodes.push(...persona.nodos)
+Object.assign(connections, persona.conexiones)
+connections['Chatwoot Webhook'].main[0].push({ node: 'Respondio Persona?', type: 'main', index: 0 })
+
 const nombres = new Set(nodes.map((n) => n.name))
 for (const [origen, tipos] of Object.entries(connections)) {
   if (!nombres.has(origen)) throw new Error(`Conexión desde nodo inexistente: ${origen}`)

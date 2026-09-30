@@ -88,6 +88,22 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(destinos).toContain('Necesita Humano?')
   })
 
+  it('si una persona contesta a mano, el agente se calla (etiqueta humano sin pisar las demás)', () => {
+    const desdeWebhook = workflow.connections['Chatwoot Webhook']?.main?.[0]?.map((c) => c.node)
+    expect(desdeWebhook).toContain('Respondio Persona?')
+    expect(workflow.connections['Respondio Persona?']?.main?.[0]?.[0]?.node).toBe(
+      'Etiqueta Humano Persona',
+    )
+    const filtro = JSON.stringify(porNombre('Respondio Persona?')?.parameters)
+    expect(filtro).toContain('outgoing')
+    expect(filtro).toContain('private')
+    // el agente publica como «Byron ADMIN»: no puede dispararse a sí mismo
+    expect(filtro).toContain('Byron ADMIN')
+    const etiqueta = JSON.stringify(porNombre('Etiqueta Humano Persona')?.parameters)
+    expect(etiqueta).toContain('humano')
+    expect(etiqueta).toContain('conversation?.labels')
+  })
+
   it('la memoria va en su propia tabla', () => {
     expect(porNombre('Memory Laundry')?.parameters.tableName).toBe('n8n_laundry_chat_histories')
   })

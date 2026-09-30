@@ -32,10 +32,12 @@ Resumen 8:00 (L-S) → datos del CRM → un mensaje por admin → ¿escribió en
 - **Quién publica qué en Chatwoot:** el agente responde con el token de
   **Byron ADMIN** (usuario 1). En las transcripciones `SALE(Byron ADMIN)` es el
   agente; `SALE(María Sol Játiva)` es una persona escribiendo a mano.
-- **Hueco conocido (CONTINUIDAD §4, B1):** el `Filtro Chatwoot` descarta todo
-  mensaje saliente, así que cuando María Sol le contesta a un cliente a mano,
-  **el agente sigue contestando encima** (ya pasó, con precios contradictorios:
-  $7,50 ella contra $3,75 el agente).
+- **Coexistencia persona–agente (B1, hecho 2026-09-30):** si una persona del
+  equipo contesta a mano (remitente ≠ «Byron ADMIN», mensaje público), la rama
+  `Respondio Persona?` pone la etiqueta `humano` y deja una nota interna; el
+  agente se calla hasta que alguien la quite. Un mensaje del agente ya en vuelo
+  lo aborta `Es Ultimo Mensaje?`. Antes de esto el agente contestaba encima de
+  María Sol (precios contradictorios: $3,75 ella, $7,50 el agente).
 - **La etiqueta `humano`** la pone el propio agente al escalar, y también se
   puede poner a mano. Mientras esté, el agente no contesta esa conversación.
   Quitarla devuelve el control. **Ojo:** probar al agente escribiéndole «mal
@@ -112,7 +114,7 @@ una orden inventada con ID falso.
 
 1. **Edita el prompt `.md`** (o el generador en `n8n/generador/`) y regenera:
    ```bash
-   node n8n/generador/generar.cjs        # debe decir «OK: 59 nodos»
+   node n8n/generador/generar.cjs        # debe decir «OK: 62 nodos»
    pnpm biome check --write n8n
    ```
    El generador lee `iAgente 321 INMO V2.json` de **Descargas** (ya está ahí).
