@@ -159,6 +159,9 @@ describe('agente Laundry VIP (clon del 321)', () => {
     }
     // una persona a cargo (etiqueta humano) frena el seguimiento
     expect(JSON.stringify(porNombre('Sin Persona a Cargo?')?.parameters)).toContain('humano')
+    expect(JSON.stringify(porNombre('Sin Persona a Cargo?')?.parameters)).toContain(
+      'sin_filtro_persona',
+    )
     // ni si alguien del equipo ya le contestó a mano
     expect(JSON.stringify(porNombre('Sin Persona a Cargo?')?.parameters)).toContain('Byron ADMIN')
     // el modo de Configuración decide si es nota interna o mensaje al cliente

@@ -157,7 +157,8 @@ const nodos = [
   const conv = $('Conversacion Seguimiento').item.json;
   const mensajes = $json.payload || [];
   const hace24h = Date.now() / 1000 - 24 * 3600;
-  const persona = mensajes.some((m) => m.message_type === 1 && !m.private && m.sender && m.sender.type === 'user' && m.sender.name !== 'Byron ADMIN' && m.created_at > hace24h);
+  // Barrido del dueño: en esos chats una persona a cargo no frena el seguimiento.
+  const persona = !$('Uno por Candidato').item.json.sin_filtro_persona && mensajes.some((m) => m.message_type === 1 && !m.private && m.sender && m.sender.type === 'user' && m.sender.name !== 'Byron ADMIN' && m.created_at > hace24h);
   return conv.id !== undefined && !(conv.labels || []).includes('humano') && conv.status !== 'resolved' && !persona;
 })() }}`,
             rightValue: '',

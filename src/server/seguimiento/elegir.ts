@@ -50,6 +50,8 @@ export type Candidato = {
   paso: Paso
   /** Seguimientos que ya se le mandaron en este mismo silencio, para no repetirse. */
   anteriores: string[]
+  /** Barrido del dueño: n8n no aplica el filtro «ya le contestó una persona» a este chat. */
+  sin_filtro_persona: boolean
   telefono: string
   chatwoot_conversation_id: number
   interaccion_base: string
@@ -68,6 +70,8 @@ export type ContextoSeleccion = {
   excluidos: Set<string>
   /** Seguimientos ya hechos (`claveHecho`). */
   hechos: Set<string>
+  /** Silencios (`telefono|interaccion`) donde el dueño ordenó un barrido. */
+  barridos: Set<string>
   /** Textos ya enviados en un mismo silencio: clave `telefono|interaccion`. */
   textosPrevios: Map<string, string[]>
   /** Nombre que dijo el cliente o puso el CRM; el del perfil de WhatsApp no cuenta. */
@@ -101,6 +105,7 @@ export function elegirCandidatos(filas: FilaConversacion[], ctx: ContextoSelecci
       {
         paso,
         anteriores: ctx.textosPrevios.get(silencio) ?? [],
+        sin_filtro_persona: ctx.barridos.has(silencio),
         telefono: fila.telefono,
         chatwoot_conversation_id: fila.chatwoot_conversation_id,
         interaccion_base: fila.ultima_interaccion,

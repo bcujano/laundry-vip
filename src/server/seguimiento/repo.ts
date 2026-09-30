@@ -46,7 +46,7 @@ export async function buscarCandidatos(
       .in('telefono', telefonos),
     db
       .from('seguimientos')
-      .select('telefono, paso, mensaje, interaccion_base')
+      .select('telefono, paso, mensaje, interaccion_base, barrido')
       .in('telefono', telefonos)
       .gte('interaccion_base', haceMinutos(ahora, SILENCIO_MAX_MINUTOS + 60))
       .order('paso', { ascending: true }),
@@ -80,15 +80,18 @@ export async function buscarCandidatos(
 
   const hechos = new Set<string>()
   const textosPrevios = new Map<string, string[]>()
+  const barridos = new Set<string>()
   for (const p of (previos.data ?? []) as {
     telefono: string
     paso: number
     mensaje: string
     interaccion_base: string
+    barrido: boolean
   }[]) {
     hechos.add(claveHecho(p.telefono, p.paso, p.interaccion_base))
     const clave = `${p.telefono}|${new Date(p.interaccion_base).getTime()}`
     textosPrevios.set(clave, [...(textosPrevios.get(clave) ?? []), p.mensaje])
+    if (p.barrido) barridos.add(clave)
   }
 
   const candidatos = elegirCandidatos(conversaciones, {
@@ -96,6 +99,7 @@ export async function buscarCandidatos(
     equipo: new Set((equipo.data ?? []).map((e) => e.telefono as string)),
     excluidos,
     hechos,
+    barridos,
     textosPrevios,
     nombres,
   }).slice(0, LIMITE_POR_CORRIDA)

@@ -33,6 +33,7 @@ const ctx = (sobre: Partial<ContextoSeleccion> = {}): ContextoSeleccion => ({
   equipo: new Set(),
   excluidos: new Set(),
   hechos: new Set(),
+  barridos: new Set(),
   textosPrevios: new Map(),
   nombres: new Map(),
   ...sobre,
@@ -101,6 +102,19 @@ describe('seguimiento: a quién se le escribe', () => {
       ),
     ).toHaveLength(1)
     expect(hechos.size).toBe(1)
+  })
+
+  it('un chat de barrido pasa sin el filtro de persona, pero el pedido lo sigue frenando', () => {
+    const f = fila(400)
+    const barridos = new Set([`${f.telefono}|${new Date(f.ultima_interaccion).getTime()}`])
+    expect(elegirCandidatos([f], ctx({ barridos }))[0]?.sin_filtro_persona).toBe(true)
+    expect(elegirCandidatos([f], ctx())[0]?.sin_filtro_persona).toBe(false)
+    expect(elegirCandidatos([f], ctx({ barridos, excluidos: new Set([f.telefono]) }))).toHaveLength(
+      0,
+    )
+    expect(
+      elegirCandidatos([fila(400, {}, { proxima_accion: 'pedido_creado' })], ctx({ barridos })),
+    ).toHaveLength(0)
   })
 
   it('pasa a la redacción lo ya enviado, para no repetirse', () => {

@@ -142,7 +142,7 @@ async function main() {
       data: { content: texto, additional_kwargs: {}, response_metadata: {} },
     }
     await sql`insert into n8n_laundry_chat_histories (session_id, message) values (${telefono.replace(/\D/g, '')}, ${sql.json(mensajeMemoria)})`
-    await sql`insert into seguimientos (telefono, chatwoot_conversation_id, modo, mensaje, interaccion_base, paso) values (${telefono}, ${id}, 'activo', ${texto}, ${fila.ultima_interaccion}, 1)`
+    await sql`insert into seguimientos (telefono, chatwoot_conversation_id, modo, mensaje, interaccion_base, paso, barrido) values (${telefono}, ${id}, 'activo', ${texto}, ${fila.ultima_interaccion}, 1, true)`
     console.log('   enviado y registrado')
   }
   await sql?.end()
