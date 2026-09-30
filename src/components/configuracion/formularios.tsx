@@ -227,6 +227,19 @@ export function FormularioConfiguracion({ config }: { config: Configuracion }) {
         </Etiquetado>
       </div>
 
+      <Etiquetado
+        para="campo-sectores_cobertura"
+        texto="Sectores dentro de la zona de recogida (uno por línea; vacío = no se verifica)"
+      >
+        <textarea
+          className="campo"
+          defaultValue={config.sectores_cobertura.join('\n')}
+          id="campo-sectores_cobertura"
+          name="sectores_cobertura"
+          rows={4}
+        />
+      </Etiquetado>
+
       <div className="flex items-center gap-3">
         <Boton disabled={pendiente} type="submit">
           {pendiente ? 'Guardando…' : 'Guardar configuración'}

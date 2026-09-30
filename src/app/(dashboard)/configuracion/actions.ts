@@ -25,6 +25,13 @@ const esquema = z
     hora_cierre: hora,
     hora_cierre_sabado: hora,
     radio_cobertura_km: z.coerce.number().positive('El radio de recogida debe ser mayor que cero.'),
+    // Un sector por línea (o separados por coma); las líneas vacías se descartan.
+    sectores_cobertura: z.string().transform((texto) =>
+      texto
+        .split(/[\n,]/)
+        .map((sector) => sector.trim())
+        .filter((sector) => sector !== ''),
+    ),
     direccion_local: z.string().trim().min(1, 'La dirección del local es obligatoria.'),
     telefono_local: z.string().trim().min(1, 'El teléfono del local es obligatorio.'),
     enlace_mapa: z.string().trim().url('El enlace del mapa debe ser una dirección web válida.'),

@@ -33,7 +33,7 @@ function agregar(nodes) {
     [
       'crear_pedido',
       'Crea el pedido. SOLO después de que el cliente confirmó el resumen con un sí explícito.',
-      `={{ JSON.stringify(Object.assign({canal: 'whatsapp_agente'}, $fromAI('pedido', 'Objeto JSON con: cliente_id (uuid de find_or_create_client), tipo_entrega ("combo" si la lavanderia recoge y entrega con la tarifa unica, "a_la_carta" si el cliente trae y retira su ropa), items (como en cotizar_prendas, con metodo ya elegido), numero_fundas, direccion_recoleccion, ventana_recoleccion_inicio y ventana_recoleccion_fin (ISO tal como vinieron), y si el cliente trae y retira, metodo_transporte_recoleccion y metodo_transporte_entrega en "propio_cliente".', 'json'))) }}`,
+      `={{ JSON.stringify(Object.assign({canal: 'whatsapp_agente'}, $fromAI('pedido', 'Objeto JSON con: cliente_id (uuid de find_or_create_client), tipo_entrega ("combo" si la lavanderia recoge y entrega con la tarifa unica, "a_la_carta" si el cliente trae y retira su ropa), items (como en cotizar_prendas, con metodo ya elegido), numero_fundas, direccion_recoleccion, sector (barrio o sector de la recogida, como lo dijo el cliente), ventana_recoleccion_inicio y ventana_recoleccion_fin (ISO tal como vinieron), y si el cliente trae y retira, metodo_transporte_recoleccion y metodo_transporte_entrega en "propio_cliente".', 'json'))) }}`,
     ],
     [
       'consultar_estado_pedido',

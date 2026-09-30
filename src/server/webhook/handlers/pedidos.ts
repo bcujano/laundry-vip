@@ -46,6 +46,7 @@ export async function crear(
       montoEntrega: parametros.monto_entrega,
       numeroFundas: parametros.numero_fundas,
       direccionRecoleccion: parametros.direccion_recoleccion,
+      sector: parametros.sector,
       ventanaInicio: parametros.ventana_recoleccion_inicio,
       ventanaFin: parametros.ventana_recoleccion_fin,
     })

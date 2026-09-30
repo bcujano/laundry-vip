@@ -102,6 +102,7 @@ export const parametrosPorAccion = {
     monto_entrega: z.number().nonnegative().optional(),
     numero_fundas: z.number().int().positive().optional(),
     direccion_recoleccion: z.string().optional(),
+    sector: z.string().optional(),
     ventana_recoleccion_inicio: z.iso.datetime().optional(),
     ventana_recoleccion_fin: z.iso.datetime().optional(),
   }),

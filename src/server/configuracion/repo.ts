@@ -40,6 +40,7 @@ export type CambiosConfiguracion = Partial<
     | 'hora_cierre'
     | 'hora_cierre_sabado'
     | 'radio_cobertura_km'
+    | 'sectores_cobertura'
     | 'direccion_local'
     | 'telefono_local'
     | 'enlace_mapa'

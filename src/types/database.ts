@@ -109,6 +109,8 @@ export type Configuracion = {
   /** Hasta dónde llega la recolección, en km a la redonda del local. */
   radio_cobertura_km: number
   /** Dónde queda el local, el fijo y el enlace de Google Maps (migración 0014). */
+  /** Barrios dentro del radio de recogida; vacía = la cobertura no se verifica. */
+  sectores_cobertura: string[]
   direccion_local: string
   telefono_local: string
   enlace_mapa: string

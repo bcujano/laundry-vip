@@ -131,6 +131,12 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(uso).not.toContain('telefono')
   })
 
+  it('el sector de la recogida se pregunta y viaja al crear el pedido (B4)', () => {
+    expect(systemMessage).toContain('`sector`')
+    expect(systemMessage).toContain('FUERA_DE_COBERTURA')
+    expect(JSON.stringify(porNombre('crear_pedido')?.parameters)).toContain('sector')
+  })
+
   it('la memoria va en su propia tabla', () => {
     expect(porNombre('Memory Laundry')?.parameters.tableName).toBe('n8n_laundry_chat_histories')
   })

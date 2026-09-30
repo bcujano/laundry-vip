@@ -50,12 +50,12 @@ activarlo en la tarjeta del workflow.
 | | |
 |---|---|
 | CRM | **https://laundry-vip.vercel.app** · Vercel `bcujanos-projects/laundry-vip` · deploy: `npx vercel --prod --yes` desde `C:\dev\laundry-vip` (el CLI ya tiene sesión) |
-| Base | Supabase `cvdlslltevwxprdktmfu` (São Paulo). **Una sola base: pruebas y producción comparten.** Migraciones `0001`–`0014` aplicadas |
-| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · 68 nodos · activo · versión activa `01ad3067-b57c-4891-9887-f537bdef5b20` (2026-09-30) |
+| Base | Supabase `cvdlslltevwxprdktmfu` (São Paulo). **Una sola base: pruebas y producción comparten.** Migraciones `0001`–`0015` aplicadas |
+| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · 68 nodos · activo · versión activa `41b3784d-dc1c-463b-b5f0-3b5b22fe1ce4` (2026-09-30) |
 | Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · bandeja «Vip Laundry». La cuenta 1 es de 321: **no se toca ni para leer** |
 | WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
 | Repo | local, rama `agente-n8n-laundry`, etiqueta `v1.0` (estado con el número de prueba). Historial reescrito el 2026-09-23 (los SHA cambiaron). Remoto `github.com/bcujano/laundry-vip` configurado pero **el repositorio no existe en GitHub** |
-| Gate | typecheck, lint, build y **277 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
+| Gate | typecheck, lint, build y **283 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
 | Credenciales en n8n | `CRM Laundry VIP Webhook` (id `9456EHfb8yxpZOmr`), `Chatwoot Laundry VIP API`, `Meta WhatsApp Laundry VIP`, `Postgres Laundry VIP`, `OpenAi account` (compartida con 321). Nunca en el JSON |
 | Variables (`.env.local`) | Solo nombres aquí: `SUPABASE_*`, `N8N_WEBHOOK_SECRET`, `CHATWOOT_*`, `WHATSAPP_*`, `OPENAI_API_KEY`, `LOCAL_LATITUD/LONGITUD/DIRECCION` |
 
@@ -147,15 +147,7 @@ actualizar esta sección.
 
 **B3 · Dirección, fijo y mapa en Configuración — HECHO (2026-09-30).** Migración `0014` (`direccion_local`, `telefono_local`, `enlace_mapa`, sembrados con los valores que traía el prompt); `verificar_whitelist_operador` y `obtener_proxima_ventana` los devuelven; el prompt del agente de clientes los lee de `negocio`; la pantalla de Configuración los edita (y de paso ahora también edita el cierre de sábado y el radio de recogida, que faltaban en el formulario). El `saludo_agente` **no se conectó a propósito**: la decisión del 2026-09-24 es que el saludo cambia cada vez; el campo sigue en pantalla pero el prompt no lo usa (ver si se quita).
 
-**B4 · Cobertura verificable (2,5 km).** Hoy el radio es solo una frase que el
-agente lee; nada impide un pedido fuera de él. Recomendado (sin APIs externas):
-lista de **sectores dentro del radio** editable en Configuración
-(`sectores_cobertura text[]`), herramienta o validación en `crear_pedido` que
-compare el sector con la lista usando el normalizador de `pricing/normalizar.ts`,
-y el prompt que pregunta el sector y ofrece traer y retirar si no está.
-Las coordenadas del local están en `LOCAL_LATITUD/LONGITUD`. **Depende de que
-el dueño dé la lista de barrios (§5 E3):** mientras no la haya, implementa la
-estructura y deja la lista vacía = «sin verificar» (comportamiento de hoy).
+**B4 · Cobertura verificable — ESTRUCTURA HECHA (2026-09-30), INERTE hasta que el dueño dé la lista (E3).** Migración `0015` (`configuracion.sectores_cobertura text[]`, vacía), pantalla de Configuración con un sector por línea, `src/server/pedidos/cobertura.ts` (`verificarSector`, con el normalizador de precios), `crear_pedido` acepta `sector` y, con lista cargada, rechaza `FUERA_DE_COBERTURA` o pide el sector; el prompt y la tool de n8n ya lo mandan. Con la lista vacía todo se comporta como antes. **Cuando E3 llegue:** cargar los barrios en Configuración y probar un pedido real con un sector fuera de la lista.
 
 **B5 · Validar la búsqueda de Chatwoot por teléfono** (`src/lib/chatwoot.ts`,
 `/search?q=`): es lo que usan los botones «abrir en Chatwoot» del CRM. Pruébala
