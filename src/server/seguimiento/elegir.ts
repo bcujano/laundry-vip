@@ -8,7 +8,7 @@
  * Los cuatro seguimientos, en minutos de silencio del cliente. Recorren la
  * ventana de 24 h de WhatsApp; el último sale a las 23 h 30 min y tiene que
  * salir antes de las 23 h 54 min, o Meta ya no deja mandar texto libre.
- * Cada paso tiene un margen porque n8n pregunta cada 5 minutos.
+ * `hasta` es el margen normal con que n8n, que pregunta cada 5 minutos, lo manda a tiempo.
  */
 export const PASOS = [
   { paso: 1, desde: 30, hasta: 45 },
@@ -23,10 +23,16 @@ export const SILENCIO_MAX_MINUTOS = 1434
 
 export type Paso = (typeof PASOS)[number]['paso']
 
-/** Qué paso toca con ese silencio, o null si ninguno. */
+/**
+ * Qué paso toca con ese silencio: el último cuyo momento ya llegó, mientras la
+ * ventana de 24 h siga abierta. Así un paso que se quedó sin salir (de noche, un
+ * domingo, n8n caído) sale en cuanto se puede, y nunca se mandan dos de golpe:
+ * solo el más reciente.
+ */
 export function pasoDebido(minutosDeSilencio: number): Paso | null {
-  const p = PASOS.find((x) => minutosDeSilencio >= x.desde && minutosDeSilencio < x.hasta)
-  return p ? p.paso : null
+  if (minutosDeSilencio >= SILENCIO_MAX_MINUTOS) return null
+  const vencidos = PASOS.filter((x) => minutosDeSilencio >= x.desde)
+  return vencidos.length > 0 ? (vencidos[vencidos.length - 1] as { paso: Paso }).paso : null
 }
 
 /** Clave de un seguimiento ya hecho: ese paso, de esa conversación, en ese silencio. */

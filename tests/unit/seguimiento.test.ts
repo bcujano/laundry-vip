@@ -46,14 +46,23 @@ describe('seguimiento: los cuatro pasos de la ventana de 24 h', () => {
     expect(pasoDebido(23 * 60 + 30)).toBe(4)
   })
 
-  it('entre un paso y otro no toca nada', () => {
-    for (const m of [0, 10, 29, 50, 90, 200, 400, 1000, 1409]) expect(pasoDebido(m)).toBeNull()
+  it('antes de los 30 min no toca nada', () => {
+    for (const m of [0, 10, 29]) expect(pasoDebido(m)).toBeNull()
+  })
+
+  it('un paso que no salió a tiempo sale después: solo el más reciente, nunca varios', () => {
+    expect(pasoDebido(50)).toBe(1)
+    expect(pasoDebido(90)).toBe(2)
+    expect(pasoDebido(400)).toBe(3)
+    expect(pasoDebido(1000)).toBe(3)
+    expect(pasoDebido(1415)).toBe(4)
   })
 
   it('el último sale antes de que Meta cierre la ventana (24 h)', () => {
     const ultimo = PASOS[PASOS.length - 1]
     expect(ultimo?.hasta).toBeLessThan(24 * 60)
     expect(pasoDebido(24 * 60)).toBeNull()
+    expect(pasoDebido(1434)).toBeNull()
   })
 
   it('cada margen alcanza para una consulta cada 5 minutos', () => {
