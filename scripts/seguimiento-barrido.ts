@@ -142,7 +142,10 @@ async function main() {
       data: { content: texto, additional_kwargs: {}, response_metadata: {} },
     }
     await sql`insert into n8n_laundry_chat_histories (session_id, message) values (${telefono.replace(/\D/g, '')}, ${sql.json(mensajeMemoria)})`
-    await sql`insert into seguimientos (telefono, chatwoot_conversation_id, modo, mensaje, interaccion_base, paso, barrido) values (${telefono}, ${id}, 'activo', ${texto}, ${fila.ultima_interaccion}, 1, true)`
+    // Se registra el paso que ya tocaba por el silencio: así el flujo normal no manda
+    // enseguida otro mensaje, y sigue con el paso que viene.
+    const paso = minutos >= 1410 ? 4 : minutos >= 360 ? 3 : minutos >= 60 ? 2 : 1
+    await sql`insert into seguimientos (telefono, chatwoot_conversation_id, modo, mensaje, interaccion_base, paso, barrido) values (${telefono}, ${id}, 'activo', ${texto}, ${fila.ultima_interaccion}, ${paso}, true)`
     console.log('   enviado y registrado')
   }
   await sql?.end()
