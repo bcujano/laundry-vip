@@ -5,8 +5,14 @@ barrio en La Kennedy, Quito. Capta clientes B2B (clínicas, restaurantes,
 hoteles), cotiza contra el catálogo real, agenda recolección y entrega.
 
 **Antes de tocar nada, lee [`docs/CONTINUIDAD.md`](docs/CONTINUIDAD.md).** Ahí
-está el estado exacto, los IDs de todo, las decisiones ya tomadas, lo pendiente
-y el prompt para abrir la siguiente sesión. Todo está en producción.
+está el estado exacto, los IDs de todo, las acciones con las que se arranca, el
+plan en orden, lo que espera al dueño y el prompt para abrir la siguiente
+sesión. Todo está en producción **con clientes reales**.
+
+Si vas a tocar el agente de WhatsApp, lee además
+[`docs/AGENTE.md`](docs/AGENTE.md) (mecánica y cómo se cambia por MCP) y
+[`docs/DECISIONES.md`](docs/DECISIONES.md) (lo que el dueño decidió y los
+fallos que ya ocurrieron: no los reintroduzcas).
 
 ## Cómo trabaja el dueño (Byron)
 
@@ -19,6 +25,12 @@ y el prompt para abrir la siguiente sesión. Todo está en producción.
   letra: analiza, propón, espera.
 - Quiere que verifiques contra el sistema real, no solo con pruebas.
 - Dale recomendaciones, no menús de opciones.
+- **La dueña del negocio en la operación diaria es María Sol Játiva.** Lo que
+  ella ordena sobre horario, cobertura, precios y plazos manda sobre el prompt, y
+  el agente debe tratarla como a la dueña. Byron es el dueño y superadmin.
+- Cuando diga «deja todo listo para la siguiente sesión»: reescribe
+  `docs/CONTINUIDAD.md` con el estado **verificado contra producción**, sin
+  dejar pendientes solo en el chat, y dale el prompt de arranque.
 
 ## Reglas del proyecto
 
@@ -46,6 +58,13 @@ y el prompt para abrir la siguiente sesión. Todo está en producción.
     por el dueño), nunca reimportando. Ver `n8n/README.md`.
 12. Ediciones de TSX con la herramienta Edit, no con reemplazos masivos por
     script: ya rompieron JSX una vez.
+13. **Lo que el agente promete sale de Configuración, no del prompt**, y lo que
+    tiene consecuencias (permisos, dirección, dinero) lo hace cumplir el
+    servidor, no el modelo.
+14. **Cada frase real que falle se convierte en prueba** antes de arreglarla, y
+    tras subir un prompt a n8n se corre `node n8n/verificar-prompts.cjs`.
+15. **El agente no niega un servicio, no inventa el nombre del cliente y no
+    miente si le preguntan de frente si es una persona.**
 
 ## Stack
 
@@ -68,6 +87,8 @@ n8n + Chatwoot + WhatsApp Cloud API · OpenAI `gpt-4.1-mini` y `gpt-transcribe`
 | `pnpm db:demo` · `pnpm db:demo --borrar` | datos de ejemplo (teléfonos `+5932200…`). **La base está entregada en cero: no los cargues sin permiso del dueño** |
 | `pnpm db:reset-clientes` · `--confirmar` | deja la base de clientes como de fábrica. Sin `--confirmar` solo simula; con él no hay vuelta atrás |
 | `pnpm check:integraciones` | las 9 credenciales de n8n |
+| `pnpm chatwoot:revisar --desde AAAA-MM-DD` | transcripciones del agente con clientes reales (solo lectura, cuenta 3): la auditoría más barata |
+| `node n8n/verificar-prompts.cjs <archivo>` | comprueba que los prompts de n8n son idénticos a los del repo |
 | `node n8n/generador/generar.cjs` | regenera el JSON del workflow |
 | `npx vercel --prod --yes` | deploy del CRM (el CLI ya tiene sesión) |
 
@@ -77,6 +98,6 @@ El dueño tiene otro negocio, **321 Soluciones Inmobiliarias**, que comparte la
 instancia de n8n y la de Chatwoot con este proyecto.
 
 **No se toca nada de 321. Nunca. Por ningún motivo.** Ni workflows, ni
-credenciales, ni tablas, ni su cuenta de Chatwoot (la 1). Lavandería VIP vive
+credenciales, ni tablas, ni su cuenta de Chatwoot (la 1, ni siquiera para leer). Lavandería VIP vive
 en la cuenta 3 de Chatwoot y en credenciales propias. Solo se crean cosas
 nuevas. Está en `docs/CONTINUIDAD.md` con el detalle de por qué.

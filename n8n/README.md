@@ -18,7 +18,8 @@ nodo por nodo están en [`../docs/CONTINUIDAD.md`](../docs/CONTINUIDAD.md).
 | `prompt-operador-laundry.md` | Constitución del agente de planta (operador y admin) |
 | `generador/` | Scripts que producen el JSON a partir de la base de 321 |
 | `versiones/v1.0/` | Respaldo del estado con el número de prueba |
-| `referencia/` | Workflows de 321 de solo lectura. **No se modifican** |
+| `referencia/` | Workflows de 321 de solo lectura. **No se modifican.** El agente de 321 ya no se versiona (traía una credencial literal): vive solo en Descargas |
+| `verificar-prompts.cjs` | Comprueba que los prompts publicados en n8n son idénticos a los `.md` |
 
 Una prueba (`tests/unit/workflow-laundry-agente.test.ts`) exige que los
 prompts del JSON sean idénticos a los `.md`, que no quede nada de 321, que no

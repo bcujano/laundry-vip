@@ -1,0 +1,123 @@
+# Decisiones del dueño y fallos ya encontrados
+
+Complemento de [`CONTINUIDAD.md`](CONTINUIDAD.md). Dos listas que existen para
+que nadie repita lo que ya se resolvió: §1 lo que el dueño decidió (no se
+revierte sin preguntarle) y §2 lo que ya se rompió y por qué.
+
+**Quién manda:** el dueño es **Byron David** (`brncjn@gmail.com`). La
+**dueña del negocio en la operación diaria es María Sol Játiva** (administradora
+en el CRM y en la lista blanca de WhatsApp): lo que ella ordena sobre el
+negocio —horario, cobertura, precios, plazos— manda sobre el prompt, y el agente
+debe tratarla como a la dueña.
+
+## 1. Decisiones (no revertir sin preguntarle)
+
+| Decisión | Por qué / cuándo |
+|---|---|
+| El agente es el workflow de 321 **clonado y recortado**, no uno nuevo | Instrucción textual del dueño; ver `historia-agente.md` |
+| Tres roles en el CRM (`superadmin` / `admin` / `operador`) | Lo pidió; la spec decía dos |
+| Contraseña en vez de enlace mágico | El enlace entraba en bucle |
+| AI Agent de LangChain, no «Tool First» | Es lo que el dueño ya opera |
+| Registro en el CRM en cada turno | Como el CRM de 321: todo lead queda, compre o no |
+| Dos niveles de WhatsApp autorizado y **nada de dinero por WhatsApp** | 2026-09-17, tras una orden inventada con ID falso |
+| Resumen diario de las 8:00 para admins, **texto libre** dentro de las 24 h de Meta | El CRM anota la hora del último mensaje de cada autorizado (migración 0008); la plantilla es solo respaldo |
+| Nombre de WhatsApp como nombre **provisional** del lead; el que diga el cliente lo reemplaza; lo que escribe el equipo en el CRM no se pisa | El dueño no quiere leads «Sin nombre». `clientes.nombre_contacto_origen` (migración 0010) |
+| Descargas de clientes/pedidos solo para superadmin y admin | Datos personales (LOPDP) |
+| **El CRM manda** sobre catálogo y configuración; `pnpm db:seed` no pisa lo que el dueño cambió | 2026-09-21. Las pruebas leen los precios de la base, no los llevan escritos |
+| Catálogo: 13 categorías por prenda, 54 ítems, del archivo `catalogo-lavanderia.xlsx` | 2026-09-21. Los `nombre_item` no se tocaron (el agente empareja contra ellos) |
+| Cada prenda declara su método (agua / seco) | 2026-09-23. El agente proponía lavar un terno en agua |
+| Promoción por cantidad en columnas, nunca en el prompt (cobijas: $5,00 c/u o 3 por $12,00) | 2026-09-21 |
+| **No hay «combo» ni «a la carta»:** o se recoge y entrega con la tarifa única, o el cliente trae y retira | 2026-09-23. «No somos un restaurante». En la base siguen los valores `combo`/`a_la_carta` (hay pedidos con ellos); en pantalla sale `entregaLegible` |
+| Tarifa única de recogida y entrega **$2,50**, aparte del lavado | 2026-09-23, en Configuración |
+| Entrega en **48 a 72 horas**; la fecha exacta la acuerda el operador en planta | 2026-09-23, en Configuración. María Sol a veces dice «48 h» o «24 a 48»: **sin decisión del dueño se mantiene 48–72** |
+| Recolección de lunes a sábado; el local abre **9:00–19:00** y los **sábados hasta las 17:00** | 2026-09-30, dicho por María Sol; migración 0012 |
+| **Se recoge a 2,5 km a la redonda del local** | 2026-09-30, dicho por el dueño; migración 0013. Fuera del radio se ofrece traer y retirar |
+| Peso en **libras**; la ropa de diario va **al peso** ($0,70/lb); las cortinas siguen **por kilo** | 2026-09-23 |
+| Siempre **un estimado en dólares**; «se verifica en planta» va después | 2026-09-23. «Decía a todo que en planta se confirma» |
+| El negocio se llama **VIP Laundry** y el nombre sale de Configuración | 2026-09-23 |
+| **El agente habla como una persona del local:** saludo distinto cada vez, no se anuncia como asistente virtual, lee y espeja el tono, sin frases de call center | 2026-09-24. **Pero si le preguntan de frente si es una persona o un sistema, no miente** (decisión mía, no objetada: mentir ahí es lo que de verdad quema al negocio) |
+| El aviso de la ley de datos **no va en el saludo**: va al pedir los datos del cierre | 2026-09-24 |
+| **El agente nunca dice que no se ofrece un servicio**; si no encuentra, pregunta o confirma con planta | 2026-09-24 |
+| A la dueña (admin) se le habla de usted, por su nombre, con datos del CRM y el siguiente paso útil | 2026-09-23 |
+| Base de clientes entregada **en cero** a VIP; no cargar datos de ejemplo sin permiso | 2026-09-23 |
+| Sin dirección no hay pedido con recogida; el nombre del cliente nunca se inventa | 2026-09-30 |
+| OpenAI compartido con 321 | Temporal, acordado |
+| Session pooler de Supabase | La conexión directa es solo IPv6 |
+
+## 2. Fallos ya encontrados (no reintroducir)
+
+### Del agente (con clientes reales)
+
+- **Inventó una orden** («✅ Orden registrada», ID y monto falsos) sin llamar a
+  la tool. Por eso existe la guardia de `Extraer JSON`.
+- **Dijo «no ofrecemos tinturado» y «no lavamos zapatos»** (2026-09-24) teniendo
+  ambos en el catálogo. Causa triple: las palabras de pregunta («lavado de…»,
+  «hacen…») diluían la coincidencia, faltaban los nombres con que se pide
+  cada cosa (sinónimos) y el modelo traducía «no encontré el nombre» como «no
+  existe». Arreglado en `normalizar.ts`, `servicios.sinonimos` y el prompt.
+- **Prometió recogida «en todo Quito»** a una clienta del sur (2026-09-30) y
+  María Sol tuvo que desdecirlo. El agente no tenía ningún dato de cobertura.
+- **Dio un horario distinto al del local** (lunes–sábado 9:30–19:00 contra el
+  real, con sábado hasta las 17:00).
+- **No podía pedir otro día:** la tool `obtener_proxima_ventana` estaba clavada
+  en `{}`; decía «para mañana no hay ventana» y confirmó para hoy un pedido que
+  el cliente quería para mañana. `es_hoy` además se calculaba contra la fecha
+  consultada.
+- **Cerró un pedido sin dirección** y con un **nombre inventado** («Juan» para
+  un contacto llamado «Jp»).
+- **Se contradijo con la dueña:** ella dijo $3,75 por un saco y el agente
+  había dicho $7,50 (arrastró «terno» del mensaje anterior en vez de consultar).
+- **Cotizó por prenda la ropa de diario:** 7 camisetas a $17,50 cuando por
+  libra eran ~$7. «Calentadores» y «busos» no existían ni como sinónimo, y
+  «calentador deportivo» cotizaba como un par de zapatos.
+- **Una sola cobija se cotizaba a $12,00** (solo sabía cobrar el paquete).
+- **Ofreció métodos (agua/seco/planchado) para ternos** sin consultar el catálogo.
+- **«¿Cuántas fundas?» confunde:** tres clientes respondieron que no entendían.
+- **Respondía dos veces seguidas** a una ráfaga, y a veces preguntaba algo que
+  el cliente ya había contestado.
+- **Quedó mudo con la dueña:** la conversación de María Sol tiene la etiqueta
+  `humano` desde que probó con «Mal servicio». **Sigue puesta** (ver
+  CONTINUIDAD §3, acción 2).
+- **Responde encima de una persona:** cuando María Sol escribe a mano en
+  Chatwoot, el agente no se entera y sigue contestando (hueco abierto, B1).
+
+### Del sistema y de las pruebas
+
+- **La suite borraba datos reales:** `operador.test.ts` usaba el número del
+  dueño y le borraba la conversación. **Ninguna prueba usa ni limpia un número
+  real ni un valor que el dueño edita en el CRM;** cada corrida crea sus
+  propios operadores y admins (`tests/util/corrida.ts`).
+- **Pruebas atadas a valores de fábrica** (08:00, combo $5, 54 filas, precios
+  escritos) fallaban cuando el dueño cambiaba el CRM. Ahora comparan contra la
+  base (`tests/util/catalogo.ts`) y usan «al menos» donde otras pruebas crean
+  filas en paralelo.
+- **Carrera entre pruebas** por el precio del chal (`servicios.test` lo cambia
+  mientras `cotizar.test` lo usa): `cotizar.test` usa bufanda.
+- **Los 10 E2E de Playwright nunca habían corrido** hasta el 2026-09-23: su
+  preparación de sesión seguía en el login por enlace mágico.
+- **`'use server'` solo puede exportar funciones async:** un helper exportado
+  desde `actions.ts` rompió el build (vive en `src/lib/sinonimos.ts`).
+- **Secreto de 321 en el historial de git** (un JSON de referencia): purgado con
+  `git filter-repo` el 2026-09-23; una prueba recorre todo lo rastreado.
+- **Transcribir un prompt a mano al MCP se comió una tilde** («propón») y otra
+  vez un carácter cirílico. Por eso existe `n8n/verificar-prompts.cjs`.
+- **`seed` revertía los precios del dueño** (upsert de la lista del repo).
+- Login roto por el token en el fragmento de la URL · bucle login↔panel por
+  cookie caducada · pedido congelado sin poder cancelarse · «edredón 3 plazas»
+  no se cotizaba · cajón móvil sin `translate-x` · Biome apagado al migrar ·
+  corrida repetida cada 16,7 min · servidor zombi en el 3000 (`/api/health`
+  reporta la fase compilada).
+- **Reemplazos masivos con `node -e` / `String.replace`** dañaron JSX (se
+  comieron llaves). Para TSX usa la herramienta Edit.
+
+## 3. Reglas de proceso que salieron de esto
+
+1. **Cada frase real que falle se convierte en una prueba** antes de arreglarla.
+2. **Todo lo que el agente promete sale de Configuración,** nunca del prompt.
+3. **Lo que tiene consecuencias (dirección, permisos, dinero) lo hace cumplir
+   el servidor,** no el prompt: el modelo a veces no obedece.
+4. **Verifica contra producción, no solo con pruebas** (el webhook con `curl`
+   y el secreto, `pnpm chatwoot:revisar`, ejecuciones de n8n).
+5. **Después de subir un prompt, `node n8n/verificar-prompts.cjs`.**
+6. **Un hallazgo que no puedes arreglar se escribe en CONTINUIDAD §3–§5,**
+   nunca se deja solo en el chat.

@@ -21,6 +21,7 @@
     "db:reset-clientes": "tsx scripts/reset-clientes.ts",
     "db:staff": "tsx scripts/crear-staff.ts",
     "check:integraciones": "tsx scripts/check-integraciones-env.ts",
+    "chatwoot:revisar": "tsx scripts/revisar-chatwoot.ts",
     "test:e2e": "playwright test",
     "db:password": "tsx scripts/poner-password.ts"
   },

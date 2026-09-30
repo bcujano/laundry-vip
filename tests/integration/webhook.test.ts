@@ -191,24 +191,16 @@ describe('acciones de logística', () => {
   })
 
   it('una fecha vacía o ausente sigue dando la próxima ventana', async () => {
-    const vacia = await llamar({
-      accion: 'obtener_proxima_ventana',
-      parametros: { desde: '' },
-    })
+    const vacia = await llamar({ accion: 'obtener_proxima_ventana', parametros: { desde: '' } })
     const sinNada = await llamar({ accion: 'obtener_proxima_ventana', parametros: {} })
 
     expect(vacia.estado).toBe(200)
-    expect((vacia.sobre.data as { inicio: string }).inicio).toBe(
-      (sinNada.sobre.data as { inicio: string }).inicio,
-    )
-  })
-
-  it('la ventana empieza en hora redonda, no en «13:41»', async () => {
-    const { sobre } = await llamar({ accion: 'obtener_proxima_ventana', parametros: {} })
-    const inicio = new Date((sobre.data as { inicio: string }).inicio)
-
-    expect([0, 30]).toContain(inicio.getUTCMinutes())
-    expect(inicio.getUTCSeconds()).toBe(0)
+    // Se compara el día, no el instante: cuando faltan minutos para el cierre la
+    // ventana arranca «ahora + margen» y dos llamadas difieren en segundos. El
+    // redondeo a hora en punto se prueba con instantes fijos en tests/unit.
+    const lo = (r: typeof vacia) => r.sobre.data as { inicio: string; es_hoy: boolean }
+    expect(lo(vacia).inicio.slice(0, 10)).toBe(lo(sinNada).inicio.slice(0, 10))
+    expect(lo(vacia).es_hoy).toBe(lo(sinNada).es_hoy)
   })
 
   it('el agente sabe hasta dónde se recoge y a qué hora abre el local', async () => {

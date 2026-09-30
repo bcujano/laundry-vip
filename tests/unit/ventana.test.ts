@@ -42,6 +42,25 @@ describe('obtenerProximaVentana', () => {
     expect(ventana.esHoy).toBe(true)
   })
 
+  it('la ventana de hoy empieza en hora redonda, no en «13:41»', () => {
+    // 09:10 + 30 min de margen = 09:40 → se le dice al cliente «desde las 10:00».
+    const ventana = obtenerProximaVentana(enQuito('2026-09-15T09:10'), HORARIO)
+    expect(comoQuito(ventana.inicio)).toBe('2026-09-15 10:00')
+  })
+
+  it('una hora que ya es redonda no se mueve', () => {
+    const ventana = obtenerProximaVentana(enQuito('2026-09-15T09:00'), HORARIO)
+    expect(comoQuito(ventana.inicio)).toBe('2026-09-15 09:30')
+  })
+
+  it('al final del día, si redondear se come la ventana, vale el minuto exacto', () => {
+    // 11:20 + 30 = 11:50 → redondear daría 12:00, que es el cierre: mejor
+    // «de 11:50 a 12:00» que perder la ventana de hoy.
+    const ventana = obtenerProximaVentana(enQuito('2026-09-15T11:20'), HORARIO)
+    expect(comoQuito(ventana.inicio)).toBe('2026-09-15 11:50')
+    expect(ventana.esHoy).toBe(true)
+  })
+
   it('un minuto más tarde ya salta al día siguiente', () => {
     const ventana = obtenerProximaVentana(enQuito('2026-09-15T11:31'), HORARIO)
     expect(comoQuito(ventana.inicio)).toBe('2026-09-16 08:00')
