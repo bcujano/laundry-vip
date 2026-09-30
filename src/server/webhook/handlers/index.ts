@@ -1,6 +1,7 @@
 import { fallo, type ResultadoAccion } from '../respuesta'
 import { type Accion, parametrosPorAccion } from '../schemas'
 import { consultaAdmin, resumenDiario } from './admin'
+import { listarAvisosPendientes, marcarAvisoAccion } from './avisos'
 import {
   cotizar,
   findOrCreateClient,
@@ -43,6 +44,8 @@ const MANEJADORES: Record<Accion, Manejador> = {
   candidatos_seguimiento: candidatosSeguimiento,
   registrar_seguimiento: anotarSeguimiento,
   registrar_conversion: registrarConversion,
+  avisos_pendientes: listarAvisosPendientes,
+  marcar_aviso: marcarAvisoAccion,
 }
 
 export async function despachar(

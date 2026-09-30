@@ -1,4 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { obtener as obtenerConfig } from '@/server/configuracion/repo'
+import { verificarSector } from '@/server/pedidos/cobertura'
 import { crearPedido } from '@/server/pedidos/crear'
 import { obtener as obtenerPedido, ultimoDelCliente } from '@/server/pedidos/repo'
 import { ErrorCotizacion } from '@/server/pricing/cotizar'
@@ -35,6 +37,25 @@ export async function crear(
   parametros: ParametrosDe<'crear_pedido'>,
 ): Promise<ResultadoAccion<unknown>> {
   try {
+    // La cobertura la hace cumplir el servidor, no el modelo. Solo al pedido que llega
+    // por el agente: el equipo puede crear desde el CRM una excepción a mano.
+    if (parametros.canal === 'whatsapp_agente' && parametros.tipo_entrega === 'combo') {
+      const config = await obtenerConfig()
+      const veredicto = verificarSector(parametros.sector, config.sectores_cobertura)
+      if (veredicto === 'falta_sector') {
+        return fallo(
+          'PARAMETROS_INVALIDOS',
+          'Falta el sector o barrio de la recogida. Pregúntaselo al cliente.',
+        )
+      }
+      if (veredicto === 'fuera') {
+        return fallo(
+          'FUERA_DE_COBERTURA',
+          `Ese sector queda fuera de la zona de recogida (${config.radio_cobertura_km} km a la redonda del local). Ofrécele traer y retirar su ropa en el local, sin recargo.`,
+        )
+      }
+    }
+
     const resultado = await crearPedido({
       clienteId: parametros.cliente_id,
       canal: parametros.canal,
@@ -46,7 +67,6 @@ export async function crear(
       montoEntrega: parametros.monto_entrega,
       numeroFundas: parametros.numero_fundas,
       direccionRecoleccion: parametros.direccion_recoleccion,
-      sector: parametros.sector,
       ventanaInicio: parametros.ventana_recoleccion_inicio,
       ventanaFin: parametros.ventana_recoleccion_fin,
     })

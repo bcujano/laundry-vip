@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { crearAvisoDiscrepancia } from '@/server/avisos/repo'
 import type { EstadoPedido, PedidoItem } from '@/types/database'
 import { type Contexto, leerPedido, type Resultado, registrarEvento } from './comun'
 
@@ -114,6 +115,15 @@ export async function verificarConteo(
     ...contexto,
     motivo: motivo ?? 'Conteo verificado sin diferencias',
   })
+
+  if (hayDiscrepancia) {
+    await crearAvisoDiscrepancia(pedidoId, {
+      tipo: 'discrepancia_conteo',
+      montoAnterior: Number(pedido.monto_estimado_lavado ?? 0),
+      montoNuevo: montoConfirmado,
+      diferencias,
+    })
+  }
 
   return {
     ok: true,

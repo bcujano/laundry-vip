@@ -208,6 +208,33 @@ describe('agente Laundry VIP (clon del 321)', () => {
     )
   })
 
+  it('el aviso de discrepancia: dentro de las 24 h se manda, fuera queda nota para una persona (2026-09-30)', () => {
+    const c = workflow.connections
+    expect(c['Avisos Pendientes']?.main?.[0]?.[0]?.node).toBe('Uno por Aviso')
+    expect(c['Ventana Abierta?']?.main?.[0]?.[0]?.node).toBe('Enviar Aviso al Cliente')
+    expect(c['Ventana Abierta?']?.main?.[1]?.[0]?.node).toBe('Nota Aviso Manual')
+    // el texto viene del CRM tal cual: el flujo no lo redacta ni le pone cifras
+    const enviar = JSON.stringify(porNombre('Enviar Aviso al Cliente')?.parameters)
+    expect(enviar).toContain('.texto')
+    expect(enviar).not.toContain('openai')
+    // fuera de la ventana no hay texto libre: es nota privada
+    expect(JSON.stringify(porNombre('Nota Aviso Manual')?.parameters)).toContain('private: true')
+    expect(JSON.stringify(porNombre('Marcar Aviso Persona')?.parameters)).toContain(
+      'requiere_persona',
+    )
+  })
+
+  it('si el cliente responde a un aviso de diferencia, el agente no discute montos y escala (2026-09-30)', () => {
+    expect(systemMessage).toContain('AVISOS DE DIFERENCIA')
+    expect(systemMessage).toContain('NO')
+    expect(systemMessage).toContain('no das\n   cuentas de pago')
+  })
+
+  it('usa el saludo de la casa que define el dueño en Configuración (2026-09-30)', () => {
+    expect(systemMessage).toContain('negocio?.saludo')
+    expect(systemMessage).toContain('SALUDO DE LA CASA')
+  })
+
   it('la memoria va en su propia tabla', () => {
     expect(porNombre('Memory Laundry')?.parameters.tableName).toBe('n8n_laundry_chat_histories')
   })

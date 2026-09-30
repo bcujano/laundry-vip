@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { crearAvisoDiscrepancia } from '@/server/avisos/repo'
 import type { EstadoPedido } from '@/types/database'
 import { type Contexto, leerPedido, type Resultado, registrarEvento } from './comun'
 
@@ -113,6 +114,13 @@ export async function corregirCotizacion(
   await registrarEvento(pedidoId, pedido.estado, 'discrepancia_detectada', {
     ...contexto,
     motivo: `Cotización corregida: ${motivo.trim()}`,
+  })
+
+  await crearAvisoDiscrepancia(pedidoId, {
+    tipo: 'correccion_monto',
+    montoAnterior,
+    montoNuevo: montoCorregido,
+    motivo: motivo.trim(),
   })
 
   return { ok: true, datos: { montoAnterior, montoCorregido, notificarCliente: true } }

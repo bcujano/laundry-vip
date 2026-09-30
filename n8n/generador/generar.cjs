@@ -252,6 +252,11 @@ const seguimiento = require('./seguimiento.cjs')
 nodes.push(...seguimiento.nodos)
 Object.assign(connections, seguimiento.conexiones)
 
+// Aviso automático al cliente por una discrepancia de conteo o de monto.
+const avisos = require('./avisos.cjs')
+nodes.push(...avisos.nodos)
+Object.assign(connections, avisos.conexiones)
+
 const nombres = new Set(nodes.map((n) => n.name))
 for (const [origen, tipos] of Object.entries(connections)) {
   if (!nombres.has(origen)) throw new Error(`Conexión desde nodo inexistente: ${origen}`)

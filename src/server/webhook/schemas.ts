@@ -33,6 +33,8 @@ export const ACCIONES = [
   'candidatos_seguimiento',
   'registrar_seguimiento',
   'registrar_conversion',
+  'avisos_pendientes',
+  'marcar_aviso',
 ] as const
 
 export type Accion = (typeof ACCIONES)[number]
@@ -126,6 +128,13 @@ export const parametrosPorAccion = {
     estado: z.enum(['vendido', 'agendado', 'rechazado']),
     detalle: z.string().max(500).default(''),
     nombre_contacto: z.string().max(120).optional(),
+  }),
+
+  avisos_pendientes: z.object({}).optional(),
+
+  marcar_aviso: z.object({
+    id: z.uuid(),
+    estado: z.enum(['enviado', 'requiere_persona']),
   }),
 
   consultar_estado_pedido: z.object({ telefono }),

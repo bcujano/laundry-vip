@@ -79,6 +79,13 @@ lo intente.
 
 **Nada de dinero por WhatsApp:** confirmar pagos, corregir montos, cerrar
 discrepancias, cancelar y borrar no existen como acciones del webhook.
+**Excepción autorizada (2026-09-30):** el aviso automático de discrepancia. Cuando
+el conteo en planta no cuadra (`verificarConteo`) o se corrige un monto
+(`corregirCotizacion`), el servidor guarda un aviso (`avisos_cliente`) con texto
+propio y cifras de la base; el flujo `Avisos cada 5 min` lo manda al cliente si su
+ventana de 24 h está abierta, o deja una nota interna para que una persona lo
+llame (estado `requiere_persona`). No pide pago, no da cuentas y no negocia; si el
+cliente responde, el prompt (§4.9) obliga a escalar.
 
 **La guardia** (`Extraer JSON`, `n8n/generador/guardia.cjs`): si el agente
 dice que algo quedó registrado sin que la tool haya respondido `ok:true`, o
@@ -113,7 +120,7 @@ una orden inventada con ID falso.
 
 1. **Edita el prompt `.md`** (o el generador en `n8n/generador/`) y regenera:
    ```bash
-   node n8n/generador/generar.cjs        # debe decir «OK: 85 nodos»
+   node n8n/generador/generar.cjs        # debe decir «OK: 93 nodos»
    pnpm biome check --write n8n
    ```
    El generador lee `iAgente 321 INMO V2.json` de **Descargas** (ya está ahí).
@@ -157,3 +164,22 @@ encontraron todos los errores de [`DECISIONES.md`](DECISIONES.md) §2. Regla de
 oro: **cada frase real que falle se convierte en una prueba**
 (`tests/unit/emparejar.test.ts`, `tests/integration/cotizar.test.ts`) y, si es
 de comportamiento, en una regla del prompt con su ejemplo.
+
+## 7. Un usuario de Chatwoot propio para el agente (E10)
+
+Hoy el agente publica con el token de «Byron ADMIN», así que no se puede distinguir
+del dueño: si Byron responde a mano desde Chatwoot, el agente no se pausa. Para
+arreglarlo:
+
+1. **Chatwoot (cuenta 3) → Configuración → Agentes → Agregar agente.** Nombre
+   «Agente VIP», rol Agente, un correo propio (sirve un alias: `tucorreo+agentevip@gmail.com`).
+2. **Bandejas → «Vip Laundry» → Colaboradores:** agrega a «Agente VIP», o no podrá
+   publicar en esa bandeja.
+3. Entra con ese usuario (ventana privada) → avatar → **Configuración del perfil →
+   Token de acceso** → copiar.
+4. **n8n → Credenciales → «Chatwoot Laundry VIP API»:** pega el token nuevo en la
+   cabecera `api_access_token` y guarda. (Es la credencial nuestra; no toques las de 321.)
+5. Avísale a Claude el nombre exacto del usuario: se cambia «Byron ADMIN» por ese
+   nombre en `n8n/generador/persona.cjs`, `n8n/generador/seguimiento.cjs` y
+   `scripts/seguimiento-barrido.ts`, se regenera y se publica. Desde ahí, cualquier
+   mensaje de una persona (incluido Byron) pausa al agente en ese chat.

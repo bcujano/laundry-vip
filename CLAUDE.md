@@ -53,7 +53,13 @@ fallos que ya ocurrieron: no los reintroduzcas).
 9. **El CRM es la fuente de verdad del catálogo y de la configuración.** Ningún
    script, siembra ni prueba revierte lo que el dueño cambió en pantalla.
 10. **Nada de dinero por WhatsApp.** Pagos, montos, discrepancias, cancelar y
-    borrar solo en el CRM. Los permisos del agente los decide el servidor.
+    borrar solo en el CRM: el agente no cobra, no confirma ni corrige montos.
+    **Única excepción, autorizada por el dueño (2026-09-30):** el *aviso
+    informativo* automático de una discrepancia (conteo que no cuadra o monto
+    corregido). Lo arma el servidor con cifras de la base (nunca el modelo), no
+    pide pago, no da cuentas y no negocia, y solo sale dentro de la ventana de
+    24 h de WhatsApp; si el cliente responde, el agente escala a una persona.
+    Los permisos del agente los decide el servidor.
 11. **n8n se cambia por MCP** sobre el workflow `Bleb55WBKPfBdxVg` (autorizado
     por el dueño), nunca reimportando. Ver `n8n/README.md`.
 12. Ediciones de TSX con la herramienta Edit, no con reemplazos masivos por

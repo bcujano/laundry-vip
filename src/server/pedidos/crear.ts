@@ -3,7 +3,6 @@ import { obtener as obtenerConfig, parametrosVentana } from '@/server/configurac
 import { calcularVehiculo, cotizarPrendas, type ItemPedido } from '@/server/pricing/cotizar'
 import { obtenerProximaVentana } from '@/server/scheduling/ventana'
 import type { Cliente, EstadoPedido, Pedido } from '@/types/database'
-import { verificarSector } from './cobertura'
 
 export type EntradaPedido = {
   clienteId: string
@@ -16,8 +15,6 @@ export type EntradaPedido = {
   montoEntrega?: number
   numeroFundas?: number
   direccionRecoleccion?: string
-  /** Barrio de la recogida; se verifica contra la lista de Configuración. */
-  sector?: string
   ventanaInicio?: string
   ventanaFin?: string
 }
@@ -26,12 +23,7 @@ export type ResultadoCrear =
   | { ok: true; pedido: Pedido; montoEstimadoLavado: number; requiereRespuestaDelCliente: boolean }
   | {
       ok: false
-      codigo:
-        | 'NO_ENCONTRADO'
-        | 'ITEMS_VACIOS'
-        | 'PARAMETROS_INVALIDOS'
-        | 'FUERA_DE_COBERTURA'
-        | 'ERROR_INTERNO'
+      codigo: 'NO_ENCONTRADO' | 'ITEMS_VACIOS' | 'PARAMETROS_INVALIDOS' | 'ERROR_INTERNO'
       mensaje: string
     }
 
@@ -146,24 +138,6 @@ export async function crearPedido(entrada: EntradaPedido): Promise<ResultadoCrea
   const datosCliente = filaCliente as Cliente
 
   const config = await obtenerConfig()
-
-  if (entrada.tipoEntrega === 'combo') {
-    const veredicto = verificarSector(entrada.sector, config.sectores_cobertura)
-    if (veredicto === 'falta_sector') {
-      return {
-        ok: false,
-        codigo: 'PARAMETROS_INVALIDOS',
-        mensaje: 'Falta el sector o barrio de la recogida. Pregúntaselo al cliente.',
-      }
-    }
-    if (veredicto === 'fuera') {
-      return {
-        ok: false,
-        codigo: 'FUERA_DE_COBERTURA',
-        mensaje: `Ese sector queda fuera de la zona de recogida (${config.radio_cobertura_km} km a la redonda del local). Ofrécele traer y retirar su ropa en el local, sin recargo.`,
-      }
-    }
-  }
 
   const cotizacion = await cotizarPrendas(entrada.items)
   const logistica = resolverLogistica(entrada, Number(config.tarifa_recoleccion_entrega))

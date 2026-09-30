@@ -19,7 +19,7 @@ debe tratarla como a la dueña.
 | Contraseña en vez de enlace mágico | El enlace entraba en bucle |
 | AI Agent de LangChain, no «Tool First» | Es lo que el dueño ya opera |
 | Registro en el CRM en cada turno | Como el CRM de 321: todo lead queda, compre o no |
-| Dos niveles de WhatsApp autorizado y **nada de dinero por WhatsApp** | 2026-09-17, tras una orden inventada con ID falso |
+| Dos niveles de WhatsApp autorizado y **nada de dinero por WhatsApp** | 2026-09-17, tras una orden inventada con ID falso. **Excepción del 2026-09-30:** el aviso informativo automático de una discrepancia (texto del servidor, sin pedir pago, solo dentro de las 24 h) |
 | Resumen diario de las 8:00 para admins, **texto libre** dentro de las 24 h de Meta | El CRM anota la hora del último mensaje de cada autorizado (migración 0008); la plantilla es solo respaldo |
 | Nombre de WhatsApp como nombre **provisional** del lead; el que diga el cliente lo reemplaza; lo que escribe el equipo en el CRM no se pisa | El dueño no quiere leads «Sin nombre». `clientes.nombre_contacto_origen` (migración 0010) |
 | Descargas de clientes/pedidos solo para superadmin y admin | Datos personales (LOPDP) |
@@ -39,6 +39,10 @@ debe tratarla como a la dueña.
 | El aviso de la ley de datos **no va en el saludo**: va al pedir los datos del cierre | 2026-09-24 |
 | **El agente nunca dice que no se ofrece un servicio**; si no encuentra, pregunta o confirma con planta | 2026-09-24 |
 | A la dueña (admin) se le habla de usted, por su nombre, con datos del CRM y el siguiente paso útil | 2026-09-23 |
+| **Cobertura verificable:** 36 sectores dentro de 2,5 km, tomados de OpenStreetMap | 2026-09-30, pedido por el dueño |
+| **El agente saluda con el saludo de la casa** (campo «Saludo» de Configuración) y cambia el resto del mensaje cada vez | 2026-09-30, pedido por el dueño |
+| **Seguimiento a quien no contesta:** 30 min, 1 h, 6 h y 23 h 30 min dentro de las 24 h; quien contrata o dice que no, no recibe más | 2026-09-30 |
+| **Barrido del primer seguimiento** a todos los leads con ventana abierta, incluso a los que María Sol ya había contestado | 2026-09-30, pedido por el dueño |
 | Base de clientes entregada **en cero** a VIP; no cargar datos de ejemplo sin permiso | 2026-09-23 |
 | Sin dirección no hay pedido con recogida; el nombre del cliente nunca se inventa | 2026-09-30 |
 | OpenAI compartido con 321 | Temporal, acordado |
