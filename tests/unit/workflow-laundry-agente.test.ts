@@ -166,6 +166,9 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(armar).toContain("c.modo !== 'activo'")
     // solo valen los montos que ya se le dijeron al cliente
     expect(armar).toContain('ultima_respuesta_agente')
+    // el saludo correcto lo pone el código según la hora de Quito
+    expect(armar).toContain('Buenas tardes')
+    expect(armar).toContain('getUTCHours')
     expect(JSON.stringify(porNombre('Redactar Seguimiento')?.parameters)).toContain('gpt-4.1-mini')
     // los cuatro pasos y la memoria del agente (solo si de verdad se envió)
     expect(JSON.stringify(porNombre('Redactar Seguimiento')?.parameters)).toContain('de 4')
