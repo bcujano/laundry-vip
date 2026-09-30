@@ -111,6 +111,8 @@ export type Configuracion = {
   /** Dónde queda el local, el fijo y el enlace de Google Maps (migración 0014). */
   /** Barrios dentro del radio de recogida; vacía = la cobertura no se verifica. */
   sectores_cobertura: string[]
+  /** Agente de seguimiento (migración 0016). */
+  seguimiento_modo: 'apagado' | 'borrador' | 'activo'
   direccion_local: string
   telefono_local: string
   enlace_mapa: string

@@ -137,6 +137,37 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(JSON.stringify(porNombre('crear_pedido')?.parameters)).toContain('sector')
   })
 
+  it('el seguimiento retoma leads dentro de las 24 h, sin persona a cargo y sin inventar precios', () => {
+    const c = workflow.connections
+    const disparador = workflow.nodes.find((n) => n.name === 'Seguimiento cada 30 min')
+    expect(JSON.stringify(disparador?.parameters)).toContain('*/30 9-18 * * 1-6')
+    const cadena = [
+      'Seguimiento cada 30 min',
+      'Candidatos Seguimiento',
+      'Uno por Candidato',
+      'Conversacion Seguimiento',
+      'Mensajes Seguimiento',
+      'Sin Persona a Cargo?',
+      'Redactar Seguimiento',
+      'Armar Seguimiento',
+      'Enviar Seguimiento',
+      'Anotar Seguimiento',
+    ]
+    for (let i = 0; i < cadena.length - 1; i++) {
+      expect(c[cadena[i] as string]?.main?.[0]?.[0]?.node).toBe(cadena[i + 1])
+    }
+    // una persona a cargo (etiqueta humano) frena el seguimiento
+    expect(JSON.stringify(porNombre('Sin Persona a Cargo?')?.parameters)).toContain('humano')
+    // ni si alguien del equipo ya le contestó a mano
+    expect(JSON.stringify(porNombre('Sin Persona a Cargo?')?.parameters)).toContain('Byron ADMIN')
+    // el modo de Configuración decide si es nota interna o mensaje al cliente
+    const armar = String(porNombre('Armar Seguimiento')?.parameters.jsCode)
+    expect(armar).toContain("c.modo !== 'activo'")
+    // solo valen los montos que ya se le dijeron al cliente
+    expect(armar).toContain('ultima_respuesta_agente')
+    expect(JSON.stringify(porNombre('Redactar Seguimiento')?.parameters)).toContain('gpt-4.1-mini')
+  })
+
   it('la memoria va en su propia tabla', () => {
     expect(porNombre('Memory Laundry')?.parameters.tableName).toBe('n8n_laundry_chat_histories')
   })

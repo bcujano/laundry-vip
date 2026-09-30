@@ -113,7 +113,7 @@ una orden inventada con ID falso.
 
 1. **Edita el prompt `.md`** (o el generador en `n8n/generador/`) y regenera:
    ```bash
-   node n8n/generador/generar.cjs        # debe decir «OK: 68 nodos»
+   node n8n/generador/generar.cjs        # debe decir «OK: 78 nodos»
    pnpm biome check --write n8n
    ```
    El generador lee `iAgente 321 INMO V2.json` de **Descargas** (ya está ahí).

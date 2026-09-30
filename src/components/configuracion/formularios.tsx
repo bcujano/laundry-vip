@@ -2,7 +2,7 @@
 
 import { useActionState } from 'react'
 import { type EstadoConfig, guardarConfiguracion } from '@/app/(dashboard)/configuracion/actions'
-import { Boton, Campo } from '@/components/ui/primitivos'
+import { Boton, Campo, Seleccion } from '@/components/ui/primitivos'
 import type { Configuracion } from '@/types/database'
 
 const INICIAL: EstadoConfig = {}
@@ -226,6 +226,23 @@ export function FormularioConfiguracion({ config }: { config: Configuracion }) {
           <Campo defaultValue={config.enlace_mapa} id="campo-enlace_mapa" name="enlace_mapa" />
         </Etiquetado>
       </div>
+
+      <Etiquetado
+        para="campo-seguimiento_modo"
+        texto="Seguimiento a clientes que pidieron precio y no contestaron"
+      >
+        <Seleccion
+          defaultValue={config.seguimiento_modo}
+          id="campo-seguimiento_modo"
+          name="seguimiento_modo"
+        >
+          <option value="apagado">Apagado</option>
+          <option value="borrador">
+            Borrador: deja la nota en Chatwoot y la manda una persona
+          </option>
+          <option value="activo">Activo: escribe al cliente solo</option>
+        </Seleccion>
+      </Etiquetado>
 
       <Etiquetado
         para="campo-sectores_cobertura"

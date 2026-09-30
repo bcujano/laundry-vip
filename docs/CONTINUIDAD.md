@@ -50,12 +50,12 @@ activarlo en la tarjeta del workflow.
 | | |
 |---|---|
 | CRM | **https://laundry-vip.vercel.app** · Vercel `bcujanos-projects/laundry-vip` · deploy: `npx vercel --prod --yes` desde `C:\dev\laundry-vip` (el CLI ya tiene sesión) |
-| Base | Supabase `cvdlslltevwxprdktmfu` (São Paulo). **Una sola base: pruebas y producción comparten.** Migraciones `0001`–`0015` aplicadas |
-| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · 68 nodos · activo · versión activa `41b3784d-dc1c-463b-b5f0-3b5b22fe1ce4` (2026-09-30) |
+| Base | Supabase `cvdlslltevwxprdktmfu` (São Paulo). **Una sola base: pruebas y producción comparten.** Migraciones `0001`–`0016` aplicadas |
+| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · 78 nodos · activo · versión activa `73b1eef9-428e-46aa-bd3d-d6fe16a9beed` (2026-09-30) |
 | Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · bandeja «Vip Laundry». La cuenta 1 es de 321: **no se toca ni para leer** |
 | WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
 | Repo | local, rama `agente-n8n-laundry`, etiqueta `v1.0` (estado con el número de prueba). Historial reescrito el 2026-09-23 (los SHA cambiaron). Remoto `github.com/bcujano/laundry-vip` configurado pero **el repositorio no existe en GitHub** |
-| Gate | typecheck, lint, build y **283 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
+| Gate | typecheck, lint, build y **290 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
 | Credenciales en n8n | `CRM Laundry VIP Webhook` (id `9456EHfb8yxpZOmr`), `Chatwoot Laundry VIP API`, `Meta WhatsApp Laundry VIP`, `Postgres Laundry VIP`, `OpenAi account` (compartida con 321). Nunca en el JSON |
 | Variables (`.env.local`) | Solo nombres aquí: `SUPABASE_*`, `N8N_WEBHOOK_SECRET`, `CHATWOOT_*`, `WHATSAPP_*`, `OPENAI_API_KEY`, `LOCAL_LATITUD/LONGITUD/DIRECCION` |
 
@@ -129,6 +129,8 @@ actualizar esta sección.
 
 **B4 · Cobertura verificable — ESTRUCTURA HECHA (2026-09-30), INERTE hasta que el dueño dé la lista (E3).** Migración `0015` (`configuracion.sectores_cobertura text[]`, vacía), pantalla de Configuración con un sector por línea, `src/server/pedidos/cobertura.ts` (`verificarSector`, con el normalizador de precios), `crear_pedido` acepta `sector` y, con lista cargada, rechaza `FUERA_DE_COBERTURA` o pide el sector; el prompt y la tool de n8n ya lo mandan. Con la lista vacía todo se comporta como antes. **Cuando E3 llegue:** cargar los barrios en Configuración y probar un pedido real con un sector fuera de la lista.
 
+**S1 · Agente de seguimiento — PUBLICADO EN MODO BORRADOR (2026-09-30).** Retoma a quien pidió precio y dejó de contestar, dentro de las 24 h de WhatsApp (fuera de ellas Meta exige plantilla). Cada 30 min, lunes a sábado 9:00–18:30: `candidatos_seguimiento` (CRM: `src/server/seguimiento/`) elige conversaciones con 3–21 h de silencio, lead tibio/caliente, sin pedido, sin escalar, que no sean del equipo y sin seguimiento en 48 h; n8n confirma en Chatwoot que no hay etiqueta `humano` ni respuesta de una persona en 24 h; OpenAI (gpt-4.1-mini) redacta ≤35 palabras; una guardia descarta montos que no se le dijeron ya al cliente. **Modo en Configuración** (`seguimiento_modo`): `apagado` · `borrador` (nota interna en Chatwoot, la manda una persona; **es el de arranque**) · `activo` (escribe al cliente). Tabla `seguimientos` (migración 0016). **Pasar a `activo` es decisión del dueño** tras leer unos borradores reales (E12). Pendiente: ver los primeros borradores en Chatwoot y afinar el texto.
+
 **B5 · Búsqueda de Chatwoot por teléfono — VERIFICADA POR API (2026-09-30).** `contacts/search?q=` de la cuenta 3 encuentra al contacto con el teléfono con o sin `+` y con el número local sin prefijo; `conversations/search` por teléfono no devuelve nada (busca en el contenido de los mensajes). El enlace del CRM (`/search?q=<dígitos>`) es de la pantalla de Chatwoot y **no se pudo probar en el navegador** (pide sesión): el dueño puede comprobar un botón «abrir en Chatwoot» de un cliente sin conversación registrada.
 
 **B6 · GitHub y CI** — cuando el repositorio exista (§5 E5): `git push -u origin
@@ -163,6 +165,7 @@ y rotar la contraseña de la base al estrenar la de producción.
 | E8 | **Cuentas nuevas:** Supabase de producción, OpenAI propia con tope de gasto, n8n y Chatwoot propios | Nada; B8 espera |
 | E9 | **Limpiar Chatwoot** (conversaciones de prueba; el contacto «321 Soluciones Inmobiliarias» es el número de 321 de Byron usado para probar). El dueño lo dejó «para más adelante» | Nada; no bloquea |
 | E10 | **Un usuario de Chatwoot propio para el agente** (p. ej. «Agente VIP») con su token, y cambiar el token de la credencial `Chatwoot Laundry VIP API` en n8n. Hace limpia la regla de B1 | Regla por nombre de remitente (ver B1) |
+| E12 | **Activar el seguimiento:** revisar los borradores que deja el agente como nota interna en Chatwoot y, si le gustan, cambiar Configuración → Seguimiento a «Activo» | Se queda en borrador |
 | E11 | Si Byron quiere usar el modo admin por WhatsApp, agregarse como Administrador en Configuración → lista blanca | Nada |
 
 ---

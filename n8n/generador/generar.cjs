@@ -247,6 +247,11 @@ nodes.push(...protecciones.nodos)
 Object.assign(connections, protecciones.conexiones)
 connections['Extraer JSON'].main[0].push({ node: 'Estimar Uso', type: 'main', index: 0 })
 
+// Agente de seguimiento: retoma a quien pidió precio y no contestó.
+const seguimiento = require('./seguimiento.cjs')
+nodes.push(...seguimiento.nodos)
+Object.assign(connections, seguimiento.conexiones)
+
 const nombres = new Set(nodes.map((n) => n.name))
 for (const [origen, tipos] of Object.entries(connections)) {
   if (!nombres.has(origen)) throw new Error(`Conexión desde nodo inexistente: ${origen}`)

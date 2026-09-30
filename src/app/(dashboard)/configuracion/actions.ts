@@ -32,6 +32,7 @@ const esquema = z
         .map((sector) => sector.trim())
         .filter((sector) => sector !== ''),
     ),
+    seguimiento_modo: z.enum(['apagado', 'borrador', 'activo']),
     direccion_local: z.string().trim().min(1, 'La dirección del local es obligatoria.'),
     telefono_local: z.string().trim().min(1, 'El teléfono del local es obligatorio.'),
     enlace_mapa: z.string().trim().url('El enlace del mapa debe ser una dirección web válida.'),

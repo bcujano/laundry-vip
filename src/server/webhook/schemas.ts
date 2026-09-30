@@ -30,6 +30,8 @@ export const ACCIONES = [
   'resumen_diario',
   'generar_reporte',
   'consultar_pedido',
+  'candidatos_seguimiento',
+  'registrar_seguimiento',
 ] as const
 
 export type Accion = (typeof ACCIONES)[number]
@@ -105,6 +107,16 @@ export const parametrosPorAccion = {
     sector: z.string().optional(),
     ventana_recoleccion_inicio: z.iso.datetime().optional(),
     ventana_recoleccion_fin: z.iso.datetime().optional(),
+  }),
+
+  candidatos_seguimiento: z.object({}).optional(),
+
+  registrar_seguimiento: z.object({
+    telefono,
+    chatwoot_conversation_id: z.number().int().optional(),
+    modo: z.enum(['borrador', 'activo']),
+    mensaje: z.string().min(1).max(2000),
+    interaccion_base: z.iso.datetime(),
   }),
 
   consultar_estado_pedido: z.object({ telefono }),
