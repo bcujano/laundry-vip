@@ -4,12 +4,11 @@ import { consultaAdmin, resumenDiario } from './admin'
 import {
   cotizar,
   findOrCreateClient,
-  proximaVentana,
   registrarEventoEntrante,
   sincronizarMemoria,
-  vehiculo,
   verificarWhitelistOperador,
 } from './cliente'
+import { proximaVentana, vehiculo } from './logistica'
 import { actualizarRegistro, registrarClientePresencial } from './operador'
 import { consultarEstadoPorTelefono, consultarPedidoPorId, crear } from './pedidos'
 import { avanzarEstadoPlanta, buscarPedidos, registrarConteo } from './planta'

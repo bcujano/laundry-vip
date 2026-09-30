@@ -176,15 +176,23 @@ describe('reporte de ingresos', () => {
       clienteId: clinica,
       canal: 'whatsapp_agente',
       tipoEntrega: 'combo',
+      direccionRecoleccion: 'Av. de prueba y Los Pinos',
       items,
     })
     await crearPedido({
       clienteId: clinica,
       canal: 'whatsapp_agente',
       tipoEntrega: 'combo',
+      direccionRecoleccion: 'Av. de prueba y Los Pinos',
       items,
     })
-    await crearPedido({ clienteId: hotel, canal: 'whatsapp_agente', tipoEntrega: 'combo', items })
+    await crearPedido({
+      clienteId: hotel,
+      canal: 'whatsapp_agente',
+      tipoEntrega: 'combo',
+      direccionRecoleccion: 'Av. de prueba y Los Pinos',
+      items,
+    })
 
     // Uno de la clínica ya pasó por planta: su monto es confirmado.
     if (unoClinica.ok) {
@@ -221,6 +229,7 @@ describe('reporte de ingresos', () => {
       clienteId: restaurante,
       canal: 'whatsapp_agente',
       tipoEntrega: 'combo',
+      direccionRecoleccion: 'Av. de prueba y Los Pinos',
       items: [{ descripcion: '4 camisetas', cantidad: 4, metodo: 'agua' }],
     })
     if (!creado.ok) throw new Error('no se creó')

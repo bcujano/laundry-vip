@@ -108,7 +108,19 @@ export async function crearPedido(entrada: EntradaPedido): Promise<ResultadoCrea
     return {
       ok: false,
       codigo: 'PARAMETROS_INVALIDOS',
-      mensaje: 'Falta tipo_entrega: el cliente tiene que elegir combo o a la carta.',
+      mensaje:
+        'Falta tipo_entrega: hay que saber si la lavandería recoge o el cliente trae la ropa.',
+    }
+  }
+
+  // Si la lavandería va a recoger, sin dirección no hay pedido: el agente ya
+  // cerró uno con la dirección vacía y nadie supo a dónde ir.
+  if (entrada.tipoEntrega === 'combo' && (entrada.direccionRecoleccion ?? '').trim() === '') {
+    return {
+      ok: false,
+      codigo: 'PARAMETROS_INVALIDOS',
+      mensaje:
+        'Falta la dirección de recolección. Pregúntasela al cliente antes de confirmar el pedido.',
     }
   }
 

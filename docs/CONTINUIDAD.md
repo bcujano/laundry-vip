@@ -1,6 +1,6 @@
 # Estado y continuidad
 
-Última actualización: **2026-09-24**. Traspaso entre sesiones: léelo entero
+Última actualización: **2026-09-30**. Traspaso entre sesiones: léelo entero
 antes de tocar nada. La historia del plan original del agente está en
 [`historia-agente.md`](historia-agente.md).
 
@@ -82,6 +82,24 @@ Resumen 8:00 (L-S) → datos del CRM → un mensaje por admin → ¿escribió en
   conversación, aunque no compre. El nombre del perfil de WhatsApp entra como
   nombre **provisional**; el que diga el cliente lo reemplaza y lo editado en
   el CRM nunca se pisa. Los operadores no cuentan como leads.
+- **Lo que manda es Configuración, y Configuración dice lo que dice la dueña**
+  (revisión de las 16 conversaciones reales, 2026-09-30): se recoge hasta
+  **2,5 km a la redonda del local** (`radio_cobertura_km`, migración 0013),
+  el local abre **de 9:00 a 19:00 y los sábados hasta las 17:00**
+  (`hora_cierre_sabado`, migración 0012) y el agente lo lee todo de
+  `obtener_proxima_ventana`, que ahora devuelve `horario` y `cobertura` ya
+  escritos. El agente había prometido recogida «en todo Quito» y dado un
+  horario que no era.
+- **La ventana de OTRO DÍA.** La herramienta estaba clavada en `{}`: el agente
+  no podía pedir otra fecha, así que decía «para mañana no hay ventana» y
+  confirmaba para hoy. Ahora acepta `desde` (YYYY-MM-DD o vacío), el inicio se
+  redondea a la media hora («de 15:30 a 17:00», no «13:41») y `es_hoy` compara
+  contra el día de verdad, no contra la fecha consultada.
+- **Sin dirección no hay pedido.** El servidor rechaza `crear_pedido` cuando la
+  lavandería recoge y la dirección viene vacía: ya se creó uno así y nadie
+  supo a dónde ir.
+- **La ropa de diario va al peso.** Regla de la dueña: camisetas, calentadores,
+  busos y «ropa de casa» se cotizan por libra, nunca pieza por pieza.
 - **El agente NUNCA niega un servicio** (fallo real del 2026-09-24: dijo «no
   ofrecemos tinturado» y «no lavamos zapatos» teniendo los dos en el catálogo).
   Tres arreglos: las palabras con las que se pregunta («lavado de…», «hacen…»)

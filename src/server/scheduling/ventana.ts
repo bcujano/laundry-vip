@@ -75,13 +75,30 @@ export function obtenerProximaVentana(ahora: Date, parametros: ParametrosVentana
     const cierra = new Date(dia.getTime() + finMin * 60_000)
 
     // El inicio nunca queda antes del margen: pedir un vehículo toma tiempo.
-    const inicio = minimoLocal > abre ? new Date(minimoLocal) : abre
+    // Y se redondea a la media hora siguiente: al cliente se le dice «de 14:00
+    // a 17:00», no «de 13:41 a 17:00», que suena a máquina.
+    // Se redondea salvo que redondear se pase de la hora de cierre: entonces
+    // vale el minuto exacto, que es lo que respeta el margen mínimo.
+    const redondeado = redondearArriba(minimoLocal)
+    // Si redondear se come la ventana entera (redondea justo al cierre o más
+    // allá), vale el minuto exacto: mejor «11:47 a 12:00» que nada.
+    const conMargen = redondeado < cierra ? redondeado : minimoLocal
+    const inicio = minimoLocal > abre ? conMargen : abre
     if (inicio > cierra) continue
 
     return { inicio: aInstante(inicio), fin: aInstante(cierra), esHoy: desfase === 0 }
   }
 
   throw new Error('No se encontró ninguna ventana válida en los próximos 8 días.')
+}
+
+/** A la media hora siguiente, para decir horas redondas. */
+function redondearArriba(local: Date): Date {
+  const minutos = local.getUTCMinutes()
+  const sobra = minutos % 30
+  if (sobra === 0 && local.getUTCSeconds() === 0 && local.getUTCMilliseconds() === 0) return local
+  const sumar = (30 - sobra) * 60_000 - local.getUTCSeconds() * 1000 - local.getUTCMilliseconds()
+  return new Date(local.getTime() + sumar)
 }
 
 /** La hora más tardía a la que todavía se puede agendar para hoy. */

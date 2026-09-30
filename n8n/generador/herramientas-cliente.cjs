@@ -17,8 +17,8 @@ function agregar(nodes) {
     ],
     [
       'obtener_proxima_ventana',
-      'Devuelve la próxima ventana válida de recolección (inicio y fin en UTC ISO), el horario del local, la tarifa de recogida y entrega y el lapso de entrega en horas. Úsala antes de hablar de horarios, tarifa o tiempos.',
-      '{}',
+      'Devuelve la ventana de recoleccion (inicio y fin en UTC ISO), el horario del local, la tarifa de recogida y entrega, hasta donde se recoge y el lapso de entrega en horas. Si el cliente pide OTRO DIA, vuelve a llamarla con desde = esa fecha. Usala antes de hablar de horarios, fechas, tarifa, cobertura o tiempos.',
+      `{"desde": ${fromAI('desde', 'Fecha desde la que buscar la ventana, formato YYYY-MM-DD. Cadena vacia para la proxima disponible. Si el cliente dice "manana", manda la fecha de manana.')}}`,
     ],
     [
       'calcular_vehiculo',

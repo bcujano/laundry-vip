@@ -176,6 +176,54 @@ describe('acciones de logística', () => {
     expect(data.horas_entrega_max).toBeGreaterThanOrEqual(data.horas_entrega_min)
   })
 
+  it('si el cliente pide otro día, la ventana es la de ESE día', async () => {
+    // El agente le dijo a un cliente «para mañana no tenemos ventana» y le
+    // confirmó el pedido para hoy. La herramienta sí sabe buscar otro día.
+    const { sobre } = await llamar({
+      accion: 'obtener_proxima_ventana',
+      parametros: { desde: '2026-10-05' },
+    })
+    const data = sobre.data as { inicio: string; es_hoy: boolean }
+
+    // 2026-10-05 es lunes: la ventana cae ese mismo día, en hora de Quito.
+    expect(data.inicio).toContain('2026-10-05')
+    expect(data.es_hoy).toBe(false)
+  })
+
+  it('una fecha vacía o ausente sigue dando la próxima ventana', async () => {
+    const vacia = await llamar({
+      accion: 'obtener_proxima_ventana',
+      parametros: { desde: '' },
+    })
+    const sinNada = await llamar({ accion: 'obtener_proxima_ventana', parametros: {} })
+
+    expect(vacia.estado).toBe(200)
+    expect((vacia.sobre.data as { inicio: string }).inicio).toBe(
+      (sinNada.sobre.data as { inicio: string }).inicio,
+    )
+  })
+
+  it('la ventana empieza en hora redonda, no en «13:41»', async () => {
+    const { sobre } = await llamar({ accion: 'obtener_proxima_ventana', parametros: {} })
+    const inicio = new Date((sobre.data as { inicio: string }).inicio)
+
+    expect([0, 30]).toContain(inicio.getUTCMinutes())
+    expect(inicio.getUTCSeconds()).toBe(0)
+  })
+
+  it('el agente sabe hasta dónde se recoge y a qué hora abre el local', async () => {
+    const { sobre } = await llamar({
+      accion: 'verificar_whitelist_operador',
+      parametros: { telefono: TELEFONO },
+    })
+    const negocio = (sobre.data as { negocio: { cobertura: string; horario: string } }).negocio
+    const config = await obtenerConfig()
+
+    // Nada de esto está escrito en el prompt: sale de Configuración.
+    expect(negocio.cobertura).toContain(String(Number(config.radio_cobertura_km)).replace('.', ','))
+    expect(negocio.horario).toContain(config.hora_apertura.slice(0, 5))
+  })
+
   it('un domingo de madrugada ofrece el lunes, nunca rechaza', async () => {
     const { sobre } = await llamar({
       accion: 'obtener_proxima_ventana',

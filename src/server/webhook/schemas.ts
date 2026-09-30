@@ -87,7 +87,9 @@ export const parametrosPorAccion = {
 
   calcular_vehiculo: z.object({ numero_fundas: z.number().int() }),
 
-  obtener_proxima_ventana: z.object({ desde: z.iso.datetime().optional() }).optional(),
+  // «desde» llega como fecha suelta («2026-10-01»), como ISO completo o vacío:
+  // el modelo escribe las tres formas. Se valida en el handler.
+  obtener_proxima_ventana: z.object({ desde: z.string().optional() }).optional(),
 
   crear_pedido: z.object({
     cliente_id: z.uuid(),

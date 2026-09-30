@@ -38,6 +38,8 @@ export type CambiosConfiguracion = Partial<
     | 'hora_recoleccion_fin'
     | 'hora_apertura'
     | 'hora_cierre'
+    | 'hora_cierre_sabado'
+    | 'radio_cobertura_km'
     | 'margen_minimo_minutos'
     | 'tarifa_recoleccion_entrega'
     | 'horas_entrega_min'

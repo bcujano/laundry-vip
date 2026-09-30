@@ -165,6 +165,8 @@ describe('las prendas y el primer evento', () => {
       clienteId: cliente.id,
       canal: 'whatsapp_agente',
       tipoEntrega: 'combo',
+      // La lavandería recoge: sin dirección el servidor lo rechaza.
+      direccionRecoleccion: 'Av. de prueba y Los Pinos',
       items: [
         { descripcion: '3 camisetas', cantidad: 3, metodo: 'agua' },
         { descripcion: 'un kayak inflable', cantidad: 1 },
@@ -196,6 +198,8 @@ describe('las prendas y el primer evento', () => {
       clienteId: cliente.id,
       canal: 'whatsapp_agente',
       tipoEntrega: 'combo',
+      // La lavandería recoge: sin dirección el servidor lo rechaza.
+      direccionRecoleccion: 'Av. de prueba y Los Pinos',
       items: ITEMS,
     })
     expect(resultado.ok).toBe(true)
@@ -218,6 +222,8 @@ describe('las prendas y el primer evento', () => {
       clienteId: cliente.id,
       canal: 'whatsapp_agente',
       tipoEntrega: 'combo',
+      // La lavandería recoge: sin dirección el servidor lo rechaza.
+      direccionRecoleccion: 'Av. de prueba y Los Pinos',
       items: ITEMS,
     })
     expect(resultado.ok).toBe(true)
@@ -229,11 +235,44 @@ describe('las prendas y el primer evento', () => {
 })
 
 describe('errores', () => {
+  it('sin dirección no se crea un pedido que la lavandería tiene que recoger', async () => {
+    // Pasó de verdad: el agente confirmó un pedido con la dirección vacía y
+    // nadie supo a dónde ir a recoger la ropa.
+    const resultado = await crearPedido({
+      clienteId: (await crearCliente()).id,
+      canal: 'whatsapp_agente',
+      tipoEntrega: 'combo',
+      direccionRecoleccion: '   ',
+      items: [{ descripcion: 'chal', cantidad: 1 }],
+    })
+
+    expect(resultado.ok).toBe(false)
+    if (!resultado.ok) {
+      expect(resultado.codigo).toBe('PARAMETROS_INVALIDOS')
+      expect(resultado.mensaje).toContain('dirección de recolección')
+    }
+  })
+
+  it('si el cliente trae y retira su ropa, la dirección no hace falta', async () => {
+    const resultado = await crearPedido({
+      clienteId: (await crearCliente()).id,
+      canal: 'whatsapp_agente',
+      tipoEntrega: 'a_la_carta',
+      metodoRecoleccion: 'propio_cliente',
+      metodoEntrega: 'propio_cliente',
+      items: [{ descripcion: 'chal', cantidad: 1 }],
+    })
+
+    expect(resultado.ok).toBe(true)
+  })
+
   it('cliente inexistente: NO_ENCONTRADO', async () => {
     const resultado = await crearPedido({
       clienteId: '11111111-1111-4111-8111-111111111111',
       canal: 'whatsapp_agente',
       tipoEntrega: 'combo',
+      // La lavandería recoge: sin dirección el servidor lo rechaza.
+      direccionRecoleccion: 'Av. de prueba y Los Pinos',
       items: ITEMS,
     })
     expect(resultado).toMatchObject({ ok: false, codigo: 'NO_ENCONTRADO' })
@@ -245,6 +284,8 @@ describe('errores', () => {
       clienteId: cliente.id,
       canal: 'whatsapp_agente',
       tipoEntrega: 'combo',
+      // La lavandería recoge: sin dirección el servidor lo rechaza.
+      direccionRecoleccion: 'Av. de prueba y Los Pinos',
       items: [],
     })
     expect(resultado).toMatchObject({ ok: false, codigo: 'ITEMS_VACIOS' })
@@ -269,6 +310,8 @@ describe('consultar el estado', () => {
       clienteId: cliente.id,
       canal: 'whatsapp_agente',
       tipoEntrega: 'combo',
+      // La lavandería recoge: sin dirección el servidor lo rechaza.
+      direccionRecoleccion: 'Av. de prueba y Los Pinos',
       items: ITEMS,
     })
     // Separación mínima para que el orden por created_at sea inequívoco.

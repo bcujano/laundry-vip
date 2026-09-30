@@ -1,7 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { obtener as obtenerConfig, parametrosVentana } from '@/server/configuracion/repo'
-import { calcularVehiculo, cotizarPrendas, ErrorCotizacion } from '@/server/pricing/cotizar'
-import { obtenerProximaVentana, ultimaHoraDelDia } from '@/server/scheduling/ventana'
+import { horarioLegible } from '@/server/configuracion/horario'
+import { obtener as obtenerConfig } from '@/server/configuracion/repo'
+import { cotizarPrendas, ErrorCotizacion } from '@/server/pricing/cotizar'
 import type { Cliente, Conversacion } from '@/types/database'
 import { type ResultadoUso, registrarUso } from '../cost-tracking'
 import { exito, fallo, type ResultadoAccion } from '../respuesta'
@@ -100,7 +100,12 @@ export async function verificarWhitelistOperador(
     es_operador: boolean
     nombre: string | null
     nivel: string | null
-    negocio: { nombre: string; saludo: string }
+    negocio: {
+      nombre: string
+      saludo: string
+      cobertura: string
+      horario: string
+    }
   }>
 > {
   const [{ data, error }, negocio] = await Promise.all([
@@ -128,7 +133,12 @@ export async function verificarWhitelistOperador(
     es_operador: data !== null,
     nombre: data?.nombre ?? null,
     nivel: data?.nivel ?? null,
-    negocio: { nombre: negocio.nombre_negocio, saludo: negocio.saludo_agente },
+    negocio: {
+      nombre: negocio.nombre_negocio,
+      saludo: negocio.saludo_agente,
+      cobertura: `${Number(negocio.radio_cobertura_km).toString().replace('.', ',')} km a la redonda del local`,
+      horario: horarioLegible(negocio),
+    },
   })
 }
 
@@ -223,56 +233,4 @@ export async function cotizar(
     if (error instanceof ErrorCotizacion) return fallo(error.codigo, error.message, 400)
     throw error
   }
-}
-
-export function vehiculo(
-  parametros: ParametrosDe<'calcular_vehiculo'>,
-): ResultadoAccion<{ vehiculo: 'moto' | 'auto'; numero_fundas: number }> {
-  try {
-    return exito({
-      vehiculo: calcularVehiculo(parametros.numero_fundas),
-      numero_fundas: parametros.numero_fundas,
-    })
-  } catch (error) {
-    if (error instanceof ErrorCotizacion) return fallo(error.codigo, error.message, 400)
-    throw error
-  }
-}
-
-/** El agente nunca rechaza por horario: siempre ofrece la siguiente ventana. */
-export async function proximaVentana(parametros: ParametrosDe<'obtener_proxima_ventana'>): Promise<
-  ResultadoAccion<{
-    inicio: string
-    fin: string
-    es_hoy: boolean
-    ultima_hora_del_dia: string
-    hora_apertura: string
-    hora_cierre: string
-    tarifa_recoleccion_entrega: number
-    horas_entrega_min: number
-    horas_entrega_max: number
-  }>
-> {
-  // Horario y tarifa salen de Configuración: el dueño los cambia en el CRM y el
-  // agente no puede tener un valor escrito a mano en su prompt.
-  const [config, negocio] = await Promise.all([parametrosVentana(), obtenerConfig()])
-  const desde = parametros?.desde ? new Date(parametros.desde) : new Date()
-
-  if (Number.isNaN(desde.getTime())) {
-    return fallo('PARAMETROS_INVALIDOS', 'La fecha "desde" no es válida.')
-  }
-
-  const ventana = obtenerProximaVentana(desde, config)
-  return exito({
-    inicio: ventana.inicio.toISOString(),
-    fin: ventana.fin.toISOString(),
-    es_hoy: ventana.esHoy,
-    ultima_hora_del_dia: ultimaHoraDelDia(config),
-    hora_apertura: negocio.hora_apertura.slice(0, 5),
-    hora_cierre: negocio.hora_cierre.slice(0, 5),
-    tarifa_recoleccion_entrega: Number(negocio.tarifa_recoleccion_entrega),
-    // El lapso de entrega también sale del CRM: el prompt no lleva números.
-    horas_entrega_min: negocio.horas_entrega_min,
-    horas_entrega_max: negocio.horas_entrega_max,
-  })
 }

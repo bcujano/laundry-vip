@@ -104,6 +104,10 @@ export type Configuracion = {
   hora_recoleccion_fin: string
   hora_apertura: string
   hora_cierre: string
+  /** El sábado se cierra antes; hora_cierre rige de lunes a viernes. */
+  hora_cierre_sabado: string
+  /** Hasta dónde llega la recolección, en km a la redonda del local. */
+  radio_cobertura_km: number
   margen_minimo_minutos: number
   /** Tarifa única de recogida y entrega, aparte del costo del lavado. */
   tarifa_recoleccion_entrega: number
