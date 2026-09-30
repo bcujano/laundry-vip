@@ -116,7 +116,8 @@ export const parametrosPorAccion = {
     chatwoot_conversation_id: z.number().int().optional(),
     modo: z.enum(['borrador', 'activo']),
     mensaje: z.string().min(1).max(2000),
-    interaccion_base: z.iso.datetime(),
+    interaccion_base: z.iso.datetime({ offset: true }),
+    paso: z.number().int().min(1).max(4),
   }),
 
   consultar_estado_pedido: z.object({ telefono }),

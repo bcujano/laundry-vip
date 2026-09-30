@@ -1,68 +1,132 @@
 import { describe, expect, it } from 'vitest'
 import {
   type ContextoSeleccion,
+  claveHecho,
   dentroDelHorario,
   elegirCandidatos,
   type FilaConversacion,
+  PASOS,
+  pasoDebido,
 } from '@/server/seguimiento/elegir'
 
 const AHORA = new Date('2026-10-01T15:00:00Z') // 10:00 en Quito
-const haceHoras = (h: number) => new Date(AHORA.getTime() - h * 3_600_000).toISOString()
+const haceMin = (m: number) => new Date(AHORA.getTime() - m * 60_000).toISOString()
 
-const fila = (sobre: Partial<FilaConversacion> = {}, contexto = {}): FilaConversacion => ({
-  telefono: '+593990000001',
-  chatwoot_conversation_id: 7,
-  ultima_interaccion: haceHoras(5),
-  contexto: {
-    temperatura: 'tibio',
-    necesidad: 'lavar un edredón',
-    proxima_accion: 'agendar',
-    ultimo_mensaje_cliente: 'cuánto cuesta un edredón',
-    ultima_respuesta_agente: 'El edredón le sale en $6,00. ¿Le agendo la recogida?',
-    ...contexto,
-  },
-  ...sobre,
-})
+const fila = (minutos: number, sobre: Partial<FilaConversacion> = {}, contexto = {}) =>
+  ({
+    telefono: '+593990000001',
+    chatwoot_conversation_id: 7,
+    ultima_interaccion: haceMin(minutos),
+    contexto: {
+      temperatura: 'tibio',
+      necesidad: 'lavar un edredón',
+      proxima_accion: 'agendar',
+      ultimo_mensaje_cliente: 'cuánto cuesta un edredón',
+      ultima_respuesta_agente: 'El edredón le sale en $6,00. ¿Le agendo la recogida?',
+      ...contexto,
+    },
+    ...sobre,
+  }) satisfies FilaConversacion
 
 const ctx = (sobre: Partial<ContextoSeleccion> = {}): ContextoSeleccion => ({
   ahora: AHORA,
   equipo: new Set(),
   excluidos: new Set(),
+  hechos: new Set(),
+  textosPrevios: new Map(),
   nombres: new Map(),
   ...sobre,
 })
 
-describe('seguimiento: a quién se le escribe', () => {
-  it('un lead tibio que calló hace 5 h es candidato', () => {
-    const [c] = elegirCandidatos([fila()], ctx())
-    expect(c?.telefono).toBe('+593990000001')
-    expect(c?.necesidad).toBe('lavar un edredón')
+describe('seguimiento: los cuatro pasos de la ventana de 24 h', () => {
+  it('toca a los 30 min, a la hora, a las 6 h y a las 23 h 30 min de silencio', () => {
+    expect(pasoDebido(30)).toBe(1)
+    expect(pasoDebido(60)).toBe(2)
+    expect(pasoDebido(360)).toBe(3)
+    expect(pasoDebido(23 * 60 + 30)).toBe(4)
   })
 
-  it('respeta la ventana: ni muy pronto ni fuera de las 24 h de Meta', () => {
-    expect(elegirCandidatos([fila({ ultima_interaccion: haceHoras(1) })], ctx())).toHaveLength(0)
-    expect(elegirCandidatos([fila({ ultima_interaccion: haceHoras(22) })], ctx())).toHaveLength(0)
+  it('entre un paso y otro no toca nada', () => {
+    for (const m of [0, 10, 29, 50, 90, 200, 400, 1000, 1409]) expect(pasoDebido(m)).toBeNull()
+  })
+
+  it('el último sale antes de que Meta cierre la ventana (24 h)', () => {
+    const ultimo = PASOS[PASOS.length - 1]
+    expect(ultimo?.hasta).toBeLessThan(24 * 60)
+    expect(pasoDebido(24 * 60)).toBeNull()
+  })
+
+  it('cada margen alcanza para una consulta cada 5 minutos', () => {
+    for (const p of PASOS) expect(p.hasta - p.desde).toBeGreaterThanOrEqual(10)
+  })
+})
+
+describe('seguimiento: a quién se le escribe', () => {
+  it('un lead tibio que calló 30 min es candidato y lleva su paso', () => {
+    const [c] = elegirCandidatos([fila(32)], ctx())
+    expect(c?.paso).toBe(1)
+    expect(c?.necesidad).toBe('lavar un edredón')
+    expect(elegirCandidatos([fila(62)], ctx())[0]?.paso).toBe(2)
+    expect(elegirCandidatos([fila(1412)], ctx())[0]?.paso).toBe(4)
+  })
+
+  it('no repite un paso ya hecho en el mismo silencio, pero sí hace el siguiente', () => {
+    const f = fila(32)
+    const hechos = new Set([claveHecho(f.telefono, 1, f.ultima_interaccion)])
+    expect(elegirCandidatos([f], ctx({ hechos }))).toHaveLength(0)
+    const segundo = fila(62, { ultima_interaccion: f.ultima_interaccion })
+    expect(
+      elegirCandidatos([{ ...segundo, ultima_interaccion: haceMin(62) }], ctx({ hechos })),
+    ).toHaveLength(1)
+  })
+
+  it('si el cliente vuelve a escribir, la cuenta empieza de nuevo', () => {
+    const viejo = fila(32)
+    const hechos = new Set([claveHecho(viejo.telefono, 1, viejo.ultima_interaccion)])
+    // nueva interacción: otra marca de tiempo, otra clave
+    const nuevo = fila(31, { ultima_interaccion: haceMin(31) })
+    expect(
+      elegirCandidatos(
+        [nuevo],
+        ctx({ hechos: new Set([claveHecho(nuevo.telefono, 1, haceMin(200))]) }),
+      ),
+    ).toHaveLength(1)
+    expect(hechos.size).toBe(1)
+  })
+
+  it('pasa a la redacción lo ya enviado, para no repetirse', () => {
+    const f = fila(62)
+    const textosPrevios = new Map([
+      [`${f.telefono}|${new Date(f.ultima_interaccion).getTime()}`, ['¿Pudo ver el precio?']],
+    ])
+    expect(elegirCandidatos([f], ctx({ textosPrevios }))[0]?.anteriores).toEqual([
+      '¿Pudo ver el precio?',
+    ])
   })
 
   it('no molesta al que ya pidió, al escalado, al frío ni al equipo', () => {
-    expect(elegirCandidatos([fila({}, { proxima_accion: 'pedido_creado' })], ctx())).toHaveLength(0)
-    expect(elegirCandidatos([fila({}, { escalado: true })], ctx())).toHaveLength(0)
-    expect(elegirCandidatos([fila({}, { temperatura: 'frio' })], ctx())).toHaveLength(0)
-    expect(elegirCandidatos([fila()], ctx({ equipo: new Set(['+593990000001']) }))).toHaveLength(0)
-    expect(elegirCandidatos([fila()], ctx({ excluidos: new Set(['+593990000001']) }))).toHaveLength(
+    expect(
+      elegirCandidatos([fila(32, {}, { proxima_accion: 'pedido_creado' })], ctx()),
+    ).toHaveLength(0)
+    expect(elegirCandidatos([fila(32, {}, { escalado: true })], ctx())).toHaveLength(0)
+    expect(elegirCandidatos([fila(32, {}, { temperatura: 'frio' })], ctx())).toHaveLength(0)
+    expect(elegirCandidatos([fila(32)], ctx({ equipo: new Set(['+593990000001']) }))).toHaveLength(
       0,
     )
+    expect(
+      elegirCandidatos([fila(32)], ctx({ excluidos: new Set(['+593990000001']) })),
+    ).toHaveLength(0)
   })
 
   it('sin conversación de Chatwoot o sin nada que retomar no hay mensaje posible', () => {
-    expect(elegirCandidatos([fila({ chatwoot_conversation_id: null })], ctx())).toHaveLength(0)
-    expect(elegirCandidatos([fila({}, { ultima_respuesta_agente: '' })], ctx())).toHaveLength(0)
+    expect(elegirCandidatos([fila(32, { chatwoot_conversation_id: null })], ctx())).toHaveLength(0)
+    expect(elegirCandidatos([fila(32, {}, { ultima_respuesta_agente: '' })], ctx())).toHaveLength(0)
   })
 
   it('el nombre solo sale si el cliente o el CRM lo dieron', () => {
-    const con = elegirCandidatos([fila()], ctx({ nombres: new Map([['+593990000001', 'Ana']]) }))
+    const con = elegirCandidatos([fila(32)], ctx({ nombres: new Map([['+593990000001', 'Ana']]) }))
     expect(con[0]?.nombre).toBe('Ana')
-    expect(elegirCandidatos([fila()], ctx())[0]?.nombre).toBeNull()
+    expect(elegirCandidatos([fila(32)], ctx())[0]?.nombre).toBeNull()
   })
 })
 
@@ -76,7 +140,7 @@ describe('seguimiento: solo en horario del local', () => {
   it('escribe en horario y no de madrugada, de noche ni en domingo', () => {
     expect(dentroDelHorario(AHORA, config)).toBe(true) // jueves 10:00
     expect(dentroDelHorario(new Date('2026-10-01T11:00:00Z'), config)).toBe(false) // 06:00
-    expect(dentroDelHorario(new Date('2026-10-01T23:30:00Z'), config)).toBe(false) // 18:30: queda menos de una hora
+    expect(dentroDelHorario(new Date('2026-10-02T00:00:00Z'), config)).toBe(false) // 19:00
     expect(dentroDelHorario(new Date('2026-10-04T15:00:00Z'), config)).toBe(false) // domingo
   })
 })

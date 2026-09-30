@@ -1,5 +1,7 @@
 // Agente de seguimiento: retoma a quien pidió precio y dejó de contestar, dentro
-// de la ventana de 24 h de WhatsApp. Cada 30 minutos en horario del local:
+// de la ventana de 24 h de WhatsApp. Son cuatro mensajes, a los 30 min, 1 h, 6 h y
+// 23 h 30 min de silencio; si en ese lapso no contrata, no se insiste más.
+// Cada 5 minutos en horario del local:
 //   CRM decide a quién (y en qué modo: apagado / borrador / activo)
 //   → Chatwoot confirma que ninguna persona se hizo cargo (etiqueta o respuesta a mano)
 //   → OpenAI redacta un mensaje corto con lo que ya se habló
@@ -12,8 +14,15 @@ const CRED_CRM = { httpHeaderAuth: { id: '9456EHfb8yxpZOmr', name: 'CRM Laundry 
 const CRED_CW = { httpHeaderAuth: { id: '3W2BykSid0f9dMTV', name: 'Chatwoot Laundry VIP API' } }
 const CRED_OPENAI = { openAiApi: { id: 'GvNmUCZRx5ZvZerQ', name: 'OpenAi account' } }
 
-const SISTEMA = `Escribes por WhatsApp a nombre de una lavandería de barrio en La Kennedy, Quito. Un cliente pidió información o precio hace unas horas y no volvió a escribir. Redacta UN mensaje corto (máximo 35 palabras) para retomar la conversación.
-Reglas: trátalo de usted, con calidez y sin presionar. Retoma lo que él pidió con sus propias palabras y ofrece el siguiente paso concreto (agendar la recogida, resolver una duda). No repitas el mensaje anterior. No inventes precios, fechas ni promociones: si mencionas un monto, tiene que ser uno que ya se le dijo. Usa su nombre solo si te lo doy. No digas que eres un asistente, un bot o un sistema, ni pidas disculpas por escribir. Sin emojis. Responde solo con el texto del mensaje.`
+const SISTEMA = `Escribes por WhatsApp a nombre de una lavandería de barrio en La Kennedy, Quito. Un cliente pidió información o precio y dejó de contestar. Te digo cuál de cuatro seguimientos es y qué busca. Redacta UN mensaje corto (máximo 35 palabras) para retomar la conversación.
+Reglas: trátalo de usted, con calidez y sin presionar. Retoma lo que él pidió con sus propias palabras y ofrece el siguiente paso concreto (agendar la recogida, resolver una duda). No repitas ni parafrasees los seguimientos que ya le mandamos. No inventes precios, fechas ni promociones: si mencionas un monto, tiene que ser uno que ya se le dijo. Usa su nombre solo si te lo doy. No digas que eres un asistente, un bot o un sistema, ni pidas disculpas por escribir. Sin emojis. Responde solo con el texto del mensaje.`
+
+const GUIA = {
+  1: 'Un recordatorio suave y breve: pregunta si pudo ver el precio o si le quedó alguna duda.',
+  2: 'Ofrece resolver lo que lo frena: una duda del servicio, del precio o de cómo funciona la recogida.',
+  3: 'Propón algo concreto y fácil: agendar la recogida para mañana o que traiga la ropa al local.',
+  4: 'Último mensaje. Cordial y sin presión: avisa que queda a su disposición si más adelante lo necesita. No propongas más pasos ni insistas.',
+}
 
 const PROMPT_USUARIO = `={{ JSON.stringify({
   model: 'gpt-4.1-mini',
@@ -26,6 +35,8 @@ const PROMPT_USUARIO = `={{ JSON.stringify({
       'Lo que necesita: ' + $('Uno por Candidato').item.json.necesidad,
       'Lo último que escribió: ' + $('Uno por Candidato').item.json.ultimo_mensaje_cliente,
       'Lo último que le respondimos: ' + $('Uno por Candidato').item.json.ultima_respuesta_agente,
+      'Seguimiento número ' + $('Uno por Candidato').item.json.paso + ' de 4. ' + (${JSON.stringify(GUIA)})[$('Uno por Candidato').item.json.paso],
+      'Seguimientos que ya le mandamos: ' + ($('Uno por Candidato').item.json.anteriores.join(' | ') || '(ninguno)'),
     ].join('\\n') },
   ],
 }) }}`
@@ -43,6 +54,7 @@ const privado = c.modo !== 'activo';
 return [{ json: {
   texto,
   privado,
+  paso: c.paso,
   contenido: privado ? '📝 Borrador de seguimiento (NO se envió al cliente). Si le sirve, cópielo y envíelo:\\n\\n' + texto : texto,
 } }];`
 
@@ -74,15 +86,15 @@ const crm = (name, cuerpo, position) => ({
 const nodos = [
   {
     parameters: {
-      rule: { interval: [{ field: 'cronExpression', expression: '*/30 9-18 * * 1-6' }] },
+      rule: { interval: [{ field: 'cronExpression', expression: '*/5 9-18 * * 1-6' }] },
     },
-    name: 'Seguimiento cada 30 min',
+    name: 'Seguimiento cada 5 min',
     type: 'n8n-nodes-base.scheduleTrigger',
     typeVersion: 1.2,
     position: [-2000, 1600],
     id: crypto.randomUUID(),
     notes:
-      'Lunes a sábado, 9:00 a 18:30 (zona America/Guayaquil). El CRM además revisa el horario del local.',
+      'Lunes a sábado, 9:00 a 18:55 (zona America/Guayaquil). El CRM además revisa el horario del local y decide qué paso toca.',
   },
   crm(
     'Candidatos Seguimiento',
@@ -204,16 +216,37 @@ const nodos = [
     credentials: CRED_CW,
     onError: 'continueRegularOutput',
   },
+  {
+    parameters: {
+      operation: 'executeQuery',
+      // Solo en modo activo: un borrador nunca llegó al cliente y el agente no debe creer que sí.
+      query:
+        "INSERT INTO n8n_laundry_chat_histories (session_id, message) SELECT $1, $2::jsonb WHERE $3 = 'activo'",
+      options: {
+        queryReplacement:
+          "={{ [$('Uno por Candidato').item.json.telefono.replace(/[^0-9]/g, ''), JSON.stringify({ type: 'ai', data: { content: $('Armar Seguimiento').item.json.texto, additional_kwargs: {}, response_metadata: {} } }), $('Uno por Candidato').item.json.modo] }}",
+      },
+    },
+    name: 'Guardar Seguimiento en Memoria',
+    type: 'n8n-nodes-base.postgres',
+    typeVersion: 2.5,
+    position: [-200, 1600],
+    id: crypto.randomUUID(),
+    credentials: { postgres: { id: 'uS6oHAzjK8OQg6K3', name: 'Postgres Laundry VIP' } },
+    onError: 'continueRegularOutput',
+    notes:
+      'Como el follow-up de 321: lo que se le escribió al cliente queda en la memoria del agente.',
+  },
   crm(
     'Anotar Seguimiento',
-    `{ accion: 'registrar_seguimiento', parametros: { telefono: $('Uno por Candidato').item.json.telefono, chatwoot_conversation_id: $('Uno por Candidato').item.json.chatwoot_conversation_id, modo: $('Uno por Candidato').item.json.modo === 'activo' ? 'activo' : 'borrador', mensaje: $('Armar Seguimiento').item.json.texto, interaccion_base: $('Uno por Candidato').item.json.interaccion_base } }`,
-    [-80, 1600],
+    `{ accion: 'registrar_seguimiento', parametros: { telefono: $('Uno por Candidato').item.json.telefono, chatwoot_conversation_id: $('Uno por Candidato').item.json.chatwoot_conversation_id, modo: $('Uno por Candidato').item.json.modo === 'activo' ? 'activo' : 'borrador', paso: $('Uno por Candidato').item.json.paso, mensaje: $('Armar Seguimiento').item.json.texto, interaccion_base: $('Uno por Candidato').item.json.interaccion_base } }`,
+    [40, 1600],
   ),
 ]
 
 const main = (d) => ({ main: [[{ node: d, type: 'main', index: 0 }]] })
 const conexiones = {
-  'Seguimiento cada 30 min': main('Candidatos Seguimiento'),
+  'Seguimiento cada 5 min': main('Candidatos Seguimiento'),
   'Candidatos Seguimiento': main('Uno por Candidato'),
   'Uno por Candidato': main('Conversacion Seguimiento'),
   'Conversacion Seguimiento': main('Mensajes Seguimiento'),
@@ -221,7 +254,8 @@ const conexiones = {
   'Sin Persona a Cargo?': main('Redactar Seguimiento'),
   'Redactar Seguimiento': main('Armar Seguimiento'),
   'Armar Seguimiento': main('Enviar Seguimiento'),
-  'Enviar Seguimiento': main('Anotar Seguimiento'),
+  'Enviar Seguimiento': main('Guardar Seguimiento en Memoria'),
+  'Guardar Seguimiento en Memoria': main('Anotar Seguimiento'),
 }
 
 module.exports = { nodos, conexiones }

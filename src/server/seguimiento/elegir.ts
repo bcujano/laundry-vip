@@ -1,13 +1,37 @@
 /**
- * Seguimiento: a quién se le escribe. Toda la decisión es pura y vive aquí
- * para poder probarla sin base: el repositorio solo junta los datos.
+ * Seguimiento: a quién se le escribe y cuál de los cuatro mensajes le toca.
+ * Toda la decisión es pura y vive aquí para poder probarla sin base: el
+ * repositorio solo junta los datos.
  */
 
-/** Silencio mínimo antes de insistir, y tope para no salirse de las 24 h de Meta. */
-export const SILENCIO_MIN_HORAS = 3
-export const SILENCIO_MAX_HORAS = 21
-/** Un cliente recibe a lo sumo un seguimiento cada 48 h. */
-export const ENFRIAMIENTO_HORAS = 48
+/**
+ * Los cuatro seguimientos, en minutos de silencio del cliente. Recorren la
+ * ventana de 24 h de WhatsApp; el último sale a las 23 h 30 min y tiene que
+ * salir antes de las 23 h 54 min, o Meta ya no deja mandar texto libre.
+ * Cada paso tiene un margen porque n8n pregunta cada 5 minutos.
+ */
+export const PASOS = [
+  { paso: 1, desde: 30, hasta: 45 },
+  { paso: 2, desde: 60, hasta: 75 },
+  { paso: 3, desde: 360, hasta: 375 },
+  { paso: 4, desde: 1410, hasta: 1434 },
+] as const
+
+/** El silencio más corto y el más largo que puede tocar un seguimiento. */
+export const SILENCIO_MIN_MINUTOS = 30
+export const SILENCIO_MAX_MINUTOS = 1434
+
+export type Paso = (typeof PASOS)[number]['paso']
+
+/** Qué paso toca con ese silencio, o null si ninguno. */
+export function pasoDebido(minutosDeSilencio: number): Paso | null {
+  const p = PASOS.find((x) => minutosDeSilencio >= x.desde && minutosDeSilencio < x.hasta)
+  return p ? p.paso : null
+}
+
+/** Clave de un seguimiento ya hecho: ese paso, de esa conversación, en ese silencio. */
+export const claveHecho = (telefono: string, paso: number, interaccion: string | number | Date) =>
+  `${telefono}|${paso}|${new Date(interaccion).getTime()}`
 
 export type FilaConversacion = {
   telefono: string
@@ -17,6 +41,9 @@ export type FilaConversacion = {
 }
 
 export type Candidato = {
+  paso: Paso
+  /** Seguimientos que ya se le mandaron en este mismo silencio, para no repetirse. */
+  anteriores: string[]
   telefono: string
   chatwoot_conversation_id: number
   interaccion_base: string
@@ -31,8 +58,12 @@ export type ContextoSeleccion = {
   ahora: Date
   /** Teléfonos del equipo (lista blanca): nunca son leads. */
   equipo: Set<string>
-  /** Teléfonos con pedido reciente o con seguimiento reciente. */
+  /** Teléfonos con pedido reciente. */
   excluidos: Set<string>
+  /** Seguimientos ya hechos (`claveHecho`). */
+  hechos: Set<string>
+  /** Textos ya enviados en un mismo silencio: clave `telefono|interaccion`. */
+  textosPrevios: Map<string, string[]>
   /** Nombre que dijo el cliente o puso el CRM; el del perfil de WhatsApp no cuenta. */
   nombres: Map<string, string>
 }
@@ -40,26 +71,30 @@ export type ContextoSeleccion = {
 const texto = (valor: unknown): string => (typeof valor === 'string' ? valor.trim() : '')
 
 export function elegirCandidatos(filas: FilaConversacion[], ctx: ContextoSeleccion): Candidato[] {
-  const horas = (desde: string) => (ctx.ahora.getTime() - new Date(desde).getTime()) / 3_600_000
+  const minutos = (desde: string) => (ctx.ahora.getTime() - new Date(desde).getTime()) / 60_000
 
   return filas.flatMap((fila) => {
-    const silencio = horas(fila.ultima_interaccion)
-    if (silencio < SILENCIO_MIN_HORAS || silencio > SILENCIO_MAX_HORAS) return []
+    const paso = pasoDebido(minutos(fila.ultima_interaccion))
+    if (paso === null) return []
+    if (ctx.hechos.has(claveHecho(fila.telefono, paso, fila.ultima_interaccion))) return []
     if (fila.chatwoot_conversation_id === null) return []
     if (ctx.equipo.has(fila.telefono) || ctx.excluidos.has(fila.telefono)) return []
 
     const c = fila.contexto
     if (c.escalado === true) return []
     if (c.temperatura !== 'tibio' && c.temperatura !== 'caliente') return []
-    // Ya pidió, o quedó esperando algo de nosotros: no es un lead dormido.
+    // Ya pidió: no es un lead dormido.
     const accion = texto(c.proxima_accion)
-    if (accion === 'pedido_creado' || accion === 'seguimiento') return []
+    if (accion === 'pedido_creado') return []
     // Sin lo último que se le dijo no hay de qué colgar el mensaje.
     const respuesta = texto(c.ultima_respuesta_agente)
     if (respuesta === '') return []
 
+    const silencio = `${fila.telefono}|${new Date(fila.ultima_interaccion).getTime()}`
     return [
       {
+        paso,
+        anteriores: ctx.textosPrevios.get(silencio) ?? [],
         telefono: fila.telefono,
         chatwoot_conversation_id: fila.chatwoot_conversation_id,
         interaccion_base: fila.ultima_interaccion,
@@ -83,5 +118,5 @@ export function dentroDelHorario(
   if (!config.dias_operacion.includes(dia)) return false
   const minutos = quito.getUTCHours() * 60 + quito.getUTCMinutes()
   const aMinutos = (hhmm: string) => Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3, 5))
-  return minutos >= aMinutos(config.hora_apertura) && minutos < aMinutos(config.hora_cierre) - 60
+  return minutos >= aMinutos(config.hora_apertura) && minutos < aMinutos(config.hora_cierre) - 30
 }

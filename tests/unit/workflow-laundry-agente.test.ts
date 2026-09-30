@@ -139,10 +139,10 @@ describe('agente Laundry VIP (clon del 321)', () => {
 
   it('el seguimiento retoma leads dentro de las 24 h, sin persona a cargo y sin inventar precios', () => {
     const c = workflow.connections
-    const disparador = workflow.nodes.find((n) => n.name === 'Seguimiento cada 30 min')
-    expect(JSON.stringify(disparador?.parameters)).toContain('*/30 9-18 * * 1-6')
+    const disparador = workflow.nodes.find((n) => n.name === 'Seguimiento cada 5 min')
+    expect(JSON.stringify(disparador?.parameters)).toContain('*/5 9-18 * * 1-6')
     const cadena = [
-      'Seguimiento cada 30 min',
+      'Seguimiento cada 5 min',
       'Candidatos Seguimiento',
       'Uno por Candidato',
       'Conversacion Seguimiento',
@@ -151,6 +151,7 @@ describe('agente Laundry VIP (clon del 321)', () => {
       'Redactar Seguimiento',
       'Armar Seguimiento',
       'Enviar Seguimiento',
+      'Guardar Seguimiento en Memoria',
       'Anotar Seguimiento',
     ]
     for (let i = 0; i < cadena.length - 1; i++) {
@@ -166,6 +167,12 @@ describe('agente Laundry VIP (clon del 321)', () => {
     // solo valen los montos que ya se le dijeron al cliente
     expect(armar).toContain('ultima_respuesta_agente')
     expect(JSON.stringify(porNombre('Redactar Seguimiento')?.parameters)).toContain('gpt-4.1-mini')
+    // los cuatro pasos y la memoria del agente (solo si de verdad se envió)
+    expect(JSON.stringify(porNombre('Redactar Seguimiento')?.parameters)).toContain('de 4')
+    expect(JSON.stringify(porNombre('Guardar Seguimiento en Memoria')?.parameters)).toContain(
+      "'activo'",
+    )
+    expect(JSON.stringify(porNombre('Anotar Seguimiento')?.parameters)).toContain('paso')
   })
 
   it('la memoria va en su propia tabla', () => {

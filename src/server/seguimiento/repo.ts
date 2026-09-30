@@ -2,22 +2,22 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 import { obtener as obtenerConfig } from '@/server/configuracion/repo'
 import {
   type Candidato,
+  claveHecho,
   dentroDelHorario,
-  ENFRIAMIENTO_HORAS,
   elegirCandidatos,
   type FilaConversacion,
-  SILENCIO_MAX_HORAS,
-  SILENCIO_MIN_HORAS,
+  SILENCIO_MAX_MINUTOS,
+  SILENCIO_MIN_MINUTOS,
 } from './elegir'
 
 export type ModoSeguimiento = 'apagado' | 'borrador' | 'activo'
 
 const LIMITE_POR_CORRIDA = 10
 
-const haceHoras = (ahora: Date, horas: number) =>
-  new Date(ahora.getTime() - horas * 3_600_000).toISOString()
+const haceMinutos = (ahora: Date, minutos: number) =>
+  new Date(ahora.getTime() - minutos * 60_000).toISOString()
 
-/** A quién se le escribe ahora, y en qué modo. Fuera de horario o apagado: nadie. */
+/** A quién se le escribe ahora, qué paso le toca y en qué modo. Fuera de horario o apagado: nadie. */
 export async function buscarCandidatos(
   ahora = new Date(),
 ): Promise<{ modo: ModoSeguimiento; candidatos: Candidato[] }> {
@@ -29,8 +29,8 @@ export async function buscarCandidatos(
   const { data: filas, error } = await db
     .from('conversaciones')
     .select('telefono, chatwoot_conversation_id, ultima_interaccion, contexto')
-    .gte('ultima_interaccion', haceHoras(ahora, SILENCIO_MAX_HORAS))
-    .lte('ultima_interaccion', haceHoras(ahora, SILENCIO_MIN_HORAS))
+    .gte('ultima_interaccion', haceMinutos(ahora, SILENCIO_MAX_MINUTOS))
+    .lte('ultima_interaccion', haceMinutos(ahora, SILENCIO_MIN_MINUTOS))
     .order('ultima_interaccion', { ascending: true })
     .limit(100)
   if (error) throw new Error(`No se pudieron leer las conversaciones: ${error.message}`)
@@ -38,7 +38,7 @@ export async function buscarCandidatos(
   if (conversaciones.length === 0) return { modo, candidatos: [] }
 
   const telefonos = conversaciones.map((f) => f.telefono)
-  const [equipo, clientes, recientes] = await Promise.all([
+  const [equipo, clientes, previos] = await Promise.all([
     db.from('operador_whitelist').select('telefono').in('telefono', telefonos),
     db
       .from('clientes')
@@ -46,9 +46,10 @@ export async function buscarCandidatos(
       .in('telefono', telefonos),
     db
       .from('seguimientos')
-      .select('telefono')
+      .select('telefono, paso, mensaje, interaccion_base')
       .in('telefono', telefonos)
-      .gte('created_at', haceHoras(ahora, ENFRIAMIENTO_HORAS)),
+      .gte('interaccion_base', haceMinutos(ahora, SILENCIO_MAX_MINUTOS + 60))
+      .order('paso', { ascending: true }),
   ])
 
   const clientesFila = (clientes.data ?? []) as {
@@ -64,10 +65,10 @@ export async function buscarCandidatos(
       'cliente_id',
       clientesFila.map((c) => c.id),
     )
-    .gte('created_at', haceHoras(ahora, SILENCIO_MAX_HORAS + 24))
+    .gte('created_at', haceMinutos(ahora, SILENCIO_MAX_MINUTOS + 24 * 60))
   const conPedido = new Set((pedidos ?? []).map((p) => p.cliente_id as string))
 
-  const excluidos = new Set<string>((recientes.data ?? []).map((r) => r.telefono as string))
+  const excluidos = new Set<string>()
   const nombres = new Map<string, string>()
   for (const c of clientesFila) {
     if (conPedido.has(c.id)) excluidos.add(c.telefono)
@@ -77,10 +78,25 @@ export async function buscarCandidatos(
     }
   }
 
+  const hechos = new Set<string>()
+  const textosPrevios = new Map<string, string[]>()
+  for (const p of (previos.data ?? []) as {
+    telefono: string
+    paso: number
+    mensaje: string
+    interaccion_base: string
+  }[]) {
+    hechos.add(claveHecho(p.telefono, p.paso, p.interaccion_base))
+    const clave = `${p.telefono}|${new Date(p.interaccion_base).getTime()}`
+    textosPrevios.set(clave, [...(textosPrevios.get(clave) ?? []), p.mensaje])
+  }
+
   const candidatos = elegirCandidatos(conversaciones, {
     ahora,
     equipo: new Set((equipo.data ?? []).map((e) => e.telefono as string)),
     excluidos,
+    hechos,
+    textosPrevios,
     nombres,
   }).slice(0, LIMITE_POR_CORRIDA)
   return { modo, candidatos }
@@ -92,6 +108,7 @@ export async function registrarSeguimiento(datos: {
   modo: 'borrador' | 'activo'
   mensaje: string
   interaccion_base: string
+  paso: number
 }): Promise<void> {
   const { error } = await supabaseAdmin().from('seguimientos').insert(datos)
   if (error) throw new Error(`No se pudo registrar el seguimiento: ${error.message}`)
