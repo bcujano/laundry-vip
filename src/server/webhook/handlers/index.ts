@@ -13,7 +13,7 @@ import { actualizarRegistro, registrarClientePresencial } from './operador'
 import { consultarEstadoPorTelefono, consultarPedidoPorId, crear } from './pedidos'
 import { avanzarEstadoPlanta, buscarPedidos, registrarConteo } from './planta'
 import { generarReporte } from './reportes'
-import { anotarSeguimiento, candidatosSeguimiento } from './seguimiento'
+import { anotarSeguimiento, candidatosSeguimiento, registrarConversion } from './seguimiento'
 
 /**
  * Registro de acciones. Añadir una acción es añadir su schema y su entrada
@@ -42,6 +42,7 @@ const MANEJADORES: Record<Accion, Manejador> = {
   consultar_pedido: consultarPedidoPorId,
   candidatos_seguimiento: candidatosSeguimiento,
   registrar_seguimiento: anotarSeguimiento,
+  registrar_conversion: registrarConversion,
 }
 
 export async function despachar(

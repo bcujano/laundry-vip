@@ -92,6 +92,12 @@ export function elegirCandidatos(filas: FilaConversacion[], ctx: ContextoSelecci
 
     const c = fila.contexto
     if (c.escalado === true) return []
+    // Ya se detectó en Chatwoot que contrató, agendó o dijo que no, y desde entonces
+    // no ha vuelto a escribir. Si escribe de nuevo, se vuelve a evaluar.
+    const estadoEn = texto(c.estado_comercial_en)
+    if (texto(c.estado_comercial) !== '' && estadoEn !== '') {
+      if (new Date(estadoEn).getTime() >= new Date(fila.ultima_interaccion).getTime()) return []
+    }
     if (c.temperatura !== 'tibio' && c.temperatura !== 'caliente') return []
     // Ya pidió: no es un lead dormido.
     const accion = texto(c.proxima_accion)

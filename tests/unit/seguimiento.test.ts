@@ -117,6 +117,19 @@ describe('seguimiento: a quién se le escribe', () => {
     ).toHaveLength(0)
   })
 
+  it('no insiste a quien ya se detectó que contrató, agendó o dijo que no, salvo que vuelva a escribir', () => {
+    const f = fila(400)
+    const despues = new Date(new Date(f.ultima_interaccion).getTime() + 60_000).toISOString()
+    const antes = new Date(new Date(f.ultima_interaccion).getTime() - 60_000).toISOString()
+    for (const estado of ['vendido', 'agendado', 'rechazado']) {
+      const cerrado = fila(400, {}, { estado_comercial: estado, estado_comercial_en: despues })
+      expect(elegirCandidatos([cerrado], ctx())).toHaveLength(0)
+    }
+    // escribió otra vez después de la detección: se vuelve a evaluar
+    const volvio = fila(400, {}, { estado_comercial: 'vendido', estado_comercial_en: antes })
+    expect(elegirCandidatos([volvio], ctx())).toHaveLength(1)
+  })
+
   it('pasa a la redacción lo ya enviado, para no repetirse', () => {
     const f = fila(62)
     const textosPrevios = new Map([

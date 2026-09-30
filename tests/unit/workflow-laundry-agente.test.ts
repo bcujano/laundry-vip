@@ -148,6 +148,10 @@ describe('agente Laundry VIP (clon del 321)', () => {
       'Conversacion Seguimiento',
       'Mensajes Seguimiento',
       'Sin Persona a Cargo?',
+      'Armar Transcripcion',
+      'Clasificar Conversion',
+      'Leer Clasificacion',
+      'Sigue Abierto?',
       'Redactar Seguimiento',
       'Armar Seguimiento',
       'Enviar Seguimiento',
@@ -179,6 +183,29 @@ describe('agente Laundry VIP (clon del 321)', () => {
       "'activo'",
     )
     expect(JSON.stringify(porNombre('Anotar Seguimiento')?.parameters)).toContain('paso')
+  })
+
+  it('antes de insistir, lee la conversación: si ya compró entra al CRM y no se le insiste', () => {
+    const c = workflow.connections
+    // abierto → sigue el seguimiento; cualquier otro estado → se registra y se avisa
+    expect(c['Sigue Abierto?']?.main?.[0]?.[0]?.node).toBe('Redactar Seguimiento')
+    expect(c['Sigue Abierto?']?.main?.[1]?.[0]?.node).toBe('Registrar Conversion')
+    expect(c['Registrar Conversion']?.main?.[0]?.[0]?.node).toBe('Nota Conversion')
+    const clasificar = JSON.stringify(porNombre('Clasificar Conversion')?.parameters)
+    for (const estado of ['vendido', 'agendado', 'rechazado', 'abierto']) {
+      expect(clasificar).toContain(estado)
+    }
+    // ante la duda, abierto: nunca se deja de atender por una clasificación incierta
+    expect(String(porNombre('Leer Clasificacion')?.parameters.jsCode)).toContain(
+      "estado: 'abierto'",
+    )
+    expect(JSON.stringify(porNombre('Registrar Conversion')?.parameters)).toContain(
+      'registrar_conversion',
+    )
+    // el pedido no se inventa desde un chat: se avisa que falta
+    expect(JSON.stringify(porNombre('Nota Conversion')?.parameters)).toContain(
+      'FALTA crear su pedido',
+    )
   })
 
   it('la memoria va en su propia tabla', () => {
