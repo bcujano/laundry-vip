@@ -108,6 +108,10 @@ export type Configuracion = {
   hora_cierre_sabado: string
   /** Hasta dónde llega la recolección, en km a la redonda del local. */
   radio_cobertura_km: number
+  /** Dónde queda el local, el fijo y el enlace de Google Maps (migración 0014). */
+  direccion_local: string
+  telefono_local: string
+  enlace_mapa: string
   margen_minimo_minutos: number
   /** Tarifa única de recogida y entrega, aparte del costo del lavado. */
   tarifa_recoleccion_entrega: number

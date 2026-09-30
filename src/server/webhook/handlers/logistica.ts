@@ -1,4 +1,5 @@
 import { horarioLegible } from '@/server/configuracion/horario'
+import { datosDelLocal } from '@/server/configuracion/local'
 import { obtener as obtenerConfig, parametrosVentana } from '@/server/configuracion/repo'
 import { calcularVehiculo, ErrorCotizacion } from '@/server/pricing/cotizar'
 import { limitesDelDia, obtenerProximaVentana, ultimaHoraDelDia } from '@/server/scheduling/ventana'
@@ -81,6 +82,7 @@ export async function proximaVentana(parametros: ParametrosDe<'obtener_proxima_v
     hora_cierre: negocio.hora_cierre.slice(0, 5),
     // Ya escritos para decírselos al cliente tal cual, sin que el agente los arme.
     horario: horarioLegible(negocio),
+    ...datosDelLocal(negocio),
     cobertura: `${Number(negocio.radio_cobertura_km).toString().replace('.', ',')} km a la redonda del local`,
     tarifa_recoleccion_entrega: Number(negocio.tarifa_recoleccion_entrega),
     // El lapso de entrega también sale del CRM: el prompt no lleva números.

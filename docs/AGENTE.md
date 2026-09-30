@@ -49,6 +49,7 @@ Resumen 8:00 (L-S) → datos del CRM → un mensaje por admin → ¿escribió en
 |---|---|---|
 | Precios, métodos, unidades, promociones | tabla `servicios` | `cotizar_prendas` |
 | Cómo nombra el cliente cada prenda | `servicios.sinonimos` | `cotizar_prendas` (emparejador) |
+| Dirección, fijo, enlace de mapa | `configuracion` | `Verificar Operador` → `negocio` |
 | Nombre del negocio | `configuracion.nombre_negocio` | `Verificar Operador` → `negocio.nombre` |
 | Horario en palabras | `configuracion` (apertura, cierre, cierre sábado, días) | `obtener_proxima_ventana` → `horario` |
 | Hasta dónde se recoge | `configuracion.radio_cobertura_km` | `obtener_proxima_ventana` → `cobertura` |
@@ -56,9 +57,7 @@ Resumen 8:00 (L-S) → datos del CRM → un mensaje por admin → ¿escribió en
 | Plazo de entrega | `configuracion.horas_entrega_min/max` | `obtener_proxima_ventana` |
 | Ventana de recolección (cualquier día) | `configuracion` + reloj | `obtener_proxima_ventana` con `desde` |
 
-**Lo único que sigue escrito en el prompt:** la dirección del local, el fijo
-(02) 281-0815 y el enlace de Google Maps. Hay que moverlos a Configuración
-(CONTINUIDAD §4, B3).
+**Dirección, fijo y enlace de mapa** también salen de Configuración (`negocio.direccion`, `negocio.telefono`, `negocio.enlace_mapa`, vía `Verificar Operador`). Ya no queda nada del negocio escrito en el prompt.
 
 ## 3. Las herramientas
 

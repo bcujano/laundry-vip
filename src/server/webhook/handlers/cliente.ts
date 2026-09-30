@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { horarioLegible } from '@/server/configuracion/horario'
+import { datosDelLocal } from '@/server/configuracion/local'
 import { obtener as obtenerConfig } from '@/server/configuracion/repo'
 import { cotizarPrendas, ErrorCotizacion } from '@/server/pricing/cotizar'
 import type { Cliente, Conversacion } from '@/types/database'
@@ -148,6 +149,7 @@ export async function verificarWhitelistOperador(
       saludo: negocio.saludo_agente,
       cobertura: `${Number(negocio.radio_cobertura_km).toString().replace('.', ',')} km a la redonda del local`,
       horario: horarioLegible(negocio),
+      ...datosDelLocal(negocio),
     },
   })
 }

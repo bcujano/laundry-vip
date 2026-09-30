@@ -208,12 +208,26 @@ describe('acciones de logística', () => {
       accion: 'verificar_whitelist_operador',
       parametros: { telefono: TELEFONO },
     })
-    const negocio = (sobre.data as { negocio: { cobertura: string; horario: string } }).negocio
+    const negocio = (
+      sobre.data as {
+        negocio: {
+          cobertura: string
+          horario: string
+          direccion: string
+          telefono: string
+          enlace_mapa: string
+        }
+      }
+    ).negocio
     const config = await obtenerConfig()
 
     // Nada de esto está escrito en el prompt: sale de Configuración.
     expect(negocio.cobertura).toContain(String(Number(config.radio_cobertura_km)).replace('.', ','))
     expect(negocio.horario).toContain(config.hora_apertura.slice(0, 5))
+    // La dirección, el fijo y el mapa también: el prompt ya no los lleva escritos.
+    expect(negocio.direccion).toBe(config.direccion_local)
+    expect(negocio.telefono).toBe(config.telefono_local)
+    expect(negocio.enlace_mapa).toBe(config.enlace_mapa)
   })
 
   it('un domingo de madrugada ofrece el lunes, nunca rechaza', async () => {

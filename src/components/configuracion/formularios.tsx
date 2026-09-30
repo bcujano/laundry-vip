@@ -186,6 +186,47 @@ export function FormularioConfiguracion({ config }: { config: Configuracion }) {
         </Etiquetado>
       </div>
 
+      <div className="grid gap-3 sm:grid-cols-3">
+        <Etiquetado para="campo-hora_cierre_sabado" texto="Cierra los sábados">
+          <Campo
+            defaultValue={hhmm(config.hora_cierre_sabado)}
+            id="campo-hora_cierre_sabado"
+            name="hora_cierre_sabado"
+            type="time"
+          />
+        </Etiquetado>
+        <Etiquetado para="campo-radio_cobertura_km" texto="Recogida hasta (km a la redonda)">
+          <Campo
+            defaultValue={config.radio_cobertura_km}
+            min="0.1"
+            id="campo-radio_cobertura_km"
+            name="radio_cobertura_km"
+            step="0.1"
+            type="number"
+          />
+        </Etiquetado>
+        <Etiquetado para="campo-telefono_local" texto="Teléfono del local">
+          <Campo
+            defaultValue={config.telefono_local}
+            id="campo-telefono_local"
+            name="telefono_local"
+          />
+        </Etiquetado>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Etiquetado para="campo-direccion_local" texto="Dirección del local">
+          <Campo
+            defaultValue={config.direccion_local}
+            id="campo-direccion_local"
+            name="direccion_local"
+          />
+        </Etiquetado>
+        <Etiquetado para="campo-enlace_mapa" texto="Enlace de Google Maps">
+          <Campo defaultValue={config.enlace_mapa} id="campo-enlace_mapa" name="enlace_mapa" />
+        </Etiquetado>
+      </div>
+
       <div className="flex items-center gap-3">
         <Boton disabled={pendiente} type="submit">
           {pendiente ? 'Guardando…' : 'Guardar configuración'}

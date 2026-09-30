@@ -50,12 +50,12 @@ activarlo en la tarjeta del workflow.
 | | |
 |---|---|
 | CRM | **https://laundry-vip.vercel.app** · Vercel `bcujanos-projects/laundry-vip` · deploy: `npx vercel --prod --yes` desde `C:\dev\laundry-vip` (el CLI ya tiene sesión) |
-| Base | Supabase `cvdlslltevwxprdktmfu` (São Paulo). **Una sola base: pruebas y producción comparten.** Migraciones `0001`–`0013` aplicadas |
-| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · 68 nodos · activo · versión activa `0eb000f9-eb94-499b-a291-afb706ee367e` (2026-09-30) |
+| Base | Supabase `cvdlslltevwxprdktmfu` (São Paulo). **Una sola base: pruebas y producción comparten.** Migraciones `0001`–`0014` aplicadas |
+| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · 68 nodos · activo · versión activa `01ad3067-b57c-4891-9887-f537bdef5b20` (2026-09-30) |
 | Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · bandeja «Vip Laundry». La cuenta 1 es de 321: **no se toca ni para leer** |
 | WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
 | Repo | local, rama `agente-n8n-laundry`, etiqueta `v1.0` (estado con el número de prueba). Historial reescrito el 2026-09-23 (los SHA cambiaron). Remoto `github.com/bcujano/laundry-vip` configurado pero **el repositorio no existe en GitHub** |
-| Gate | typecheck, lint, build y **276 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
+| Gate | typecheck, lint, build y **277 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
 | Credenciales en n8n | `CRM Laundry VIP Webhook` (id `9456EHfb8yxpZOmr`), `Chatwoot Laundry VIP API`, `Meta WhatsApp Laundry VIP`, `Postgres Laundry VIP`, `OpenAi account` (compartida con 321). Nunca en el JSON |
 | Variables (`.env.local`) | Solo nombres aquí: `SUPABASE_*`, `N8N_WEBHOOK_SECRET`, `CHATWOOT_*`, `WHATSAPP_*`, `OPENAI_API_KEY`, `LOCAL_LATITUD/LONGITUD/DIRECCION` |
 
@@ -145,13 +145,7 @@ actualizar esta sección.
 
 **B2 · Protecciones conectadas — PUBLICADO (2026-09-30), PENDIENTE DE VER CON TRÁFICO REAL.** `n8n/generador/protecciones.cjs`: tras el debounce, `Registrar Entrante` llama a `registrar_evento_entrante` con el teléfono en el sobre (cuenta **un mensaje por turno**, deduplica por id de mensaje de Chatwoot, y devuelve `costo_excedido`); `Puede Continuar?` corta si es repetido, si pasó el tope diario (nota interna para el equipo, sin responder al cliente) o si el gasto del día pasó el techo (aviso al cliente). Un fallo del CRM deja pasar al cliente. Al final del turno `Estimar Uso` → `Registrar Uso` reporta un costo **estimado** (n8n no expone los tokens del agente; la estimación va por encima de lo real). **Primera acción de la próxima sesión:** con un mensaje real, comprobar que `mensajes_diarios`, `eventos_procesados` (claves `chatwoot-…` y `uso-…`) y `uso_openai_diario` dejan de estar vacías, y que el costo estimado por turno es razonable frente a la factura de OpenAI.
 
-**B3 · Dirección, fijo, enlace de mapa y saludo a Configuración.** Hoy siguen
-escritos en el prompt (`De los Pinos y Pedro Barrios`, `(02) 281-0815`, el enlace
-de Google Maps); el `saludo_agente` existe en `configuracion` y está vacío.
-Migración `0014` con `direccion_local`, `telefono_local`, `enlace_mapa`; sembrar
-los valores actuales; devolverlos en `negocio` de `verificar_whitelist_operador`
-y en `obtener_proxima_ventana`; que los prompts los lean de ahí; pantalla de
-Configuración para editarlos; prueba de que el prompt ya no los lleva escritos.
+**B3 · Dirección, fijo y mapa en Configuración — HECHO (2026-09-30).** Migración `0014` (`direccion_local`, `telefono_local`, `enlace_mapa`, sembrados con los valores que traía el prompt); `verificar_whitelist_operador` y `obtener_proxima_ventana` los devuelven; el prompt del agente de clientes los lee de `negocio`; la pantalla de Configuración los edita (y de paso ahora también edita el cierre de sábado y el radio de recogida, que faltaban en el formulario). El `saludo_agente` **no se conectó a propósito**: la decisión del 2026-09-24 es que el saludo cambia cada vez; el campo sigue en pantalla pero el prompt no lo usa (ver si se quita).
 
 **B4 · Cobertura verificable (2,5 km).** Hoy el radio es solo una frase que el
 agente lee; nada impide un pedido fuera de él. Recomendado (sin APIs externas):

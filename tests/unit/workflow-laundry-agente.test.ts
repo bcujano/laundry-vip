@@ -203,6 +203,15 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(systemMessage.split('\n')[0]).not.toContain('Lavandería VIP')
   })
 
+  it('la dirección, el fijo y el mapa salen de Configuración, no del prompt (B3)', () => {
+    expect(systemMessage).not.toContain('Pedro Barrios')
+    expect(systemMessage).not.toContain('281-0815')
+    expect(systemMessage).not.toContain('maps.google.com')
+    expect(systemMessage).toContain('negocio?.direccion')
+    expect(systemMessage).toContain('negocio?.telefono')
+    expect(systemMessage).toContain('negocio?.enlace_mapa')
+  })
+
   it('no hay ninguna llave literal', () => {
     expect(crudo).not.toMatch(/sk-[A-Za-z0-9_-]{20,}/)
     expect(crudo).not.toMatch(/EAA[A-Za-z0-9]{20,}/)
