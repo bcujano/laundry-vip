@@ -1,4 +1,4 @@
-// Las 6 tools del agente de clientes: HTTP Request Tool contra /api/webhook del CRM.
+// Las 5 tools del agente de clientes: HTTP Request Tool contra /api/webhook del CRM.
 const crypto = require('node:crypto')
 
 const CRM_URL = 'https://laundry-vip.vercel.app/api/webhook'
@@ -21,11 +21,6 @@ function agregar(nodes) {
       `{"desde": ${fromAI('desde', 'Fecha desde la que buscar la ventana, formato YYYY-MM-DD. Cadena vacia para la proxima disponible. Si el cliente dice "manana", manda la fecha de manana.')}}`,
     ],
     [
-      'calcular_vehiculo',
-      'Dice si la recolección va en moto o auto según el número de fundas.',
-      `{"numero_fundas": ${fromAI('numero_fundas', 'Número entero de fundas que entregará el cliente', 'number')}}`,
-    ],
-    [
       'find_or_create_client',
       'Busca o registra al cliente por su teléfono. Devuelve cliente.id y si hay que enviar el aviso de privacidad.',
       `{"telefono": "${telefono}", "canal_origen": "whatsapp_agente", "nombre_contacto": ${fromAI('nombre_contacto', 'Nombre de la persona de contacto')}, "nombre_negocio": ${fromAI('nombre_negocio', 'Nombre del negocio; cadena vacía si es particular')}, "tipo_negocio": ${fromAI('tipo_negocio', 'Uno de: clinica, restaurante, hotel, otro, particular')}}`,
@@ -33,7 +28,7 @@ function agregar(nodes) {
     [
       'crear_pedido',
       'Crea el pedido. SOLO después de que el cliente confirmó el resumen con un sí explícito.',
-      `={{ JSON.stringify(Object.assign({canal: 'whatsapp_agente'}, $fromAI('pedido', 'Objeto JSON con: cliente_id (uuid de find_or_create_client), tipo_entrega ("combo" si la lavanderia recoge y entrega con la tarifa unica, "a_la_carta" si el cliente trae y retira su ropa), items (como en cotizar_prendas, con metodo ya elegido), numero_fundas, direccion_recoleccion, sector (barrio o sector de la recogida, como lo dijo el cliente), ventana_recoleccion_inicio y ventana_recoleccion_fin (ISO tal como vinieron), y si el cliente trae y retira, metodo_transporte_recoleccion y metodo_transporte_entrega en "propio_cliente".', 'json'))) }}`,
+      `={{ JSON.stringify(Object.assign({canal: 'whatsapp_agente'}, $fromAI('pedido', 'Objeto JSON con: cliente_id (uuid de find_or_create_client), tipo_entrega ("combo" si la lavanderia recoge y entrega con la tarifa unica, "a_la_carta" si el cliente trae y retira su ropa), items (como en cotizar_prendas, con metodo ya elegido), direccion_recoleccion, sector (barrio o sector de la recogida, como lo dijo el cliente), ventana_recoleccion_inicio y ventana_recoleccion_fin (ISO tal como vinieron), y si el cliente trae y retira, metodo_transporte_recoleccion y metodo_transporte_entrega en "propio_cliente".', 'json'))) }}`,
     ],
     [
       'consultar_estado_pedido',

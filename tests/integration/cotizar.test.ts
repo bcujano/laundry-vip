@@ -259,16 +259,10 @@ describe('es lectura pura', () => {
 })
 
 describe('calcularVehiculo', () => {
-  it('1 funda va en moto', () => {
-    expect(calcularVehiculo(1)).toBe('moto')
-  })
-
-  it('más de 1 funda necesita auto', () => {
+  it('siempre es auto, sin importar cuántas fundas sean (decisión del 2026-10-01)', () => {
+    expect(calcularVehiculo(1)).toBe('auto')
     expect(calcularVehiculo(2)).toBe('auto')
     expect(calcularVehiculo(9)).toBe('auto')
-  })
-
-  it('cero fundas no es un pedido', () => {
-    expect(() => calcularVehiculo(0)).toThrow(ErrorCotizacion)
+    expect(calcularVehiculo()).toBe('auto')
   })
 })

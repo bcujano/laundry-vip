@@ -138,12 +138,11 @@ describe('cotizar_prendas por el webhook', () => {
 })
 
 describe('acciones de logística', () => {
-  it('calcular_vehiculo: 1 funda moto, 3 fundas auto', async () => {
-    const moto = await llamar({ accion: 'calcular_vehiculo', parametros: { numero_fundas: 1 } })
-    expect((moto.sobre.data as { vehiculo: string }).vehiculo).toBe('moto')
-
-    const auto = await llamar({ accion: 'calcular_vehiculo', parametros: { numero_fundas: 3 } })
-    expect((auto.sobre.data as { vehiculo: string }).vehiculo).toBe('auto')
+  it('calcular_vehiculo: siempre auto, con 1 funda, con 3 o sin decir cuántas', async () => {
+    for (const parametros of [{ numero_fundas: 1 }, { numero_fundas: 3 }, {}]) {
+      const r = await llamar({ accion: 'calcular_vehiculo', parametros })
+      expect((r.sobre.data as { vehiculo: string }).vehiculo).toBe('auto')
+    }
   })
 
   it('obtener_proxima_ventana siempre devuelve una ventana futura', async () => {

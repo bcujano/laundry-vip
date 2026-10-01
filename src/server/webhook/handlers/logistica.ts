@@ -1,7 +1,7 @@
 import { horarioLegible } from '@/server/configuracion/horario'
 import { datosDelLocal } from '@/server/configuracion/local'
 import { obtener as obtenerConfig, parametrosVentana } from '@/server/configuracion/repo'
-import { calcularVehiculo, ErrorCotizacion } from '@/server/pricing/cotizar'
+import { calcularVehiculo } from '@/server/pricing/cotizar'
 import { limitesDelDia, obtenerProximaVentana, ultimaHoraDelDia } from '@/server/scheduling/ventana'
 import { exito, fallo, type ResultadoAccion } from '../respuesta'
 import type { ParametrosDe } from '../schemas'
@@ -14,16 +14,11 @@ import type { ParametrosDe } from '../schemas'
 
 export function vehiculo(
   parametros: ParametrosDe<'calcular_vehiculo'>,
-): ResultadoAccion<{ vehiculo: 'moto' | 'auto'; numero_fundas: number }> {
-  try {
-    return exito({
-      vehiculo: calcularVehiculo(parametros.numero_fundas),
-      numero_fundas: parametros.numero_fundas,
-    })
-  } catch (error) {
-    if (error instanceof ErrorCotizacion) return fallo(error.codigo, error.message, 400)
-    throw error
-  }
+): ResultadoAccion<{ vehiculo: 'auto'; numero_fundas: number | null }> {
+  return exito({
+    vehiculo: calcularVehiculo(parametros?.numero_fundas),
+    numero_fundas: parametros?.numero_fundas ?? null,
+  })
 }
 
 /**

@@ -128,10 +128,11 @@ export async function cotizarPrendas(items: ItemPedido[]): Promise<Cotizacion> {
   }
 }
 
-/** 1 funda cabe en moto; más de 1 necesita auto. Nada que ver con las prendas. */
-export function calcularVehiculo(numeroFundas: number): 'moto' | 'auto' {
-  if (!Number.isFinite(numeroFundas) || numeroFundas < 1) {
-    throw new ErrorCotizacion('CANTIDAD_INVALIDA', 'El número de fundas debe ser al menos 1.')
-  }
-  return numeroFundas === 1 ? 'moto' : 'auto'
+/**
+ * Decisión del dueño (2026-10-01): la recolección y la entrega SIEMPRE van en auto,
+ * sin importar cuántas fundas sean. El número de fundas ya no decide nada ni se le
+ * pregunta al cliente; el parámetro se acepta solo para no romper llamadas viejas.
+ */
+export function calcularVehiculo(_numeroFundas?: number): 'auto' {
+  return 'auto'
 }

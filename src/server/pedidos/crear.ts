@@ -163,10 +163,14 @@ export async function crearPedido(entrada: EntradaPedido): Promise<ResultadoCrea
       pago_lavado: esConsolidado ? 'acumulado_mensual' : 'estimado',
       monto_estimado_lavado: cotizacion.resumen.subtotal,
       numero_fundas: entrada.canal === 'presencial' ? null : (entrada.numeroFundas ?? null),
+      // Si la lavandería recoge o entrega, va en auto (decisión del dueño, 2026-10-01).
       vehiculo_sugerido:
-        entrada.canal === 'presencial' || !entrada.numeroFundas
-          ? null
-          : calcularVehiculo(entrada.numeroFundas),
+        entrada.canal !== 'presencial' &&
+        (entrada.tipoEntrega === 'combo' ||
+          entrada.metodoRecoleccion === 'app' ||
+          entrada.metodoEntrega === 'app')
+          ? calcularVehiculo()
+          : null,
       direccion_recoleccion:
         entrada.canal === 'presencial' ? null : (entrada.direccionRecoleccion ?? null),
       ventana_recoleccion_inicio: entrada.canal === 'presencial' ? null : ventana.inicio,

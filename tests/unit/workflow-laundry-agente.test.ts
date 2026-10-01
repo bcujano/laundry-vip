@@ -64,7 +64,7 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(JSON.stringify(porNombre('Transcribir Audio')?.parameters)).toContain('gpt-transcribe')
   })
 
-  it('cuelga las seis tools del CRM y la calculadora del agente', () => {
+  it('cuelga las cinco tools del CRM y la calculadora del agente', () => {
     const tools = Object.entries(workflow.connections)
       .filter(([, tipos]) => tipos.ai_tool?.[0]?.[0]?.node === 'Agente Laundry VIP')
       .map(([nombre]) => nombre)
@@ -72,7 +72,6 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(tools).toEqual(
       [
         'Calculator',
-        'calcular_vehiculo',
         'consultar_estado_pedido',
         'cotizar_prendas',
         'crear_pedido',
@@ -234,6 +233,17 @@ describe('agente Laundry VIP (clon del 321)', () => {
   it('usa el saludo de la casa que define el dueño en Configuración (2026-09-30)', () => {
     expect(systemMessage).toContain('negocio?.saludo')
     expect(systemMessage).toContain('SALUDO DE LA CASA')
+  })
+
+  it('ya no pregunta cuántas fundas: la recogida y la entrega siempre van en auto (2026-10-01)', () => {
+    expect(porNombre('calcular_vehiculo')).toBeUndefined()
+    expect(systemMessage).not.toContain('calcular_vehiculo')
+    expect(systemMessage).toContain('SIEMPRE van en auto')
+    expect(systemMessage).toContain('NUNCA\n   preguntes cuántas fundas')
+    // el pedido tampoco lleva el número de fundas
+    expect(JSON.stringify(porNombre('crear_pedido')?.parameters)).not.toContain('numero_fundas')
+    // al peso: siempre un estimado, y las libras reales se confirman en planta
+    expect(systemMessage).toContain('se pesan en\n     planta')
   })
 
   it('la memoria va en su propia tabla', () => {

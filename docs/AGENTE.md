@@ -59,9 +59,9 @@ Resumen 8:00 (L-S) → datos del CRM → un mensaje por admin → ¿escribió en
 
 ## 3. Las herramientas
 
-**Clientes (6), todas contra `POST /api/webhook` con el secreto
+**Clientes (5), todas contra `POST /api/webhook` con el secreto
 `x-webhook-secret`:** `cotizar_prendas`, `obtener_proxima_ventana`,
-`calcular_vehiculo`, `find_or_create_client`, `crear_pedido`,
+`find_or_create_client`, `crear_pedido`,
 `consultar_estado_pedido`.
 
 **Planta (operador y admin):** `cotizar_prendas_operador`,
@@ -118,7 +118,7 @@ una orden inventada con ID falso.
 
 1. **Edita el prompt `.md`** (o el generador en `n8n/generador/`) y regenera:
    ```bash
-   node n8n/generador/generar.cjs        # debe decir «OK: 93 nodos»
+   node n8n/generador/generar.cjs        # debe decir «OK: 92 nodos»
    pnpm biome check --write n8n
    ```
    El generador lee `iAgente 321 INMO V2.json` de **Descargas** (ya está ahí).

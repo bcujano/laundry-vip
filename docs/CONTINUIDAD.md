@@ -51,11 +51,11 @@ activarlo en la tarjeta del workflow.
 |---|---|
 | CRM | **https://laundry-vip.vercel.app** · Vercel `bcujanos-projects/laundry-vip` · deploy: `npx vercel --prod --yes` desde `C:\dev\laundry-vip` (el CLI ya tiene sesión) |
 | Base | Supabase `cvdlslltevwxprdktmfu` (São Paulo). **Una sola base: pruebas y producción comparten.** Migraciones `0001`–`0019` aplicadas |
-| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · 93 nodos · activo · versión activa `8e07e79f-33a6-459f-b9c4-7078e2add428` (2026-10-01) |
+| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · 92 nodos · activo · versión activa `a0f9dfa0-a88e-4c10-9017-416c95ec5555` (2026-10-01) |
 | Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · bandeja «Vip Laundry». La cuenta 1 es de 321: **no se toca ni para leer** |
 | WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
 | Repo | `github.com/bcujano/laundry-vip` (privado) · rama `agente-n8n-laundry` y etiqueta `v1.0` subidas el 2026-09-30. Local en `C:\dev\laundry-vip`. Historial reescrito el 2026-09-23 (los SHA cambiaron) |
-| Gate | typecheck, lint, build y **309 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
+| Gate | typecheck, lint, build y **308 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
 | Credenciales en n8n | `CRM Laundry VIP Webhook` (id `9456EHfb8yxpZOmr`), `Chatwoot Laundry VIP API`, `Meta WhatsApp Laundry VIP`, `Postgres Laundry VIP`, `OpenAi account` (compartida con 321). Nunca en el JSON |
 | Variables (`.env.local`) | Solo nombres aquí: `SUPABASE_*`, `N8N_WEBHOOK_SECRET`, `CHATWOOT_*`, `WHATSAPP_*`, `OPENAI_API_KEY`, `LOCAL_LATITUD/LONGITUD/DIRECCION` |
 
@@ -120,6 +120,8 @@ Scripts sueltos contra la base: `scripts/` no usa el alias `@/`; en Windows los
 Cada punto termina con: gate verde → deploy → verificación contra producción →
 commit → si tocó el agente, publicación en n8n + `verificar-prompts.cjs` →
 actualizar esta sección.
+
+**Fundas — QUITADAS (2026-10-01, pedido del dueño).** El agente preguntaba «¿cuántas fundas?» para decidir moto o auto y confundía a los clientes. Ahora **la recogida y la entrega siempre van en auto**: se quitó la tool `calcular_vehiculo` del agente, `crear_pedido` ya no pide `numero_fundas`, el servidor guarda `vehiculo_sugerido = auto` cuando la lavandería recoge o entrega, y el prompt prohíbe preguntar por fundas y exige un estimado siempre (al peso: ejemplo de 10 libras; las libras reales se pesan en planta). La acción `calcular_vehiculo` del webhook sigue existiendo y siempre responde `auto` (compatibilidad).
 
 **B1 · Coexistencia persona–agente — HECHO (2026-09-30).** Rama paralela del webhook (`n8n/generador/persona.cjs`): mensaje saliente público de un usuario de Chatwoot distinto de «Byron ADMIN» → etiqueta `humano` (conserva las otras) + nota interna. Verificado en producción simulando el webhook sobre la conversación 5 (etiquetó; «Byron ADMIN» no dispara). Desde el 2026-10-01 el agente tiene su propio usuario de Chatwoot («Agente VIP», id 8): cualquier otro remitente, **incluido Byron**, cuenta como persona y pausa el chat. Los mensajes viejos de «Byron ADMIN» anteriores a `2026-10-01T00:30Z` se siguen leyendo como del agente (`n8n/generador/agente.cjs`). La etiqueta se queda hasta que alguien la quite. Probado con el webhook real el 2026-10-01 (Agente VIP no etiqueta; Byron ADMIN sí). **Falta confirmar con el primer mensaje real que el agente publica como «Agente VIP»** (en Chatwoot debe verse ese nombre en sus respuestas).
 

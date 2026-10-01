@@ -90,7 +90,8 @@ export const parametrosPorAccion = {
 
   cotizar_prendas: z.object({ items: z.array(itemCotizable) }),
 
-  calcular_vehiculo: z.object({ numero_fundas: z.number().int() }),
+  // Siempre auto: el número de fundas es opcional y no cambia nada (2026-10-01).
+  calcular_vehiculo: z.object({ numero_fundas: z.number().int().optional() }).optional(),
 
   // «desde» llega como fecha suelta («2026-10-01»), como ISO completo o vacío:
   // el modelo escribe las tres formas. Se valida en el handler.

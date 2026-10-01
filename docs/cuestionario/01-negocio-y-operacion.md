@@ -38,7 +38,7 @@ Q: ¿Puede otra persona entregar o recibir la ropa (vecino, guardia, empleada)? 
 
 ## Cómo se recoge y se entrega
 Q: ¿Quién hace las recolecciones y entregas? (moto propia, mensajero contratado, servicio externo tipo Uber o inDrive, usted misma)
-Q: Regla moto o auto: hoy depende del número de fundas. ¿Cuál es el límite? ¿Qué pasa si hay muebles, alfombras o edredones grandes?
+Q: Decisión tomada el 1/10/2026: la recogida y la entrega SIEMPRE van en auto, sin importar el número de fundas (el agente ya no pregunta cuántas son). ¿Hay alguna excepción? (por ejemplo un pedido muy pequeño, o un cliente que prefiere entregar él mismo)
 Q: ¿Cuánto cuesta la recogida y entrega? Hoy: tarifa única de $2,50 por pedido. ¿Cambia por zona, por volumen, por día u hora, si el pedido es grande o si es auto en vez de moto?
 Q: ¿Desde qué monto la recogida es gratis, si existe? ¿Hay clientes con tarifa especial?
 Q: ¿La recogida y la entrega se cobran cada una o una sola tarifa cubre ambas? ¿Y si el cliente solo quiere una (trae él, o retira él)?

@@ -88,7 +88,8 @@ describe('matriz de pagos', () => {
     expect(resultado.pedido.pago_entrega).toBe('n_a')
     expect(Number(resultado.pedido.monto_recoleccion)).toBe(3.4)
     expect(resultado.pedido.monto_entrega).toBeNull()
-    expect(resultado.pedido.vehiculo_sugerido).toBe('moto')
+    // una sola funda también va en auto: el número de fundas ya no decide el vehículo
+    expect(resultado.pedido.vehiculo_sugerido).toBe('auto')
   })
 
   it('a la carta con los dos tramos del cliente no bloquea nada', async () => {
