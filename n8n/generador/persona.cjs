@@ -2,10 +2,10 @@
 // cliente a mano en Chatwoot, el agente se calla en esa conversación.
 // Rama paralela a la del cliente, desde el mismo webhook: mensaje saliente,
 // público, de un usuario de Chatwoot que no es el agente → etiqueta «humano».
-// El agente publica con el token de «Byron ADMIN»; hasta que exista un usuario
-// propio para el agente (CONTINUIDAD §5, E10) la regla es por nombre.
+// El agente publica con su propio usuario de Chatwoot («Agente VIP», desde el
+// 2026-10-01); cualquier otro remitente, incluido Byron, es una persona.
 const crypto = require('node:crypto')
-const AGENTE = 'Byron ADMIN'
+const { NOMBRE_AGENTE: AGENTE } = require('./agente.cjs')
 const BASE = 'https://chatwoot-production-8564.up.railway.app/api/v1/accounts/3/conversations'
 const CRED = { httpHeaderAuth: { id: '3W2BykSid0f9dMTV', name: 'Chatwoot Laundry VIP API' } }
 

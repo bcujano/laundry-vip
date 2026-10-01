@@ -27,6 +27,12 @@ const TOKEN = env('CHATWOOT_API_TOKEN')
 const simular = process.argv.includes('--simular')
 const archivo = process.argv.slice(2).find((a) => a.endsWith('.json'))
 const VENTANA_MAX_MIN = 23 * 60 + 54
+// Igual que en n8n/generador/agente.cjs: el agente es «Agente VIP»; los mensajes viejos de
+// «Byron ADMIN» (antes de 2026-10-01 00:30Z) también eran del agente.
+const CORTE_EPOCH = 1790814600
+const esAgente = (m: { created_at?: number; sender?: { name: string } }) =>
+  m.sender?.name === 'Agente VIP' ||
+  (m.sender?.name === 'Byron ADMIN' && (m.created_at ?? 0) < CORTE_EPOCH)
 
 async function rest<T>(ruta: string): Promise<T> {
   const r = await fetch(`${SUPABASE}/rest/v1/${ruta}`, {
@@ -99,17 +105,12 @@ async function main() {
       message_type: number
       private: boolean
       content: string | null
+      created_at?: number
       sender?: { type: string; name: string }
     }[]
     const persona = [...mensajes]
       .reverse()
-      .find(
-        (m) =>
-          m.message_type === 1 &&
-          !m.private &&
-          m.sender?.type === 'user' &&
-          m.sender.name !== 'Byron ADMIN',
-      )
+      .find((m) => m.message_type === 1 && !m.private && m.sender?.type === 'user' && !esAgente(m))
     console.log(
       `${telefono} (conv ${id}, ${Math.round(minutos)} min de silencio, nombre: ${nombre ?? 'sin nombre'})`,
     )

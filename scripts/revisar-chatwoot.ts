@@ -10,7 +10,7 @@ import { resolve } from 'node:path'
  *   pnpm chatwoot:revisar --desde 2026-09-30     # solo mensajes de esa fecha en adelante
  *   pnpm chatwoot:revisar --salida chats.txt     # a un archivo
  *
- * En la salida, `SALE(Byron ADMIN)` es el AGENTE (publica con el token de esa
+ * En la salida, `SALE(Agente VIP)` es el AGENTE (desde 2026-10-01; antes publicaba con el token de esa
  * cuenta) y `SALE(<otro nombre>)` es una PERSONA respondiendo desde Chatwoot.
  * No escribe nada en Chatwoot: para quitar una etiqueta o responder, se hace a
  * mano o con una orden aparte, nunca desde este script.

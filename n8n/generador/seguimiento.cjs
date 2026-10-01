@@ -10,6 +10,7 @@
 //   → una guardia descarta cualquier precio que no sea el ya dicho
 //   → borrador: nota interna · activo: mensaje al cliente → se anota en el CRM.
 const crypto = require('node:crypto')
+const { ES_AGENTE_JS } = require('./agente.cjs')
 const CRM_URL = 'https://laundry-vip.vercel.app/api/webhook'
 const CW = 'https://chatwoot-production-8564.up.railway.app/api/v1/accounts/3/conversations'
 const CRED_CRM = { httpHeaderAuth: { id: '9456EHfb8yxpZOmr', name: 'CRM Laundry VIP Webhook' } }
@@ -55,16 +56,17 @@ nombre: solo si el CLIENTE lo escribió en la conversación; si no, cadena vací
 detalle: una frase corta con lo que se acordó o por qué rechazó.`
 
 const transcripcion = `// La conversación tal como la vio Chatwoot, con quién dijo cada cosa.
+${ES_AGENTE_JS}
 const msgs = (($('Mensajes Seguimiento').item.json.payload) || []).slice(-40);
 const lineas = msgs
   .filter((m) => String(m.content || '').trim() !== '')
   // Las notas que deja este mismo sistema (borradores, avisos) no son conversación.
-  .filter((m) => !(m.private && m.sender && m.sender.name === 'Byron ADMIN'))
+  .filter((m) => !(m.private && esAgente(m)))
   .map((m) => {
     let quien;
     if (m.message_type === 0) quien = 'CLIENTE';
     else if (m.private) quien = 'NOTA INTERNA';
-    else if (m.sender && m.sender.name === 'Byron ADMIN') quien = 'AGENTE';
+    else if (esAgente(m)) quien = 'AGENTE';
     else quien = 'EQUIPO (' + ((m.sender && m.sender.name) || 'persona') + ')';
     return quien + ': ' + String(m.content).replace(/\\s+/g, ' ').slice(0, 500);
   });
@@ -284,9 +286,10 @@ const nodos = [
             leftValue: `={{ (() => {
   const conv = $('Conversacion Seguimiento').item.json;
   const mensajes = $json.payload || [];
+  ${ES_AGENTE_JS}
   const hace24h = Date.now() / 1000 - 24 * 3600;
   // Barrido del dueño: en esos chats una persona a cargo no frena el seguimiento.
-  const persona = !$('Uno por Candidato').item.json.sin_filtro_persona && mensajes.some((m) => m.message_type === 1 && !m.private && m.sender && m.sender.type === 'user' && m.sender.name !== 'Byron ADMIN' && m.created_at > hace24h);
+  const persona = !$('Uno por Candidato').item.json.sin_filtro_persona && mensajes.some((m) => m.message_type === 1 && !m.private && m.sender && m.sender.type === 'user' && !esAgente(m) && m.created_at > hace24h);
   return conv.id !== undefined && !(conv.labels || []).includes('humano') && conv.status !== 'resolved' && !persona;
 })() }}`,
             rightValue: '',

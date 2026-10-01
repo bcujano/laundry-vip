@@ -97,8 +97,9 @@ describe('agente Laundry VIP (clon del 321)', () => {
     const filtro = JSON.stringify(porNombre('Respondio Persona?')?.parameters)
     expect(filtro).toContain('outgoing')
     expect(filtro).toContain('private')
-    // el agente publica como «Byron ADMIN»: no puede dispararse a sí mismo
-    expect(filtro).toContain('Byron ADMIN')
+    // el agente publica como «Agente VIP»: no puede dispararse a sí mismo, pero Byron sí es una persona
+    expect(filtro).toContain('Agente VIP')
+    expect(filtro).not.toContain('Byron ADMIN')
     const etiqueta = JSON.stringify(porNombre('Etiqueta Humano Persona')?.parameters)
     expect(etiqueta).toContain('humano')
     expect(etiqueta).toContain('conversation?.labels')
@@ -167,7 +168,7 @@ describe('agente Laundry VIP (clon del 321)', () => {
       'sin_filtro_persona',
     )
     // ni si alguien del equipo ya le contestó a mano
-    expect(JSON.stringify(porNombre('Sin Persona a Cargo?')?.parameters)).toContain('Byron ADMIN')
+    expect(JSON.stringify(porNombre('Sin Persona a Cargo?')?.parameters)).toContain('Agente VIP')
     // el modo de Configuración decide si es nota interna o mensaje al cliente
     const armar = String(porNombre('Armar Seguimiento')?.parameters.jsCode)
     expect(armar).toContain("c.modo !== 'activo'")

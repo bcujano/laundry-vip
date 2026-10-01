@@ -29,9 +29,7 @@ Resumen 8:00 (L-S) → datos del CRM → un mensaje por admin → ¿escribió en
 - **Debounce de 30 s:** el agente espera 30 s de silencio antes de contestar,
   para juntar ráfagas de mensajes. El cliente lo nota (hay huecos de medio
   minuto en los chats reales); es deliberado.
-- **Quién publica qué en Chatwoot:** el agente responde con el token de
-  **Byron ADMIN** (usuario 1). En las transcripciones `SALE(Byron ADMIN)` es el
-  agente; `SALE(María Sol Játiva)` es una persona escribiendo a mano.
+- **Quién publica qué en Chatwoot:** desde el 2026-10-01 el agente responde con su propio usuario, **«Agente VIP»** (id 8); antes usaba el token de «Byron ADMIN». En las transcripciones `SALE(Agente VIP)` es el agente; cualquier otro nombre (María Sol, Daniel, Byron) es una persona escribiendo a mano, y los `SALE(Byron ADMIN)` anteriores al 2026-10-01 son del agente.
 - **Coexistencia persona–agente (B1, hecho 2026-09-30):** si una persona del
   equipo contesta a mano (remitente ≠ «Byron ADMIN», mensaje público), la rama
   `Respondio Persona?` pone la etiqueta `humano` y deja una nota interna; el
@@ -165,11 +163,9 @@ oro: **cada frase real que falle se convierte en una prueba**
 (`tests/unit/emparejar.test.ts`, `tests/integration/cotizar.test.ts`) y, si es
 de comportamiento, en una regla del prompt con su ejemplo.
 
-## 7. Un usuario de Chatwoot propio para el agente (E10)
+## 7. Usuario de Chatwoot propio del agente (hecho el 2026-10-01)
 
-Hoy el agente publica con el token de «Byron ADMIN», así que no se puede distinguir
-del dueño: si Byron responde a mano desde Chatwoot, el agente no se pausa. Para
-arreglarlo:
+Antes el agente publicaba con el token de «Byron ADMIN» y no se podía distinguir del dueño. Se resolvió así (queda como receta por si hay que repetirlo, p. ej. al rotar el token):
 
 1. **Chatwoot (cuenta 3) → Configuración → Agentes → Agregar agente.** Nombre
    «Agente VIP», rol Agente, un correo propio (sirve un alias: `tucorreo+agentevip@gmail.com`).
@@ -179,7 +175,11 @@ arreglarlo:
    Token de acceso** → copiar.
 4. **n8n → Credenciales → «Chatwoot Laundry VIP API»:** pega el token nuevo en la
    cabecera `api_access_token` y guarda. (Es la credencial nuestra; no toques las de 321.)
-5. Avísale a Claude el nombre exacto del usuario: se cambia «Byron ADMIN» por ese
-   nombre en `n8n/generador/persona.cjs`, `n8n/generador/seguimiento.cjs` y
-   `scripts/seguimiento-barrido.ts`, se regenera y se publica. Desde ahí, cualquier
-   mensaje de una persona (incluido Byron) pausa al agente en ese chat.
+5. El nombre del usuario vive en `n8n/generador/agente.cjs` (`NOMBRE_AGENTE`, y la
+   hora de corte para los mensajes viejos de «Byron ADMIN»); si cambia, se regenera y
+   se publica. Desde ahí, cualquier mensaje de una persona (incluido Byron) pausa al
+   agente en ese chat.
+6. **Ojo con los scripts:** `scripts/seguimiento-barrido.ts` publica con el token de
+   `CHATWOOT_API_TOKEN` en `.env.local`. Si sigue siendo el de Byron, sus mensajes
+   saldrían como «Byron ADMIN» y pausarían el chat; para un barrido usa el token de
+   «Agente VIP» en esa variable.
