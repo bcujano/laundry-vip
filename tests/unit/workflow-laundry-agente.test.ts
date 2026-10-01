@@ -64,7 +64,7 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(JSON.stringify(porNombre('Transcribir Audio')?.parameters)).toContain('gpt-transcribe')
   })
 
-  it('cuelga las cinco tools del CRM y la calculadora del agente', () => {
+  it('cuelga las seis tools del CRM y la calculadora del agente', () => {
     const tools = Object.entries(workflow.connections)
       .filter(([, tipos]) => tipos.ai_tool?.[0]?.[0]?.node === 'Agente Laundry VIP')
       .map(([nombre]) => nombre)
@@ -77,6 +77,7 @@ describe('agente Laundry VIP (clon del 321)', () => {
         'crear_pedido',
         'find_or_create_client',
         'obtener_proxima_ventana',
+        'verificar_cobertura',
       ].sort(),
     )
   })
@@ -244,6 +245,23 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(JSON.stringify(porNombre('crear_pedido')?.parameters)).not.toContain('numero_fundas')
     // al peso: siempre un estimado, y las libras reales se confirman en planta
     expect(systemMessage).toContain('se pesan en\n     planta')
+  })
+
+  it('verifica la cobertura por dentro y nunca le habla de kilómetros al cliente (2026-10-01)', () => {
+    expect(porNombre('verificar_cobertura')).toBeDefined()
+    expect(systemMessage).toContain('verificar_cobertura')
+    expect(systemMessage).toContain('NUNCA menciones kilómetros')
+    // el prompt no lleva el radio escrito
+    expect(systemMessage).not.toMatch(/\d+[,.]?\d*\s*km/i)
+    // la ventana de recolección ya no entrega el radio al modelo
+    expect(String(porNombre('obtener_proxima_ventana')?.parameters.toolDescription)).not.toContain(
+      'hasta donde',
+    )
+  })
+
+  it('responde solo lo necesario, sin soltar horario ni plazo que no preguntaron (2026-10-01)', () => {
+    expect(systemMessage).toContain('SOLO LO NECESARIO')
+    expect(systemMessage).toContain('Dilo cuando te pregunten')
   })
 
   it('la memoria va en su propia tabla', () => {

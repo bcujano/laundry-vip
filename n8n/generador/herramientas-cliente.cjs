@@ -1,4 +1,4 @@
-// Las 5 tools del agente de clientes: HTTP Request Tool contra /api/webhook del CRM.
+// Las 6 tools del agente de clientes: HTTP Request Tool contra /api/webhook del CRM.
 const crypto = require('node:crypto')
 
 const CRM_URL = 'https://laundry-vip.vercel.app/api/webhook'
@@ -17,8 +17,13 @@ function agregar(nodes) {
     ],
     [
       'obtener_proxima_ventana',
-      'Devuelve la ventana de recoleccion (inicio y fin en UTC ISO), el horario del local, la tarifa de recogida y entrega, hasta donde se recoge y el lapso de entrega en horas. Si el cliente pide OTRO DIA, vuelve a llamarla con desde = esa fecha. Usala antes de hablar de horarios, fechas, tarifa, cobertura o tiempos.',
+      'Devuelve la ventana de recoleccion (inicio y fin en UTC ISO), el horario del local, la tarifa de recogida y entrega y el lapso de entrega en horas. Si el cliente pide OTRO DIA, vuelve a llamarla con desde = esa fecha. Usala antes de hablar de horarios, fechas, tarifa o tiempos.',
       `{"desde": ${fromAI('desde', 'Fecha desde la que buscar la ventana, formato YYYY-MM-DD. Cadena vacia para la proxima disponible. Si el cliente dice "manana", manda la fecha de manana.')}}`,
+    ],
+    [
+      'verificar_cobertura',
+      'Dice si se recoge en el barrio o sector que nombró el cliente. Llámala apenas lo diga. Devuelve cubre: true (sí se recoge), false (no se recoge) o null (no se puede verificar).',
+      `{"sector": ${fromAI('sector', 'Barrio o sector que dijo el cliente, tal como lo escribió', 'string')}}`,
     ],
     [
       'find_or_create_client',

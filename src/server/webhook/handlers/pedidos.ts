@@ -51,7 +51,7 @@ export async function crear(
       if (veredicto === 'fuera') {
         return fallo(
           'FUERA_DE_COBERTURA',
-          `Ese sector queda fuera de la zona de recogida (${config.radio_cobertura_km} km a la redonda del local). Ofrécele traer y retirar su ropa en el local, sin recargo.`,
+          'Por ese sector no se recoge. Díselo en una frase, sin explicar distancias, y ofrécele traer y retirar su ropa en el local, sin recargo.',
         )
       }
     }

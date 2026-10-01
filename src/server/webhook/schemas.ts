@@ -35,6 +35,7 @@ export const ACCIONES = [
   'registrar_conversion',
   'avisos_pendientes',
   'marcar_aviso',
+  'verificar_cobertura',
 ] as const
 
 export type Accion = (typeof ACCIONES)[number]
@@ -130,6 +131,8 @@ export const parametrosPorAccion = {
     detalle: z.string().max(500).default(''),
     nombre_contacto: z.string().max(120).optional(),
   }),
+
+  verificar_cobertura: z.object({ sector: z.string().min(1).max(200) }),
 
   avisos_pendientes: z.object({}).optional(),
 

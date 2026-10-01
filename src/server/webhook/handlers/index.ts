@@ -9,7 +9,7 @@ import {
   sincronizarMemoria,
   verificarWhitelistOperador,
 } from './cliente'
-import { proximaVentana, vehiculo } from './logistica'
+import { proximaVentana, vehiculo, verificarCobertura } from './logistica'
 import { actualizarRegistro, registrarClientePresencial } from './operador'
 import { consultarEstadoPorTelefono, consultarPedidoPorId, crear } from './pedidos'
 import { avanzarEstadoPlanta, buscarPedidos, registrarConteo } from './planta'
@@ -46,6 +46,7 @@ const MANEJADORES: Record<Accion, Manejador> = {
   registrar_conversion: registrarConversion,
   avisos_pendientes: listarAvisosPendientes,
   marcar_aviso: marcarAvisoAccion,
+  verificar_cobertura: verificarCobertura,
 }
 
 export async function despachar(

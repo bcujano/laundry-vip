@@ -1,6 +1,7 @@
 import { horarioLegible } from '@/server/configuracion/horario'
 import { datosDelLocal } from '@/server/configuracion/local'
 import { obtener as obtenerConfig, parametrosVentana } from '@/server/configuracion/repo'
+import { verificarSector } from '@/server/pedidos/cobertura'
 import { calcularVehiculo } from '@/server/pricing/cotizar'
 import { limitesDelDia, obtenerProximaVentana, ultimaHoraDelDia } from '@/server/scheduling/ventana'
 import { exito, fallo, type ResultadoAccion } from '../respuesta'
@@ -45,7 +46,6 @@ export async function proximaVentana(parametros: ParametrosDe<'obtener_proxima_v
     hora_apertura: string
     hora_cierre: string
     horario: string
-    cobertura: string
     tarifa_recoleccion_entrega: number
     horas_entrega_min: number
     horas_entrega_max: number
@@ -78,10 +78,27 @@ export async function proximaVentana(parametros: ParametrosDe<'obtener_proxima_v
     // Ya escritos para decírselos al cliente tal cual, sin que el agente los arme.
     horario: horarioLegible(negocio),
     ...datosDelLocal(negocio),
-    cobertura: `${Number(negocio.radio_cobertura_km).toString().replace('.', ',')} km a la redonda del local`,
+    // OJO: aquí NO va el radio. Al cliente no se le dice «a 2,5 km a la redonda»: se verifica
+    // por dentro con verificar_cobertura y se le dice solo si se puede o no.
     tarifa_recoleccion_entrega: Number(negocio.tarifa_recoleccion_entrega),
     // El lapso de entrega también sale del CRM: el prompt no lleva números.
     horas_entrega_min: negocio.horas_entrega_min,
     horas_entrega_max: negocio.horas_entrega_max,
   })
+}
+
+/**
+ * ¿Se recoge en el barrio o sector que dijo el cliente? El agente solo recibe sí o no:
+ * el radio y la lista de sectores son cosa interna. `cubre: null` = la lista no está
+ * cargada y no se puede verificar (el agente sigue como antes, sin prometer ni negar).
+ */
+export async function verificarCobertura(
+  parametros: ParametrosDe<'verificar_cobertura'>,
+): Promise<ResultadoAccion<{ cubre: boolean | null }>> {
+  const config = await obtenerConfig()
+  const veredicto = verificarSector(parametros.sector, config.sectores_cobertura)
+  if (veredicto === 'falta_sector') {
+    return fallo('PARAMETROS_INVALIDOS', 'No se entiende el sector. Pídele el barrio al cliente.')
+  }
+  return exito({ cubre: veredicto === 'sin_verificar' ? null : veredicto === 'dentro' })
 }

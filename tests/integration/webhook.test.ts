@@ -145,6 +145,32 @@ describe('acciones de logística', () => {
     }
   })
 
+  it('verificar_cobertura responde solo sí o no, sin radio ni distancias', async () => {
+    const config = await obtenerConfig()
+    const r = await llamar({
+      accion: 'verificar_cobertura',
+      parametros: { sector: 'Cumbayá lejano' },
+    })
+    expect(r.estado).toBe(200)
+    const data = r.sobre.data as Record<string, unknown>
+    expect(Object.keys(data)).toEqual(['cubre'])
+    if (config.sectores_cobertura.length > 0) {
+      expect(data.cubre).toBe(false)
+      const dentro = await llamar({
+        accion: 'verificar_cobertura',
+        parametros: { sector: config.sectores_cobertura[0] },
+      })
+      expect((dentro.sobre.data as { cubre: boolean }).cubre).toBe(true)
+    } else {
+      expect(data.cubre).toBeNull()
+    }
+  })
+
+  it('obtener_proxima_ventana ya no entrega el radio de cobertura al agente', async () => {
+    const { sobre } = await llamar({ accion: 'obtener_proxima_ventana', parametros: {} })
+    expect(sobre.data as Record<string, unknown>).not.toHaveProperty('cobertura')
+  })
+
   it('obtener_proxima_ventana siempre devuelve una ventana futura', async () => {
     const { estado, sobre } = await llamar({ accion: 'obtener_proxima_ventana', parametros: {} })
     expect(estado).toBe(200)

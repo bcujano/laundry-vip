@@ -51,11 +51,11 @@ activarlo en la tarjeta del workflow.
 |---|---|
 | CRM | **https://laundry-vip.vercel.app** · Vercel `bcujanos-projects/laundry-vip` · deploy: `npx vercel --prod --yes` desde `C:\dev\laundry-vip` (el CLI ya tiene sesión) |
 | Base | Supabase `cvdlslltevwxprdktmfu` (São Paulo). **Una sola base: pruebas y producción comparten.** Migraciones `0001`–`0019` aplicadas |
-| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · 92 nodos · activo · versión activa `a0f9dfa0-a88e-4c10-9017-416c95ec5555` (2026-10-01) |
+| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · 93 nodos · activo · versión activa `8ffea962-abf8-437f-8b30-19bdeff88c6a` (2026-10-01) |
 | Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · bandeja «Vip Laundry». La cuenta 1 es de 321: **no se toca ni para leer** |
 | WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
 | Repo | `github.com/bcujano/laundry-vip` (privado) · rama `agente-n8n-laundry` y etiqueta `v1.0` subidas el 2026-09-30. Local en `C:\dev\laundry-vip`. Historial reescrito el 2026-09-23 (los SHA cambiaron) |
-| Gate | typecheck, lint, build y **308 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
+| Gate | typecheck, lint, build y **312 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
 | Credenciales en n8n | `CRM Laundry VIP Webhook` (id `9456EHfb8yxpZOmr`), `Chatwoot Laundry VIP API`, `Meta WhatsApp Laundry VIP`, `Postgres Laundry VIP`, `OpenAi account` (compartida con 321). Nunca en el JSON |
 | Variables (`.env.local`) | Solo nombres aquí: `SUPABASE_*`, `N8N_WEBHOOK_SECRET`, `CHATWOOT_*`, `WHATSAPP_*`, `OPENAI_API_KEY`, `LOCAL_LATITUD/LONGITUD/DIRECCION` |
 
@@ -120,6 +120,8 @@ Scripts sueltos contra la base: `scripts/` no usa el alias `@/`; en Windows los
 Cada punto termina con: gate verde → deploy → verificación contra producción →
 commit → si tocó el agente, publicación en n8n + `verificar-prompts.cjs` →
 actualizar esta sección.
+
+**Cobertura invisible para el cliente — HECHO (2026-10-01, pedido del dueño).** El agente le decía al cliente «dentro de los 2,5 km a la redonda» y además prometió recogida en Carcelén Bajo, que está fuera. Ahora **verifica por dentro** con la tool  ( en , usa  + la lista de Configuración) y solo le dice al cliente sí o no: «Sí, pasamos a recoger por [barrio]» o «Por esa zona no recogemos» + traer al local sin recargo.  ya no devuelve el radio y el error  tampoco habla de km; el prompt prohíbe kilómetros, radio y distancias. **Regla nueva (§2.9): responder SOLO lo necesario**: nada de soltar horario, plazo ni reglas que no preguntó (el plazo se dice al confirmar o si pregunta). Verificado en producción: Carcelén Bajo/Cumbayá/Calderón → no; La Kennedy → sí. **Conversación 22 (Fabian Vilema, +593967001736):** se le había prometido recogida por error; se marcó como  para frenar el seguimiento y **debe atenderlo una persona**.
 
 **Fundas — QUITADAS (2026-10-01, pedido del dueño).** El agente preguntaba «¿cuántas fundas?» para decidir moto o auto y confundía a los clientes. Ahora **la recogida y la entrega siempre van en auto**: se quitó la tool `calcular_vehiculo` del agente, `crear_pedido` ya no pide `numero_fundas`, el servidor guarda `vehiculo_sugerido = auto` cuando la lavandería recoge o entrega, y el prompt prohíbe preguntar por fundas y exige un estimado siempre (al peso: ejemplo de 10 libras; las libras reales se pesan en planta). La acción `calcular_vehiculo` del webhook sigue existiendo y siempre responde `auto` (compatibilidad).
 
