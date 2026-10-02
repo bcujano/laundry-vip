@@ -260,8 +260,11 @@ describe('agente Laundry VIP (clon del 321)', () => {
   })
 
   it('responde solo lo necesario, sin soltar horario ni plazo que no preguntaron (2026-10-01)', () => {
-    expect(systemMessage).toContain('SOLO LO NECESARIO')
-    expect(systemMessage).toContain('Dilo cuando te pregunten')
+    expect(systemMessage).toContain('DIRECTO, SIN RELLENO')
+    // precio y plazo van juntos, apenas dice qué quiere lavar
+    expect(systemMessage).toContain('Dilo junto con el')
+    // la regla es una forma de actuar, no una plantilla que se copia
+    expect(systemMessage).toContain('NO una plantilla')
   })
 
   it('la memoria va en su propia tabla', () => {
