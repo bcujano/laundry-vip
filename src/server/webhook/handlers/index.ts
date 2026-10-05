@@ -1,7 +1,7 @@
 import { fallo, type ResultadoAccion } from '../respuesta'
 import { type Accion, parametrosPorAccion } from '../schemas'
 import { consultaAdmin, resumenDiario } from './admin'
-import { listarAvisosPendientes, marcarAvisoAccion } from './avisos'
+import { adminsParaAvisoAccion, listarAvisosPendientes, marcarAvisoAccion } from './avisos'
 import {
   cotizar,
   findOrCreateClient,
@@ -47,6 +47,7 @@ const MANEJADORES: Record<Accion, Manejador> = {
   avisos_pendientes: listarAvisosPendientes,
   marcar_aviso: marcarAvisoAccion,
   verificar_cobertura: verificarCobertura,
+  admins_para_aviso: adminsParaAvisoAccion,
 }
 
 export async function despachar(

@@ -5,20 +5,22 @@
  */
 
 /**
- * Los cuatro seguimientos, en minutos de silencio del cliente. Recorren la
+ * Los cuatro seguimientos, en minutos de silencio del cliente: a los 5 min (la
+ * decisión de un lead es casi inmediata; además se avisa a la dueña), a la hora, a
+ * las 6 h y a las 23 h 30 min. Recorren la
  * ventana de 24 h de WhatsApp; el último sale a las 23 h 30 min y tiene que
  * salir antes de las 23 h 54 min, o Meta ya no deja mandar texto libre.
  * `hasta` es el margen normal con que n8n, que pregunta cada 5 minutos, lo manda a tiempo.
  */
 export const PASOS = [
-  { paso: 1, desde: 30, hasta: 45 },
+  { paso: 1, desde: 5, hasta: 20 },
   { paso: 2, desde: 60, hasta: 75 },
   { paso: 3, desde: 360, hasta: 375 },
   { paso: 4, desde: 1410, hasta: 1434 },
 ] as const
 
 /** El silencio más corto y el más largo que puede tocar un seguimiento. */
-export const SILENCIO_MIN_MINUTOS = 30
+export const SILENCIO_MIN_MINUTOS = 5
 export const SILENCIO_MAX_MINUTOS = 1434
 
 export type Paso = (typeof PASOS)[number]['paso']

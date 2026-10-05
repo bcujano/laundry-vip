@@ -24,7 +24,7 @@ R: 12. Un solo lugar para cada dato | Precios, horarios, plazos, zonas y promoci
 - Si usted escribe a mano en un chat, el agente se pausa en ese chat.
 - Tope de 40 mensajes por teléfono al día y tope de gasto diario de inteligencia artificial, configurables.
 - Resumen diario a las 8:00 para las administradoras, dentro de la ventana de 24 horas de WhatsApp.
-- Seguimiento a clientes que no contestan (30 min, 1 h, 6 h, 23 h 30 min) con detección de quién ya compró o dijo que no, y aviso interno cuando falta crear el pedido.
+- Seguimiento a clientes que no contestan (5 min, 1 h, 6 h, 23 h 30 min) con detección de quién ya compró o dijo que no, y aviso interno cuando falta crear el pedido.
 - Modo de seguimiento cambiable en Configuración: apagado, borrador o activo.
 
 # Cómo nos devuelve las respuestas

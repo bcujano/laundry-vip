@@ -162,6 +162,10 @@ nodo('Nota Escalamiento').parameters.jsonBody = nodo(
   'Nota Escalamiento',
 ).parameters.jsonBody.replace(/\\n📢 Desde anuncio:.*?'NO' }}/, '')
 
+// Debounce: en n8n está en 7 s (se bajó a mano desde los 30 s del 321). El repo lo refleja
+// para que regenerar el JSON no lo devuelva a 30.
+nodo('Debounce').parameters.amount = 7
+
 // Typing indicator: si Meta falla, el cliente igual recibe respuesta.
 nodo('Typing Indicator').onError = 'continueRegularOutput'
 
@@ -251,6 +255,11 @@ connections['Extraer JSON'].main[0].push({ node: 'Estimar Uso', type: 'main', in
 const seguimiento = require('./seguimiento.cjs')
 nodes.push(...seguimiento.nodos)
 Object.assign(connections, seguimiento.conexiones)
+
+// Catálogo en imagen en el primer contacto.
+const catalogo = require('./catalogo.cjs')
+nodes.push(...catalogo.nodos)
+Object.assign(connections, catalogo.conexiones)
 
 // Aviso automático al cliente por una discrepancia de conteo o de monto.
 const avisos = require('./avisos.cjs')

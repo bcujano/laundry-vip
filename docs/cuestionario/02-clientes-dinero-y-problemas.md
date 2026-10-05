@@ -61,7 +61,7 @@ Q: Qué puede prometer el agente como «beneficio» sin consultar, y qué jamás
 
 # 11. Seguimiento a clientes que no contestan
 
-Hoy el agente retoma a quien pidió precio y dejó de contestar: a los 30 minutos, a la hora, a las 6 horas y a las 23 h 30 min, dentro de la ventana de 24 horas de WhatsApp. Si en ese lapso no contrata, no se insiste más.
+Hoy el agente retoma a quien pidió precio y dejó de contestar: a los 5 minutos, a la hora, a las 6 horas y a las 23 h 30 min, dentro de la ventana de 24 horas de WhatsApp. Si en ese lapso no contrata, no se insiste más.
 
 Q: ¿Está bien ese ritmo de cuatro mensajes? ¿Quitaría alguno, cambiaría la hora o el tono de alguno?
 Q: ¿A qué hora del día deja de escribir y desde cuándo? ¿Y los domingos y feriados?

@@ -42,7 +42,7 @@ debe tratarla como a la dueña.
 | **Cobertura verificable:** 36 sectores dentro de 2,5 km, tomados de OpenStreetMap | 2026-09-30, pedido por el dueño |
 | **El agente saluda con el saludo de la casa** (campo «Saludo» de Configuración) y cambia el resto del mensaje cada vez | 2026-09-30, pedido por el dueño |
 | **La recogida y la entrega SIEMPRE van en auto; el agente ya no pregunta cuántas fundas** (se quitó la tool `calcular_vehiculo`). Al peso: siempre un estimado, las libras reales se pesan en planta | 2026-10-01, pedido por el dueño: «cuántas fundas» confundía a los clientes |
-| **Seguimiento a quien no contesta:** 30 min, 1 h, 6 h y 23 h 30 min dentro de las 24 h; quien contrata o dice que no, no recibe más | 2026-09-30 |
+| **Seguimiento a quien no contesta:** 5 min, 1 h, 6 h y 23 h 30 min dentro de las 24 h; quien contrata o dice que no, no recibe más | 2026-09-30 |
 | **Barrido del primer seguimiento** a todos los leads con ventana abierta, incluso a los que María Sol ya había contestado | 2026-09-30, pedido por el dueño |
 | Base de clientes entregada **en cero** a VIP; no cargar datos de ejemplo sin permiso | 2026-09-23 |
 | Sin dirección no hay pedido con recogida; el nombre del cliente nunca se inventa | 2026-09-30 |

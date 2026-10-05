@@ -40,18 +40,19 @@ const ctx = (sobre: Partial<ContextoSeleccion> = {}): ContextoSeleccion => ({
 })
 
 describe('seguimiento: los cuatro pasos de la ventana de 24 h', () => {
-  it('toca a los 30 min, a la hora, a las 6 h y a las 23 h 30 min de silencio', () => {
-    expect(pasoDebido(30)).toBe(1)
+  it('toca a los 5 min, a la hora, a las 6 h y a las 23 h 30 min de silencio', () => {
+    expect(pasoDebido(5)).toBe(1)
     expect(pasoDebido(60)).toBe(2)
     expect(pasoDebido(360)).toBe(3)
     expect(pasoDebido(23 * 60 + 30)).toBe(4)
   })
 
-  it('antes de los 30 min no toca nada', () => {
-    for (const m of [0, 10, 29]) expect(pasoDebido(m)).toBeNull()
+  it('antes de los 5 min no toca nada', () => {
+    for (const m of [0, 1, 4]) expect(pasoDebido(m)).toBeNull()
   })
 
   it('un paso que no salió a tiempo sale después: solo el más reciente, nunca varios', () => {
+    expect(pasoDebido(30)).toBe(1)
     expect(pasoDebido(50)).toBe(1)
     expect(pasoDebido(90)).toBe(2)
     expect(pasoDebido(400)).toBe(3)

@@ -204,14 +204,22 @@ describe('acciones de logística', () => {
   it('si el cliente pide otro día, la ventana es la de ESE día', async () => {
     // El agente le dijo a un cliente «para mañana no tenemos ventana» y le
     // confirmó el pedido para hoy. La herramienta sí sabe buscar otro día.
+    // Un día de operación a 3–9 días de hoy (no una fecha fija: la prueba vencería sola).
+    const dias = (await obtenerConfig()).dias_operacion
+    let fecha = ''
+    for (let k = 3; k <= 9 && fecha === ''; k++) {
+      const quito = new Date(Date.now() - 5 * 3_600_000 + k * 86_400_000)
+      const diaSemana = quito.getUTCDay() === 0 ? 7 : quito.getUTCDay()
+      if (dias.includes(diaSemana)) fecha = quito.toISOString().slice(0, 10)
+    }
     const { sobre } = await llamar({
       accion: 'obtener_proxima_ventana',
-      parametros: { desde: '2026-10-05' },
+      parametros: { desde: fecha },
     })
     const data = sobre.data as { inicio: string; es_hoy: boolean }
 
-    // 2026-10-05 es lunes: la ventana cae ese mismo día, en hora de Quito.
-    expect(data.inicio).toContain('2026-10-05')
+    // La ventana cae ese mismo día, en hora de Quito (UTC-5: el inicio sigue siendo ese día en UTC).
+    expect(data.inicio).toContain(fecha)
     expect(data.es_hoy).toBe(false)
   })
 

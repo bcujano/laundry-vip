@@ -13,6 +13,8 @@ const CABECERAS_SEGURIDAD = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // `next dev` reescribía CLAUDE.md con un bloque propio; las reglas de este repo se mantienen a mano.
+  agentRules: false,
   headers: async () => [{ source: '/:ruta*', headers: CABECERAS_SEGURIDAD }],
 }
 

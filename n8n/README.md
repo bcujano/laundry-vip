@@ -13,7 +13,7 @@ nodo por nodo están en [`../docs/CONTINUIDAD.md`](../docs/CONTINUIDAD.md).
 
 | Ruta | Qué es |
 |---|---|
-| `workflows/laundry-vip-agente.json` | El workflow generado (93 nodos) |
+| `workflows/laundry-vip-agente.json` | El workflow generado (104 nodos) |
 | `prompt-agente-laundry.md` | Constitución del agente de clientes |
 | `prompt-operador-laundry.md` | Constitución del agente de planta (operador y admin) |
 | `generador/` | Scripts que producen el JSON a partir de la base de 321 |

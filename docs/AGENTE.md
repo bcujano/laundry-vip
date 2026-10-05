@@ -13,7 +13,7 @@ de tocar el comportamiento.
 WhatsApp → Meta (app Laundry VIP) → Chatwoot cuenta 3 → webhook → n8n
   Filtro Chatwoot  (solo message_created + incoming)
   Filtro Humano    (la etiqueta «humano» en la conversación apaga el agente)
-  → WhatsApp Inicio → Debounce 30 s → ¿es el último mensaje? → combina textos
+  → WhatsApp Inicio → Debounce 7 s → ¿es el último mensaje? → combina textos
   → texto | audio (gpt-transcribe) | imagen (visión → hechos estructurados)
   → Verificar Operador (CRM: ¿es número autorizado? + datos del negocio)
   → ¿Es Operador?
@@ -26,7 +26,7 @@ Resumen 8:00 (L-S) → datos del CRM → un mensaje por admin → ¿escribió en
        sí → texto libre · no → plantilla resumen_diario_admin (si Meta la aprobó)
 ```
 
-- **Debounce de 30 s:** el agente espera 30 s de silencio antes de contestar,
+- **Debounce de 7 s:** el agente espera 7 s de silencio antes de contestar,
   para juntar ráfagas de mensajes. El cliente lo nota (hay huecos de medio
   minuto en los chats reales); es deliberado.
 - **Quién publica qué en Chatwoot:** desde el 2026-10-01 el agente responde con su propio usuario, **«Agente VIP»** (id 8); antes usaba el token de «Byron ADMIN». En las transcripciones `SALE(Agente VIP)` es el agente; cualquier otro nombre (María Sol, Daniel, Byron) es una persona escribiendo a mano, y los `SALE(Byron ADMIN)` anteriores al 2026-10-01 son del agente.
@@ -118,7 +118,7 @@ una orden inventada con ID falso.
 
 1. **Edita el prompt `.md`** (o el generador en `n8n/generador/`) y regenera:
    ```bash
-   node n8n/generador/generar.cjs        # debe decir «OK: 93 nodos»
+   node n8n/generador/generar.cjs        # debe decir «OK: 104 nodos»
    pnpm biome check --write n8n
    ```
    El generador lee `iAgente 321 INMO V2.json` de **Descargas** (ya está ahí).
