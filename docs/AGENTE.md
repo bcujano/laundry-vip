@@ -24,6 +24,8 @@ WhatsApp → Meta (app Laundry VIP) → Chatwoot cuenta 3 → webhook → n8n
             obtener_proxima_ventana, verificar_cobertura, find_or_create_client,
             crear_pedido, consultar_estado_pedido)
   → Extraer JSON (parser + GUARDIA) → respuesta por Chatwoot
+                                   → ¿primer contacto? → descarga https://laundry-vip.vercel.app/catalogo.png
+                                     → adjunto de Chatwoot (foto nativa de WhatsApp)
                                    → ¿escalar? → etiqueta «humano» + nota
                                    → Registrar cliente y conversación en el CRM
                                    → Estimar Uso → Registrar Uso (costo OpenAI estimado)

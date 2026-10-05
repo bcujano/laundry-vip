@@ -1,7 +1,7 @@
 # Estado y continuidad
 
 Última actualización: **2026-10-05** (cierre de sesión, verificado contra
-producción ese mismo día). Es el primer archivo que se lee en cada sesión; está
+producción ese mismo día; P1 y P2 hechos esa tarde). Es el primer archivo que se lee en cada sesión; está
 escrito para arrancar **sin hacerle preguntas al dueño**. Mapa de documentos:
 
 | Archivo | Para qué |
@@ -57,14 +57,15 @@ workflow.
 |---|---|
 | CRM | **https://laundry-vip.vercel.app** · Vercel `bcujanos-projects/laundry-vip` · deploy: `npx vercel --prod --yes` desde `C:\dev\laundry-vip` (el CLI ya tiene sesión) |
 | Base | Supabase `cvdlslltevwxprdktmfu` (São Paulo), **solo de VIP** (sin tablas de 321). Pruebas y producción comparten esa base (decidido: seguir así). Migraciones `0001`–`0019` aplicadas |
-| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · **100 nodos** · activo · versión activa `921804f5-f3a0-4b70-b494-bbf07769db30` (2026-10-05) |
+| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · **105 nodos** · activo · versión activa `4486439d-d6ad-4a3a-b1a0-0c035d1b0a8b` (2026-10-05) |
 | Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · bandeja «Vip Laundry». El agente publica como **«Agente VIP»** (usuario 8). La cuenta 1 es de 321: **no se toca ni para leer** |
 | WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
 | Repo | `github.com/bcujano/laundry-vip` (privado) · rama `agente-n8n-laundry`, etiqueta `v1.0` (estado con el número de prueba). Local en `C:\dev\laundry-vip`. Historial reescrito el 2026-09-23 |
-| Gate | typecheck, lint (sin advertencias), build y **315 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
+| Gate | typecheck, lint (sin advertencias), build y **324 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
 | Credenciales en n8n | `CRM Laundry VIP Webhook` (id `9456EHfb8yxpZOmr`), `Chatwoot Laundry VIP API` (token de «Agente VIP»), `Meta WhatsApp Laundry VIP`, `Postgres Laundry VIP`, `OpenAi account` (compartida con 321). Nunca en el JSON |
 | Variables (`.env.local`) | Solo nombres: `SUPABASE_*`, `N8N_WEBHOOK_SECRET`, `CHATWOOT_*` (el token de ahí es el de Byron: no lo uses para publicar como agente), `WHATSAPP_*`, `OPENAI_API_KEY` (vacía a propósito: vive solo en n8n), `LOCAL_LATITUD/LONGITUD/DIRECCION` |
-| Conectores de esta sesión | Google Drive (`mcp__12076c00…`: buscar/leer/descargar archivos) para P1 |
+| Imagen del catálogo | `public/catalogo.png` → **https://laundry-vip.vercel.app/catalogo.png** (pública: está excluida del proxy de sesión). Es `vip5.png` de la carpeta de Drive del dueño (2026-09-24). **Es una foto fija: no sigue a Configuración.** Para cambiarla: reemplazar el archivo y `npx vercel --prod --yes` (n8n la descarga cada vez) |
+| Conectores de esta sesión | Google Drive (`mcp__12076c00…`): `download_file_content` devuelve base64 en un archivo JSON; se decodifica con `node` |
 
 **Personas:** Byron David (dueño, superadmin, `brncjn@gmail.com`) · **María Sol
 Játiva** (administradora/dueña en la operación diaria, `+593 98 509 1860`; su
@@ -162,51 +163,33 @@ Cada punto termina con: gate verde → deploy → verificación contra producci�
 commit y push → si tocó el agente, publicación en n8n + `verificar-prompts.cjs` +
 `verificar-errores.cjs` → actualizar esta sección.
 
-**P1 · Catálogo en imagen al primer contacto (lo pidió el dueño; se dejó listo
-para esta sesión).** Qué quiere: que cuando alguien contacta por primera vez el
-agente le mande la lista de precios **como imagen nativa de WhatsApp (foto), sin
-enlaces**, y **no quiere que la genere el CRM**: la imagen es suya y la puso en
-Google Drive («para que tú la conviertas en Google Fotos y uses ese URL»). Se
-quitó el generador que había hecho (se desconectó porque no era lo pedido).
-Plan recomendado:
-1. Buscar la imagen con el conector de Drive (`search_files`, nombres como
-   «catálogo»/«precios»; `download_file_content`). Si no aparece, pedírsela al
-   dueño **una sola vez**.
-2. **No hace falta Google Fotos**: sus enlaces compartidos no son imagen directa.
-   Servir la imagen desde el propio CRM (`public/catalogo.png` → 
-   `https://laundry-vip.vercel.app/catalogo.png`) y que n8n la descargue y la suba a
-   Chatwoot como **adjunto**, que es lo que la manda a WhatsApp como foto nativa y la
-   deja en el chat. (Si el dueño insiste en Fotos/Drive, un enlace directo
-   `…/uc?export=download&id=…` de un archivo público también sirve como origen.)
-3. La cadena ya está escrita y probada en su tramo de Chatwoot:
-   `n8n/referencia/catalogo-en-imagen.cjs` (`Primer Contacto?` → `Descargar Catalogo` →
-   `Nombrar Catalogo` → `Enviar Catalogo`, multipart con `attachments[]`, sin `content`:
-   un `content` con paréntesis o acentos hizo que Chatwoot respondiera 400 por curl).
-   Copiarla a `n8n/generador/`, poner `URL_CATALOGO`, requerirla en `generar.cjs`
-   (después del bloque de avisos, **conectada** desde `Enviar Respuesta Chatwoot`),
-   volver a poner en el prompt (Sección 1) la línea «la lista de precios llega sola:
-   no la ofrezcas, no pegues enlaces ni recites el catálogo» y su prueba.
-4. Publicar por MCP (**`addNode` pierde `onError`: correr `verificar-errores.cjs`**) y
-   comprobar con el primer cliente nuevo real que en WhatsApp **se ve como foto** y no
-   como archivo; si el dueño puede probar desde un número que no sea del equipo, mejor.
+**P1 · Catálogo en imagen al primer contacto — HECHO el 2026-10-05, falta verlo con un cliente real.**
+La imagen es la del dueño (`vip5.png`, «Servicios y precios VIP», 1080×1920), servida por el CRM
+(`public/catalogo.png`) y enviada por n8n como **adjunto de Chatwoot** (foto nativa, sin enlace):
+`Enviar Respuesta Chatwoot` → `Primer Contacto?` → `Descargar Catalogo` → `Nombrar Catalogo` →
+`Enviar Catalogo` (`n8n/generador/catalogo.cjs`). Primer contacto = nadie ha escrito aún en la
+conversación y no es del equipo ni escalado. El prompt (Sección 1, punto 9) le dice al agente que la
+lista llega sola. Publicado y verificado (`verificar-prompts` y `verificar-errores` en OK).
+**Pendiente (P4):** con el **primer cliente nuevo** comprobar en Chatwoot/WhatsApp que llega **después
+del primer mensaje del agente y se ve como foto, no como archivo**. Fabian Vilema (conversación 22,
+2026-10-05 22:43Z) escribió minutos antes de publicar: **no la recibió**; no se le mandó a mano.
+**Para el dueño sobre la imagen (E1):** (a) el cuadro dice «SERVICIO DE RECOGIDA Y ENTREGA» **sin
+precio** (la tarifa es $2,50; la versión `vip6.png` sí lo trae, pero es un anuncio, no la lista);
+(b) dice vestidos «de $6,00 a $25,50» y en el CRM el vestido corto cuesta $5,00; (c) como es foto fija,
+si cambia un precio en el CRM hay que reemplazar la imagen. Los demás precios coinciden con la base.
 
-**P2 · Pulir lo que mostró el tráfico real (2026-10-05, conversaciones 26 y 27).**
-Cada uno con prueba antes de arreglar:
-- **F1** El seguimiento escribió «Buen mediodía» y «Buen día»: la guardia del saludo
-  (`armar` en `n8n/generador/seguimiento.cjs` y el script de barrido) solo corrige
-  «buenos días/tardes/noches». Ampliar a «buen día», «buen mediodía» y variantes.
-- **F2** Un cliente escribió «Tengo 3 ternos» / «Completos» y el agente volvió a
-  preguntar «¿cuántos ternos quiere lavar?» (ráfaga de dos mensajes; debía cotizar
-  3 × $7,50 = $22,50). Revisar el prompt y el debounce de 7 s.
-- **F3** Al cliente fuera de cobertura (Llano Grande) el seguimiento siguió
-  ofreciéndole «¿agendamos la recogida?». Pasar la conversación completa al
-  redactor del seguimiento (ya existe `Armar Transcripcion`) con la regla «si se le
-  dijo que su zona no tiene recogida, solo ofrece traer la ropa».
-- **F4** Tras «Por Llano Grande no recogemos, pero puede traer…» el agente preguntó
-  «¿prefiere que le agende para que pase por su ropa…?», confuso: una pregunta clara.
-- **F5** `Nota Aviso Manual` falla con 404 si el aviso no tiene conversación de
-  Chatwoot (pasó con avisos de pruebas); añadir un IF que lo salte y marque
-  `requiere_persona` directo.
+**P2 · Pulido del tráfico real — HECHO el 2026-10-05** (cada punto con prueba en
+`tests/unit/saludo-seguimiento.test.ts` y `workflow-pulido-p2.test.ts`; publicado en n8n):
+- **F1** el saludo del seguimiento ahora corrige también «buen día», «buen mediodía», «buena tarde/noche»
+  (`n8n/generador/saludo.cjs`, mismo patrón en el script de barrido).
+- **F2** el prompt obliga a usar la cantidad que el cliente ya dijo («Tengo 3 ternos» + «Completos») y a
+  preguntar solo el dato que falta. **Es comportamiento del modelo: sin prueba real hasta que pase otro
+  caso igual** (revisar con `pnpm chatwoot:revisar`).
+- **F3** el redactor del seguimiento recibe la conversación completa (`Armar Transcripcion`) y no ofrece
+  recoger a quien ya oyó que su zona no tiene recogida; además se le prohibió el relleno
+  («quedamos atentos», «estoy para ayudarle»). Igual: confirmar con el próximo seguimiento real.
+- **F4** fuera de zona, una sola pregunta clara y nunca «agendar para que pase por su ropa».
+- **F5** `Hay Conversacion?` antes de `Nota Aviso Manual`: un aviso sin chat solo se marca `requiere_persona`.
 
 **P3 · Cuestionario de María Sol (en proceso con ella).** Cuando lo devuelva: cargar
 los datos al CRM (precios, `sectores_cobertura`, horarios, plazos), escribir las reglas en
@@ -216,7 +199,8 @@ y construir las reglas de intervención aprobadas del **Anexo A** (`#bot`, `#ven
 WhatsApp, suplente). Decidir con ella si el agente debe crear el pedido de una venta
 cerrada por chat (hoy solo avisa que falta). Sin ella respondida, nada de esto avanza.
 
-**P4 · Confirmar con tráfico real lo que aún no se ha visto:** primer envío de la nota
+**P4 · Confirmar con tráfico real lo que aún no se ha visto:** la foto del catálogo en el primer
+contacto (P1) y los seguimientos con la conversación (F3); primer envío de la nota
 «Lead sin respuesta» a María Sol (y por WhatsApp si ya escribió al agente); primer aviso
 de discrepancia real; primer pedido real creado por el agente con `sector` y vehículo
 `auto`.
@@ -265,7 +249,7 @@ de discrepancia real; primer pedido real creado por el agente con `sector` y veh
 
 | # | Qué falta | Por defecto, sin preguntarle |
 |---|---|---|
-| E1 | **La imagen del catálogo en Google Drive** (la puso o la pondrá él) | Búscala con el conector de Drive; si no está, pídela una sola vez |
+| E1 | **Imagen del catálogo:** decidir si se corrige (falta el precio de recogida y entrega; vestidos «desde $6» contra $5 del CRM). Hoy se usa `vip5.png` tal cual | Se mantiene `vip5.png`; para cambiarla basta reemplazar `public/catalogo.png` y desplegar |
 | E2 | **Plazo de entrega:** Configuración dice 48–72 h; María Sol a veces dice «48 h» y otras «24 a 48» | Se mantiene 48–72 h |
 | E3 | **Cuestionario respondido por María Sol** y sus decisiones sobre el Anexo A | Nada; P3 espera |
 | E4 | **María Sol debe escribirle algo al agente cada día** (su número de admin) para que el aviso de «lead sin respuesta» y el resumen de las 8:00 le lleguen por WhatsApp | Solo quedan las notas internas en Chatwoot |
