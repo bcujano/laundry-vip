@@ -7,7 +7,7 @@ vi.mock('@supabase/ssr', () => ({
   createServerClient: () => ({ auth: { getUser } }),
 }))
 
-const { proxy } = await import('@/proxy')
+const { proxy, config } = await import('@/proxy')
 
 function peticion(ruta: string) {
   return new NextRequest(new URL(ruta, 'http://localhost:3000'))
@@ -94,5 +94,11 @@ describe('sesión rota', () => {
 
     const respuesta = await proxy(conCookieRota('/pedidos'))
     expect(respuesta.headers.get('location')).toContain('/login')
+  })
+
+  it('la imagen del catálogo es pública: n8n la descarga sin sesión', () => {
+    const patron = new RegExp(`^${config.matcher[0]}$`)
+    expect(patron.test('/catalogo.png')).toBe(false)
+    expect(patron.test('/clientes')).toBe(true)
   })
 })

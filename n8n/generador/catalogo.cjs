@@ -1,15 +1,9 @@
-// REFERENCIA — NO SE DESPLIEGA (apagado el 2026-10-05).
-// Cadena que manda una imagen a WhatsApp como FOTO nativa (adjunto en Chatwoot, no enlace):
-//   ¿primer contacto? → descargar imagen → ponerle nombre/tipo → subirla multipart a Chatwoot.
-// Se probó el tramo de Chatwoot (acepta el adjunto como imagen). Falta cambiar el origen: el dueño
-// quiere usar SU imagen (Google Drive/Fotos), no una generada por el CRM. Para encenderla:
-// copiar este módulo a n8n/generador/, poner `URL_CATALOGO` con el enlace directo a su imagen,
-// requerirlo en generar.cjs y publicar por MCP. Ver docs/CONTINUIDAD.md §4 (C1).
-// Catálogo en imagen en el primer contacto. El CRM la dibuja en el momento con los
-// precios vigentes (GET /api/catalogo); aquí se descarga y se manda por Chatwoot como
-// ADJUNTO, así llega a WhatsApp como foto nativa (no como enlace) y queda en el chat.
+// Catálogo en imagen en el primer contacto. La imagen es la que puso el dueño (public/catalogo.png,
+// servida por el CRM en URL_CATALOGO); no la genera nadie. n8n la descarga y la sube a Chatwoot
+// como ADJUNTO: así llega a WhatsApp como foto nativa (no como enlace) y queda en el chat.
+// Para cambiarla basta reemplazar public/catalogo.png y desplegar el CRM.
 const crypto = require('node:crypto')
-const URL_CATALOGO = 'REEMPLAZAR: enlace directo a la imagen del dueño'
+const URL_CATALOGO = 'https://laundry-vip.vercel.app/catalogo.png'
 const CW = 'https://chatwoot-production-8564.up.railway.app/api/v1/accounts/3/conversations'
 const CRED_CW = { httpHeaderAuth: { id: '3W2BykSid0f9dMTV', name: 'Chatwoot Laundry VIP API' } }
 

@@ -92,7 +92,7 @@ discrepancia, 0 errores del agente. Catálogo: 54 servicios con sinónimos.
 |---|---|
 | `pnpm typecheck` · `pnpm lint` · `pnpm test` · `pnpm build` | el gate (los cuatro, siempre). Si `typecheck` se queja de `.next/types`, borra la carpeta `.next` |
 | `pnpm chatwoot:revisar --desde AAAA-MM-DD [--salida f.txt]` | transcripciones del agente con clientes reales (solo lectura, cuenta 3) |
-| `node n8n/generador/generar.cjs` | regenera el JSON del workflow (debe decir «OK: 100 nodos») |
+| `node n8n/generador/generar.cjs` | regenera el JSON del workflow (debe decir «OK: 104 nodos») |
 | `node n8n/verificar-prompts.cjs <archivo>` | n8n idéntico al repo en los dos prompts |
 | `node n8n/verificar-errores.cjs <archivo>` | los nodos de n8n conservan su «continuar si falla» (el MCP lo pierde al crear nodos) |
 | `pnpm db:migrate` | aplica migraciones nuevas (nunca se edita una aplicada) |

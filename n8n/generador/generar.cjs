@@ -261,6 +261,11 @@ const avisos = require('./avisos.cjs')
 nodes.push(...avisos.nodos)
 Object.assign(connections, avisos.conexiones)
 
+// Primer contacto: la lista de precios (imagen del dueño) llega como foto nativa de WhatsApp.
+const catalogo = require('./catalogo.cjs')
+nodes.push(...catalogo.nodos)
+Object.assign(connections, catalogo.conexiones)
+
 const nombres = new Set(nodes.map((n) => n.name))
 for (const [origen, tipos] of Object.entries(connections)) {
   if (!nombres.has(origen)) throw new Error(`Conexión desde nodo inexistente: ${origen}`)

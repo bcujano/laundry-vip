@@ -77,5 +77,5 @@ export async function proxy(peticion: NextRequest) {
 export const config = {
   // Se excluyen los assets y /api: el webhook del agente se autentica con su
   // propio secreto, no con la sesión del navegador.
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|api/).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|catalogo.png|api/).*)'],
 }
