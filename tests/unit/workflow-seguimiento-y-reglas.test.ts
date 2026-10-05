@@ -129,7 +129,8 @@ describe('agente Laundry VIP: protecciones, seguimiento y reglas del dueño', ()
     const c = workflow.connections
     expect(c['Avisos Pendientes']?.main?.[0]?.[0]?.node).toBe('Uno por Aviso')
     expect(c['Ventana Abierta?']?.main?.[0]?.[0]?.node).toBe('Enviar Aviso al Cliente')
-    expect(c['Ventana Abierta?']?.main?.[1]?.[0]?.node).toBe('Nota Aviso Manual')
+    expect(c['Ventana Abierta?']?.main?.[1]?.[0]?.node).toBe('Hay Conversacion?')
+    expect(c['Hay Conversacion?']?.main?.[0]?.[0]?.node).toBe('Nota Aviso Manual')
     // el texto viene del CRM tal cual: el flujo no lo redacta ni le pone cifras
     const enviar = JSON.stringify(porNombre('Enviar Aviso al Cliente')?.parameters)
     expect(enviar).toContain('.texto')

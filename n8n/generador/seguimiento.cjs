@@ -10,12 +10,13 @@
 //   → una guardia descarta cualquier precio que no sea el ya dicho
 //   → borrador: nota interna · activo: mensaje al cliente → se anota en el CRM.
 const { ES_AGENTE_JS } = require('./agente.cjs')
+const { PATRON: SALUDO_PATRON } = require('./saludo.cjs')
 const { crypto, CW, CRED_CW, CRED_OPENAI, crm, main } = require('./seguimiento-comun.cjs')
 const conversion = require('./seguimiento-conversion.cjs')
 const duena = require('./seguimiento-duena.cjs')
 
 const SISTEMA = `Escribes por WhatsApp a nombre de una lavandería de barrio en La Kennedy, Quito. Un cliente pidió información o precio y dejó de contestar. Te digo cuál de cuatro seguimientos es y qué busca. Redacta UN mensaje corto (máximo 35 palabras) para retomar la conversación.
-Reglas: trátalo de usted, con calidez y sin presionar. Retoma lo que él pidió con sus propias palabras y ofrece el siguiente paso concreto (agendar la recogida, resolver una duda). No repitas ni parafrasees los seguimientos que ya le mandamos. No inventes precios, fechas ni promociones: si mencionas un monto, tiene que ser uno que ya se le dijo. Usa su nombre solo si te lo doy. No digas que eres un asistente, un bot o un sistema, ni pidas disculpas por escribir. Si saludas, usa el saludo que corresponde a la hora de Quito que te doy. Sin emojis. Responde solo con el texto del mensaje.`
+Reglas: trátalo de usted, con calidez y sin presionar. Retoma lo que él pidió con sus propias palabras y ofrece el siguiente paso concreto (agendar la recogida, resolver una duda). No repitas ni parafrasees los seguimientos que ya le mandamos. No inventes precios, fechas ni promociones: si mencionas un monto, tiene que ser uno que ya se le dijo. Usa su nombre solo si te lo doy. No digas que eres un asistente, un bot o un sistema, ni pidas disculpas por escribir. Si saludas, usa el saludo que corresponde a la hora de Quito que te doy. Si en la conversación que te doy ya se le dijo que por su zona no recogemos, no le ofrezcas recoger: ofrécele solo traer y retirar su ropa en el local. No retomes lo que ya quedó resuelto. Nada de relleno de call center («estoy para ayudarle», «quedamos atentos», «no dude en contactarnos»): una idea y una pregunta. Sin emojis. Responde solo con el texto del mensaje.`
 
 const GUIA = {
   1: 'Han pasado solo unos minutos: un mensaje muy breve para ver si pudo revisar la información o si le quedó alguna duda.',
@@ -37,6 +38,7 @@ const PROMPT_USUARIO = `={{ JSON.stringify({
       'Lo último que escribió: ' + $('Uno por Candidato').item.json.ultimo_mensaje_cliente,
       'Lo último que le respondimos: ' + $('Uno por Candidato').item.json.ultima_respuesta_agente,
       'Seguimiento número ' + $('Uno por Candidato').item.json.paso + ' de 4. ' + (${JSON.stringify(GUIA)})[$('Uno por Candidato').item.json.paso],
+      'Conversación hasta ahora:\\n' + ($('Armar Transcripcion').item.json.transcripcion || '(sin mensajes)'),
       'Seguimientos que ya le mandamos: ' + ($('Uno por Candidato').item.json.anteriores.join(' | ') || '(ninguno)'),
     ].join('\\n') },
   ],
@@ -50,7 +52,7 @@ texto = texto.replace(/^["«]|["»]$/g, '').trim();
 // El saludo lo corrige el código y no el modelo: a las 5 de la tarde ya dijo «buenos días».
 const hora = new Date(Date.now() - 5 * 3600 * 1000).getUTCHours();
 const saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
-texto = texto.replace(/^(buenos d[ií]as|buenas tardes|buenas noches)/i, saludo);
+texto = texto.replace(/${SALUDO_PATRON}/i, saludo);
 if (texto === '') return [];
 const montos = texto.match(/\\$\\s?\\d+(?:[.,]\\d+)?/g) || [];
 const dichos = String(c.ultima_respuesta_agente || '');

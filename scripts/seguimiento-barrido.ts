@@ -50,6 +50,10 @@ const cw = async (ruta: string, cuerpo?: unknown) => {
   return (await r.json()) as Record<string, unknown>
 }
 
+// Mismo patrón que n8n/generador/saludo.cjs (una prueba los compara).
+const PATRON_SALUDO =
+  /^(buenos d[ií]as|buenas tardes|buenas noches|buen d[ií]a|buen mediod[ií]a|buena tarde|buena noche)/i
+
 function saludoDeQuito(): string {
   const hora = new Date(Date.now() - 5 * 3_600_000).getUTCHours()
   return hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches'
@@ -64,7 +68,7 @@ type Fila = {
 
 /** Guardas: saludo según la hora de Quito y ningún monto que no se le haya dicho ya. */
 function revisar(texto: string, dichos: string): string {
-  const t = texto.trim().replace(/^(buenos d[ií]as|buenas tardes|buenas noches)/i, saludoDeQuito())
+  const t = texto.trim().replace(PATRON_SALUDO, saludoDeQuito())
   const montos = t.match(/\$\s?\d+(?:[.,]\d+)?/g) ?? []
   return montos.some((m) => !dichos.includes(m.replace(/\s/g, ''))) ? '' : t
 }

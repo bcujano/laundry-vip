@@ -102,6 +102,30 @@ const nodos = [
     "{ accion: 'marcar_aviso', parametros: { id: $('Uno por Aviso').item.json.id, estado: 'enviado' } }",
     [-800, 2300],
   ),
+  {
+    parameters: {
+      conditions: {
+        options: { caseSensitive: true, leftValue: '', typeValidation: 'loose', version: 2 },
+        conditions: [
+          {
+            id: 'hay-conversacion',
+            leftValue: '={{ !!$json.chatwoot_conversation_id }}',
+            rightValue: '',
+            operator: { type: 'boolean', operation: 'true', singleValue: true },
+          },
+        ],
+        combinator: 'and',
+      },
+      options: {},
+    },
+    name: 'Hay Conversacion?',
+    type: 'n8n-nodes-base.if',
+    typeVersion: 2.2,
+    position: [-1160, 2500],
+    id: crypto.randomUUID(),
+    notes:
+      'Un aviso sin conversación de Chatwoot no puede dejar nota (daba 404): solo se marca como requiere_persona.',
+  },
   chatwoot(
     'Nota Aviso Manual',
     "'⚠️ Hay una diferencia en el pedido de este cliente y no pude avisarle por WhatsApp: pasaron más de 24 h desde su último mensaje, y fuera de ese plazo WhatsApp solo deja mandar plantillas aprobadas. Llámelo o escríbale usted. Esto es lo que el sistema le diría:\\n\\n' + $('Uno por Aviso').item.json.texto",
@@ -123,7 +147,13 @@ const conexiones = {
   'Ventana Abierta?': {
     main: [
       [{ node: 'Enviar Aviso al Cliente', type: 'main', index: 0 }],
+      [{ node: 'Hay Conversacion?', type: 'main', index: 0 }],
+    ],
+  },
+  'Hay Conversacion?': {
+    main: [
       [{ node: 'Nota Aviso Manual', type: 'main', index: 0 }],
+      [{ node: 'Marcar Aviso Persona', type: 'main', index: 0 }],
     ],
   },
   'Enviar Aviso al Cliente': main('Marcar Aviso Enviado'),
