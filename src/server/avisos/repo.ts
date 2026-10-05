@@ -44,6 +44,12 @@ export async function crearAvisoDiscrepancia(
   }
 }
 
+/** ¿Se puede mandar texto libre? Pura, para probarla sin tocar la base (que el flujo real también lee). */
+export function ventanaAbierta(ultimaInteraccion: string | null, ahora: Date): boolean {
+  if (ultimaInteraccion === null) return false
+  return (ahora.getTime() - new Date(ultimaInteraccion).getTime()) / 60_000 < VENTANA_MINUTOS
+}
+
 export type AvisoPendiente = {
   id: string
   telefono: string
@@ -73,13 +79,12 @@ export async function avisosPendientes(ahora = new Date()): Promise<AvisoPendien
 
   return avisos.map((a) => {
     const c = porTelefono.get(a.telefono)
-    const minutos = c ? (ahora.getTime() - new Date(c.ultima_interaccion).getTime()) / 60_000 : null
     return {
       id: a.id as string,
       telefono: a.telefono as string,
       texto: a.texto as string,
       chatwoot_conversation_id: (c?.chatwoot_conversation_id as number | null) ?? null,
-      ventana_abierta: minutos !== null && minutos < VENTANA_MINUTOS,
+      ventana_abierta: ventanaAbierta((c?.ultima_interaccion as string | undefined) ?? null, ahora),
     }
   })
 }

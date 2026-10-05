@@ -249,8 +249,8 @@ de discrepancia real; primer pedido real creado por el agente con `sector` y veh
 - Las pruebas **no pueden depender de fechas ni de datos reales**: una tenía escrita la fecha
   «2026-10-05» y otra contaba clientes por 5 dígitos que coincidieron con un teléfono real.
   Usa `tests/util/corrida.ts` y frases únicas en el nombre.
-- Los avisos que crean las pruebas pueden ser vistos por el flujo real de avisos (cada 5 min)
-  mientras corre la suite; son avisos sin conversación y solo generan ruido.
+- Los avisos que crean las pruebas los puede leer el flujo real de avisos (cada 5 min)
+  mientras corre la suite y cambiarles el estado: por eso la prueba de avisos no depende del estado `pendiente` (usa `ventanaAbierta`, pura).
 - Debounce del agente: **7 s** (se bajó a mano en n8n; el repo ya lo refleja). `Extraer JSON`
   en n8n difiere del generado solo en formato; la guardia anti-alucinación está.
 - Una sola base para pruebas y producción; n8n, Chatwoot y la clave de OpenAI se comparten con
