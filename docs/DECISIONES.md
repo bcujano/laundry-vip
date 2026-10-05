@@ -44,6 +44,11 @@ debe tratarla como a la dueña.
 | **La recogida y la entrega SIEMPRE van en auto; el agente ya no pregunta cuántas fundas** (se quitó la tool `calcular_vehiculo`). Al peso: siempre un estimado, las libras reales se pesan en planta | 2026-10-01, pedido por el dueño: «cuántas fundas» confundía a los clientes |
 | **Seguimiento a quien no contesta:** 5 min, 1 h, 6 h y 23 h 30 min dentro de las 24 h; quien contrata o dice que no, no recibe más | 2026-09-30 |
 | **Barrido del primer seguimiento** a todos los leads con ventana abierta, incluso a los que María Sol ya había contestado | 2026-09-30, pedido por el dueño |
+| **El primer seguimiento es a los 5 minutos** (no a los 30) y con él se resume el lead a la dueña (nota interna y WhatsApp si cabe texto libre) | 2026-10-05, pedido del dueño: «esa decisión es casi inmediata» |
+| **Franja de recolección: lunes a sábado, 9:00–17:00** | 2026-10-05, pedido del dueño |
+| **El catálogo en imagen NO lo genera el CRM:** usa la imagen que el dueño pone en Google Drive y llega a WhatsApp como foto nativa (adjunto), sin enlaces. El generador que se hizo se quitó | 2026-10-05, pedido del dueño (P1 de `CONTINUIDAD.md`) |
+| **El agente es «directo y sin relleno» como principio, no como plantilla:** nada de explicar el radio ni reglas internas, precio y plazo juntos, y los ejemplos del prompt nunca se copian | 2026-10-01 y 2026-10-05, pedido del dueño |
+| **No cometer errores:** todo cambio se verifica contra producción (n8n, base, Chatwoot) antes de darlo por hecho; lo que no se pueda ver con tráfico real se anota como pendiente | Byron, repetido varias veces |
 | Base de clientes entregada **en cero** a VIP; no cargar datos de ejemplo sin permiso | 2026-09-23 |
 | Sin dirección no hay pedido con recogida; el nombre del cliente nunca se inventa | 2026-09-30 |
 | OpenAI compartido con 321 | Temporal, acordado |
@@ -87,6 +92,12 @@ debe tratarla como a la dueña.
   Chatwoot, el agente no se entera y sigue contestando (hueco abierto, B1).
 
 ### Del sistema y de las pruebas
+
+- **27 nodos de n8n sin «continuar si falla»** (2026-10-05): el MCP pierde `onError` al crear nodos; un 404 de Chatwoot detuvo el flujo de avisos y `Registrar Entrante` ya no era a prueba de fallos. Ahora `n8n/verificar-errores.cjs` lo comprueba tras cada publicación.
+- **El agente se habría callado solo** al cambiar su usuario de Chatwoot (2026-10-01): el filtro de «una persona escribió» todavía ignoraba solo a «Byron ADMIN». Se corrigió antes de que entrara un cliente (`n8n/generador/agente.cjs`).
+- **Prometió recogida fuera de zona** (Carcelén Bajo, 2026-10-01) y explicaba «dentro de los 2,5 km a la redonda»: ahora lo verifica por dentro y solo dice sí o no.
+- **Seguimiento con saludo equivocado** («buenos días» a las 5 pm; después «Buen mediodía»): la hora la fija el código, no el modelo; falta ampliar la guardia a «buen día/mediodía» (P2 F1).
+- **Pruebas que vencen con el calendario o chocan con datos reales** (fecha fija «2026-10-05»; conteo de clientes por 5 dígitos que coincidieron con un teléfono real): usar fechas calculadas y frases únicas.
 
 - **La suite borraba datos reales:** `operador.test.ts` usaba el número del
   dueño y le borraba la conversación. **Ninguna prueba usa ni limpia un número

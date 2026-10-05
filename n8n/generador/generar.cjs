@@ -256,11 +256,6 @@ const seguimiento = require('./seguimiento.cjs')
 nodes.push(...seguimiento.nodos)
 Object.assign(connections, seguimiento.conexiones)
 
-// Catálogo en imagen en el primer contacto.
-const catalogo = require('./catalogo.cjs')
-nodes.push(...catalogo.nodos)
-Object.assign(connections, catalogo.conexiones)
-
 // Aviso automático al cliente por una discrepancia de conteo o de monto.
 const avisos = require('./avisos.cjs')
 nodes.push(...avisos.nodos)

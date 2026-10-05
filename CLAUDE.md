@@ -95,6 +95,7 @@ n8n + Chatwoot + WhatsApp Cloud API · OpenAI `gpt-4.1-mini` y `gpt-transcribe`
 | `pnpm check:integraciones` | las 9 credenciales de n8n |
 | `pnpm chatwoot:revisar --desde AAAA-MM-DD` | transcripciones del agente con clientes reales (solo lectura, cuenta 3): la auditoría más barata |
 | `node n8n/verificar-prompts.cjs <archivo>` | comprueba que los prompts de n8n son idénticos a los del repo |
+| `node n8n/verificar-errores.cjs <archivo>` | comprueba que los nodos de n8n conservan su «continuar si falla» (el MCP lo pierde al crear nodos; correrlo tras cada publicación) |
 | `node n8n/generador/generar.cjs` | regenera el JSON del workflow |
 | `npx vercel --prod --yes` | deploy del CRM (el CLI ya tiene sesión) |
 

@@ -215,34 +215,11 @@ describe('agente Laundry VIP: protecciones, seguimiento y reglas del dueño', ()
     )
   })
 
-  it('en el primer contacto manda el catálogo como IMAGEN nativa, no como enlace (2026-10-05)', () => {
-    const c = workflow.connections
-    expect(c['Enviar Respuesta Chatwoot']?.main?.[0]?.map((x) => x.node)).toContain(
-      'Primer Contacto?',
-    )
-    expect(c['Primer Contacto?']?.main?.[0]?.[0]?.node).toBe('Descargar Catalogo')
-    expect(c['Descargar Catalogo']?.main?.[0]?.[0]?.node).toBe('Nombrar Catalogo')
-    expect(c['Nombrar Catalogo']?.main?.[0]?.[0]?.node).toBe('Enviar Catalogo')
-    // solo la primera vez, y no al equipo ni a un chat que se escala
-    const cond = JSON.stringify(porNombre('Primer Contacto?')?.parameters)
-    expect(cond).toContain('previos.length === 0')
-    expect(cond).toContain('es_operador')
-    expect(cond).toContain('escalar_humano')
-    // se descarga la imagen que dibuja el CRM y se sube como ADJUNTO (multipart), con tipo imagen
-    const descarga = JSON.stringify(porNombre('Descargar Catalogo')?.parameters)
-    expect(descarga).toContain('/api/catalogo')
-    expect(descarga).toContain('"responseFormat":"file"')
-    expect(String(porNombre('Nombrar Catalogo')?.parameters.jsCode)).toContain('image/png')
-    const envio = JSON.stringify(porNombre('Enviar Catalogo')?.parameters)
-    expect(envio).toContain('multipart-form-data')
-    expect(envio).toContain('attachments[]')
-    expect(envio).toContain('"private","value":"false"')
-    // sin enlaces en el texto del cliente
-    expect(envio).not.toContain('"content"')
-  })
-
-  it('el prompt sabe que la lista de precios llega sola y no la recita (2026-10-05)', () => {
-    expect(systemMessage).toContain('LA LISTA DE PRECIOS LLEGA SOLA')
-    expect(systemMessage).toContain('no recites el catálogo')
+  it('el catálogo en imagen está apagado hasta tener la imagen del dueño (2026-10-05)', () => {
+    // Nada en el workflow genera ni manda el catálogo: no hay nodos huérfanos ni cadena conectada.
+    for (const nombre of ['Primer Contacto?', 'Descargar Catalogo', 'Enviar Catalogo']) {
+      expect(porNombre(nombre)).toBeUndefined()
+    }
+    expect(JSON.stringify(workflow.connections)).not.toContain('/api/catalogo')
   })
 })

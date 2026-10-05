@@ -1,18 +1,19 @@
 # Estado y continuidad
 
-Última actualización: **2026-09-30** (cierre de sesión). Es el primer archivo
-que se lee en cada sesión; está escrito para arrancar **sin hacerle preguntas
-al dueño**. Mapa de documentos:
+Última actualización: **2026-10-05** (cierre de sesión, verificado contra
+producción ese mismo día). Es el primer archivo que se lee en cada sesión; está
+escrito para arrancar **sin hacerle preguntas al dueño**. Mapa de documentos:
 
 | Archivo | Para qué |
 |---|---|
-| **este** | Arranque, estado real, acciones inmediatas, plan y pendientes |
+| **este** | Arranque, estado real, plan en orden y lo que espera al dueño |
 | [`AGENTE.md`](AGENTE.md) | Cómo funciona el agente de WhatsApp y cómo se cambia (MCP de n8n) |
 | [`DECISIONES.md`](DECISIONES.md) | Lo que el dueño decidió (no revertir) y los fallos ya encontrados |
+| [`Cuestionario_Conocimiento_del_Agente.pdf`](Cuestionario_Conocimiento_del_Agente.pdf) · `cuestionario/*.md` | Lo que María Sol debe transmitirle al agente (en proceso con ella). Se regenera con `python scripts/cuestionario_pdf.py` |
 | [`CHATWOOT_Y_WHATSAPP.md`](CHATWOOT_Y_WHATSAPP.md) | De dónde sale cada credencial de integración |
 | [`DESPLIEGUE.md`](DESPLIEGUE.md) | Despliegue del CRM |
 | [`historia-agente.md`](historia-agente.md) | Por qué el agente nació clonado de 321 |
-| `GUIA_CONSTRUCCION…`, `PLANO_PROYECTO`, `PROMPT_CONSTRUCCION…`, `CUESTIONARIO…` | **Históricos de la construcción.** Traen valores viejos (combo, 5 km…): no son fuente de verdad |
+| `GUIA_CONSTRUCCION…`, `PLANO_PROYECTO`, `PROMPT_CONSTRUCCION…`, `CUESTIONARIO_OPERADOR…` | **Históricos de la construcción.** Traen valores viejos (combo, 5 km…): no son fuente de verdad |
 
 ---
 
@@ -25,10 +26,14 @@ al dueño**. Mapa de documentos:
 > workflow `Bleb55WBKPfBdxVg` · número +593 98 566 2822). Lee `CLAUDE.md` y
 > `docs/CONTINUIDAD.md` completos, y `docs/AGENTE.md` y `docs/DECISIONES.md`
 > antes de tocar el agente. No me hagas preguntas: ejecuta la «§3 Acciones al
-> arrancar» (las autorizo todas), sigue con el «§4 Plan» en el orden escrito
-> sin parar, y al final reporta qué hiciste, qué verificaste contra el sistema
-> real y qué quedó esperando algo mío (§5), con lo que hiciste por defecto.
-> No toques nada de 321.
+> arrancar», sigue con el «§4 Plan» en el orden escrito sin parar —empieza por
+> **P1, el catálogo en imagen: la imagen la puse yo en Google Drive; búscala con
+> el conector de Drive y haz que WhatsApp la entregue como foto nativa, sin
+> enlaces ni generarla**— y al final reporta qué hiciste, qué verificaste contra
+> el sistema real y qué quedó esperando algo mío (§5). Mi estilo: avanza de
+> corrido, recomendaciones y no menús, **no cometas errores** (verifica contra
+> producción), y nada de relleno ni plantillas en lo que el agente le dice al
+> cliente. No toques nada de 321.
 
 **Verificación en 1 minuto** de que todo sigue vivo:
 
@@ -38,10 +43,11 @@ pnpm typecheck && pnpm lint && pnpm test
 ```
 
 Y en n8n (MCP): `search_workflow_executions` sobre `Bleb55WBKPfBdxVg` con
-`status: ["error","crashed"]`. Hay **una** ejecución `crashed` del 2026-09-30
-17:26Z sin `startedAt` (probablemente un reinicio de n8n); si aparecen más,
-investígalas. Si el MCP dice «Workflow is not available in MCP», el dueño debe
-activarlo en la tarjeta del workflow.
+`status: ["error","crashed"]`. El 2026-10-05 había **una** ejecución con error
+(15:40Z del 1/10, un 404 de `Nota Aviso Manual` por un aviso de prueba sin
+conversación; ya corregido, §6). Si aparecen más, investígalas. Si el MCP dice
+«Workflow is not available in MCP», el dueño debe activarlo en la tarjeta del
+workflow.
 
 ---
 
@@ -50,29 +56,33 @@ activarlo en la tarjeta del workflow.
 | | |
 |---|---|
 | CRM | **https://laundry-vip.vercel.app** · Vercel `bcujanos-projects/laundry-vip` · deploy: `npx vercel --prod --yes` desde `C:\dev\laundry-vip` (el CLI ya tiene sesión) |
-| Base | Supabase `cvdlslltevwxprdktmfu` (São Paulo). **Una sola base: pruebas y producción comparten.** Migraciones `0001`–`0019` aplicadas |
-| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · 104 nodos · activo · versión activa `362e6b86-585a-4474-9583-067d56b5eb3c` (2026-10-05) |
-| Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · bandeja «Vip Laundry». La cuenta 1 es de 321: **no se toca ni para leer** |
+| Base | Supabase `cvdlslltevwxprdktmfu` (São Paulo), **solo de VIP** (sin tablas de 321). Pruebas y producción comparten esa base (decidido: seguir así). Migraciones `0001`–`0019` aplicadas |
+| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · **100 nodos** · activo · versión activa `921804f5-f3a0-4b70-b494-bbf07769db30` (2026-10-05) |
+| Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · bandeja «Vip Laundry». El agente publica como **«Agente VIP»** (usuario 8). La cuenta 1 es de 321: **no se toca ni para leer** |
 | WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
-| Repo | `github.com/bcujano/laundry-vip` (privado) · rama `agente-n8n-laundry` y etiqueta `v1.0` subidas el 2026-09-30. Local en `C:\dev\laundry-vip`. Historial reescrito el 2026-09-23 (los SHA cambiaron) |
-| Gate | typecheck, lint, build y **321 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
-| Credenciales en n8n | `CRM Laundry VIP Webhook` (id `9456EHfb8yxpZOmr`), `Chatwoot Laundry VIP API`, `Meta WhatsApp Laundry VIP`, `Postgres Laundry VIP`, `OpenAi account` (compartida con 321). Nunca en el JSON |
-| Variables (`.env.local`) | Solo nombres aquí: `SUPABASE_*`, `N8N_WEBHOOK_SECRET`, `CHATWOOT_*`, `WHATSAPP_*`, `OPENAI_API_KEY`, `LOCAL_LATITUD/LONGITUD/DIRECCION` |
+| Repo | `github.com/bcujano/laundry-vip` (privado) · rama `agente-n8n-laundry`, etiqueta `v1.0` (estado con el número de prueba). Local en `C:\dev\laundry-vip`. Historial reescrito el 2026-09-23 |
+| Gate | typecheck, lint (sin advertencias), build y **315 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
+| Credenciales en n8n | `CRM Laundry VIP Webhook` (id `9456EHfb8yxpZOmr`), `Chatwoot Laundry VIP API` (token de «Agente VIP»), `Meta WhatsApp Laundry VIP`, `Postgres Laundry VIP`, `OpenAi account` (compartida con 321). Nunca en el JSON |
+| Variables (`.env.local`) | Solo nombres: `SUPABASE_*`, `N8N_WEBHOOK_SECRET`, `CHATWOOT_*` (el token de ahí es el de Byron: no lo uses para publicar como agente), `WHATSAPP_*`, `OPENAI_API_KEY` (vacía a propósito: vive solo en n8n), `LOCAL_LATITUD/LONGITUD/DIRECCION` |
+| Conectores de esta sesión | Google Drive (`mcp__12076c00…`: buscar/leer/descargar archivos) para P1 |
 
 **Personas:** Byron David (dueño, superadmin, `brncjn@gmail.com`) · **María Sol
-Játiva** (administradora/dueña en la operación diaria, `+593 98 509 1860`) ·
-Daniel Serrano (operador de planta, `+593 99 304 6212`). Lista blanca de
-WhatsApp: María Sol (admin) y Daniel (operador). Byron **no** está en la lista
-blanca: sus pruebas con el número de 321 entran como cliente.
+Játiva** (administradora/dueña en la operación diaria, `+593 98 509 1860`; su
+Chatwoot es el usuario 6) · Daniel Serrano (operador de planta, `+593 99 304 6212`).
+Lista blanca de WhatsApp: María Sol (admin) y Daniel (operador). Byron **no** está
+en ella: sus pruebas con el número de 321 entran como cliente.
 
 **Configuración hoy (la edita el dueño en el CRM):** «VIP Laundry» · lunes a
-sábado · 9:00–19:00, sábados hasta 17:00 · recolección a **2,5 km** del local ·
-tarifa de recogida y entrega **$2,50** · entrega **48–72 h** · tope de mensajes
-40/teléfono/día y tope de gasto OpenAI $5/día (**conectados el 2026-09-30, pendientes de verse con tráfico real, §4 B2**).
+sábado, local 9:00–19:00 (sábados hasta 17:00) · **recolección 9:00–17:00** ·
+tarifa de recogida y entrega **$2,50** · entrega **48–72 h** · recogida solo en
+**36 sectores** (≤2,5 km del local; el cliente nunca oye «2,5 km») · saludo «Bienvenido
+a VIP Laundry, La Kennedy.» · seguimiento en modo **activo** · tope de mensajes
+40/teléfono/día y de gasto OpenAI $5/día (ambos funcionan: ver §3).
 
-**Datos hoy:** base entregada en cero el 2026-09-23 y desde entonces entraron
-clientes reales: 14 clientes, 15 conversaciones, **1 pedido** (defectuoso, ver
-§5 E1), 0 errores del agente. Catálogo: 54 servicios con sinónimos.
+**Datos hoy (2026-10-05):** 20 clientes, 21 conversaciones, **1 pedido** (el de
+«Jp», defectuoso; el dueño dijo que lo olvidemos), 35 seguimientos, 0 avisos de
+discrepancia, 0 errores del agente. Catálogo: 54 servicios con sinónimos.
+`uso_openai_diario` marca ~$0,01–0,04 al día (estimado).
 
 ---
 
@@ -80,137 +90,214 @@ clientes reales: 14 clientes, 15 conversaciones, **1 pedido** (defectuoso, ver
 
 | Comando | Para qué |
 |---|---|
-| `pnpm typecheck` · `pnpm lint` · `pnpm test` · `pnpm build` | el gate (los cuatro, siempre) |
+| `pnpm typecheck` · `pnpm lint` · `pnpm test` · `pnpm build` | el gate (los cuatro, siempre). Si `typecheck` se queja de `.next/types`, borra la carpeta `.next` |
 | `pnpm chatwoot:revisar --desde AAAA-MM-DD [--salida f.txt]` | transcripciones del agente con clientes reales (solo lectura, cuenta 3) |
-| `node n8n/generador/generar.cjs` | regenera el JSON del workflow desde los prompts |
-| `node n8n/verificar-prompts.cjs <archivo>` | comprueba que n8n quedó idéntico al repo (ver `AGENTE.md` §5) |
+| `node n8n/generador/generar.cjs` | regenera el JSON del workflow (debe decir «OK: 100 nodos») |
+| `node n8n/verificar-prompts.cjs <archivo>` | n8n idéntico al repo en los dos prompts |
+| `node n8n/verificar-errores.cjs <archivo>` | los nodos de n8n conservan su «continuar si falla» (el MCP lo pierde al crear nodos) |
 | `pnpm db:migrate` | aplica migraciones nuevas (nunca se edita una aplicada) |
-| `pnpm db:seed` / `--forzar` | carga el catálogo **solo si está vacío** / reimpone la lista del archivo (pisa al dueño) |
+| `pnpm db:seed` / `--forzar` | catálogo **solo si está vacío** / reimpone la lista (pisa al dueño) |
 | `pnpm db:reset-clientes` / `--confirmar` | simula / **borra sin vuelta atrás** clientes, pedidos, conversaciones y memoria del agente |
 | `pnpm db:staff` · `pnpm db:password <correo>` | cuentas del CRM |
-| `pnpm check:integraciones` | las 9 variables de integración (falla si falta alguna) |
+| `pnpm check:integraciones` | las 9 variables de integración |
 | `pnpm db:demo` | datos de ejemplo. **No los cargues sin permiso del dueño** |
-| Webhook a mano | `curl -X POST https://laundry-vip.vercel.app/api/webhook -H "content-type: application/json" -H "x-webhook-secret: $N8N_WEBHOOK_SECRET" -d '{"accion":"cotizar_prendas","parametros":{"items":[{"descripcion":"hacen tintura","cantidad":1}]}}'` |
+| `pnpm tsx scripts/seguimiento-barrido.ts mensajes.json [--simular]` | manda ya un seguimiento a los teléfonos del archivo (orden del dueño del 30/09). Publica con el token de `.env.local`: ponle el de «Agente VIP» o su mensaje saldrá como de Byron y pausará el chat |
+| `python scripts/cuestionario_pdf.py` | regenera el PDF del cuestionario |
+| Webhook a mano | `curl -X POST https://laundry-vip.vercel.app/api/webhook -H "content-type: application/json" -H "x-webhook-secret: $N8N_WEBHOOK_SECRET" -d '{"accion":"verificar_cobertura","parametros":{"sector":"La Kennedy"}}'` |
 
-Scripts sueltos contra la base: `scripts/` no usa el alias `@/`; en Windows los
-`.mts` fuera del repo importan con `file:///C:/...`.
+`scripts/` no usa el alias `@/`. En este entorno, para escribir JSON/JS con
+comillas y backticks usa la herramienta Write (un `heredoc` con `'` o `` ` ``
+rompe el shell); y no uses `` ` `` dentro de `node -e "…"`.
 
 ---
 
-## 3. Acciones al arrancar (el dueño las autoriza al pegar el prompt)
+## 3. Cómo está el sistema hoy (resumen verificado)
+
+- **Agente de clientes** (`n8n/prompt-agente-laundry.md`, 6 tools): cotiza del
+  catálogo, **verifica la cobertura por dentro** (`verificar_cobertura`, solo dice
+  sí/no), **precio y plazo juntos** apenas el cliente dice qué quiere lavar, la
+  **recogida y la entrega siempre en auto** (no pregunta fundas), saluda con el
+  saludo de la casa, **directo y sin relleno** (principio, no plantilla), nunca niega
+  un servicio, no inventa el nombre, no miente si le preguntan si es persona.
+- **Persona manda:** si alguien que no es «Agente VIP» (María Sol, Daniel, Byron)
+  escribe a mano, el chat queda con la etiqueta `humano` y el agente calla.
+- **Protecciones con tráfico real (verificado):** `mensajes_diarios`,
+  `eventos_procesados` y `uso_openai_diario` se llenan desde el 30/09; el tope de
+  40 mensajes cuenta un mensaje por turno; el gasto es una estimación.
+- **Seguimiento** (modo `activo`): 5 min, 1 h, 6 h y 23 h 30 min de silencio, solo
+  dentro de las 24 h de WhatsApp y del horario del local; un paso atrasado sale
+  en cuanto se puede (solo el más reciente). Antes de insistir lee la conversación:
+  si ya compró/agendó/dijo que no, no insiste (y si compró, entra al CRM y deja una
+  nota «falta crear el pedido»). Con el primer paso resume la conversación a María
+  Sol (nota interna siempre; por WhatsApp solo si ella escribió al agente en las
+  últimas 24 h, y hoy **no** lo ha hecho). El saludo del seguimiento lo corrige el
+  código según la hora de Quito. Los 5 chats del barrido siguen sin el filtro
+  «una persona ya contestó» (`seguimientos.barrido`).
+- **Aviso de discrepancia** (excepción autorizada a la regla 10): si el conteo en
+  planta no cuadra o se corrige un monto, el servidor arma un aviso fijo y n8n lo
+  manda si la ventana de 24 h está abierta; si no, nota interna `requiere_persona`.
+  **Nunca ha habido un caso real.**
+- **Cuestionario para María Sol** entregado y **en proceso con ella**.
+
+---
+
+## 4. Acciones al arrancar (el dueño las autoriza al pegar el prompt)
 
 1. **Verificación de 1 minuto** (§0). Si algo está rojo, arréglalo antes de seguir.
-2. **Conversación 5 de María Sol — RESUELTO (2026-09-30).** La etiqueta `humano` ya no está (Byron la quitó a las 21:11Z); con B1 ahora, si ella responde a mano en un chat de cliente, el agente se calla solo en ese chat. Comprobar que el agente le contesta cuando ella le escribe al número del negocio.
-3. **Revisar lo que pasó con clientes reales desde la última revisión** (cubrió
-   hasta 2026-09-30 18:12Z): `pnpm chatwoot:revisar --desde 2026-09-30`. Busca
-   lo de `DECISIONES.md` §2: negaciones de servicio, promesas fuera de
-   cobertura, precios que no salen del catálogo, nombres inventados, pedidos
-   sin dirección, respuestas dobles, el agente contestando encima de María Sol.
-   **Cada falla: primero prueba, luego arreglo, luego verificación en
-   producción.** Anota en §5 lo que no puedas resolver tú.
-4. **Comprobar el resumen de las 8:00** cuando María Sol ya haya escrito al
-   agente (`operador_whitelist.ultimo_mensaje_en` deja de ser `null`): ver la
-   ejecución del nodo `Resumen 8:00` y que llegó a su WhatsApp. Sin plantilla
-   aprobada, solo llega si ella le escribió al agente en las últimas 23 h.
+2. **Revisar lo que pasó con clientes reales** desde 2026-10-05:
+   `pnpm chatwoot:revisar --desde 2026-10-05`. Busca lo de `DECISIONES.md` §2 y
+   comprueba: que las respuestas del agente salen firmadas **«Agente VIP»**; que
+   no suelta relleno ni el radio; que el seguimiento de 5 min llega y que María Sol
+   recibió su nota (y el WhatsApp si ya le escribió al agente). **Cada falla:
+   primero prueba, luego arreglo, luego verificación en producción.**
+3. **Comprobar el resumen de las 8:00** solo si María Sol ya escribió al agente
+   (`operador_whitelist.ultimo_mensaje_en` distinto de `null`); sin plantilla de
+   Meta únicamente llega dentro de las 23 h siguientes a su último mensaje.
 
 ---
 
-## 4. Plan de desarrollo (en este orden, sin parar)
+## 5. Plan de trabajo (en este orden, sin parar)
 
 Cada punto termina con: gate verde → deploy → verificación contra producción →
-commit → si tocó el agente, publicación en n8n + `verificar-prompts.cjs` →
-actualizar esta sección.
+commit y push → si tocó el agente, publicación en n8n + `verificar-prompts.cjs` +
+`verificar-errores.cjs` → actualizar esta sección.
 
-**Catálogo en imagen al primer contacto — HECHO (2026-10-05, pedido del dueño).** El CRM dibuja la lista de precios como PNG en el momento (`GET /api/catalogo`, pública, `next/og`; datos de `servicios` y Configuración, así que nunca queda vieja: `src/server/catalogo/`). En n8n, tras la respuesta del agente: `Primer Contacto?` (nadie ha escrito aún al cliente, no es del equipo, no se escala) → `Descargar Catalogo` → `Nombrar Catalogo` → `Enviar Catalogo`, que lo sube a Chatwoot como **adjunto** (multipart) para que llegue a WhatsApp como foto nativa y quede en el chat; nada de enlaces. Probado: Chatwoot acepta el adjunto como imagen (nota privada de prueba en la conversación 5) y `/api/catalogo` responde 200 en producción. **Falta ver el primer envío real a un cliente nuevo** (comprobar que en WhatsApp se ve como foto y no como archivo).
+**P1 · Catálogo en imagen al primer contacto (lo pidió el dueño; se dejó listo
+para esta sesión).** Qué quiere: que cuando alguien contacta por primera vez el
+agente le mande la lista de precios **como imagen nativa de WhatsApp (foto), sin
+enlaces**, y **no quiere que la genere el CRM**: la imagen es suya y la puso en
+Google Drive («para que tú la conviertas en Google Fotos y uses ese URL»). Se
+quitó el generador que había hecho (se desconectó porque no era lo pedido).
+Plan recomendado:
+1. Buscar la imagen con el conector de Drive (`search_files`, nombres como
+   «catálogo»/«precios»; `download_file_content`). Si no aparece, pedírsela al
+   dueño **una sola vez**.
+2. **No hace falta Google Fotos**: sus enlaces compartidos no son imagen directa.
+   Servir la imagen desde el propio CRM (`public/catalogo.png` → 
+   `https://laundry-vip.vercel.app/catalogo.png`) y que n8n la descargue y la suba a
+   Chatwoot como **adjunto**, que es lo que la manda a WhatsApp como foto nativa y la
+   deja en el chat. (Si el dueño insiste en Fotos/Drive, un enlace directo
+   `…/uc?export=download&id=…` de un archivo público también sirve como origen.)
+3. La cadena ya está escrita y probada en su tramo de Chatwoot:
+   `n8n/referencia/catalogo-en-imagen.cjs` (`Primer Contacto?` → `Descargar Catalogo` →
+   `Nombrar Catalogo` → `Enviar Catalogo`, multipart con `attachments[]`, sin `content`:
+   un `content` con paréntesis o acentos hizo que Chatwoot respondiera 400 por curl).
+   Copiarla a `n8n/generador/`, poner `URL_CATALOGO`, requerirla en `generar.cjs`
+   (después del bloque de avisos, **conectada** desde `Enviar Respuesta Chatwoot`),
+   volver a poner en el prompt (Sección 1) la línea «la lista de precios llega sola:
+   no la ofrezcas, no pegues enlaces ni recites el catálogo» y su prueba.
+4. Publicar por MCP (**`addNode` pierde `onError`: correr `verificar-errores.cjs`**) y
+   comprobar con el primer cliente nuevo real que en WhatsApp **se ve como foto** y no
+   como archivo; si el dueño puede probar desde un número que no sea del equipo, mejor.
 
-**Primer seguimiento a los 5 minutos + aviso a la dueña — HECHO (2026-10-05).** `PASOS[0]` pasa a 5–20 min. Con ese primer seguimiento (solo en modo `activo`) se resume la conversación (gpt-4.1-mini) y se deja como nota interna del chat y, si a María Sol le cabe texto libre (`admins_para_aviso`: escribió al agente en las últimas 24 h), también por WhatsApp. **Para que le llegue por WhatsApp ella tiene que escribirle algo al agente al menos una vez al día** (hoy `dentro_de_ventana: false`); si no, solo queda la nota en Chatwoot (donde los chats se le asignan).
+**P2 · Pulir lo que mostró el tráfico real (2026-10-05, conversaciones 26 y 27).**
+Cada uno con prueba antes de arreglar:
+- **F1** El seguimiento escribió «Buen mediodía» y «Buen día»: la guardia del saludo
+  (`armar` en `n8n/generador/seguimiento.cjs` y el script de barrido) solo corrige
+  «buenos días/tardes/noches». Ampliar a «buen día», «buen mediodía» y variantes.
+- **F2** Un cliente escribió «Tengo 3 ternos» / «Completos» y el agente volvió a
+  preguntar «¿cuántos ternos quiere lavar?» (ráfaga de dos mensajes; debía cotizar
+  3 × $7,50 = $22,50). Revisar el prompt y el debounce de 7 s.
+- **F3** Al cliente fuera de cobertura (Llano Grande) el seguimiento siguió
+  ofreciéndole «¿agendamos la recogida?». Pasar la conversación completa al
+  redactor del seguimiento (ya existe `Armar Transcripcion`) con la regla «si se le
+  dijo que su zona no tiene recogida, solo ofrece traer la ropa».
+- **F4** Tras «Por Llano Grande no recogemos, pero puede traer…» el agente preguntó
+  «¿prefiere que le agende para que pase por su ropa…?», confuso: una pregunta clara.
+- **F5** `Nota Aviso Manual` falla con 404 si el aviso no tiene conversación de
+  Chatwoot (pasó con avisos de pruebas); añadir un IF que lo salte y marque
+  `requiere_persona` directo.
 
-**Franja de recolección — 9:00 a 17:00, lunes a sábado (2026-10-05).** Configuración: `hora_recoleccion_inicio = 09:00`, `hora_recoleccion_fin = 17:00`.
+**P3 · Cuestionario de María Sol (en proceso con ella).** Cuando lo devuelva: cargar
+los datos al CRM (precios, `sectores_cobertura`, horarios, plazos), escribir las reglas en
+los prompts **como principios y no como plantillas**, convertir cada escenario en prueba
+y construir las reglas de intervención aprobadas del **Anexo A** (`#bot`, `#venta`,
+`#seguir`, vencimiento de la pausa a las 3 h hábiles, nota de traspaso, avisos por
+WhatsApp, suplente). Decidir con ella si el agente debe crear el pedido de una venta
+cerrada por chat (hoy solo avisa que falta). Sin ella respondida, nada de esto avanza.
 
-**Deuda de tamaño (regla 2, 300 líneas):** `tests/integration/webhook.test.ts` (~440) y `tests/integration/crear-pedido.test.ts` (~345) ya pasaban de 300 antes; no se tocó. El módulo de seguimiento de n8n se dividió en `seguimiento*.cjs` y la prueba del workflow en tres archivos.
+**P4 · Confirmar con tráfico real lo que aún no se ha visto:** primer envío de la nota
+«Lead sin respuesta» a María Sol (y por WhatsApp si ya escribió al agente); primer aviso
+de discrepancia real; primer pedido real creado por el agente con `sector` y vehículo
+`auto`.
 
-**Drift de n8n anotado:** el debounce en n8n estaba en 7 s (el repo y los docs decían 30); el repo ahora lo refleja (`generar.cjs`). `Extraer JSON` en n8n difiere del generado solo en formato; la guardia está.
-
-**Cobertura invisible para el cliente — HECHO (2026-10-01, pedido del dueño).** El agente le decía al cliente «dentro de los 2,5 km a la redonda» y además prometió recogida en Carcelén Bajo, que está fuera. Ahora **verifica por dentro** con la tool `verificar_cobertura` (`verificarCobertura` en `src/server/webhook/handlers/logistica.ts`, usa `verificarSector` y la lista de Configuración) y solo le dice al cliente sí o no: «Sí, pasamos a recoger por [barrio]» o «Por esa zona no recogemos» más traer al local sin recargo. `obtener_proxima_ventana` ya no devuelve el radio y el error `FUERA_DE_COBERTURA` tampoco habla de kilómetros; el prompt prohíbe kilómetros, radio y distancias. **Regla nueva (§2.9): «directo, sin relleno»**, como principio y no como plantilla: apenas el cliente dice qué quiere lavar, en el mismo mensaje van el precio estimado y el plazo de entrega; si pregunta si recogen, sí o no y ya; nada de explicar cómo se decide la cobertura ni reglas internas, ni soltar el horario sin que haga falta. El prompt no lleva ejemplos de respuesta que el modelo pueda copiar. Verificado en producción: Carcelén Bajo, Cumbayá y Calderón dan no; La Kennedy da sí. **Conversación 22 (Fabian Vilema, +593967001736):** se le había prometido recogida por error; se marcó como `rechazado` para frenar el seguimiento y **debe atenderlo una persona**.
-
-**Fundas — QUITADAS (2026-10-01, pedido del dueño).** El agente preguntaba «¿cuántas fundas?» para decidir moto o auto y confundía a los clientes. Ahora **la recogida y la entrega siempre van en auto**: se quitó la tool `calcular_vehiculo` del agente, `crear_pedido` ya no pide `numero_fundas`, el servidor guarda `vehiculo_sugerido = auto` cuando la lavandería recoge o entrega, y el prompt prohíbe preguntar por fundas y exige un estimado siempre (al peso: ejemplo de 10 libras; las libras reales se pesan en planta). La acción `calcular_vehiculo` del webhook sigue existiendo y siempre responde `auto` (compatibilidad).
-
-**B1 · Coexistencia persona–agente — HECHO (2026-09-30).** Rama paralela del webhook (`n8n/generador/persona.cjs`): mensaje saliente público de un usuario de Chatwoot distinto de «Byron ADMIN» → etiqueta `humano` (conserva las otras) + nota interna. Verificado en producción simulando el webhook sobre la conversación 5 (etiquetó; «Byron ADMIN» no dispara). Desde el 2026-10-01 el agente tiene su propio usuario de Chatwoot («Agente VIP», id 8): cualquier otro remitente, **incluido Byron**, cuenta como persona y pausa el chat. Los mensajes viejos de «Byron ADMIN» anteriores a `2026-10-01T00:30Z` se siguen leyendo como del agente (`n8n/generador/agente.cjs`). La etiqueta se queda hasta que alguien la quite. Probado con el webhook real el 2026-10-01 (Agente VIP no etiqueta; Byron ADMIN sí). **Falta confirmar con el primer mensaje real que el agente publica como «Agente VIP»** (en Chatwoot debe verse ese nombre en sus respuestas).
-
-**B2 · Protecciones conectadas — PUBLICADO (2026-09-30), PENDIENTE DE VER CON TRÁFICO REAL.** `n8n/generador/protecciones.cjs`: tras el debounce, `Registrar Entrante` llama a `registrar_evento_entrante` con el teléfono en el sobre (cuenta **un mensaje por turno**, deduplica por id de mensaje de Chatwoot, y devuelve `costo_excedido`); `Puede Continuar?` corta si es repetido, si pasó el tope diario (nota interna para el equipo, sin responder al cliente) o si el gasto del día pasó el techo (aviso al cliente). Un fallo del CRM deja pasar al cliente. Al final del turno `Estimar Uso` → `Registrar Uso` reporta un costo **estimado** (n8n no expone los tokens del agente; la estimación va por encima de lo real). **Primera acción de la próxima sesión:** con un mensaje real, comprobar que `mensajes_diarios`, `eventos_procesados` (claves `chatwoot-…` y `uso-…`) y `uso_openai_diario` dejan de estar vacías, y que el costo estimado por turno es razonable frente a la factura de OpenAI.
-
-**B3 · Dirección, fijo y mapa en Configuración — HECHO (2026-09-30).** Migración `0014` (`direccion_local`, `telefono_local`, `enlace_mapa`, sembrados con los valores que traía el prompt); `verificar_whitelist_operador` y `obtener_proxima_ventana` los devuelven; el prompt del agente de clientes los lee de `negocio`; la pantalla de Configuración los edita (y de paso ahora también edita el cierre de sábado y el radio de recogida, que faltaban en el formulario). El `saludo_agente` **no se conectó a propósito**: la decisión del 2026-09-24 es que el saludo cambia cada vez; el campo sigue en pantalla pero el prompt no lo usa (ver si se quita).
-
-**B4 · Cobertura verificable — ACTIVA (2026-09-30).** Migración `0015` (`configuracion.sectores_cobertura`) y validación en el handler de `crear_pedido` del agente (`FUERA_DE_COBERTURA` / falta de sector; el CRM puede crear excepciones a mano). **Lista cargada por el dueño: 36 sectores a ≤2,5 km del local**, sacados de OpenStreetMap (nodos `place=suburb|neighbourhood|quarter` dentro de 2,5 km de `-0.1382973,-78.4820373`, distancia recalculada con haversine). Ojo: varios nombres existen también lejos (San Carlos, La Luz, El Carmen, La Florida, El Edén, Nazareth); el agente ya pide calle y referencia, y el equipo puede ajustar la lista en Configuración. Verificado en producción: `Cumbayá` → `FUERA_DE_COBERTURA`; sin sector → pide sector; `La Kennedy` pasa.
-
-**S1 · Agente de seguimiento — ACTIVO (2026-09-30, lo pidió el dueño tras ver un borrador real).** Retoma a quien pidió precio y dejó de contestar, dentro de las 24 h de WhatsApp (fuera de ellas Meta exige plantilla). **Cuatro mensajes por silencio del cliente: a los 5 min, 1 h, 6 h y 23 h 30 min** (el último sale antes de las 23 h 54 min); si en ese lapso no contrata, no se insiste más. n8n pregunta cada 5 min (lunes a sábado, 9:00–18:55); `candidatos_seguimiento` (CRM: `src/server/seguimiento/`) dice a quién y qué paso le toca: lead tibio/caliente, sin pedido, sin escalar, que no sea del equipo y al que no se le mandó ya ese paso en ese silencio (tabla `seguimientos`, migración 0016–0017). Solo dentro del horario del local: un paso que no pudo salir a tiempo (de noche, domingo, n8n caído) **sale en cuanto se puede, y solo el más reciente** (nunca varios de golpe) mientras la ventana de 24 h siga abierta. n8n confirma en Chatwoot que no hay etiqueta `humano` ni respuesta de una persona en 24 h; OpenAI (gpt-4.1-mini) redacta ≤35 palabras con la intención de cada paso (recordatorio · resolver duda · propuesta concreta · cierre cordial) y sin repetir lo ya enviado; una guardia descarta montos no dichos. Lo enviado en modo activo queda en la memoria del agente (patrón tomado del follow-up de 321, `Guardar Followup en Memory`). **Modo en Configuración** (`seguimiento_modo`): `apagado` · `borrador` (nota interna en Chatwoot) · `activo` (escribe al cliente; **es el de hoy**). El saludo («buenos días/tardes/noches») lo fija el código según la hora de Quito, no el modelo (a las 5 pm salió «buenos días»). **Barrido del 2026-09-30 (orden del dueño):** se mandó el primer seguimiento a los 8 leads (registrado en el paso que tocaba por su silencio, para que el flujo no mande otro enseguida) con ventana abierta, incluso a los que María Sol ya había contestado (13, 14, 15, 16, 19), con `scripts/seguimiento-barrido.ts` (`mensajes.json` con un texto por teléfono; `--simular` no envía; respeta ventana de 24 h, pedido previo y montos no dichos; registra el paso que tocaba). Los pasos siguientes siguen el flujo normal, y **esos 5 chats siguen el flujo sin el filtro «una persona ya contestó»** (`seguimientos.barrido`, migración 0018; decisión del dueño). Solo los frenan un pedido agendado o confirmado, la etiqueta `humano` o una conversación resuelta. Pendiente: revisar con `pnpm chatwoot:revisar` los primeros seguimientos enviados de verdad y afinar el texto.
-
-**S2 · Detección de conversión — PUBLICADO (2026-09-30).** Antes de insistir, el seguimiento lee la conversación en Chatwoot y un clasificador (gpt-4.1-mini, `temperature 0`) dice `vendido` · `agendado` · `rechazado` · `abierto` (ante la duda, `abierto`). Si compró o agendó: `registrar_conversion` (CRM) agrega al cliente si falta, marca `conversaciones.contexto.estado_comercial` **sin tocar `ultima_interaccion`** y una nota interna avisa si **falta crear el pedido** (el pedido no se inventa desde un chat). Si rechazó, no se le insiste. Si el cliente vuelve a escribir, se reevalúa. **Pendiente (decisión de María Sol, Anexo A del PDF):** reglas de intervención de la dueña (#bot, #venta, #seguir, vencimiento de la pausa, nota de traspaso, avisos por WhatsApp) y si el agente debe crear el pedido él mismo.
-
-**S3 · Cuestionario de conocimiento — ENTREGADO (2026-09-30).** `docs/Cuestionario_Conocimiento_del_Agente.pdf` (37 páginas, 173 preguntas + 44 escenarios + Anexo A de reglas de intervención). Fuente en `docs/cuestionario/*.md`; se regenera con `python scripts/cuestionario_pdf.py`. **Cuando María Sol lo devuelva:** cargar datos al CRM (precios, zonas en `sectores_cobertura`, horarios, plazos), escribir las reglas en los prompts con ejemplos y convertir cada escenario en prueba.
-
-**B5 · Búsqueda de Chatwoot por teléfono — VERIFICADA POR API (2026-09-30).** `contacts/search?q=` de la cuenta 3 encuentra al contacto con el teléfono con o sin `+` y con el número local sin prefijo; `conversations/search` por teléfono no devuelve nada (busca en el contenido de los mensajes). El enlace del CRM (`/search?q=<dígitos>`) es de la pantalla de Chatwoot y **no se pudo probar en el navegador** (pide sesión): el dueño puede comprobar un botón «abrir en Chatwoot» de un cliente sin conversación registrada.
-
-**B6 · GitHub — HECHO (2026-09-30):** `git push -u origin agente-n8n-laundry --tags`. Falta revisar que `.github/workflows/ci.yml` corra el gate con las variables como *secrets* (las pruebas de integración tocan la base real: **no** les des las llaves de producción, ver B8).
-
-**B7 · Funcionalidad pendiente del CRM.**
-- **Aviso automático de discrepancia al cliente — HECHO (2026-09-30)**, excepción autorizada a la regla 10 (ver `CLAUDE.md`). Migración `0019` (`avisos_cliente`), `src/server/avisos/`, flujo `Avisos cada 5 min` en n8n (dentro de las 24 h se manda; fuera queda nota interna `requiere_persona`). **Sin ver con un caso real todavía** (nunca ha habido un conteo que no cuadre). Pendiente: plantilla de Meta `aviso_diferencia` (Utilidad) para poder avisar fuera de las 24 h.
-- **Pantalla para cerrar el mes** de clientes `consolidado_mensual`: explicada al dueño, **se construye cuando exista el primer cliente con facturación mensual**.
-- **`meta_referrals` (origen de los anuncios): el dueño lo dejó para más adelante.** Patrón en `n8n/referencia/Meta-Referral-Capture.json`.
-
-**B8 · Infraestructura propia** (depende del dueño, §5 E8): segundo proyecto de
-Supabase para producción (hoy las pruebas borran y crean filas en la base
-real); instancias propias de n8n y Chatwoot; clave de OpenAI propia con tope.
-Al separar la base hay que cambiar **tres** sitios: variables del CRM en Vercel,
-la credencial `Postgres Laundry VIP` de n8n (memoria del agente) y `.env.local`;
-y rotar la contraseña de la base al estrenar la de producción.
+**P5 · Menores, cuando haya hueco:**
+- `.github/workflows/ci.yml`: revisar que corra el gate con las variables como
+  *secrets* (las pruebas de integración tocan la base real: **no** darles las llaves de
+  producción).
+- El botón «abrir en Chatwoot» de un cliente sin conversación (`/search?q=<dígitos>`) no
+  se pudo probar en el navegador (pide sesión); `contacts/search` sí funciona por API.
+- Deuda de tamaño (regla 2, 300 líneas): `tests/integration/webhook.test.ts` (~450) y
+  `tests/integration/crear-pedido.test.ts` (~345) ya pasaban de 300 antes.
+- **Pantalla de cierre de mes** de clientes `consolidado_mensual`: solo cuando exista el
+  primer cliente con facturación mensual (explicado al dueño).
+- **`meta_referrals`** (origen de los anuncios): el dueño lo dejó para más adelante
+  (patrón en `n8n/referencia/Meta-Referral-Capture.json`).
+- Plantilla de Meta para avisar fuera de las 24 h: **no hace falta** (el dueño dice que
+  María Sol escribe todo el tiempo); lo que cae fuera de la ventana queda como nota interna.
 
 ---
 
-## 5. Esperando al dueño (con lo que haces por defecto mientras tanto)
+## 6. Trampas conocidas (no las vuelvas a pagar)
+
+- **El MCP de n8n pierde `onError` al crear nodos** (`addNode`): 27 nodos quedaron sin
+  «continuar si falla» hasta el 2026-10-05. Tras cada publicación: `verificar-errores.cjs`.
+- `update_workflow` acepta `versionName` de **80 caracteres** como máximo y hay que mandar
+  el prompt **completo** en cada cambio (luego `verificar-prompts.cjs`).
+- `next dev` reescribía `CLAUDE.md` con un bloque propio; ya está desactivado
+  (`agentRules: false` en `next.config.ts`). Si reaparece, revierte con `git checkout CLAUDE.md`.
+- Las pruebas **no pueden depender de fechas ni de datos reales**: una tenía escrita la fecha
+  «2026-10-05» y otra contaba clientes por 5 dígitos que coincidieron con un teléfono real.
+  Usa `tests/util/corrida.ts` y frases únicas en el nombre.
+- Los avisos que crean las pruebas pueden ser vistos por el flujo real de avisos (cada 5 min)
+  mientras corre la suite; son avisos sin conversación y solo generan ruido.
+- Debounce del agente: **7 s** (se bajó a mano en n8n; el repo ya lo refleja). `Extraer JSON`
+  en n8n difiere del generado solo en formato; la guardia anti-alucinación está.
+- Una sola base para pruebas y producción; n8n, Chatwoot y la clave de OpenAI se comparten con
+  321 (nada de 321 se toca). Las pruebas del comportamiento del modelo no existen: lo protege
+  el servidor, las pruebas de emparejamiento y `pnpm chatwoot:revisar`.
+- Secretos rotados por el dueño el 2026-09-23; el historial de git está limpio
+  (`tests/unit/sin-secretos.test.ts` lo vigila).
+
+---
+
+## 7. Esperando al dueño (con lo que haces por defecto mientras tanto)
 
 | # | Qué falta | Por defecto, sin preguntarle |
 |---|---|---|
+| E1 | **La imagen del catálogo en Google Drive** (la puso o la pondrá él) | Búscala con el conector de Drive; si no está, pídela una sola vez |
 | E2 | **Plazo de entrega:** Configuración dice 48–72 h; María Sol a veces dice «48 h» y otras «24 a 48» | Se mantiene 48–72 h |
-| E7 | **Borrar `Descargas\laundry-vip-respaldo-antes-de-limpiar-historial.bundle`**: es el historial viejo y **contiene la credencial de 321** | Nada |
-| E8 | **Infraestructura propia (decidido el 2026-09-30: seguir como está).** Las pruebas de integración corren contra la misma base de Supabase de los clientes reales (la base es solo de VIP; no tiene tablas de 321) y n8n, Chatwoot y la clave de OpenAI se comparten con 321. El dueño decidió no crear un Supabase de pruebas por ahora: cada prueba nueva sigue usando prefijos propios y limpiando lo suyo | Nada |
-| E9 | **Limpiar Chatwoot** (conversaciones de prueba; el contacto «321 Soluciones Inmobiliarias» es el número de 321 de Byron usado para probar). El dueño lo dejó «para más adelante» | Nada; no bloquea |
-| E11 | Si Byron quiere usar el modo admin por WhatsApp, agregarse como Administrador en Configuración → lista blanca | Nada |
+| E3 | **Cuestionario respondido por María Sol** y sus decisiones sobre el Anexo A | Nada; P3 espera |
+| E4 | **María Sol debe escribirle algo al agente cada día** (su número de admin) para que el aviso de «lead sin respuesta» y el resumen de las 8:00 le lleguen por WhatsApp | Solo quedan las notas internas en Chatwoot |
+| E5 | **Borrar `Descargas\laundry-vip-respaldo-antes-de-limpiar-historial.bundle`**: es el historial viejo y **contiene la credencial de 321** | Nada |
+| E6 | **Limpiar Chatwoot** (conversaciones de prueba; el contacto «321 Soluciones Inmobiliarias» es el número de 321 de Byron usado para probar; hay notas privadas de prueba en la conversación 5). Lo dejó «para más adelante» | Nada; no bloquea |
+| E7 | Si Byron quiere el modo admin por WhatsApp, agregarse como Administrador en Configuración → lista blanca | Nada |
+
+**Cerrados por el dueño (no reabrir):** el pedido de «Jp» (olvidado); crear el repo de GitHub
+(hecho); el workflow viejo `ksk8bnj19phzMJHU` (ya inactivo, sin versión activa; no se toca);
+el usuario propio del agente en Chatwoot (hecho); la plantilla de Meta (no hace falta); el
+Supabase de pruebas (se sigue como está); la lista de barrios (cargada); el límite geográfico
+(se queda; la pauta de anuncios ya lo respeta).
 
 ---
 
-## 6. Lo temporal y la deuda que hay que conocer
-
-- **Una sola base para pruebas y producción.** La suite crea y borra filas
-  propias (`tests/util/corrida.ts`) y compara contra la base, pero cualquier
-  prueba nueva puede tocar datos reales: respeta `DECISIONES.md` §3.
-- **n8n, Chatwoot y la clave de OpenAI se comparten con 321.** Nada de 321 se
-  toca. Lavandería VIP vive en la cuenta 3 de Chatwoot y en credenciales propias.
-- **Las pruebas del prompt no existen:** el comportamiento del modelo no se
-  puede probar con `vitest`. Lo que lo protege es el servidor (permisos,
-  dirección obligatoria, guardia), las pruebas de emparejamiento y la
-  auditoría con `pnpm chatwoot:revisar`.
-- **El agente espera 7 s antes de contestar** (debounce; estaba en 30 s y se bajó a mano en n8n). Es deliberado.
-- Secretos: los rotó el dueño el 2026-09-23 (contraseñas, PIN, tokens). El
-  historial de git está limpio (`tests/unit/sin-secretos.test.ts` lo vigila).
-
----
-
-## 7. Mapa del código que más se toca
+## 8. Mapa del código que más se toca
 
 | Qué | Dónde |
 |---|---|
-| Acciones del agente (webhook) | `src/app/api/webhook/route.ts` · `src/server/webhook/schemas.ts` · `handlers/` (`cliente`, `logistica`, `pedidos`, `operador`, `planta`, `admin`, `reportes`, `permisos`, `index`) |
-| Tope de mensajes, gasto y deduplicación | `src/server/webhook/rate-limit.ts`, `cost-tracking.ts` (conectados desde n8n, B2) |
+| Acciones del agente (webhook) | `src/app/api/webhook/route.ts` · `src/server/webhook/schemas.ts` · `handlers/` (`cliente`, `logistica`, `pedidos`, `operador`, `planta`, `admin`, `reportes`, `permisos`, `seguimiento`, `avisos`, `index`) |
+| Tope de mensajes, gasto y deduplicación | `src/server/webhook/rate-limit.ts`, `cost-tracking.ts` |
 | Motor de precios y emparejador | `src/server/pricing/cotizar.ts`, `linea.ts`, `normalizar.ts` |
-| Horario, ventana, cobertura | `src/server/configuracion/` (`repo`, `horario`) · `src/server/scheduling/ventana.ts` |
-| Crear pedido | `src/server/pedidos/crear.ts` |
+| Horario, ventana, cobertura | `src/server/configuracion/` · `src/server/scheduling/ventana.ts` · `src/server/pedidos/cobertura.ts` |
+| Crear pedido | `src/server/pedidos/crear.ts` (la cobertura la verifica el handler `pedidos.ts`) |
+| Seguimiento (selección de a quién y qué paso) | `src/server/seguimiento/` (`elegir.ts` puro, `repo.ts`) · acciones `candidatos_seguimiento`, `registrar_seguimiento`, `registrar_conversion`, `admins_para_aviso` |
+| Avisos de discrepancia | `src/server/avisos/` (`texto.ts`, `repo.ts`, `duenas.ts`) · se crean en `pedidos/verificacion.ts` y `cobros.ts` |
 | Radiografía para la dueña | `src/server/reportes/negocio.ts` · `handlers/admin.ts` |
 | Dashboard y leads | `src/server/dashboard/` · `src/app/(dashboard)/page.tsx` |
 | Catálogo y sinónimos (pantalla) | `src/app/(dashboard)/servicios/` · `src/components/servicios/` · `src/lib/sinonimos.ts` |
+| Configuración (pantalla) | `src/app/(dashboard)/configuracion/` · `src/components/configuracion/` |
 | Descargas CSV | `src/server/exportar/` · rutas `/clientes/exportar`, `/pedidos/exportar`, `/servicios/exportar` |
-| Lista blanca y niveles | `src/components/configuracion/lista-blanca.tsx` · migraciones `0007`, `0008` |
 | Enlaces a Chatwoot | `src/lib/chatwoot.ts` |
-| Workflow n8n | `n8n/generador/*.cjs` → `n8n/workflows/laundry-vip-agente.json` · prompts en `n8n/*.md` |
+| Workflow n8n | `n8n/generador/*.cjs` (`generar`, `agente` [nombre del agente y hora de corte], `persona`, `protecciones`, `seguimiento*` [núcleo, conversión, dueña, común], `avisos`, `herramientas-cliente`, `operador`, `resumen`, `crm`, `guardia`) → `n8n/workflows/laundry-vip-agente.json` · prompts en `n8n/*.md` · referencias sin desplegar en `n8n/referencia/` |
 | Catálogo inicial (solo carga en vacío) | `scripts/catalogo-datos.ts` · `scripts/db-seed.ts` |
-| Pruebas | `tests/unit`, `tests/integration` (contra la base real), `tests/e2e` (Playwright) · utilidades en `tests/util/` |
+| Pruebas | `tests/unit`, `tests/integration` (contra la base real), `tests/e2e` (Playwright) · utilidades en `tests/util/` (`corrida`, `catalogo`, `workflow`) |

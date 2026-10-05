@@ -11,19 +11,30 @@ de tocar el comportamiento.
 
 ```
 WhatsApp → Meta (app Laundry VIP) → Chatwoot cuenta 3 → webhook → n8n
+  Rama persona     (mensaje saliente de alguien que NO es «Agente VIP» → etiqueta «humano»)
   Filtro Chatwoot  (solo message_created + incoming)
   Filtro Humano    (la etiqueta «humano» en la conversación apaga el agente)
-  → WhatsApp Inicio → Debounce 7 s → ¿es el último mensaje? → combina textos
-  → texto | audio (gpt-transcribe) | imagen (visión → hechos estructurados)
+  → WhatsApp Inicio → Debounce 7 s → ¿es el último mensaje?
+  → Registrar Entrante (CRM: cuenta 1 mensaje, deduplica, ¿tope de mensajes o de gasto?)
+  → combina textos → texto | audio (gpt-transcribe) | imagen (visión → hechos)
   → Verificar Operador (CRM: ¿es número autorizado? + datos del negocio)
   → ¿Es Operador?
        sí → Agente Operador  (nivel operador, o admin = la dueña)
-       no → Agente Laundry VIP (clientes)
+       no → Agente Laundry VIP (clientes; 6 tools: cotizar_prendas,
+            obtener_proxima_ventana, verificar_cobertura, find_or_create_client,
+            crear_pedido, consultar_estado_pedido)
   → Extraer JSON (parser + GUARDIA) → respuesta por Chatwoot
                                    → ¿escalar? → etiqueta «humano» + nota
                                    → Registrar cliente y conversación en el CRM
+                                   → Estimar Uso → Registrar Uso (costo OpenAI estimado)
+
+Cada 5 min (L-S 9:00–18:55)  Seguimiento: el CRM dice a quién y qué paso toca (5 min, 1 h,
+  6 h, 23 h 30) → ¿hay persona a cargo? → ¿ya compró / rechazó? (clasificador) → redacta →
+  Chatwoot + memoria del agente + CRM; con el paso 1 además resume a la dueña (nota y WhatsApp).
+Cada 5 min (L-S 9:00–18:55)  Avisos de discrepancia: manda el texto del CRM si la ventana de
+  24 h está abierta; si no, nota interna «requiere_persona».
 Resumen 8:00 (L-S) → datos del CRM → un mensaje por admin → ¿escribió en < 23 h?
-       sí → texto libre · no → plantilla resumen_diario_admin (si Meta la aprobó)
+       sí → texto libre · no → plantilla resumen_diario_admin (no existe: no llega)
 ```
 
 - **Debounce de 7 s:** el agente espera 7 s de silencio antes de contestar,
@@ -118,7 +129,7 @@ una orden inventada con ID falso.
 
 1. **Edita el prompt `.md`** (o el generador en `n8n/generador/`) y regenera:
    ```bash
-   node n8n/generador/generar.cjs        # debe decir «OK: 104 nodos»
+   node n8n/generador/generar.cjs        # debe decir «OK: 100 nodos»
    pnpm biome check --write n8n
    ```
    El generador lee `iAgente 321 INMO V2.json` de **Descargas** (ya está ahí).
@@ -140,9 +151,19 @@ una orden inventada con ID falso.
    - `node n8n/verificar-prompts.cjs <esa-ruta>`: debe decir `OK … idéntico`
      para los dos agentes (código de salida 0). Si dice `FALLA`, muestra las
      líneas que difieren.
-5. **Verifica con el mundo real:** `pnpm chatwoot:revisar --desde AAAA-MM-DD`
+5. **Verifica el manejo de errores** (obligatorio tras crear nodos por MCP):
+   `node n8n/verificar-errores.cjs <esa-misma-ruta>`. El MCP **pierde `onError`** al hacer
+   `addNode`; si dice `FALLA`, copia sus operaciones `setNodeSettings` a `update_workflow`,
+   publica y vuelve a correrlo hasta ver `OK`. (Sin esto un 404 de Chatwoot detuvo el flujo de
+   avisos el 2026-10-01 y `Registrar Entrante` dejaba de ser a prueba de fallos.)
+6. **Verifica con el mundo real:** `pnpm chatwoot:revisar --desde AAAA-MM-DD`
    y lee cómo contestó el agente, o `search_workflow_executions` /
    `get_workflow_execution` con `includeData`.
+
+Trampas del MCP: `versionName` admite **80 caracteres** como máximo; `addNode` no fija
+`onError` (ver paso 5); un `getWorkflowDetails` pesa >100 KB y se guarda en un archivo;
+y el prompt entero hay que mandarlo completo en cada `setNodeParameter` (no hay parche parcial),
+así que se cambia de una vez y se verifica con `verificar-prompts.cjs`.
 
 Notas del MCP: el historial de versiones se purga (un `get_workflow_versions_diff`
 contra una versión vieja responde «not found»); al cambiar una tool, su
