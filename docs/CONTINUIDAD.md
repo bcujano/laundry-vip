@@ -57,12 +57,12 @@ workflow.
 | | |
 |---|---|
 | CRM | **https://laundry-vip.vercel.app** · Vercel `bcujanos-projects/laundry-vip` · deploy: `npx vercel --prod --yes` desde `C:\dev\laundry-vip` (el CLI ya tiene sesión) |
-| Base | Supabase `cvdlslltevwxprdktmfu` (São Paulo), **solo de VIP** (sin tablas de 321). Pruebas y producción comparten esa base (decidido: seguir así). Migraciones `0001`–`0020` aplicadas |
-| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · **105 nodos** · activo · versión activa `5bbeadd7-4f43-4052-abcb-1918c6f13380` (2026-10-09) |
+| Base | Supabase `cvdlslltevwxprdktmfu` (São Paulo), **solo de VIP** (sin tablas de 321). Pruebas y producción comparten esa base (decidido: seguir así). Migraciones `0001`–`0021` aplicadas |
+| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · **115 nodos** · activo · versión activa `dd349fa7-7ae4-42d3-9ae3-21f8de07a4ad` (2026-10-09) |
 | Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · bandeja «Vip Laundry». El agente publica como **«Agente VIP»** (usuario 8). La cuenta 1 es de 321: **no se toca ni para leer** |
 | WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
 | Repo | `github.com/bcujano/laundry-vip` (privado) · rama `agente-n8n-laundry`, etiqueta `v1.0` (estado con el número de prueba). Local en `C:\dev\laundry-vip`. Historial reescrito el 2026-09-23 |
-| Gate | typecheck, lint (sin advertencias), build y **330 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
+| Gate | typecheck, lint (sin advertencias), build y **350 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
 | Credenciales en n8n | `CRM Laundry VIP Webhook` (id `9456EHfb8yxpZOmr`), `Chatwoot Laundry VIP API` (token de «Agente VIP»), `Meta WhatsApp Laundry VIP`, `Postgres Laundry VIP`, `OpenAi account` (compartida con 321). Nunca en el JSON |
 | Variables (`.env.local`) | Solo nombres: `SUPABASE_*`, `N8N_WEBHOOK_SECRET`, `CHATWOOT_*` (el token de ahí es el de Byron: no lo uses para publicar como agente), `WHATSAPP_*`, `OPENAI_API_KEY` (vacía a propósito: vive solo en n8n), `LOCAL_LATITUD/LONGITUD/DIRECCION` |
 | Imagen del catálogo | `public/catalogo.png` → **https://laundry-vip.vercel.app/catalogo.png** (pública: está excluida del proxy de sesión). Es `vip5.png` de la carpeta de Drive del dueño (2026-09-24). **Es una foto fija: no sigue a Configuración.** Para cambiarla: reemplazar el archivo y `npx vercel --prod --yes` (n8n la descarga cada vez) |
@@ -94,7 +94,7 @@ discrepancia, 0 errores del agente. Catálogo: 54 servicios con sinónimos.
 |---|---|
 | `pnpm typecheck` · `pnpm lint` · `pnpm test` · `pnpm build` | el gate (los cuatro, siempre). Si `typecheck` se queja de `.next/types`, borra la carpeta `.next` |
 | `pnpm chatwoot:revisar --desde AAAA-MM-DD [--salida f.txt]` | transcripciones del agente con clientes reales (solo lectura, cuenta 3) |
-| `node n8n/generador/generar.cjs` | regenera el JSON del workflow (debe decir «OK: 104 nodos») |
+| `node n8n/generador/generar.cjs` | regenera el JSON del workflow (debe decir «OK: 115 nodos») |
 | `node n8n/verificar-prompts.cjs <archivo>` | n8n idéntico al repo en los dos prompts |
 | `node n8n/verificar-errores.cjs <archivo>` | los nodos de n8n conservan su «continuar si falla» (el MCP lo pierde al crear nodos) |
 | `pnpm db:migrate` | aplica migraciones nuevas (nunca se edita una aplicada) |
@@ -251,6 +251,8 @@ de discrepancia real; primer pedido real creado por el agente con `sector` y veh
 | # | Qué falta | Por defecto, sin preguntarle |
 |---|---|---|
 | E1 | **Imagen del catálogo:** decidir si se corrige (falta el precio de recogida y entrega; vestidos «desde $6» contra $5 del CRM). Hoy se usa `vip5.png` tal cual | Se mantiene `vip5.png`; para cambiarla basta reemplazar `public/catalogo.png` y desplegar |
+| E8 | **Token de Meta inválido en n8n** (verificado 2026-10-09: la credencial «Meta WhatsApp Laundry VIP» responde 401 «Authentication Error», código 190; `WHATSAPP_CLOUD_API_TOKEN` en `.env.local` está vacío). Todo envío directo a Graph falla: avisos al equipo, resumen de las 8:00 y aviso de lead sin respuesta por WhatsApp. El agente con clientes **no** se ve afectado (responde por Chatwoot) | Dueño: crear un token **permanente** (Meta Business → Usuarios del sistema → token con `whatsapp_business_messaging` y `whatsapp_business_management`) y pegarlo en la credencial de n8n; si lo deja también en `WHATSAPP_CLOUD_API_TOKEN` se puede crear la plantilla por API |
+| E9 | **Plantilla de Meta `aviso_equipo`** (utilidad, español): «Aviso del agente: {{1}}. Cliente: {{2}}. Detalle: {{3}}. Atienda aquí: {{4}}. Gracias.» Sin ella el aviso solo llega por WhatsApp a quien escribió al agente en las últimas 24 h; siempre queda la nota interna en Chatwoot | Dueño (o por API con el token de E8) |
 | E2 | ~~Plazo de entrega~~ **Resuelto el 2026-10-09** por María Sol en el cuestionario: 24 h agua / 72 h seco / 1 semana alfombras, desde que llega a planta | Hecho: columna `servicios.plazo_horas` (migración 0020); `cotizar_prendas` lo devuelve y el prompt lo usa. `horas_entrega_min/max` de Configuración quedan sin uso |
 | E3 | **Cuestionario respondido por María Sol** y sus decisiones sobre el Anexo A | Nada; P3 espera |
 | E4 | **María Sol debe escribirle algo al agente cada día** (su número de admin) para que el aviso de «lead sin respuesta» y el resumen de las 8:00 le lleguen por WhatsApp | Solo quedan las notas internas en Chatwoot |
