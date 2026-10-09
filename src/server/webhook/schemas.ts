@@ -37,6 +37,10 @@ export const ACCIONES = [
   'marcar_aviso',
   'verificar_cobertura',
   'admins_para_aviso',
+  'crear_aviso_equipo',
+  'avisos_equipo_pendientes',
+  'marcar_aviso_equipo',
+  'atender_avisos_equipo',
 ] as const
 
 export type Accion = (typeof ACCIONES)[number]
@@ -134,6 +138,17 @@ export const parametrosPorAccion = {
   }),
 
   admins_para_aviso: z.object({}).optional(),
+
+  crear_aviso_equipo: z.object({
+    tipo: z.string().min(1).max(40),
+    caso: z.string().min(1).max(120),
+    chatwoot_conversation_id: z.number().int().optional(),
+    telefono_cliente: z.string().max(30).optional(),
+    resumen: z.string().min(1).max(600),
+  }),
+  avisos_equipo_pendientes: z.object({}).optional(),
+  marcar_aviso_equipo: z.object({ id: z.uuid(), estado: z.enum(['enviado', 'reintentado']) }),
+  atender_avisos_equipo: z.object({ chatwoot_conversation_id: z.number().int() }),
 
   verificar_cobertura: z.object({ sector: z.string().min(1).max(200) }),
 

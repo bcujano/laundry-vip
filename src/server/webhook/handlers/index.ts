@@ -3,6 +3,12 @@ import { type Accion, parametrosPorAccion } from '../schemas'
 import { consultaAdmin, resumenDiario } from './admin'
 import { adminsParaAvisoAccion, listarAvisosPendientes, marcarAvisoAccion } from './avisos'
 import {
+  atenderAvisosAccion,
+  avisosEquipoPendientesAccion,
+  crearAvisoEquipoAccion,
+  marcarAvisoEquipoAccion,
+} from './avisos-equipo'
+import {
   cotizar,
   findOrCreateClient,
   registrarEventoEntrante,
@@ -48,6 +54,10 @@ const MANEJADORES: Record<Accion, Manejador> = {
   marcar_aviso: marcarAvisoAccion,
   verificar_cobertura: verificarCobertura,
   admins_para_aviso: adminsParaAvisoAccion,
+  crear_aviso_equipo: crearAvisoEquipoAccion,
+  avisos_equipo_pendientes: avisosEquipoPendientesAccion,
+  marcar_aviso_equipo: marcarAvisoEquipoAccion,
+  atender_avisos_equipo: atenderAvisosAccion,
 }
 
 export async function despachar(

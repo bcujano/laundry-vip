@@ -266,6 +266,11 @@ const catalogo = require('./catalogo.cjs')
 nodes.push(...catalogo.nodos)
 Object.assign(connections, catalogo.conexiones)
 
+// Aviso inmediato del agente al equipo (reclamos, dinero, empresas…) con un reintento.
+const avisosEquipo = require('./avisos-equipo.cjs')
+nodes.push(...avisosEquipo.nodos)
+Object.assign(connections, avisosEquipo.conexiones)
+
 const nombres = new Set(nodes.map((n) => n.name))
 for (const [origen, tipos] of Object.entries(connections)) {
   if (!nombres.has(origen)) throw new Error(`Conexión desde nodo inexistente: ${origen}`)
