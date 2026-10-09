@@ -11,7 +11,7 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(crudo).not.toMatch(/googleSheets|googleCalendar|gmail/i)
   })
 
-  it('solo usa credenciales de Laundry VIP, salvo OpenAI que se reusa', () => {
+  it('solo usa credenciales de Laundry VIP, salvo OpenAI y Gemini (de AIUDA, no de 321) que se reusan', () => {
     const nombres = new Set(
       workflow.nodes.flatMap((n) => Object.values(n.credentials ?? {}).map((c) => c.name)),
     )
@@ -19,6 +19,7 @@ describe('agente Laundry VIP (clon del 321)', () => {
       [
         'CRM Laundry VIP Webhook',
         'Chatwoot Laundry VIP API',
+        'Gemini Aiuda',
         'Meta WhatsApp Laundry VIP',
         'OpenAi account',
         'Postgres Laundry VIP',

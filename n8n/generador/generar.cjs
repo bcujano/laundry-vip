@@ -226,6 +226,9 @@ for (const [nombre] of TOOLS) connections[nombre] = ai('ai_tool', A)
 // Modo operador (lista blanca de planta).
 require('./operador.cjs').aplicar({ nodes, connections, nodo, REPO })
 
+// Motor: Gemini (gratis) principal y OpenAI de respaldo en el agente de clientes.
+require('./modelos.cjs').aplicar({ nodes, connections, nodo })
+
 // Guardia anti-alucinación de confirmaciones.
 require('./guardia.cjs').aplicar({ nodo })
 
