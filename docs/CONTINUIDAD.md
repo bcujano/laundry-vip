@@ -8,6 +8,7 @@ escrito para arrancar **sin hacerle preguntas al dueño**. Mapa de documentos:
 |---|---|
 | **este** | Arranque, estado real, plan en orden y lo que espera al dueño |
 | [`AGENTE.md`](AGENTE.md) | Cómo funciona el agente de WhatsApp y cómo se cambia (MCP de n8n) |
+| [`INFORME_CUESTIONARIO_SOL.md`](INFORME_CUESTIONARIO_SOL.md) | El cuestionario de María Sol ya respondido (2026-10-09): qué cambia, choques con decisiones previas y plan por fases |
 | [`DECISIONES.md`](DECISIONES.md) | Lo que el dueño decidió (no revertir) y los fallos ya encontrados |
 | [`Cuestionario_Conocimiento_del_Agente.pdf`](Cuestionario_Conocimiento_del_Agente.pdf) · `cuestionario/*.md` | Lo que María Sol debe transmitirle al agente (en proceso con ella). Se regenera con `python scripts/cuestionario_pdf.py` |
 | [`CHATWOOT_Y_WHATSAPP.md`](CHATWOOT_Y_WHATSAPP.md) | De dónde sale cada credencial de integración |
