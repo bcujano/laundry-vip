@@ -25,6 +25,11 @@ function aplicar({ nodes, connections, nodo }) {
   agente.typeVersion = 3.1
   agente.parameters.needsFallback = true
 
+  // En el nodo Agente v3 las herramientas se ejecutan como pasos aparte y `.item` ya no resuelve
+  // dentro del nodo de memoria («Key parameter is empty», prueba del 2026-10-09): `.first()` sí.
+  nodo('Memory Laundry').parameters.sessionKey =
+    "={{ $('WhatsApp Inicio').first().json.contacts[0].wa_id }}"
+
   const openai = nodo('OpenAI Laundry')
   nodes.push({
     parameters: {

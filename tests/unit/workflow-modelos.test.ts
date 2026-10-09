@@ -51,3 +51,11 @@ describe('motor del agente de clientes: OpenAI principal y Gemini gratis de resp
     expect(porNombre('Gemini Operador')).toBeUndefined()
   })
 })
+
+describe('nodo Agente v3: expresiones que sobreviven a las herramientas', () => {
+  it('la memoria del agente de clientes usa .first() y no .item (con .item falla al llamar una tool)', () => {
+    const memoria = JSON.stringify(porNombre('Memory Laundry')?.parameters)
+    expect(memoria).toContain("$('WhatsApp Inicio').first()")
+    expect(memoria).not.toContain("$('WhatsApp Inicio').item")
+  })
+})

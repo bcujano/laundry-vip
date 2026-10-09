@@ -173,6 +173,22 @@ contra una versión vieja responde «not found»); al cambiar una tool, su
 «Workflow is not available in MCP», el dueño debe activarlo en la tarjeta del
 workflow (se apaga cada vez que se reimporta).
 
+## 5b. Probar un cambio contra el sistema real sin un cliente real
+
+`pnpm tsx scripts/simular-cliente.ts "mensaje"` crea un cliente de mentira (+593 22 000 0771) en una
+bandeja API propia de la cuenta 3 de Chatwoot («PRUEBAS simulación»), manda el mensaje, y n8n lo procesa
+como a cualquiera: la respuesta queda en la conversación pero **no sale a ningún WhatsApp**.
+`--leer <conv>` muestra lo que contestó, `--mensaje <conv> "texto"` sigue la charla y
+`--limpiar <conv>` borra todo (Chatwoot, memoria del agente y filas del CRM). **Úsalo antes de dejar
+publicado cualquier cambio de modelo, prompt o herramientas, y revisa `ai.agent.tool_calls.requested`
+en la ejecución de n8n:** si es 0 y el agente dio un precio, inventó.
+
+Trampas del nodo Agente v3.x (aprendidas el 2026-10-09): las expresiones de la memoria deben usar
+`.first()` y no `.item` (con `.item` falla en cuanto el agente llama a una herramienta); el validador
+del MCP avisa «DUPLICATE_SUBNODE_CONNECTION» con modelo de respaldo, es un falso positivo (el flujo de
+AIUDA Empresas lo usa igual); y cualquier cambio de modelo se publica con un plan de vuelta: la versión
+anterior sigue en el historial (`publish_workflow` con su `versionId`).
+
 ## 6. Revisar cómo se porta el agente con clientes reales
 
 ```bash
