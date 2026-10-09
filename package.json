@@ -16,6 +16,7 @@
     "format": "biome check --write .",
     "test": "vitest run",
     "db:migrate": "tsx scripts/db-migrate.ts",
+    "db:respaldo": "tsx scripts/respaldo-base.ts",
     "db:seed": "tsx scripts/db-seed.ts",
     "db:demo": "tsx scripts/demo-datos.ts",
     "db:reset-clientes": "tsx scripts/reset-clientes.ts",

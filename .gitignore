@@ -20,3 +20,6 @@ tests/e2e/.sesion.json
 
 # El agente de 321 trae una credencial literal: no entra al repo.
 n8n/referencia/iAgente-321-INMO-V2.json
+
+# Respaldos locales de la base (datos de clientes)
+respaldos/
