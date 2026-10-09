@@ -18,6 +18,7 @@ sobre uno de estos puntos conocidos, nunca sobre el aire.
 | `respaldo-2026-10-09-antes-fases-sol` | 2026-10-09 | CRM con plazo por servicio (migración 0020), informe del cuestionario; antes de construir las fases 0–6 | `5bbeadd7-4f43-4052-abcb-1918c6f13380` |
 
 | `respaldo-2026-10-09-fase0` | 2026-10-09 | CRM con avisos al equipo (migración 0021) | `dd349fa7-7ae4-42d3-9ae3-21f8de07a4ad` |
+| `respaldo-2026-10-09-motor` | 2026-10-09 | agente v3.1 (OpenAI + Gemini de respaldo), guardia de valores, simulador | `058e2ec1-e003-4bd0-ac9b-8b36411445fc` (la anterior: `dd349fa7…`) |
 
 Respaldo de datos local: `respaldos/2026-10-09-*-antes-de-fases-sol` (18 tablas) y, dentro, el JSON del
 workflow n8n de esa versión. **Cada punto nuevo se agrega a esta tabla.**

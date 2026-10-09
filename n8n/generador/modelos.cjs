@@ -59,4 +59,51 @@ function aplicar({ nodes, connections, nodo }) {
   connections['OpenAI Laundry'] = entrada(!gemini)
 }
 
-module.exports = { aplicar, MODELO_GEMINI, CRED_GEMINI }
+/**
+ * El nodo Agente v3 corta el emparejado de ítems (paired items): después de él, `$('X').item`
+ * ya no resuelve y el nodo falla con una URL vacía (`/conversations//messages`, prueba del
+ * 2026-10-09). El flujo de un mensaje tiene un solo ítem, así que `.first()` es equivalente.
+ * Se corrige en todo lo que cuelga del agente; los flujos de seguimiento y avisos (varios
+ * ítems, no cuelgan del agente) conservan `.item`.
+ */
+const NODOS_DE_UN_ITEM = [
+  'WhatsApp Inicio',
+  'Preparar Mensaje Final',
+  'Extraer JSON',
+  'Verificar Operador',
+  'Chatwoot Webhook',
+]
+
+function descendientes(connections, origen) {
+  const vistos = new Set()
+  const pila = [origen]
+  while (pila.length) {
+    const actual = pila.pop()
+    for (const salidas of Object.values(connections[actual]?.main ?? [])) {
+      for (const c of salidas)
+        if (!vistos.has(c.node)) {
+          vistos.add(c.node)
+          pila.push(c.node)
+        }
+    }
+  }
+  return vistos
+}
+
+function corregirPares({ nodes, connections }) {
+  const patron = new RegExp(
+    String.raw`\$\('(` + NODOS_DE_UN_ITEM.join('|') + String.raw`)'\)\.item\b`,
+    'g',
+  )
+  const reemplazar = (valor) => {
+    if (typeof valor === 'string') return valor.replace(patron, "$('$1').first()")
+    if (Array.isArray(valor)) return valor.map(reemplazar)
+    if (valor && typeof valor === 'object')
+      return Object.fromEntries(Object.entries(valor).map(([k, v]) => [k, reemplazar(v)]))
+    return valor
+  }
+  const afectados = descendientes(connections, 'Agente Laundry VIP')
+  for (const n of nodes) if (afectados.has(n.name)) n.parameters = reemplazar(n.parameters)
+}
+
+module.exports = { aplicar, corregirPares, MODELO_GEMINI, CRED_GEMINI }

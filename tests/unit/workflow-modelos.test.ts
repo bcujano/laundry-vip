@@ -59,3 +59,34 @@ describe('nodo Agente v3: expresiones que sobreviven a las herramientas', () => 
     expect(memoria).not.toContain("$('WhatsApp Inicio').item")
   })
 })
+
+describe('nodos que cuelgan del agente v3 no usan .item', () => {
+  it('ningún nodo posterior al agente depende del emparejado de ítems de los nodos de un solo ítem', () => {
+    const conexiones = workflow.connections as unknown as Record<
+      string,
+      { main?: { node: string }[][] }
+    >
+    const vistos = new Set<string>()
+    const pila = ['Agente Laundry VIP']
+    while (pila.length) {
+      const actual = pila.pop() as string
+      for (const salida of conexiones[actual]?.main ?? []) {
+        for (const c of salida)
+          if (!vistos.has(c.node)) {
+            vistos.add(c.node)
+            pila.push(c.node)
+          }
+      }
+    }
+    expect(vistos.size).toBeGreaterThan(5)
+    const patron =
+      /\$\('(WhatsApp Inicio|Preparar Mensaje Final|Extraer JSON|Verificar Operador|Chatwoot Webhook)'\)\.item\b/
+    for (const nombre of vistos) {
+      expect(JSON.stringify(porNombre(nombre)?.parameters), nombre).not.toMatch(patron)
+    }
+    // y la prueba que lo motivó: la URL de respuesta lleva el id de la conversación
+    expect(JSON.stringify(porNombre('Enviar Respuesta Chatwoot')?.parameters.url)).toContain(
+      "$('WhatsApp Inicio').first()",
+    )
+  })
+})

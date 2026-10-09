@@ -274,6 +274,9 @@ const avisosEquipo = require('./avisos-equipo.cjs')
 nodes.push(...avisosEquipo.nodos)
 Object.assign(connections, avisosEquipo.conexiones)
 
+// Tras el nodo Agente v3 los ítems ya no se emparejan: lo que cuelga de él usa .first().
+require('./modelos.cjs').corregirPares({ nodes, connections })
+
 const nombres = new Set(nodes.map((n) => n.name))
 for (const [origen, tipos] of Object.entries(connections)) {
   if (!nombres.has(origen)) throw new Error(`Conexión desde nodo inexistente: ${origen}`)
