@@ -3,6 +3,7 @@ import { afterAll, describe, expect, it } from 'vitest'
 import { POST } from '@/app/api/webhook/route'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { obtener as obtenerConfig, parametrosVentana } from '@/server/configuracion/repo'
+import { plazosPorMetodo } from '@/server/pricing/plazo'
 import { ultimaHoraDelDia } from '@/server/scheduling/ventana'
 import { centavos, precioDe } from '../util/catalogo.ts'
 import { corrida } from '../util/corrida.ts'
@@ -190,15 +191,19 @@ describe('acciones de logística', () => {
     expect(data.hora_apertura).toMatch(/^\d{2}:\d{2}$/)
   })
 
-  it('la ventana trae el lapso de entrega que el agente promete', async () => {
+  it('la ventana trae los plazos de entrega por método, los de cada servicio en el CRM', async () => {
     const { sobre } = await llamar({ accion: 'obtener_proxima_ventana', parametros: {} })
-    const data = sobre.data as { horas_entrega_min: number; horas_entrega_max: number }
-    const config = await obtenerConfig()
+    const data = sobre.data as { plazos_por_metodo: Record<string, string> }
+    const { data: filas } = await supabaseAdmin()
+      .from('servicios')
+      .select('metodo, plazo_horas')
+      .eq('activo', true)
 
-    // El lapso también lo edita el dueño en Configuración.
-    expect(data.horas_entrega_min).toBe(config.horas_entrega_min)
-    expect(data.horas_entrega_max).toBe(config.horas_entrega_max)
-    expect(data.horas_entrega_max).toBeGreaterThanOrEqual(data.horas_entrega_min)
+    // Los plazos los edita María Sol en Servicios: se comparan contra la base, no contra un fijo.
+    expect(data.plazos_por_metodo).toEqual(
+      plazosPorMetodo((filas ?? []) as { metodo: string; plazo_horas: number }[]),
+    )
+    expect(Object.keys(data.plazos_por_metodo)).toEqual(expect.arrayContaining(['agua', 'seco']))
   })
 
   it('si el cliente pide otro día, la ventana es la de ESE día', async () => {

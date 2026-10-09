@@ -115,7 +115,8 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(systemMessage).toContain('las cortinas se cobran\n   POR KILO')
     expect(systemMessage).toContain('POR PESO (por libra)')
     // El lapso de entrega y la tarifa salen del CRM, no del prompt.
-    expect(systemMessage).toContain('horas_entrega_min')
+    expect(systemMessage).toContain('plazos_por_metodo')
+    expect(systemMessage).toContain('plazo_entrega')
     expect(systemMessage).toContain('tarifa_recoleccion_entrega')
     expect(systemMessage).not.toMatch(/48 a 72 horas.{0,40}\$/)
     // Ni combos ni carta: esto es una lavandería.

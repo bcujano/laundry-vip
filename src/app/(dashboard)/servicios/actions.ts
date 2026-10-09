@@ -30,6 +30,7 @@ const esquemaPrecio = z.object({
   precio_min: precio,
   precio_max: precio,
   precio_paquete: precioOpcional,
+  plazo_horas: z.union([z.literal(''), z.coerce.number().int().min(1).max(2000)]).optional(),
 })
 
 /** Editar precios es solo del superadmin: se rechaza en el servidor. */
@@ -47,6 +48,7 @@ export async function guardarPrecio(
     precio_max: datos.get('precio_max'),
     // Sin el campo en el formulario queda `undefined` y la promoción no se toca.
     precio_paquete: datos.get('precio_paquete') ?? undefined,
+    plazo_horas: datos.get('plazo_horas') ?? undefined,
   })
   if (!analisis.success) {
     return { error: analisis.error.issues[0]?.message ?? 'Datos inválidos.' }
@@ -57,6 +59,7 @@ export async function guardarPrecio(
     analisis.data.precio_min,
     analisis.data.precio_max,
     promocion(analisis.data.precio_paquete),
+    analisis.data.plazo_horas === '' ? undefined : analisis.data.plazo_horas,
   )
   if (!resultado.ok) return { error: resultado.error }
 

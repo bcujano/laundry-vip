@@ -29,7 +29,7 @@ debe tratarla como a la dueña.
 | Promoción por cantidad en columnas, nunca en el prompt (cobijas: $5,00 c/u o 3 por $12,00) | 2026-09-21 |
 | **No hay «combo» ni «a la carta»:** o se recoge y entrega con la tarifa única, o el cliente trae y retira | 2026-09-23. «No somos un restaurante». En la base siguen los valores `combo`/`a_la_carta` (hay pedidos con ellos); en pantalla sale `entregaLegible` |
 | Tarifa única de recogida y entrega **$2,50**, aparte del lavado | 2026-09-23, en Configuración |
-| Entrega en **48 a 72 horas**; la fecha exacta la acuerda el operador en planta | 2026-09-23, en Configuración. María Sol a veces dice «48 h» o «24 a 48»: **sin decisión del dueño se mantiene 48–72** |
+| ~~Entrega en 48 a 72 horas~~ → **Plazo por servicio:** agua y ropa de cama 24 h; seco, cuero, plumas, tinturado, calzado, peluches y mochilas 72 h; alfombras 1 semana hábil; cuenta desde que llega a planta, sin domingos ni feriados | 2026-10-09, María Sol (cuestionario P36 y regla final 8); `servicios.plazo_horas` |
 | Recolección de lunes a sábado; el local abre **9:00–19:00** y los **sábados hasta las 17:00** | 2026-09-30, dicho por María Sol; migración 0012 |
 | **Se recoge a 2,5 km a la redonda del local** | 2026-09-30, dicho por el dueño; migración 0013. Fuera del radio se ofrece traer y retirar |
 | Peso en **libras**; la ropa de diario va **al peso** ($0,70/lb); las cortinas siguen **por kilo** | 2026-09-23 |

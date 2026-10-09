@@ -56,6 +56,7 @@ export default async function Servicios() {
               <tr>
                 <Th>Ítem</Th>
                 <Th>Método</Th>
+                <Th>Entrega</Th>
                 <Th>Unidad</Th>
                 <Th>{editable ? 'Precio mín. / máx.' : 'Precio'}</Th>
                 {puedeBorrar ? <Th> </Th> : null}

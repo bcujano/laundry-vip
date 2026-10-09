@@ -10,6 +10,7 @@ import {
   parecidos,
   redondear,
 } from './linea'
+import { plazoLegible, plazoMayor } from './plazo'
 
 /**
  * Motor de precios: fuente única de verdad. El webhook del agente nunca
@@ -32,6 +33,11 @@ export type Cotizacion = {
     subtotal: number
     lineas_con_precio: number
     lineas_sin_precio: number
+    /** El más largo de los plazos de lo cotizado; null si ninguna línea trae plazo. */
+    plazo_entrega: string | null
+    plazo_entrega_horas: number | null
+    /** Hay líneas con plazos distintos: se dice cada uno, no uno solo. */
+    plazos_distintos: boolean
     requiere_respuesta_del_cliente: boolean
   }
 }
@@ -113,6 +119,10 @@ export async function cotizarPrendas(items: ItemPedido[]): Promise<Cotizacion> {
   })
 
   const conPrecio = lineas.filter((linea) => linea.subtotal !== undefined)
+  const plazos = lineas.flatMap((linea) =>
+    linea.plazo_horas === undefined ? [] : [linea.plazo_horas],
+  )
+  const mayor = plazoMayor(plazos)
 
   return {
     lineas,
@@ -121,6 +131,9 @@ export async function cotizarPrendas(items: ItemPedido[]): Promise<Cotizacion> {
       subtotal: redondear(conPrecio.reduce((suma, linea) => suma + (linea.subtotal ?? 0), 0)),
       lineas_con_precio: conPrecio.length,
       lineas_sin_precio: lineas.length - conPrecio.length,
+      plazo_entrega: mayor === null ? null : plazoLegible(mayor),
+      plazo_entrega_horas: mayor,
+      plazos_distintos: new Set(plazos).size > 1,
       requiere_respuesta_del_cliente: lineas.some(
         (linea) => linea.requiere_metodo || linea.requiere_desambiguacion,
       ),

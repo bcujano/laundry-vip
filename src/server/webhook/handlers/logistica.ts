@@ -4,6 +4,7 @@ import { obtener as obtenerConfig, parametrosVentana } from '@/server/configurac
 import { verificarSector } from '@/server/pedidos/cobertura'
 import { calcularVehiculo } from '@/server/pricing/cotizar'
 import { limitesDelDia, obtenerProximaVentana, ultimaHoraDelDia } from '@/server/scheduling/ventana'
+import { plazosHabituales } from '@/server/servicios/repo'
 import { exito, fallo, type ResultadoAccion } from '../respuesta'
 import type { ParametrosDe } from '../schemas'
 
@@ -47,13 +48,17 @@ export async function proximaVentana(parametros: ParametrosDe<'obtener_proxima_v
     hora_cierre: string
     horario: string
     tarifa_recoleccion_entrega: number
-    horas_entrega_min: number
-    horas_entrega_max: number
+    /** Plazo habitual por método (agua, seco…), ya escrito: «24 horas», «72 horas». */
+    plazos_por_metodo: Record<string, string>
   }>
 > {
   // Horario y tarifa salen de Configuración: el dueño los cambia en el CRM y el
   // agente no puede tener un valor escrito a mano en su prompt.
-  const [config, negocio] = await Promise.all([parametrosVentana(), obtenerConfig()])
+  const [config, negocio, plazos] = await Promise.all([
+    parametrosVentana(),
+    obtenerConfig(),
+    plazosHabituales(),
+  ])
   const desde = interpretarDesde(parametros?.desde)
 
   if (desde === null) {
@@ -81,9 +86,9 @@ export async function proximaVentana(parametros: ParametrosDe<'obtener_proxima_v
     // OJO: aquí NO va el radio. Al cliente no se le dice «a 2,5 km a la redonda»: se verifica
     // por dentro con verificar_cobertura y se le dice solo si se puede o no.
     tarifa_recoleccion_entrega: Number(negocio.tarifa_recoleccion_entrega),
-    // El lapso de entrega también sale del CRM: el prompt no lleva números.
-    horas_entrega_min: negocio.horas_entrega_min,
-    horas_entrega_max: negocio.horas_entrega_max,
+    // El plazo sale de cada servicio en el CRM (María Sol, 2026-10): agua 24 h, seco 72 h…
+    // Con una cotización a la vista, el plazo exacto viene en `cotizar_prendas`.
+    plazos_por_metodo: plazos,
   })
 }
 

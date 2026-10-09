@@ -70,8 +70,8 @@ describe('editar precios', () => {
     const resultado = await guardarPrecio({}, formulario(PRECIO_VALIDO))
 
     expect(resultado.ok).toBe(true)
-    // Sin campo de promoción en el formulario, el precio del paquete no se toca.
-    expect(actualizarPrecio).toHaveBeenCalledWith(PRECIO_VALIDO.id, 5, 5, undefined)
+    // Sin campo de promoción ni de plazo en el formulario, ninguno de los dos se toca.
+    expect(actualizarPrecio).toHaveBeenCalledWith(PRECIO_VALIDO.id, 5, 5, undefined, undefined)
   })
 
   it('valida antes de escribir aunque tenga permiso', async () => {

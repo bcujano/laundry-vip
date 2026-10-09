@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { plazosPorMetodo } from '@/server/pricing/plazo'
 import type { Servicio } from '@/types/database'
 
 export type CategoriaConServicios = { categoria: string; items: Servicio[] }
@@ -55,6 +56,7 @@ export async function actualizarPrecio(
   precioMin: number,
   precioMax: number,
   precioPaquete?: number | null,
+  plazoHoras?: number,
 ): Promise<ResultadoEscritura> {
   if (precioMin < 0 || precioMax < 0) {
     return { ok: false, error: 'Un precio no puede ser negativo.' }
@@ -67,14 +69,26 @@ export async function actualizarPrecio(
   }
 
   // `undefined` significa «no vino en el formulario»: la promoción no se toca.
-  const cambios =
-    precioPaquete === undefined
-      ? { precio_min: precioMin, precio_max: precioMax }
-      : { precio_min: precioMin, precio_max: precioMax, precio_paquete: precioPaquete }
+  const cambios = {
+    precio_min: precioMin,
+    precio_max: precioMax,
+    ...(precioPaquete === undefined ? {} : { precio_paquete: precioPaquete }),
+    ...(plazoHoras === undefined ? {} : { plazo_horas: plazoHoras }),
+  }
 
   const { error } = await supabaseAdmin().from('servicios').update(cambios).eq('id', id)
 
   return error ? { ok: false, error: error.message } : { ok: true }
+}
+
+/** Plazo habitual de entrega por método de lavado, para responder antes de cotizar. */
+export async function plazosHabituales(): Promise<Record<string, string>> {
+  const { data, error } = await supabaseAdmin()
+    .from('servicios')
+    .select('metodo, plazo_horas')
+    .eq('activo', true)
+  if (error) throw new Error(`No se pudieron leer los plazos: ${error.message}`)
+  return plazosPorMetodo((data ?? []) as { metodo: string; plazo_horas: number }[])
 }
 
 /** Con qué palabras lo pide el cliente. Lo edita el dueño en el CRM. */

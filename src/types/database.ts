@@ -87,6 +87,8 @@ export type Servicio = {
   /** Precio del paquete completo cuando la lista trae promoción. */
   precio_paquete: number | null
   requiere_seleccion_metodo: boolean
+  /** Horas de entrega desde que la ropa llega a planta (168 = 1 semana hábil). */
+  plazo_horas: number
   /** Cómo lo nombra el cliente: el emparejador puntúa contra estos también. */
   sinonimos: string[]
   activo: boolean

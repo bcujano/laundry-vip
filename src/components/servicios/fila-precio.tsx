@@ -10,6 +10,7 @@ import {
 } from '@/app/(dashboard)/servicios/actions'
 import { Boton, BotonAccion, Campo, Td } from '@/components/ui/primitivos'
 import { metodoLegible, moneda, rangoPrecio, unidadLegible } from '@/lib/format'
+import { plazoLegible } from '@/server/pricing/plazo'
 import type { Servicio } from '@/types/database'
 
 const INICIAL: EstadoServicio = {}
@@ -41,6 +42,9 @@ export function FilaPrecio({
         ) : null}
       </Td>
       <Td className="text-[var(--color-texto-apagado)]">{metodoLegible(servicio.metodo)}</Td>
+      <Td className="text-[var(--color-texto-apagado)] tabular-nums">
+        {plazoLegible(servicio.plazo_horas)}
+      </Td>
       <Td className="text-[var(--color-texto-apagado)]">
         {unidadLegible(servicio.unidad)}
         {promocion ? (
@@ -84,6 +88,16 @@ export function FilaPrecio({
                 type="number"
               />
             ) : null}
+            <Campo
+              aria-label={`Plazo de entrega de ${servicio.nombre_item}, en horas`}
+              className="w-20"
+              defaultValue={servicio.plazo_horas}
+              min="1"
+              name="plazo_horas"
+              step="1"
+              title="Plazo de entrega en horas desde que llega a planta (168 = 1 semana hábil)"
+              type="number"
+            />
             <Campo
               aria-label={`Cómo llaman los clientes a ${servicio.nombre_item}`}
               className="w-44"

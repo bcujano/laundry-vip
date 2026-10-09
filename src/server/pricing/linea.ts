@@ -1,5 +1,6 @@
 import type { MetodoServicio, Servicio } from '@/types/database'
 import { puntuar, UMBRAL } from './normalizar'
+import { plazoLegible } from './plazo'
 
 /**
  * Una línea de la cotización: emparejar lo que dijo el cliente con el catálogo
@@ -16,6 +17,9 @@ export type LineaCotizada = {
   nombre_item?: string
   metodo?: MetodoServicio
   unidad?: string
+  /** Entrega desde que la ropa llega a planta: lo fija el CRM por servicio. */
+  plazo_horas?: number
+  plazo?: string
   precio_unitario?: number
   subtotal?: number
   /** El ítem admite varios métodos y el cliente no dijo cuál. */
@@ -154,6 +158,8 @@ export function cotizarGrupo(item: ItemPedido, grupo: Grupo): LineaCotizada {
     // el agente no debe ofrecer alternativas que no existen.
     metodo_unico: grupo.filas.length === 1,
     unidad: fila.unidad,
+    plazo_horas: fila.plazo_horas,
+    plazo: plazoLegible(fila.plazo_horas),
     ...(!pedida && item.metodo && fila.metodo !== 'unico'
       ? { advertencia: `"${fila.nombre_item}" solo se lava en ${fila.metodo}: se cotiza así.` }
       : {}),
