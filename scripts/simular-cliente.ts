@@ -23,7 +23,8 @@ const TOKEN = process.env.CHATWOOT_API_TOKEN ?? ''
 const TELEFONO = '+59322000771'
 const DIGITOS = TELEFONO.replace('+', '')
 
-if (CUENTA !== '3') throw new Error('Solo la cuenta 3 (Lavandería VIP). La 1 es de 321 y no se toca.')
+if (CUENTA !== '3')
+  throw new Error('Solo la cuenta 3 (Lavandería VIP). La 1 es de 321 y no se toca.')
 
 async function api(ruta: string, metodo = 'GET', cuerpo?: unknown) {
   const r = await fetch(`${BASE}/api/v1/accounts/${CUENTA}${ruta}`, {
@@ -46,9 +47,19 @@ async function enviar(conversacion: number, texto: string) {
 
 async function leer(conversacion: number) {
   const { payload } = await api(`/conversations/${conversacion}/messages`)
-  for (const m of payload as { id: number; message_type: number; private: boolean; created_at: number; content: string | null; sender?: { name?: string } }[]) {
-    const quien = m.message_type === 0 ? 'CLIENTE' : m.private ? 'NOTA' : `SALE(${m.sender?.name ?? '?'})`
-    console.log(`[${new Date(m.created_at * 1000).toISOString().slice(11, 19)}Z] ${quien} ${m.content ?? '[adjunto]'}`)
+  for (const m of payload as {
+    id: number
+    message_type: number
+    private: boolean
+    created_at: number
+    content: string | null
+    sender?: { name?: string }
+  }[]) {
+    const quien =
+      m.message_type === 0 ? 'CLIENTE' : m.private ? 'NOTA' : `SALE(${m.sender?.name ?? '?'})`
+    console.log(
+      `[${new Date(m.created_at * 1000).toISOString().slice(11, 19)}Z] ${quien} ${m.content ?? '[adjunto]'}`,
+    )
   }
 }
 
@@ -102,7 +113,11 @@ else {
   })
   const id = contacto.payload?.contact?.id ?? contacto.id
   const origen = (contacto.payload?.contact_inbox ?? contacto.contact_inbox)?.source_id ?? DIGITOS
-  const conv = await api('/conversations', 'POST', { source_id: origen, inbox_id: inbox, contact_id: id })
+  const conv = await api('/conversations', 'POST', {
+    source_id: origen,
+    inbox_id: inbox,
+    contact_id: id,
+  })
   await enviar(conv.id, a ?? 'Hola')
   console.log(`Conversación ${conv.id}. Lee la respuesta en ~30 s con: --leer ${conv.id}`)
 }

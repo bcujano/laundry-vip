@@ -15,6 +15,23 @@ const escrituraFantasma = ESCRITURAS.includes(parsed.tool_consultada) && escritu
 let esOperadorGuardia = false;
 try { esOperadorGuardia = $('Verificar Operador').first().json.data?.es_operador === true; } catch (e) {}
 const confirmacionFalsa = !parseFailed && (idInventado || escrituraFantasma);
+// ── Guardia de valores sin herramienta ───────────────────────────────────
+// Un modelo (Gemini flash-lite en la prueba del 2026-10-09) respondió «$31,50» y «48 horas»
+// sin llamar a ninguna herramienta y marcó tool_consultada «cotizar_prendas». Un monto o un
+// plazo solo vale si salió de una herramienta de precios en ESTE turno o ya se le había dicho
+// al cliente antes; si no, se reemplaza y una persona confirma.
+const PRECIOS = ['cotizar_prendas', 'obtener_proxima_ventana', 'consultar_estado_pedido'];
+const usoPrecios = pasos.some((p) => p && p.action && PRECIOS.includes(p.action.tool));
+let dichoAntes = '';
+try { dichoAntes = (($('Obtener Ultimos Mensajes').first().json.payload) || []).filter((m) => m.message_type === 1).map((m) => String(m.content || '')).join(' '); } catch (e) {}
+const montos = textoModelo.match(/\\$\\s?\\d+(?:[.,]\\d+)?/g) || [];
+const plazos = textoModelo.match(/\\d+\\s*horas/gi) || [];
+const sinFuente = (t) => !dichoAntes.replace(/\\s/g, '').includes(t.replace(/\\s/g, '')) && !observaciones.includes(t.replace(/[^0-9.,]/g, '').replace(',', '.'));
+const valorSinHerramienta = !parseFailed && !esOperadorGuardia && !usoPrecios && [...montos, ...plazos].some(sinFuente);
+if (valorSinHerramienta) {
+  parsed.respuesta_lead = 'Permítame confirmarle ese valor con una persona de nuestro equipo y le escribe en breve.';
+  parsed.escalar_humano = true;
+}
 if (confirmacionFalsa) {
   parsed.respuesta_lead = esOperadorGuardia
     ? '⚠️ La orden NO quedó registrada: no llegué a guardarla en el sistema. Responde «registrar» y la guardo ahora con los mismos datos.'
@@ -35,9 +52,9 @@ function aplicar({ nodo }) {
     .replace(ancla, `${GUARDIA}\n${ancla}`)
     .replace(
       '    parser_failed: parseFailed,',
-      '    parser_failed: parseFailed,\n    confirmacion_falsa: confirmacionFalsa,',
+      '    parser_failed: parseFailed,\n    confirmacion_falsa: confirmacionFalsa,\n    valor_sin_herramienta: valorSinHerramienta,',
     )
-  if (!extraer.parameters.jsCode.includes('confirmacion_falsa: confirmacionFalsa'))
+  if (!extraer.parameters.jsCode.includes('valor_sin_herramienta: valorSinHerramienta'))
     throw new Error('No se marcó el flag')
 }
 

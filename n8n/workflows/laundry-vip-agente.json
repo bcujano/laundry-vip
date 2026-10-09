@@ -11,8 +11,8 @@
       "type": "n8n-nodes-base.webhook",
       "position": [-2000, 512],
       "typeVersion": 2,
-      "webhookId": "e584fee8-c3f4-4d10-9aab-1b88aa7b6beb",
-      "id": "d41a7743-d1ef-4585-b39f-4ae3b19e45e0"
+      "webhookId": "f69263b7-e061-437e-a803-184a4e3fa8bc",
+      "id": "45e21930-565c-4461-b13c-00b3b9a746fa"
     },
     {
       "parameters": {
@@ -51,7 +51,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-1776, 512],
       "typeVersion": 2.2,
-      "id": "9620b266-c95e-4ebd-9292-591b6e825e67"
+      "id": "c3df6cfd-c7fa-4765-a74c-4a99164409b8"
     },
     {
       "parameters": {
@@ -82,7 +82,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-1552, 512],
       "typeVersion": 2.2,
-      "id": "eee30f5d-3700-4279-9f34-0a8f39b41846"
+      "id": "6b909678-d709-4e29-9825-2dc571154a00"
     },
     {
       "parameters": {
@@ -186,7 +186,7 @@
       "type": "n8n-nodes-base.set",
       "position": [-1296, 384],
       "typeVersion": 3.4,
-      "id": "2edcbd6b-10e4-4512-b1ff-67416a332a10"
+      "id": "b3904c20-c6f4-4255-87f3-45cec16a226a"
     },
     {
       "parameters": {
@@ -201,7 +201,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [-432, 384],
       "typeVersion": 4.2,
-      "id": "24d17b37-e080-47fa-8e00-eb1c98d0b0ae",
+      "id": "0657545e-a7cf-4158-87cd-919554b26731",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -238,7 +238,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-208, 384],
       "typeVersion": 2.2,
-      "id": "87578552-88a5-4376-867a-95a3e1d704c9"
+      "id": "c4d9a513-fb65-478d-8166-f837a8113d5b"
     },
     {
       "parameters": {
@@ -258,7 +258,7 @@
       "type": "n8n-nodes-base.set",
       "position": [16, 384],
       "typeVersion": 3.4,
-      "id": "9f759bc7-19df-4c37-9463-6314ea840c48"
+      "id": "81cc1a19-6fb4-482e-bf1c-9a85ece991b4"
     },
     {
       "parameters": {
@@ -325,7 +325,7 @@
       "type": "n8n-nodes-base.switch",
       "position": [240, 368],
       "typeVersion": 3.2,
-      "id": "67ddf7e7-081d-4336-8d70-4e8300dfb3a0"
+      "id": "397fadbe-b532-44cb-8146-6ac464a2f68d"
     },
     {
       "parameters": {
@@ -345,7 +345,7 @@
       "type": "n8n-nodes-base.set",
       "position": [464, -16],
       "typeVersion": 3.4,
-      "id": "6b41c55a-f8ab-4955-8274-9a72b228b696"
+      "id": "bab5d775-203b-43a7-ae4c-7b5d199f304a"
     },
     {
       "parameters": {
@@ -358,7 +358,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [688, -16],
       "typeVersion": 4.2,
-      "id": "6af0fff5-5cea-402c-87ce-ccf3e5044bad",
+      "id": "8690c777-da1d-462e-a1eb-f203fc8033ab",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -399,7 +399,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [976, -16],
       "typeVersion": 4.2,
-      "id": "1ecdd226-d0b3-4255-b33d-cd7b82fac6eb",
+      "id": "351e46b2-f1c2-460a-b36d-0d0c1b8de6f9",
       "credentials": {
         "openAiApi": {
           "id": "GvNmUCZRx5ZvZerQ",
@@ -425,7 +425,7 @@
       "type": "n8n-nodes-base.set",
       "position": [464, 288],
       "typeVersion": 3.4,
-      "id": "6ab5a18f-b3f1-439a-a9fe-d2768e53bfef"
+      "id": "4aed1164-08a1-44fc-8eb1-9ac528a51830"
     },
     {
       "parameters": {
@@ -438,7 +438,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [688, 288],
       "typeVersion": 4.2,
-      "id": "d4ce0512-8711-4ce7-b82f-c6996622caec",
+      "id": "ebcda55b-00cd-4b33-bcb4-9baf100e2d9e",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -463,7 +463,7 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "position": [912, 176],
       "typeVersion": 1.4,
-      "id": "1b2d2eae-643b-4240-9b83-c6ae2cee0f1f"
+      "id": "7910044c-fd2b-4b09-8f1e-c3ee6e110665"
     },
     {
       "parameters": {
@@ -479,7 +479,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "position": [976, 400],
       "typeVersion": 1.2,
-      "id": "5fe272aa-e1e3-4e08-b65a-5113587b1b9a",
+      "id": "c61d398a-c267-46b6-8267-87625f8da248",
       "credentials": {
         "openAiApi": {
           "id": "GvNmUCZRx5ZvZerQ",
@@ -494,9 +494,9 @@
       "name": "Espera Texto",
       "type": "n8n-nodes-base.wait",
       "position": [976, 576],
-      "webhookId": "2cb299e2-912c-446b-b3ea-57c3c411353e",
+      "webhookId": "4dba8df0-07e6-49f4-a423-7a5c669296f9",
       "typeVersion": 1.1,
-      "id": "7dbc6f7b-ae54-4431-b478-67bb1ed8c651"
+      "id": "f14a016d-ddf2-4397-ad53-02196c5d1b40"
     },
     {
       "parameters": {
@@ -547,7 +547,7 @@
       "type": "n8n-nodes-base.set",
       "position": [1264, 288],
       "typeVersion": 3.4,
-      "id": "128a9ce7-e161-4f79-9e0a-b7b7d45378ca"
+      "id": "2ff32ac1-ef3b-4c74-b97c-f0c2f739c191"
     },
     {
       "parameters": {
@@ -564,7 +564,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [2960, 400],
       "typeVersion": 4.2,
-      "id": "157fcaee-5b81-4289-8a3e-9c2c451b1df4",
+      "id": "47ff7b3d-94e8-476f-9553-cebffcce2736",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -601,7 +601,7 @@
       "type": "n8n-nodes-base.if",
       "position": [2960, 96],
       "typeVersion": 2.2,
-      "id": "256ef9cd-c06b-4324-86cb-d66ea671f170",
+      "id": "d3dc8663-0fb6-4dbb-bb15-2cc38703ac82",
       "continueOnFail": true
     },
     {
@@ -621,7 +621,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [3200, 80],
       "typeVersion": 4.2,
-      "id": "973846cf-2f3a-4f8e-b9e9-0df969eefaa5",
+      "id": "39d1bf9f-a222-4aaf-8c9b-d88fc719df26",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -647,7 +647,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [3440, 80],
       "typeVersion": 4.2,
-      "id": "92264cc1-6a20-42ac-b2ef-962d165dd68b",
+      "id": "1536d977-5808-4daf-8047-9be41702bcd7",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -664,15 +664,15 @@
       "type": "n8n-nodes-base.wait",
       "position": [-656, 384],
       "typeVersion": 1.1,
-      "webhookId": "bb3974ea-8088-4bcc-a084-a1c68c90ace2",
-      "id": "2fa2a34d-6f24-46b4-9410-120c055e8643"
+      "webhookId": "2db0051b-c787-4ce5-b95c-e56a2d373703",
+      "id": "b03f46ae-2474-480e-9e1a-7593b9c994e5"
     },
     {
       "parameters": {},
       "type": "@n8n/n8n-nodes-langchain.toolCalculator",
       "typeVersion": 1,
       "position": [2580, 752],
-      "id": "88f7680f-31ef-4981-871d-cb944c58e67f",
+      "id": "6f97755e-4e5f-4cfe-bf2e-5edfbce32946",
       "name": "Calculator"
     },
     {
@@ -689,7 +689,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [2256, 288],
-      "id": "9b155ee2-5195-4117-aded-c909501eafba",
+      "id": "c0af2d64-d048-4432-8ac8-8010a9a517e5",
       "name": "Agente Laundry VIP"
     },
     {
@@ -712,7 +712,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [1984, 448],
-      "id": "8afe5822-d9c3-4a65-b4ed-346198646724",
+      "id": "0a5291b6-aed5-4637-bfa4-0612febd45fc",
       "name": "OpenAI Laundry",
       "credentials": {
         "openAiApi": {
@@ -720,7 +720,7 @@
           "name": "OpenAi account"
         }
       },
-      "notes": "Respaldo: solo se usa si «Gemini Laundry» da error."
+      "notes": "Motor principal del agente de clientes."
     },
     {
       "parameters": {
@@ -732,7 +732,7 @@
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.3,
       "position": [2128, 448],
-      "id": "d1a4e18e-f04b-4361-91f3-0a53958d3ba6",
+      "id": "acecfcd4-a556-4fdb-8682-08ee34237a76",
       "name": "Memory Laundry",
       "credentials": {
         "postgres": {
@@ -761,7 +761,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [1472, 288],
-      "id": "69ffade1-bc6f-4253-b838-a90583d34b3a",
+      "id": "3f271231-1957-4747-a4f4-0a10b2e7ad53",
       "name": "Typing Indicator",
       "credentials": {
         "httpHeaderAuth": {
@@ -780,7 +780,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [-1088, 384],
-      "id": "278af738-f4f3-422c-9725-3e5666c7e4e8",
+      "id": "d2f06e57-2a3b-4b16-b313-61e6ca8f5d13",
       "name": "Buscar Referral",
       "credentials": {
         "postgres": {
@@ -797,17 +797,17 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-880, 384],
-      "id": "3500f377-9925-44a8-a5bb-32e686a6bf64",
+      "id": "edb80c3d-3929-44eb-a776-3ebbefc00026",
       "name": "Agregar Referral"
     },
     {
       "parameters": {
-        "jsCode": "// Parser robusto del output JSON del Agente Laundry VIP\n// Tolerante a: comillas curvas, BOM, fences ```json, múltiples JSON pegados, NBSP\n\nconst rawOutput = $input.first().json.output || '';\nconst waInicio = $('WhatsApp Inicio').first().json;\n\nfunction tryParseLLMOutput(s) {\n  if (typeof s !== 'string') return s;\n  let t = s\n    .replace(/^\\uFEFF/, '')                          // BOM\n    .replace(/^\\s*```(?:json)?\\s*/i, '')             // fence apertura\n    .replace(/\\s*```\\s*$/i, '')                      // fence cierre\n    .replace(/[\\u201C\\u201D]/g, '\"')                 // comillas curvas dobles -> \"\n    .replace(/[\\u2018\\u2019]/g, \"'\")                 // comillas curvas simples -> '\n    .replace(/\\u00A0/g, ' ');                        // nbsp -> espacio\n  // Si hay multiples JSON pegados, quedate con el primer objeto balanceado\n  const start = t.indexOf('{');\n  if (start === -1) throw new Error('no JSON found');\n  let depth = 0, end = -1, inStr = false, esc = false;\n  for (let i = start; i < t.length; i++) {\n    const c = t[i];\n    if (inStr) {\n      if (esc) esc = false;\n      else if (c === '\\\\') esc = true;\n      else if (c === '\"') inStr = false;\n    } else {\n      if (c === '\"') inStr = true;\n      else if (c === '{') depth++;\n      else if (c === '}') { depth--; if (depth === 0) { end = i; break; } }\n    }\n  }\n  if (end === -1) throw new Error('unbalanced JSON');\n  return JSON.parse(t.slice(start, end + 1));\n}\n\nlet parsed = {};\nlet parseFailed = false;\ntry {\n  parsed = typeof rawOutput === 'string' ? tryParseLLMOutput(rawOutput) : rawOutput;\n} catch(e) {\n  // Fallback FINAL: NUNCA mandar JSON crudo. Mensaje de cortesia + escalar humano.\n  parseFailed = true;\n  parsed = {\n    respuesta_lead: 'Permítame un momento, le contacta una persona de nuestro equipo.',\n    tool_consultada: null,\n    imagenes: [],\n    videos: [],\n    ubicacion: false,\n    escalar_humano: true,\n    metadata: {\n      temperatura: 'tibio',\n      pain_point: 'parser fallo, escalar a humano',\n      objeciones: [],\n      next_action: 'esperar_respuesta',\n      quality_score: 0,\n      tipo_lead: 'otro',\n      datos_lead: {}\n    }\n  };\n}\n\n\n// ── Guardia anti-alucinación ─────────────────────────────────────────────\n// El modelo puede escribir \"✅ Orden registrada\" con un ID inventado sin haber\n// llamado a la herramienta. Solo vale lo que la herramienta devolvió ok:true\n// en ESTE turno; un UUID que no salió de una herramienta es inventado.\nconst pasos = Array.isArray($input.first().json.intermediateSteps) ? $input.first().json.intermediateSteps : [];\nconst ESCRITURAS = ['registrar_cliente_presencial', 'actualizar_registro', 'avanzar_estado', 'registrar_conteo', 'crear_pedido'];\nconst observaciones = pasos.map((p) => String((p && p.observation) || '')).join(' ');\nconst escriturasOk = pasos.filter((p) => p && p.action && ESCRITURAS.includes(p.action.tool) && /\"ok\"\\s*:\\s*true/.test(String(p.observation || '')));\nconst textoModelo = String(parsed.respuesta_lead || '');\nconst uuids = textoModelo.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi) || [];\nconst idInventado = uuids.some((id) => !observaciones.includes(id));\nconst escrituraFantasma = ESCRITURAS.includes(parsed.tool_consultada) && escriturasOk.length === 0;\nlet esOperadorGuardia = false;\ntry { esOperadorGuardia = $('Verificar Operador').first().json.data?.es_operador === true; } catch (e) {}\nconst confirmacionFalsa = !parseFailed && (idInventado || escrituraFantasma);\nif (confirmacionFalsa) {\n  parsed.respuesta_lead = esOperadorGuardia\n    ? '⚠️ La orden NO quedó registrada: no llegué a guardarla en el sistema. Responde «registrar» y la guardo ahora con los mismos datos.'\n    : 'Disculpe, no pude completar el registro en este momento. Una persona de nuestro equipo lo revisa y le confirma en breve.';\n  if (!esOperadorGuardia) parsed.escalar_humano = true;\n}\n\nconst imagenes = Array.isArray(parsed.imagenes) ? parsed.imagenes : [];\nconst videos = Array.isArray(parsed.videos) ? parsed.videos : [];\nconst metadata = parsed.metadata || {};\nconst datosLead = metadata.datos_lead || {};\n\nreturn [{\n  json: {\n    // Texto limpio que se enviara al lead (sin metadata, sin markers)\n    texto_limpio: parsed.respuesta_lead || '',\n    \n    // Imagenes (hasta 5) para los nodos Enviar Img 1-5\n    img1: imagenes[0] || '',\n    img2: imagenes[1] || '',\n    img3: imagenes[2] || '',\n    img4: imagenes[3] || '',\n    img5: imagenes[4] || '',\n    \n    // Videos (hasta 2) para los nodos Enviar Video\n    vid1: videos[0] || '',\n    vid2: videos[1] || '',\n    \n    // Markers de comportamiento\n    ubicacion: parsed.ubicacion === true ? 'si' : '',\n    escalar_humano: parsed.escalar_humano === true ? 'si' : '',\n    \n    // Datos del flow (no cambian)\n    phone: waInicio.contacts[0].wa_id,\n    conv_id: waInicio._chatwoot_conversation_id,\n    \n    // Flag de parser para diagnostico\n    parser_failed: parseFailed,\n    confirmacion_falsa: confirmacionFalsa,\n    \n    // Metadata para CRM / logging\n    metadata_temperatura: metadata.temperatura || 'frio',\n    metadata_pain_point: metadata.pain_point || '',\n    metadata_objeciones: Array.isArray(metadata.objeciones) ? metadata.objeciones.join(', ') : '',\n    metadata_next_action: metadata.next_action || 'esperar_respuesta',\n    metadata_quality_score: metadata.quality_score || 0,\n    metadata_tipo_lead: metadata.tipo_lead || 'otro',\n    metadata_tool_consultada: parsed.tool_consultada || null,\n    \n    // Datos del lead (estructurados)\n    lead_nombre: datosLead.nombre || null,\n    lead_servicio: datosLead.servicio || null,\n    lead_ubicacion: datosLead.ubicacion || null,\n    lead_metros: datosLead.metros || null,\n    lead_nivel_acabado: datosLead.nivel_acabado || null,\n    lead_presupuesto_usd: datosLead.presupuesto_usd || null,\n    lead_timeline: datosLead.timeline || null,\n    lead_tiene_terreno: datosLead.tiene_terreno || null,\n    \n    // Cotizacion (mantenido por compatibilidad - vacio por ahora)\n    cotizacion_json: ''\n  }\n}];"
+        "jsCode": "// Parser robusto del output JSON del Agente Laundry VIP\n// Tolerante a: comillas curvas, BOM, fences ```json, múltiples JSON pegados, NBSP\n\nconst rawOutput = $input.first().json.output || '';\nconst waInicio = $('WhatsApp Inicio').first().json;\n\nfunction tryParseLLMOutput(s) {\n  if (typeof s !== 'string') return s;\n  let t = s\n    .replace(/^\\uFEFF/, '')                          // BOM\n    .replace(/^\\s*```(?:json)?\\s*/i, '')             // fence apertura\n    .replace(/\\s*```\\s*$/i, '')                      // fence cierre\n    .replace(/[\\u201C\\u201D]/g, '\"')                 // comillas curvas dobles -> \"\n    .replace(/[\\u2018\\u2019]/g, \"'\")                 // comillas curvas simples -> '\n    .replace(/\\u00A0/g, ' ');                        // nbsp -> espacio\n  // Si hay multiples JSON pegados, quedate con el primer objeto balanceado\n  const start = t.indexOf('{');\n  if (start === -1) throw new Error('no JSON found');\n  let depth = 0, end = -1, inStr = false, esc = false;\n  for (let i = start; i < t.length; i++) {\n    const c = t[i];\n    if (inStr) {\n      if (esc) esc = false;\n      else if (c === '\\\\') esc = true;\n      else if (c === '\"') inStr = false;\n    } else {\n      if (c === '\"') inStr = true;\n      else if (c === '{') depth++;\n      else if (c === '}') { depth--; if (depth === 0) { end = i; break; } }\n    }\n  }\n  if (end === -1) throw new Error('unbalanced JSON');\n  return JSON.parse(t.slice(start, end + 1));\n}\n\nlet parsed = {};\nlet parseFailed = false;\ntry {\n  parsed = typeof rawOutput === 'string' ? tryParseLLMOutput(rawOutput) : rawOutput;\n} catch(e) {\n  // Fallback FINAL: NUNCA mandar JSON crudo. Mensaje de cortesia + escalar humano.\n  parseFailed = true;\n  parsed = {\n    respuesta_lead: 'Permítame un momento, le contacta una persona de nuestro equipo.',\n    tool_consultada: null,\n    imagenes: [],\n    videos: [],\n    ubicacion: false,\n    escalar_humano: true,\n    metadata: {\n      temperatura: 'tibio',\n      pain_point: 'parser fallo, escalar a humano',\n      objeciones: [],\n      next_action: 'esperar_respuesta',\n      quality_score: 0,\n      tipo_lead: 'otro',\n      datos_lead: {}\n    }\n  };\n}\n\n\n// ── Guardia anti-alucinación ─────────────────────────────────────────────\n// El modelo puede escribir \"✅ Orden registrada\" con un ID inventado sin haber\n// llamado a la herramienta. Solo vale lo que la herramienta devolvió ok:true\n// en ESTE turno; un UUID que no salió de una herramienta es inventado.\nconst pasos = Array.isArray($input.first().json.intermediateSteps) ? $input.first().json.intermediateSteps : [];\nconst ESCRITURAS = ['registrar_cliente_presencial', 'actualizar_registro', 'avanzar_estado', 'registrar_conteo', 'crear_pedido'];\nconst observaciones = pasos.map((p) => String((p && p.observation) || '')).join(' ');\nconst escriturasOk = pasos.filter((p) => p && p.action && ESCRITURAS.includes(p.action.tool) && /\"ok\"\\s*:\\s*true/.test(String(p.observation || '')));\nconst textoModelo = String(parsed.respuesta_lead || '');\nconst uuids = textoModelo.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi) || [];\nconst idInventado = uuids.some((id) => !observaciones.includes(id));\nconst escrituraFantasma = ESCRITURAS.includes(parsed.tool_consultada) && escriturasOk.length === 0;\nlet esOperadorGuardia = false;\ntry { esOperadorGuardia = $('Verificar Operador').first().json.data?.es_operador === true; } catch (e) {}\nconst confirmacionFalsa = !parseFailed && (idInventado || escrituraFantasma);\n// ── Guardia de valores sin herramienta ───────────────────────────────────\n// Un modelo (Gemini flash-lite en la prueba del 2026-10-09) respondió «$31,50» y «48 horas»\n// sin llamar a ninguna herramienta y marcó tool_consultada «cotizar_prendas». Un monto o un\n// plazo solo vale si salió de una herramienta de precios en ESTE turno o ya se le había dicho\n// al cliente antes; si no, se reemplaza y una persona confirma.\nconst PRECIOS = ['cotizar_prendas', 'obtener_proxima_ventana', 'consultar_estado_pedido'];\nconst usoPrecios = pasos.some((p) => p && p.action && PRECIOS.includes(p.action.tool));\nlet dichoAntes = '';\ntry { dichoAntes = (($('Obtener Ultimos Mensajes').first().json.payload) || []).filter((m) => m.message_type === 1).map((m) => String(m.content || '')).join(' '); } catch (e) {}\nconst montos = textoModelo.match(/\\$\\s?\\d+(?:[.,]\\d+)?/g) || [];\nconst plazos = textoModelo.match(/\\d+\\s*horas/gi) || [];\nconst sinFuente = (t) => !dichoAntes.replace(/\\s/g, '').includes(t.replace(/\\s/g, '')) && !observaciones.includes(t.replace(/[^0-9.,]/g, '').replace(',', '.'));\nconst valorSinHerramienta = !parseFailed && !esOperadorGuardia && !usoPrecios && [...montos, ...plazos].some(sinFuente);\nif (valorSinHerramienta) {\n  parsed.respuesta_lead = 'Permítame confirmarle ese valor con una persona de nuestro equipo y le escribe en breve.';\n  parsed.escalar_humano = true;\n}\nif (confirmacionFalsa) {\n  parsed.respuesta_lead = esOperadorGuardia\n    ? '⚠️ La orden NO quedó registrada: no llegué a guardarla en el sistema. Responde «registrar» y la guardo ahora con los mismos datos.'\n    : 'Disculpe, no pude completar el registro en este momento. Una persona de nuestro equipo lo revisa y le confirma en breve.';\n  if (!esOperadorGuardia) parsed.escalar_humano = true;\n}\n\nconst imagenes = Array.isArray(parsed.imagenes) ? parsed.imagenes : [];\nconst videos = Array.isArray(parsed.videos) ? parsed.videos : [];\nconst metadata = parsed.metadata || {};\nconst datosLead = metadata.datos_lead || {};\n\nreturn [{\n  json: {\n    // Texto limpio que se enviara al lead (sin metadata, sin markers)\n    texto_limpio: parsed.respuesta_lead || '',\n    \n    // Imagenes (hasta 5) para los nodos Enviar Img 1-5\n    img1: imagenes[0] || '',\n    img2: imagenes[1] || '',\n    img3: imagenes[2] || '',\n    img4: imagenes[3] || '',\n    img5: imagenes[4] || '',\n    \n    // Videos (hasta 2) para los nodos Enviar Video\n    vid1: videos[0] || '',\n    vid2: videos[1] || '',\n    \n    // Markers de comportamiento\n    ubicacion: parsed.ubicacion === true ? 'si' : '',\n    escalar_humano: parsed.escalar_humano === true ? 'si' : '',\n    \n    // Datos del flow (no cambian)\n    phone: waInicio.contacts[0].wa_id,\n    conv_id: waInicio._chatwoot_conversation_id,\n    \n    // Flag de parser para diagnostico\n    parser_failed: parseFailed,\n    confirmacion_falsa: confirmacionFalsa,\n    valor_sin_herramienta: valorSinHerramienta,\n    \n    // Metadata para CRM / logging\n    metadata_temperatura: metadata.temperatura || 'frio',\n    metadata_pain_point: metadata.pain_point || '',\n    metadata_objeciones: Array.isArray(metadata.objeciones) ? metadata.objeciones.join(', ') : '',\n    metadata_next_action: metadata.next_action || 'esperar_respuesta',\n    metadata_quality_score: metadata.quality_score || 0,\n    metadata_tipo_lead: metadata.tipo_lead || 'otro',\n    metadata_tool_consultada: parsed.tool_consultada || null,\n    \n    // Datos del lead (estructurados)\n    lead_nombre: datosLead.nombre || null,\n    lead_servicio: datosLead.servicio || null,\n    lead_ubicacion: datosLead.ubicacion || null,\n    lead_metros: datosLead.metros || null,\n    lead_nivel_acabado: datosLead.nivel_acabado || null,\n    lead_presupuesto_usd: datosLead.presupuesto_usd || null,\n    lead_timeline: datosLead.timeline || null,\n    lead_tiene_terreno: datosLead.tiene_terreno || null,\n    \n    // Cotizacion (mantenido por compatibilidad - vacio por ahora)\n    cotizacion_json: ''\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [2700, 288],
-      "id": "a36dabc9-6b69-4768-bf71-837be330a7e9",
+      "id": "954d889a-849e-4d83-8110-ebd6075492aa",
       "name": "Extraer JSON"
     },
     {
@@ -833,7 +833,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [1500, 752],
-      "id": "867611db-63a4-4b65-802e-c88bf6c6310a",
+      "id": "0e0f77f0-c616-4899-b1c3-57bcca053904",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -864,7 +864,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [1680, 752],
-      "id": "d23d38e9-1f5c-4d6a-9e6f-296e25909983",
+      "id": "b9a746c9-e0d0-4436-af51-8fb4285a13b5",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -895,7 +895,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [1860, 752],
-      "id": "1f1cedef-7b57-4c03-b6b7-c456c59473b8",
+      "id": "cfdd0b4d-266d-45c7-9d76-273df5106a93",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -926,7 +926,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2040, 752],
-      "id": "ee68a890-b8d3-4e32-93f6-72f12c0d0f13",
+      "id": "fbe77927-003d-41ec-b265-66262a04216f",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -957,7 +957,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2220, 752],
-      "id": "87ea4dd2-56a5-43c4-9c14-db5845aa7ee4",
+      "id": "92bbebc4-3e69-4df1-a9f9-b29e6f1fad7c",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -988,7 +988,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2400, 752],
-      "id": "d50b8767-be00-4710-841e-46b474cb1987",
+      "id": "eb9a03f4-afbe-4929-b142-249f87e665c9",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1013,7 +1013,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [1640, 288],
-      "id": "439c82a8-8568-4f64-a3e3-5b9788661a23",
+      "id": "7a27b00b-663d-4d9f-bad9-4e959fc05b12",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1052,7 +1052,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [1860, 288],
-      "id": "7e5b766a-0890-4144-9109-75975d788bad"
+      "id": "6861b59f-5019-4925-8911-226144e7aa1d"
     },
     {
       "parameters": {
@@ -1067,7 +1067,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [2256, -120],
-      "id": "6a3fef5d-8898-452d-ab91-15f9d23dd3d0",
+      "id": "5ca6df0b-9c3a-403f-a9f7-ee1fb9f97a51",
       "name": "Agente Operador"
     },
     {
@@ -1090,7 +1090,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [2060, 60],
-      "id": "93336c3c-5f49-4954-9925-7abcf5832301",
+      "id": "4e3728f0-7a11-4774-9166-91e677de74f2",
       "name": "OpenAI Operador",
       "credentials": {
         "openAiApi": {
@@ -1109,7 +1109,7 @@
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.3,
       "position": [2200, 60],
-      "id": "fe164d40-c945-46c6-b3ae-dc2c201c23ca",
+      "id": "a2aacd70-4fde-48c1-b22d-4ba488cdf47e",
       "name": "Memory Operador",
       "credentials": {
         "postgres": {
@@ -1141,7 +1141,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2360, -300],
-      "id": "85298658-1e9e-4aff-af7b-29ebb4532dd2",
+      "id": "6321667f-82d6-4841-a0de-5bf2d643530f",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1172,7 +1172,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2530, -300],
-      "id": "27c38356-ed34-402a-bc59-511fb7e6d471",
+      "id": "fb75f1aa-0b8b-430f-a379-010a98c4a90e",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1203,7 +1203,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2700, -300],
-      "id": "de73a27f-9a27-4dc3-a5c1-c07fcd81b8fc",
+      "id": "dac16c60-9fe1-4704-89df-79ce0bc38e7e",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1234,7 +1234,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2870, -300],
-      "id": "4cd1e3ff-afad-4ab9-998e-95d638476278",
+      "id": "e85cc988-aeb2-483b-a004-3d9fba0a75d8",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1265,7 +1265,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3040, -300],
-      "id": "5b70af45-6fdb-42b6-8d5c-3e75f111efaf",
+      "id": "80d0fac2-04aa-4848-8c78-c5a097763d6f",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1296,7 +1296,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3210, -300],
-      "id": "dc67973e-e6e3-4a1a-bbae-d82a24f36919",
+      "id": "7baff282-c08e-4974-9976-1694f7ea7399",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1327,7 +1327,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3380, -300],
-      "id": "5bbaaf45-df5d-4866-b462-547eebea907e",
+      "id": "05b1926b-3b05-4bcd-9d8e-55a95f4fc24d",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1358,7 +1358,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3550, -300],
-      "id": "dc6541f4-6b89-49a4-8e83-735cc01eddb1",
+      "id": "dc0993e3-298c-40a1-af8a-e3cbdfd9624c",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1389,7 +1389,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3720, -300],
-      "id": "a6dec35e-1484-443b-b2c9-e0715138dad6",
+      "id": "8cbf46b0-ca25-4cc7-8166-ffd2d0d3b9e3",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1407,9 +1407,9 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.1,
       "position": [1984, 308],
-      "id": "1670fc3b-a3ae-4793-a5ed-1e3c4a7e94e3",
+      "id": "1cede36d-0f11-4ad4-9961-6489c39bea46",
       "name": "Gemini Laundry",
-      "notes": "Motor principal (capa gratis). Si falla, n8n usa «OpenAI Laundry» (respaldo).",
+      "notes": "Respaldo gratis: solo se usa si «OpenAI Laundry» da error (ver n8n/generador/modelos.cjs).",
       "credentials": {
         "googlePalmApi": {
           "id": "jbOxhXuz7QS5IefQ",
@@ -1425,7 +1425,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [2960, 640],
-      "id": "de687e39-f90e-403f-a811-dee002273000",
+      "id": "8466cdb5-c732-483a-a2a3-2dd250e802a0",
       "onError": "continueRegularOutput"
     },
     {
@@ -1445,7 +1445,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [3200, 640],
-      "id": "51ec4fd9-34b7-4da6-891e-1fe2c292e508",
+      "id": "780fdabb-dafe-421e-bf5b-a9620981e224",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1471,7 +1471,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [3440, 640],
-      "id": "b39c01a8-f1d6-4466-a4da-7b7e211174a1",
+      "id": "57f977d0-7b5d-44fd-a2da-4055fdab7207",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1495,7 +1495,7 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [-2000, 1200],
-      "id": "066b1c80-650b-4196-8c00-31f74d259c95",
+      "id": "b940b0c8-89f8-4a4e-8986-09f4d6067aaa",
       "notes": "Lunes a sábado 8:00 (zona del workflow: America/Guayaquil)."
     },
     {
@@ -1515,7 +1515,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1760, 1200],
-      "id": "66dfa032-2419-4cbe-958f-54caf7c46d93",
+      "id": "8b79940b-8080-474a-b55b-257aba439c1f",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1531,7 +1531,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-1520, 1200],
-      "id": "fb63184a-33d4-46cd-a066-184488766fa8"
+      "id": "9b37babc-a63d-42da-94e1-b130b575fc71"
     },
     {
       "parameters": {
@@ -1563,7 +1563,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [-1280, 1200],
-      "id": "554d1ead-f2cd-4235-b61a-9e461f3a9e7e"
+      "id": "39f70f49-bfc0-4684-a08e-c7b82cf8bf43"
     },
     {
       "parameters": {
@@ -1582,7 +1582,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 1100],
-      "id": "e7584e6b-dba7-4c2c-be02-71a48e72b8ff",
+      "id": "118a61e1-bba4-4f5f-af98-37df52f2f2df",
       "credentials": {
         "httpHeaderAuth": {
           "id": "baJJfX3zWMindSEN",
@@ -1608,7 +1608,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 1300],
-      "id": "7c8ce176-43b1-4a1f-a3e3-1e4833910567",
+      "id": "b299e3de-267c-44a3-884c-e4403ec67e5e",
       "credentials": {
         "httpHeaderAuth": {
           "id": "baJJfX3zWMindSEN",
@@ -1682,7 +1682,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-1776, 160],
       "typeVersion": 2.2,
-      "id": "e57dff0b-8a01-4311-a5f2-f020b2c1be8d"
+      "id": "c6843778-684a-4333-8a42-d31e24275017"
     },
     {
       "parameters": {
@@ -1701,7 +1701,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1552, 160],
-      "id": "d521b953-d69e-418f-ac2a-84be791484ac",
+      "id": "16604641-b06e-49ec-a4b4-3103f5beccc5",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -1727,7 +1727,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1328, 160],
-      "id": "a8397ea8-0dad-4287-b4a1-5f0dfdc9b4fa",
+      "id": "1f327d43-fa23-48f4-896b-df1f166bd026",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -1758,7 +1758,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-96, 384],
-      "id": "c45bde96-1a51-4f8f-968d-d701354f9426",
+      "id": "aa8638fb-143e-446a-a8fe-568a86d8012c",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1796,7 +1796,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [128, 384],
-      "id": "6833c0e8-961a-42c5-8157-38323b2002ad"
+      "id": "7a6817a1-090d-4f1c-b9d3-9c22c11202ea"
     },
     {
       "parameters": {
@@ -1806,7 +1806,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [352, 560],
-      "id": "5da5aa75-4f03-4966-adf0-e2aab30c1e69",
+      "id": "ed7ae702-7f0d-41c2-b240-b984d69a8b61",
       "onError": "continueRegularOutput"
     },
     {
@@ -1826,7 +1826,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [576, 560],
-      "id": "297572d8-1543-4170-ac39-217382f4b92c",
+      "id": "c69ecf2d-4ea7-47e1-8896-0ef3511a46d0",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -1843,7 +1843,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [2960, 880],
-      "id": "7a28d816-ee62-4520-98c4-49f7fa1f1954",
+      "id": "bd6216f5-6c65-42f1-beb9-649f16f6500f",
       "onError": "continueRegularOutput"
     },
     {
@@ -1868,7 +1868,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [3200, 880],
-      "id": "479b0e1a-6cab-47d6-80de-79bc5d019eb2",
+      "id": "85b47690-9321-4530-aabd-6d50a4940ada",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1892,7 +1892,7 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [-2000, 1600],
-      "id": "fb3010ed-86e8-4e00-89ec-67db3e5e5567",
+      "id": "c654cae0-3fb4-478b-a36b-7260f09f306c",
       "notes": "Lunes a sábado, 9:00 a 18:55 (zona America/Guayaquil). El CRM además revisa el horario del local y decide qué paso toca."
     },
     {
@@ -1917,7 +1917,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1760, 1600],
-      "id": "cc81faea-d55d-4320-ae92-c4c5a202449a",
+      "id": "419c812f-0ef9-47c9-9bbf-dc28d39240c7",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1934,7 +1934,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-1520, 1600],
-      "id": "073fd912-5de4-457c-9236-50d529a62ce1"
+      "id": "e1a34126-5bb7-4eec-8859-9f56bffd0ab0"
     },
     {
       "parameters": {
@@ -1949,7 +1949,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1280, 1600],
-      "id": "37dc4d20-80d7-46c1-bb74-b290d035b269",
+      "id": "806255e7-dfca-424b-8833-8a75641192a8",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -1971,7 +1971,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1160, 1600],
-      "id": "cf2b6652-5306-41da-92df-843fdf9b40a8",
+      "id": "5c770f84-7b48-48b1-88bf-18db04d8f7c4",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -2009,7 +2009,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [-1040, 1600],
-      "id": "c889c17a-ea75-4a6d-86b1-6b3be5cd5fc3"
+      "id": "8146ea38-dbe0-44f2-bae9-e56e55a98fa5"
     },
     {
       "parameters": {
@@ -2028,7 +2028,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-800, 1600],
-      "id": "246571f8-ae57-4024-b50c-946ba735129e",
+      "id": "e268ab43-eac7-48d4-a885-6dd8e3ccbd75",
       "credentials": {
         "openAiApi": {
           "id": "GvNmUCZRx5ZvZerQ",
@@ -2045,7 +2045,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-560, 1600],
-      "id": "e1ed3489-0445-44a2-a18b-ea4b7dca089e"
+      "id": "c1c5b9ca-eb29-4d87-a3d3-d30d276b22ae"
     },
     {
       "parameters": {
@@ -2064,7 +2064,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-320, 1600],
-      "id": "407b08b8-d6fe-497d-a98c-db8bcd8ba91e",
+      "id": "6768b0a0-5d56-4413-8d2c-9e23e7a1a0e5",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -2085,7 +2085,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [-200, 1600],
-      "id": "61e8035b-1029-4db7-bce6-d42e30e53845",
+      "id": "83542e12-5b88-4d97-8ffb-c2a81b6b34c3",
       "credentials": {
         "postgres": {
           "id": "uS6oHAzjK8OQg6K3",
@@ -2117,7 +2117,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [40, 1600],
-      "id": "e5729c09-8a8d-4a5a-a4a9-d1521ad71827",
+      "id": "29fea3f5-de37-4d70-a3ed-38f3cdaa9cad",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -2134,7 +2134,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-800, 1850],
-      "id": "b5b3172c-bd23-4a06-b368-c9955b5c2831",
+      "id": "cace221c-6e15-497d-9748-49f2f3151266",
       "onError": "continueRegularOutput"
     },
     {
@@ -2154,7 +2154,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-560, 1850],
-      "id": "29c5ed9c-ab79-4cf1-a2b4-f19cb8ff2291",
+      "id": "1e5afa43-234c-4a57-af60-59a380d291d5",
       "credentials": {
         "openAiApi": {
           "id": "GvNmUCZRx5ZvZerQ",
@@ -2171,7 +2171,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-320, 1850],
-      "id": "5419bdcf-258c-4525-9a67-14c3150682db"
+      "id": "70022e6f-931d-4b88-aa42-f39f2c9b317f"
     },
     {
       "parameters": {
@@ -2202,7 +2202,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [-80, 1850],
-      "id": "296af3b7-33a2-4268-a0b2-7742da2dcfa2",
+      "id": "4c4d4271-031f-4773-a1f5-bf327be4f753",
       "notes": "Si ya contrató, agendó o dijo que no, no se le insiste (y si compró, entra al CRM)."
     },
     {
@@ -2227,7 +2227,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [160, 2050],
-      "id": "797e9fd9-c6cd-4ea4-89af-f7202e03339a",
+      "id": "41ed0f1d-f68d-44c0-b861-1ce95afa9ff1",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -2253,7 +2253,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [400, 2050],
-      "id": "245001eb-6e5b-4233-be24-e50ab38d3933",
+      "id": "f65c5790-fd6a-4735-bd3b-62f5ea38faee",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -2291,7 +2291,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [280, 1600],
-      "id": "22368d02-7c10-410e-91af-04080534635a",
+      "id": "5b4e875f-a56b-4f78-8ccd-db3f79d6bba6",
       "notes": "Con el primer seguimiento (5 min) se avisa a la dueña."
     },
     {
@@ -2311,7 +2311,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [520, 1600],
-      "id": "e70f3a53-42e0-494a-bb62-c047dcbdd495",
+      "id": "f21cd56e-4f00-41ce-be40-4570fd73b19f",
       "credentials": {
         "openAiApi": {
           "id": "GvNmUCZRx5ZvZerQ",
@@ -2337,7 +2337,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [760, 1600],
-      "id": "9f736750-02d0-40ab-94c5-f01db5df37d3",
+      "id": "261593c9-bbf0-47e0-8f8a-01a44fbb7ceb",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -2368,7 +2368,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [1000, 1600],
-      "id": "e71b50c9-c8b4-43ef-8a14-9aff6fbc5a23",
+      "id": "cc55bec6-bcbd-4ed8-9b8b-6c3cfec2bb99",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -2385,7 +2385,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [1240, 1600],
-      "id": "fa6fc550-6e47-4a68-a336-0ec7e1295c79"
+      "id": "9fab07d6-884d-4ba8-981d-b7d22f7c6dbd"
     },
     {
       "parameters": {
@@ -2416,7 +2416,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [1480, 1600],
-      "id": "d5ded063-6ba1-450e-9a6f-509229013d29",
+      "id": "33d176b9-3ceb-4415-a479-c73951b182fb",
       "notes": "Si no escribió al agente en 24 h, solo queda la nota interna del chat."
     },
     {
@@ -2436,7 +2436,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [1720, 1600],
-      "id": "0da9f1da-ebdc-4b7b-ba05-4e859b47d87a",
+      "id": "3f9060e6-80de-4a46-9745-c6abff55a47b",
       "credentials": {
         "httpHeaderAuth": {
           "id": "baJJfX3zWMindSEN",
@@ -2460,7 +2460,7 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [-2000, 2400],
-      "id": "112cec88-e5a6-4e1e-9f09-c0a3c87ed577",
+      "id": "f7313f08-9746-42a1-8c8e-5d4a8818f4b5",
       "notes": "Lunes a sábado, 9:00 a 18:55 (zona America/Guayaquil)."
     },
     {
@@ -2485,7 +2485,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1760, 2400],
-      "id": "227057ea-2b0b-40a9-b79e-b392cc5a8985",
+      "id": "81113d6d-11d3-458b-b439-5369b992522e",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -2502,7 +2502,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-1520, 2400],
-      "id": "63659120-7e39-437c-a751-efcf78e69a3e"
+      "id": "e829e2bd-5f72-4c7f-8d7f-37f4164030ec"
     },
     {
       "parameters": {
@@ -2533,7 +2533,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [-1280, 2400],
-      "id": "58ad7d7e-ec03-4732-b309-910583763b63"
+      "id": "2d82e846-ccd2-4c8e-b5ce-7890941d8e96"
     },
     {
       "parameters": {
@@ -2552,7 +2552,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 2300],
-      "id": "0dba493a-b455-4232-a235-95f33d8ff28f",
+      "id": "0d288735-2503-4320-9b91-db9ba96c2a63",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -2583,7 +2583,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-800, 2300],
-      "id": "2de218da-6e39-483e-8f67-694826af0976",
+      "id": "42f2f4f4-b339-4df8-abec-33e9e32c9bcd",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -2621,7 +2621,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [-1160, 2500],
-      "id": "59d88c43-5b7b-4c4b-8f1d-e552c6ac8b06",
+      "id": "5464f12d-4881-4b7a-a633-02c872bd5a6a",
       "notes": "Un aviso sin conversación de Chatwoot no puede dejar nota (daba 404): solo se marca como requiere_persona."
     },
     {
@@ -2641,7 +2641,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 2500],
-      "id": "3b9ec543-aa5f-4a10-9bd7-9dd49157ee40",
+      "id": "60f7977e-19f7-4ca5-a8f3-f71556568db9",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -2672,7 +2672,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-800, 2500],
-      "id": "7f83d544-8cab-4af8-b01a-9e8742052539",
+      "id": "0f9dc968-09f1-4276-b434-7eae00f360f7",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -2710,7 +2710,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [3200, 400],
-      "id": "9d838fd6-23ea-40bc-bbd0-3b1d178b11be",
+      "id": "3fdc4ae3-466d-48ab-a3cf-feb9b40b33fe",
       "notes": "Solo la primera vez que alguien escribe: se le manda el catálogo en imagen."
     },
     {
@@ -2730,7 +2730,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [3440, 400],
-      "id": "ed8fdd77-3930-45d6-8853-387155288854",
+      "id": "7ed9ef17-654a-426f-bc7d-206ec4951f2d",
       "onError": "continueRegularOutput"
     },
     {
@@ -2741,7 +2741,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [3680, 400],
-      "id": "5c8658fd-5d71-4712-8209-8af4cb708c6c",
+      "id": "fed02055-0a11-4818-9a7d-6cfd8f345068",
       "onError": "continueRegularOutput"
     },
     {
@@ -2777,7 +2777,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [3920, 400],
-      "id": "3175abf5-1c72-4a77-8855-7f445bef262c",
+      "id": "2119077b-ae6a-445c-8282-ccf77eaf1fa6",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -2808,7 +2808,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [3680, 80],
-      "id": "9700c23a-da99-4ae3-8a3f-f9d541d22849",
+      "id": "d6bc7adb-add3-4091-86a7-bbd3dde1e233",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -2839,7 +2839,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1552, 360],
-      "id": "98c170c8-bf23-4d8c-a65c-fa9ae755cccf",
+      "id": "e77baa0d-54bd-49a9-980e-625915a42a42",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -2863,7 +2863,7 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [-2000, 2800],
-      "id": "a980b885-daa3-4764-97e2-72adf0c70cc6",
+      "id": "8e845371-f341-4801-93b9-3148db505ef6",
       "notes": "Todos los días, a cualquier hora (zona America/Guayaquil): los avisos al equipo no esperan al horario."
     },
     {
@@ -2888,7 +2888,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1760, 2800],
-      "id": "452fadcf-9ec7-40fa-8283-f25ee899bdd3",
+      "id": "5522473f-d9f7-4d51-9da2-360fced55977",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -2905,7 +2905,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-1520, 2700],
-      "id": "69916323-d1cd-4b5f-ab0b-198c79a2186b"
+      "id": "7598c6b1-21f7-41ac-88f9-e25547294146"
     },
     {
       "parameters": {
@@ -2936,7 +2936,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [-1280, 2700],
-      "id": "59ce2aa0-c181-4cbb-8de1-106afb33a39a",
+      "id": "ccaf263a-93f5-41f0-8bb5-29d905de87fa",
       "notes": "Con ventana abierta (escribió al agente en 24 h): texto libre. Si no: plantilla aprobada."
     },
     {
@@ -2956,7 +2956,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 2600],
-      "id": "bfda07cf-9bf2-4b39-af3c-050aa4562907",
+      "id": "f86372e8-ab41-4f2b-a0ea-4b42ad751fb0",
       "credentials": {
         "httpHeaderAuth": {
           "id": "baJJfX3zWMindSEN",
@@ -2982,7 +2982,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 2800],
-      "id": "699d761a-2eae-4a10-b8c1-d21f183068f0",
+      "id": "3a8fe08d-0678-4e76-89d1-6d766dcffc30",
       "credentials": {
         "httpHeaderAuth": {
           "id": "baJJfX3zWMindSEN",
@@ -3000,7 +3000,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-1520, 2900],
-      "id": "7bb8e70d-3fda-4782-ad8e-1bb4950935d8"
+      "id": "e23dbf47-4874-4c25-adeb-b01abdcd61a2"
     },
     {
       "parameters": {
@@ -3024,7 +3024,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1280, 2900],
-      "id": "3b0bdf6d-b83d-4c20-b03d-2d5421592e10",
+      "id": "8c704729-7b7c-4aa4-85ef-1baa2078d396",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -3292,7 +3292,7 @@
           {
             "node": "Agente Laundry VIP",
             "type": "ai_languageModel",
-            "index": 1
+            "index": 0
           }
         ]
       ]
@@ -3611,7 +3611,7 @@
           {
             "node": "Agente Laundry VIP",
             "type": "ai_languageModel",
-            "index": 0
+            "index": 1
           }
         ]
       ]

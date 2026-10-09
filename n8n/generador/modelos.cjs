@@ -1,17 +1,22 @@
-// Motor del agente de clientes: Gemini (capa gratis) como principal y OpenAI de respaldo.
-// Mismo esquema que el agente de AIUDA Empresas (repo bcujano/aiuda-empresas, n8n/agente-aiuda-empresas.sdk.ts):
-// el nodo Agente (v3.1) con «modelo de respaldo» activado y dos entradas de modelo:
-//   índice 0 → Gemini (principal) · índice 1 → OpenAI gpt-4.1-mini (respaldo).
-// n8n pasa al respaldo cuando el principal responde con ERROR (límite de la capa gratis, caída,
-// esquema rechazado). Si Gemini contesta mal pero sin error, no hay respaldo: por eso el
-// parser («Extraer JSON») y la guardia siguen en pie y el agente se revisa con `pnpm chatwoot:revisar`.
+// Motor del agente de clientes: OpenAI gpt-4.1-mini como PRINCIPAL y Gemini (capa gratis) de RESPALDO.
+// Mismo esquema que el agente de AIUDA Empresas (repo bcujano/aiuda-empresas,
+// n8n/agente-aiuda-empresas.sdk.ts): nodo Agente v3.1 con «modelo de respaldo» activado y dos
+// entradas de modelo (índice 0 principal, 1 respaldo); n8n pasa al respaldo cuando el principal
+// responde con ERROR (límite, caída, cuota).
 //
-// El agente de planta/dueña («Agente Operador») sigue solo con OpenAI hasta probar sus tools
-// con Gemini (usan parámetros JSON complejos).
+// Por qué NO es Gemini el principal (prueba real del 2026-10-09, simulador): con el prompt de
+// Lavandería VIP y sus 6 herramientas, gemini-3.1-flash-lite NO llamó a ninguna herramienta,
+// inventó «$31,50» y «48 horas» y declaró tool_consultada «cotizar_prendas». gpt-4.1-mini cuesta
+// ~$0,01–0,04 al día; el ahorro no compensa el riesgo de un precio inventado. La guardia
+// «valor sin herramienta» (n8n/generador/guardia.cjs) bloquea ese tipo de respuesta con cualquier modelo.
+// Para volver a probar Gemini como principal: MOTOR_PRINCIPAL = 'gemini' y correr
+// `pnpm tsx scripts/simular-cliente.ts` con varios casos antes de publicar.
 //
-// La credencial «Gemini Aiuda» es de AIUDA (no de 321). Una lavandería nueva usa la suya.
+// El agente de planta/dueña («Agente Operador») sigue solo con OpenAI (sus tools usan parámetros
+// JSON complejos). La credencial «Gemini Aiuda» es de AIUDA (no de 321); una lavandería nueva usa la suya.
 const crypto = require('node:crypto')
 
+const MOTOR_PRINCIPAL = 'openai' // 'openai' | 'gemini'
 const MODELO_GEMINI = 'models/gemini-3.1-flash-lite'
 const CRED_GEMINI = { googlePalmApi: { id: 'jbOxhXuz7QS5IefQ', name: 'Gemini Aiuda' } }
 
@@ -33,18 +38,20 @@ function aplicar({ nodes, connections, nodo }) {
     position: [openai.position[0], openai.position[1] - 140],
     id: crypto.randomUUID(),
     name: 'Gemini Laundry',
-    notes: 'Motor principal (capa gratis). Si falla, n8n usa «OpenAI Laundry» (respaldo).',
+    notes:
+      'Respaldo gratis: solo se usa si «OpenAI Laundry» da error (ver n8n/generador/modelos.cjs).',
     credentials: CRED_GEMINI,
   })
-  openai.notes = 'Respaldo: solo se usa si «Gemini Laundry» da error.'
+  openai.notes = 'Motor principal del agente de clientes.'
 
-  connections['Gemini Laundry'] = {
-    ai_languageModel: [[{ node: 'Agente Laundry VIP', type: 'ai_languageModel', index: 0 }]],
-  }
-  // El OpenAI pasa a la segunda entrada: el modelo de respaldo.
-  connections['OpenAI Laundry'] = {
-    ai_languageModel: [[{ node: 'Agente Laundry VIP', type: 'ai_languageModel', index: 1 }]],
-  }
+  const gemini = MOTOR_PRINCIPAL === 'gemini'
+  const entrada = (principal) => ({
+    ai_languageModel: [
+      [{ node: 'Agente Laundry VIP', type: 'ai_languageModel', index: principal ? 0 : 1 }],
+    ],
+  })
+  connections['Gemini Laundry'] = entrada(gemini)
+  connections['OpenAI Laundry'] = entrada(!gemini)
 }
 
 module.exports = { aplicar, MODELO_GEMINI, CRED_GEMINI }

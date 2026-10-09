@@ -4,14 +4,16 @@ import { porNombre, workflow } from '../util/workflow.ts'
 type Conexiones = Record<string, { ai_languageModel?: { node: string; index: number }[][] }>
 const c = workflow.connections as unknown as Conexiones
 
-describe('motor del agente de clientes: Gemini gratis y OpenAI de respaldo', () => {
-  it('Gemini es la entrada principal (0) y OpenAI la de respaldo (1) del mismo agente', () => {
-    expect(c['Gemini Laundry']?.ai_languageModel?.[0]?.[0]).toEqual({
+describe('motor del agente de clientes: OpenAI principal y Gemini gratis de respaldo', () => {
+  it('OpenAI es la entrada principal (0) y Gemini la de respaldo (1) del mismo agente', () => {
+    // Gemini flash-lite inventó un precio sin llamar a la herramienta (prueba del 2026-10-09):
+    // no puede ser el principal. Ver el comentario de n8n/generador/modelos.cjs.
+    expect(c['OpenAI Laundry']?.ai_languageModel?.[0]?.[0]).toEqual({
       node: 'Agente Laundry VIP',
       type: 'ai_languageModel',
       index: 0,
     })
-    expect(c['OpenAI Laundry']?.ai_languageModel?.[0]?.[0]).toMatchObject({
+    expect(c['Gemini Laundry']?.ai_languageModel?.[0]?.[0]).toMatchObject({
       node: 'Agente Laundry VIP',
       index: 1,
     })
