@@ -75,6 +75,8 @@ async function limpiar(conversacion: number) {
   console.log('Simulación borrada (Chatwoot y CRM).')
 }
 
+/** Usuario de Chatwoot con el que publica el agente (docs/AGENTE.md §7). */
+const AGENTE_VIP = 8
 const BANDEJA = 'PRUEBAS simulación (borrar)'
 
 async function bandeja(): Promise<number> {
@@ -82,6 +84,8 @@ async function bandeja(): Promise<number> {
   const existente = lista.find((i) => i.name === BANDEJA)
   if (existente) return existente.id
   const nueva = await api('/inboxes', 'POST', { name: BANDEJA, channel: { type: 'api' } })
+  // «Agente VIP» (usuario 8) tiene que ser miembro, o Chatwoot le niega leer y responder (401).
+  await api('/inbox_members', 'POST', { inbox_id: nueva.id, user_ids: [AGENTE_VIP] })
   return nueva.id
 }
 
