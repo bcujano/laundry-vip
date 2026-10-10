@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { exigirPermiso } from '@/lib/auth'
+import { pedirDevolucionTrasCancelar } from '@/server/pedidos/cancelacion'
 import { confirmarPago, corregirCotizacion, resolverDiscrepancia } from '@/server/pedidos/cobros'
 import { avanzarEstado } from '@/server/pedidos/estado'
 import { verificarConteo } from '@/server/pedidos/verificacion'
@@ -138,4 +139,18 @@ export async function avanzarEstadoAccion(
 
   revalidatePath(`/pedidos/${pedidoId}`)
   return { ok: true, aviso: `El pedido pasó a "${analisis.data}".` }
+}
+
+export async function pedirDevolucionAccion(pedidoId: string): Promise<EstadoAccion> {
+  const ctx = await contexto()
+  if (!ctx) return { error: 'No tienes permiso para cambiar el cargo de un pedido.' }
+
+  const resultado = await pedirDevolucionTrasCancelar(pedidoId)
+  if (!resultado.ok) return { error: resultado.error }
+
+  revalidatePath(`/pedidos/${pedidoId}`)
+  return {
+    ok: true,
+    aviso: `Cargo por cancelación: $${resultado.datos.monto.toFixed(2)} (recogida + devolución).`,
+  }
 }

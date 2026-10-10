@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { CargoCancelacion } from '@/components/pedidos/cargo-cancelacion'
 import { canalLegible, EtiquetaEstado, estadoLegible } from '@/components/pedidos/etiquetas'
 import { ChecklistConteo, Cobros, CorreccionCotizacion } from '@/components/pedidos/panel-acciones'
 import { Tabla, Tarjeta, Td, Th, TituloSeccion } from '@/components/ui/primitivos'
@@ -80,6 +81,13 @@ export default async function DetallePedido({ params }: { params: Promise<{ id: 
         <TituloSeccion>Cobros</TituloSeccion>
         <Cobros pedido={pedido} />
       </Tarjeta>
+
+      {pedido.estado === 'cancelado' ? (
+        <Tarjeta>
+          <TituloSeccion>Cancelación</TituloSeccion>
+          <CargoCancelacion pedido={pedido} />
+        </Tarjeta>
+      ) : null}
 
       <Tarjeta>
         <TituloSeccion>Corrección de cotización</TituloSeccion>

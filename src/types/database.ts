@@ -158,6 +158,8 @@ export type Pedido = {
   monto_recoleccion_entrega: number | null
   monto_estimado_lavado: number | null
   monto_confirmado_lavado: number | null
+  monto_cancelacion: number | null
+  cancelacion_con_devolucion: boolean
   numero_fundas: number | null
   vehiculo_sugerido: VehiculoSugerido | null
   direccion_recoleccion: string | null

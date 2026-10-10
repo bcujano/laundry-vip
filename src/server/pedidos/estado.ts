@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { ESTADOS_PEDIDO, type EstadoPedido } from '@/types/database'
+import { cargoAlCancelar } from './cancelacion'
 import { type Contexto, leerPedido, type Resultado, registrarEvento } from './comun'
 
 /** Estados desde los que se puede pasar a cada uno. Lo que no está, no se puede. */
@@ -42,10 +43,11 @@ export async function avanzarEstado(
     return { ok: false, error: `No se puede pasar de "${pedido.estado}" a "${destino}".` }
   }
 
-  const { error } = await supabaseAdmin()
-    .from('pedidos')
-    .update({ estado: destino })
-    .eq('id', pedidoId)
+  // Cancelar con la ropa ya recogida tiene un cargo por tramo (decisión del dueño, 2026-10-09).
+  const cambios: { estado: EstadoPedido; monto_cancelacion?: number | null } = { estado: destino }
+  if (destino === 'cancelado') cambios.monto_cancelacion = await cargoAlCancelar(pedido)
+
+  const { error } = await supabaseAdmin().from('pedidos').update(cambios).eq('id', pedidoId)
   if (error) return { ok: false, error: error.message }
 
   await registrarEvento(pedidoId, pedido.estado, destino, contexto)
