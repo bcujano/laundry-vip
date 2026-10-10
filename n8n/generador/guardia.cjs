@@ -26,12 +26,7 @@ let dichoAntes = '';
 try { dichoAntes = (($('Obtener Ultimos Mensajes').first().json.payload) || []).filter((m) => m.message_type === 1).map((m) => String(m.content || '')).join(' '); } catch (e) {}
 const montos = textoModelo.match(/\\$\\s?\\d+(?:[.,]\\d+)?/g) || [];
 const plazos = textoModelo.match(/\\d+\\s*horas/gi) || [];
-const aCentavos = (t) => Math.round(Number(String(t).replace(/[^0-9.,]/g, '').replace(',', '.')) * 100);
-const dados = [...new Set([...(dichoAntes.match(/\\$\\s?\\d+(?:[.,]\\d+)?/g) || []), ...(observaciones.match(/\\d+(?:\\.\\d+)?/g) || [])].map(aCentavos).filter((n) => Number.isFinite(n) && n > 0))].slice(0, 14);
-// Un total armado con cifras que ya salieron (subtotal + tarifa, 2 x precio...) tampoco es inventado.
-let validos = new Set(dados);
-for (let ronda = 0; ronda < 3; ronda++) { const nuevos = new Set(validos); for (const a of validos) for (const b of dados) nuevos.add(a + b); validos = nuevos; }
-const sinFuente = (t) => !dichoAntes.replace(/\\s/g, '').includes(t.replace(/\\s/g, '')) && !validos.has(aCentavos(t));
+const sinFuente = (t) => !dichoAntes.replace(/\\s/g, '').includes(t.replace(/\\s/g, '')) && !observaciones.includes(t.replace(/[^0-9.,]/g, '').replace(',', '.'));
 const valorSinHerramienta = !parseFailed && !esOperadorGuardia && !usoPrecios && [...montos, ...plazos].some(sinFuente);
 if (valorSinHerramienta) {
   parsed.respuesta_lead = 'Permítame confirmarle ese valor con una persona de nuestro equipo y le escribe en breve.';

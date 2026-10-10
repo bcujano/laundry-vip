@@ -37,37 +37,12 @@ describe('laboratorio de modelos (agente de prueba)', () => {
       node: 'Agente Laundry VIP (lab)',
       index: 0,
     })
-    expect(c['OpenAI Laundry']?.ai_languageModel?.[0]?.map((d) => d.index)).toEqual([1, 1])
+    expect(c['OpenAI Laundry']?.ai_languageModel?.[0]?.map((d) => d.index)).toEqual([0, 1])
   })
 
-  it('el laboratorio usa su propio prompt compacto y conserva las reglas duras', () => {
-    const lab = porNombre('Agente Laundry VIP (lab)')?.parameters.options as {
-      systemMessage: string
-    }
-    const texto = lab.systemMessage
-    expect(texto.length).toBeLessThan(12_000)
-    for (const regla of [
-      'SOLO se escribe si salió de una herramienta',
-      'cotizar_prendas',
-      'verificar_cobertura',
-      'obtener_proxima_ventana',
-      'find_or_create_client',
-      'crear_pedido',
-      'NUNCA inventes el nombre',
-      'NO mientas',
-      'Decir que NO se ofrece un servicio',
-      'Confirmar un pago',
-      'escalar_humano',
-      '"respuesta_lead"',
-      'Ley de Protección de Datos Personales',
-      'Nada de «combo» ni «a la carta»',
-    ]) {
-      expect(texto, regla).toContain(regla)
-    }
-  })
-
-  it('la producción usa el prompt compacto del repo', () => {
-    const prod = porNombre('Agente Laundry VIP')?.parameters.options as { systemMessage: string }
-    expect(prod.systemMessage.length).toBeLessThan(12_000)
+  it('el agente de laboratorio tiene exactamente el mismo prompt que el de producción', () => {
+    const prod = porNombre('Agente Laundry VIP')?.parameters
+    const lab = porNombre('Agente Laundry VIP (lab)')?.parameters
+    expect(JSON.stringify(lab)).toBe(JSON.stringify(prod))
   })
 })

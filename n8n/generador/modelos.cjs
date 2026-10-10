@@ -16,8 +16,8 @@
 // JSON complejos). La credencial «Gemini Aiuda» es de AIUDA (no de 321); una lavandería nueva usa la suya.
 const crypto = require('node:crypto')
 
-const MOTOR_PRINCIPAL = 'gemini' // 'openai' | 'gemini'
-const MODELO_GEMINI = 'models/gemini-3-flash-preview'
+const MOTOR_PRINCIPAL = 'openai' // 'openai' | 'gemini'
+const MODELO_GEMINI = 'models/gemini-3.1-flash-lite'
 const CRED_GEMINI = { googlePalmApi: { id: 'jbOxhXuz7QS5IefQ', name: 'Gemini Aiuda' } }
 
 function aplicar({ nodes, connections, nodo }) {
