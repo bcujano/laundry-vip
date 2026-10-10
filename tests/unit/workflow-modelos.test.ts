@@ -90,3 +90,17 @@ describe('nodos que cuelgan del agente v3 no usan .item', () => {
     )
   })
 })
+
+describe('memoria cuando entra el modelo de respaldo', () => {
+  it('un nodo guarda el turno si el agente no lo guardó (n8n no lo hace con el respaldo)', () => {
+    const nodo = porNombre('Respaldar Memoria') as unknown as {
+      onError?: string
+      parameters: { query: string }
+    }
+    expect(nodo.onError).toBe('continueRegularOutput')
+    expect(nodo.parameters.query).toContain('NOT EXISTS')
+    expect(nodo.parameters.query).toContain('n8n_laundry_chat_histories')
+    const c = workflow.connections as unknown as Record<string, { main: { node: string }[][] }>
+    expect(c['Extraer JSON']?.main[0]?.map((d) => d.node)).toContain('Respaldar Memoria')
+  })
+})

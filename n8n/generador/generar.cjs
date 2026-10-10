@@ -278,6 +278,7 @@ nodes.push(...avisosEquipo.nodos)
 Object.assign(connections, avisosEquipo.conexiones)
 
 // Tras el nodo Agente v3 los ítems ya no se emparejan: lo que cuelga de él usa .first().
+require('./modelos.cjs').respaldarMemoria({ nodes, connections })
 require('./modelos.cjs').corregirPares({ nodes, connections })
 
 const nombres = new Set(nodes.map((n) => n.name))

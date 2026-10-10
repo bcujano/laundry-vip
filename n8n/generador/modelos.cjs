@@ -63,6 +63,36 @@ function aplicar({ nodes, connections, nodo }) {
 }
 
 /**
+ * Cuando el modelo principal falla y entra el de respaldo, el nodo Agente v3.1 NO guarda ese turno
+ * en la memoria (prueba del 2026-10-09: el agente volvía a preguntar lo que el cliente ya había
+ * dicho). Este nodo lo guarda: si la última fila de la memoria no es ya la respuesta de este turno,
+ * inserta el mensaje del cliente y la respuesta. En un turno normal no hace nada.
+ */
+function respaldarMemoria({ nodes, connections }) {
+  nodes.push({
+    parameters: {
+      operation: 'executeQuery',
+      query:
+        "INSERT INTO n8n_laundry_chat_histories (session_id, message) SELECT $1, v.m FROM (VALUES (1, $2::jsonb), (2, $3::jsonb)) AS v(o, m) WHERE $4 <> '' AND NOT EXISTS (SELECT 1 FROM (SELECT message FROM n8n_laundry_chat_histories WHERE session_id = $1 ORDER BY id DESC LIMIT 1) u WHERE u.message->>'type' = 'ai' AND position($4 in u.message->>'content') > 0) ORDER BY v.o",
+      options: {
+        queryReplacement:
+          "={{ [String($('WhatsApp Inicio').first().json.contacts[0].wa_id), JSON.stringify({ type: 'human', content: String($('Preparar Mensaje Final').first().json.message_text || ''), additional_kwargs: {}, response_metadata: {} }), JSON.stringify({ type: 'ai', content: $json.texto_limpio, tool_calls: [], additional_kwargs: {}, response_metadata: {}, invalid_tool_calls: [] }), String($json.texto_limpio || '').split(/[^a-zA-Z0-9áéíóúñÁÉÍÓÚÑ ]/)[0].slice(0, 30)] }}",
+      },
+    },
+    name: 'Respaldar Memoria',
+    type: 'n8n-nodes-base.postgres',
+    typeVersion: 2.5,
+    position: [2960, 700],
+    id: crypto.randomUUID(),
+    credentials: { postgres: { id: 'uS6oHAzjK8OQg6K3', name: 'Postgres Laundry VIP' } },
+    onError: 'continueRegularOutput',
+    notes:
+      'Guarda el turno en la memoria si el agente no lo hizo (pasa cuando entra el modelo de respaldo).',
+  })
+  connections['Extraer JSON'].main[0].push({ node: 'Respaldar Memoria', type: 'main', index: 0 })
+}
+
+/**
  * El nodo Agente v3 corta el emparejado de ítems (paired items): después de él, `$('X').item`
  * ya no resuelve y el nodo falla con una URL vacía (`/conversations//messages`, prueba del
  * 2026-10-09). El flujo de un mensaje tiene un solo ítem, así que `.first()` es equivalente.
@@ -109,4 +139,4 @@ function corregirPares({ nodes, connections }) {
   for (const n of nodes) if (afectados.has(n.name)) n.parameters = reemplazar(n.parameters)
 }
 
-module.exports = { aplicar, corregirPares, MODELO_GEMINI, CRED_GEMINI }
+module.exports = { aplicar, corregirPares, respaldarMemoria, MODELO_GEMINI, CRED_GEMINI }
