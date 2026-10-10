@@ -64,10 +64,12 @@ function aplicar({ nodes, connections, nodo }) {
 
 /**
  * Agente de planta y de la dueña («Agente Operador»): Gemini principal y OpenAI de respaldo, igual
- * que Fagal. Sus herramientas ya reciben cadenas sencillas (n8n/generador/operador.cjs). Usa
- * gemini-3.1-flash-lite: la capa gratis aguanta el uso de planta (pocas decenas de llamadas al día).
+ * que Fagal. Sus herramientas ya reciben cadenas sencillas (n8n/generador/operador.cjs).
+ * Probado el 2026-10-10: gemini-3.1-flash-lite NO registró una orden (contestó «dame un momento» y
+ * paró); gemini-3-flash-preview sí (registrar, corregir, contar, avanzar, resumen). Su capa gratis
+ * da pocas llamadas al día: cuando se agota entra OpenAI de respaldo.
  */
-const MODELO_OPERADOR = 'models/gemini-3.1-flash-lite'
+const MODELO_OPERADOR = 'models/gemini-3-flash-preview'
 
 function operadorConGemini({ nodes, connections, nodo }) {
   const agente = nodo('Agente Operador')
