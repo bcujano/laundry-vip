@@ -3,6 +3,7 @@
  * (motor del modelo, prompt, herramientas) sin usar el número de nadie.
  *
  *   pnpm tsx scripts/simular-cliente.ts "Hola, quiero lavar 3 ternos"          → crea la prueba y manda el mensaje
+ *   pnpm tsx scripts/simular-cliente.ts --prod "texto"                          → igual, pero por el agente de PRODUCCIÓN (el normal)
  *   pnpm tsx scripts/simular-cliente.ts --leer <conversacion>                  → muestra lo que contestó el agente
  *   pnpm tsx scripts/simular-cliente.ts --mensaje <conversacion> "texto"       → otro mensaje del mismo cliente
  *   pnpm tsx scripts/simular-cliente.ts --limpiar <conversacion>               → borra conversación, contacto y filas del CRM
@@ -100,12 +101,7 @@ async function bandeja(): Promise<number> {
   return nueva.id
 }
 
-const [a, b, c] = process.argv.slice(2)
-if (a === '--leer') await leer(Number(b))
-else if (a === '--mensaje') await enviar(Number(b), c ?? '')
-else if (a === '--limpiar') await limpiar(Number(b))
-else {
-  const inbox = await bandeja()
+async function crearConversacion(inbox: number): Promise<number> {
   const contacto = await api('/contacts', 'POST', {
     inbox_id: inbox,
     name: 'PRUEBA simulación (borrar)',
@@ -118,6 +114,20 @@ else {
     inbox_id: inbox,
     contact_id: id,
   })
-  await enviar(conv.id, a ?? 'Hola')
-  console.log(`Conversación ${conv.id}. Lee la respuesta en ~30 s con: --leer ${conv.id}`)
+  return conv.id as number
+}
+
+const [a, b, c] = process.argv.slice(2)
+if (a === '--leer') await leer(Number(b))
+else if (a === '--mensaje') await enviar(Number(b), c ?? '')
+else if (a === '--limpiar') await limpiar(Number(b))
+else if (a === '--prod') {
+  // Pasa por el agente de PRODUCCIÓN (no por el de laboratorio): el mensaje empieza por «#prod».
+  const conv = await crearConversacion(await bandeja())
+  await enviar(conv, `#prod ${b ?? 'Hola'}`)
+  console.log(`Conversación ${conv} (agente de producción). Lee la respuesta con: --leer ${conv}`)
+} else {
+  const conv = await crearConversacion(await bandeja())
+  await enviar(conv, a ?? 'Hola')
+  console.log(`Conversación ${conv} (agente de laboratorio). Lee la respuesta con: --leer ${conv}`)
 }

@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { parsearPrendas } from '../pricing/prendas-texto'
 
 /**
  * Contrato de entrada del único endpoint del agente. Cada acción valida lo
@@ -62,6 +63,37 @@ export const itemCotizable = z.object({
   metodo: metodo.optional(),
 })
 
+/**
+ * Acepta las prendas como texto (`prendas: "3 terno 2 piezas
+10 lavado secado y doblado"`) además de
+ * `items`, y trata las cadenas vacías como ausentes: un modelo pequeño llama sin problema a una
+ * herramienta con cadenas, no con JSON anidado (ver pricing/prendas-texto.ts).
+ */
+function prepararPrendas(bruto: unknown): unknown {
+  if (!bruto || typeof bruto !== 'object') return bruto
+  const o: Record<string, unknown> = { ...(bruto as Record<string, unknown>) }
+  for (const [clave, valor] of Object.entries(o)) {
+    if (typeof valor === 'string' && valor.trim() === '') delete o[clave]
+  }
+  if (typeof o.prendas === 'string') {
+    if (!Array.isArray(o.items)) o.items = parsearPrendas(o.prendas)
+    delete o.prendas
+  }
+  return o
+}
+
+/** Quien trae y retira su ropa no necesita transporte nuestro: se completa solo. */
+function prepararPedido(bruto: unknown): unknown {
+  const o = prepararPrendas(bruto) as Record<string, unknown>
+  if (!o || typeof o !== 'object') return o
+  o.canal ??= 'whatsapp_agente'
+  if (o.tipo_entrega === 'a_la_carta') {
+    o.metodo_transporte_recoleccion ??= 'propio_cliente'
+    o.metodo_transporte_entrega ??= 'propio_cliente'
+  }
+  return o
+}
+
 export const parametrosPorAccion = {
   registrar_evento_entrante: z.object({
     dedupe_key: z.string().min(1),
@@ -94,7 +126,7 @@ export const parametrosPorAccion = {
     nombre_whatsapp: z.string().optional(),
   }),
 
-  cotizar_prendas: z.object({ items: z.array(itemCotizable) }),
+  cotizar_prendas: z.preprocess(prepararPrendas, z.object({ items: z.array(itemCotizable) })),
 
   // Siempre auto: el número de fundas es opcional y no cambia nada (2026-10-01).
   calcular_vehiculo: z.object({ numero_fundas: z.number().int().optional() }).optional(),
@@ -103,21 +135,24 @@ export const parametrosPorAccion = {
   // el modelo escribe las tres formas. Se valida en el handler.
   obtener_proxima_ventana: z.object({ desde: z.string().optional() }).optional(),
 
-  crear_pedido: z.object({
-    cliente_id: z.uuid(),
-    canal: z.enum(['whatsapp_agente', 'presencial']),
-    tipo_entrega: z.enum(['combo', 'a_la_carta']).optional(),
-    items: z.array(itemCotizable),
-    metodo_transporte_recoleccion: z.enum(['app', 'propio_cliente', 'n_a']).optional(),
-    metodo_transporte_entrega: z.enum(['app', 'propio_cliente', 'n_a']).optional(),
-    monto_recoleccion: z.number().nonnegative().optional(),
-    monto_entrega: z.number().nonnegative().optional(),
-    numero_fundas: z.number().int().positive().optional(),
-    direccion_recoleccion: z.string().optional(),
-    sector: z.string().optional(),
-    ventana_recoleccion_inicio: z.iso.datetime().optional(),
-    ventana_recoleccion_fin: z.iso.datetime().optional(),
-  }),
+  crear_pedido: z.preprocess(
+    prepararPedido,
+    z.object({
+      cliente_id: z.uuid(),
+      canal: z.enum(['whatsapp_agente', 'presencial']),
+      tipo_entrega: z.enum(['combo', 'a_la_carta']).optional(),
+      items: z.array(itemCotizable),
+      metodo_transporte_recoleccion: z.enum(['app', 'propio_cliente', 'n_a']).optional(),
+      metodo_transporte_entrega: z.enum(['app', 'propio_cliente', 'n_a']).optional(),
+      monto_recoleccion: z.number().nonnegative().optional(),
+      monto_entrega: z.number().nonnegative().optional(),
+      numero_fundas: z.number().int().positive().optional(),
+      direccion_recoleccion: z.string().optional(),
+      sector: z.string().optional(),
+      ventana_recoleccion_inicio: z.iso.datetime().optional(),
+      ventana_recoleccion_fin: z.iso.datetime().optional(),
+    }),
+  ),
 
   candidatos_seguimiento: z.object({}).optional(),
 

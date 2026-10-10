@@ -232,6 +232,9 @@ require('./modelos.cjs').aplicar({ nodes, connections, nodo })
 // Guardia anti-alucinación de confirmaciones.
 require('./guardia.cjs').aplicar({ nodo })
 
+// Laboratorio: un agente de prueba solo para la bandeja de simulación (no toca a los clientes).
+require('./laboratorio.cjs').aplicar({ nodes, connections, nodo })
+
 // Rama CRM (patrón del CRM WEB de 321).
 const crm = require('./crm.cjs')
 nodes.push(...crm.nodos)

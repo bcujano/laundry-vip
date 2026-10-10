@@ -12,8 +12,8 @@ function agregar(nodes) {
   const TOOLS = [
     [
       'cotizar_prendas',
-      'Cotiza prendas contra el catálogo real. Úsala SIEMPRE antes de decir cualquier precio.',
-      `{"items": ${fromAI('items', 'Array JSON de prendas: [{"descripcion":"camiseta","cantidad":5,"metodo":"agua"}]. metodo es opcional: unico, agua, seco o planchado. Solo inclúyelo si el cliente ya lo eligió.', 'json')}}`,
+      'Cotiza prendas contra el catálogo real y devuelve precio y plazo de entrega. Úsala SIEMPRE antes de decir cualquier precio o plazo.',
+      `{"prendas": ${fromAI('prendas', 'Las prendas del cliente, una por línea, con el formato cantidad y nombre (sin escribir la unidad: libras, piezas). Si el cliente ya eligió el método de lavado, agrega al final de esa línea | agua, | seco, | planchado o | unico; si no lo eligió, no lo pongas.')}}`,
     ],
     [
       'obtener_proxima_ventana',
@@ -33,7 +33,7 @@ function agregar(nodes) {
     [
       'crear_pedido',
       'Crea el pedido. SOLO después de que el cliente confirmó el resumen con un sí explícito.',
-      `={{ JSON.stringify(Object.assign({canal: 'whatsapp_agente'}, $fromAI('pedido', 'Objeto JSON con: cliente_id (uuid de find_or_create_client), tipo_entrega ("combo" si la lavanderia recoge y entrega con la tarifa unica, "a_la_carta" si el cliente trae y retira su ropa), items (como en cotizar_prendas, con metodo ya elegido), direccion_recoleccion, sector (barrio o sector de la recogida, como lo dijo el cliente), ventana_recoleccion_inicio y ventana_recoleccion_fin (ISO tal como vinieron), y si el cliente trae y retira, metodo_transporte_recoleccion y metodo_transporte_entrega en "propio_cliente".', 'json'))) }}`,
+      `{"canal": "whatsapp_agente", "cliente_id": ${fromAI('cliente_id', 'uuid completo que devolvió find_or_create_client')}, "tipo_entrega": ${fromAI('tipo_entrega', 'combo si la lavandería recoge y entrega con la tarifa única; a_la_carta si el cliente trae y retira su ropa')}, "prendas": ${fromAI('prendas', 'Las prendas del pedido, una por línea, con el mismo formato de cotizar_prendas y con el método ya elegido')}, "direccion_recoleccion": ${fromAI('direccion_recoleccion', 'Dirección completa de la recogida; cadena vacía si el cliente trae su ropa')}, "sector": ${fromAI('sector', 'Barrio o sector de la recogida tal como lo dijo el cliente; cadena vacía si no aplica')}, "ventana_recoleccion_inicio": ${fromAI('ventana_recoleccion_inicio', 'Inicio de la ventana en ISO, tal como vino de obtener_proxima_ventana; cadena vacía si el cliente trae su ropa')}, "ventana_recoleccion_fin": ${fromAI('ventana_recoleccion_fin', 'Fin de la ventana en ISO, tal como vino de obtener_proxima_ventana; cadena vacía si el cliente trae su ropa')}}`,
     ],
     [
       'consultar_estado_pedido',
