@@ -17,6 +17,11 @@ export type ParametrosVentana = {
   horaFin: string
   /** Minutos mínimos entre "ahora" y el inicio de una recolección de hoy. */
   margenMinutos: number
+  /** Cierre por almuerzo ('HH:MM'): ninguna ventana empieza dentro ni lo cruza. */
+  almuerzoInicio?: string
+  almuerzoFin?: string
+  /** Duración de cada ventana en minutos; sin ella la ventana llega hasta el cierre. */
+  duracionMinutos?: number
 }
 
 export type Ventana = { inicio: Date; fin: Date; esHoy: boolean }
@@ -63,6 +68,11 @@ export function obtenerProximaVentana(ahora: Date, parametros: ParametrosVentana
     throw new Error('La hora de fin de recolección debe ser posterior a la de inicio.')
   }
 
+  const almuerzo =
+    parametros.almuerzoInicio && parametros.almuerzoFin
+      ? { desde: minutosDe(parametros.almuerzoInicio), hasta: minutosDe(parametros.almuerzoFin) }
+      : null
+
   const local = aLocal(ahora)
   const minimoLocal = new Date(local.getTime() + parametros.margenMinutos * 60_000)
 
@@ -83,10 +93,28 @@ export function obtenerProximaVentana(ahora: Date, parametros: ParametrosVentana
     // Si redondear se come la ventana entera (redondea justo al cierre o más
     // allá), vale el minuto exacto: mejor «11:47 a 12:00» que nada.
     const conMargen = redondeado < cierra ? redondeado : minimoLocal
-    const inicio = minimoLocal > abre ? conMargen : abre
+    let inicio = minimoLocal > abre ? conMargen : abre
     if (inicio > cierra) continue
 
-    return { inicio: aInstante(inicio), fin: aInstante(cierra), esHoy: desfase === 0 }
+    // Almuerzo: nunca se empieza dentro de él, y una ventana de duración fija no lo cruza.
+    let fin = cierra
+    if (almuerzo) {
+      const comida = {
+        desde: new Date(dia.getTime() + almuerzo.desde * 60_000),
+        hasta: new Date(dia.getTime() + almuerzo.hasta * 60_000),
+      }
+      if (inicio >= comida.desde && inicio < comida.hasta) inicio = comida.hasta
+      if (parametros.duracionMinutos) {
+        const termina = new Date(inicio.getTime() + parametros.duracionMinutos * 60_000)
+        if (inicio < comida.desde && termina > comida.desde) inicio = comida.hasta
+      }
+    }
+    if (parametros.duracionMinutos) {
+      fin = new Date(inicio.getTime() + parametros.duracionMinutos * 60_000)
+      if (fin > cierra) continue
+    } else if (inicio > cierra) continue
+
+    return { inicio: aInstante(inicio), fin: aInstante(fin), esHoy: desfase === 0 }
   }
 
   throw new Error('No se encontró ninguna ventana válida en los próximos 8 días.')

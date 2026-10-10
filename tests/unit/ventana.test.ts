@@ -126,3 +126,49 @@ describe('ultimaHoraDelDia', () => {
     expect(ultimaHoraDelDia(HORARIO)).toBe('11:30')
   })
 })
+
+describe('almuerzo y ventanas de duración fija (cuestionario de Sol)', () => {
+  const CON_ALMUERZO = {
+    diasOperacion: [1, 2, 3, 4, 5],
+    horaInicio: '09:00',
+    horaFin: '17:00',
+    margenMinutos: 60,
+    almuerzoInicio: '14:00',
+    almuerzoFin: '15:00',
+    duracionMinutos: 120,
+  }
+
+  it('la ventana dura 2 horas', () => {
+    const v = obtenerProximaVentana(enQuito('2026-09-15T08:00'), CON_ALMUERZO)
+    expect([comoQuito(v.inicio), comoQuito(v.fin)]).toEqual([
+      '2026-09-15 09:00',
+      '2026-09-15 11:00',
+    ])
+  })
+
+  it('una ventana que cruzaría el almuerzo empieza al reabrir', () => {
+    const v = obtenerProximaVentana(enQuito('2026-09-15T12:30'), CON_ALMUERZO)
+    expect([comoQuito(v.inicio), comoQuito(v.fin)]).toEqual([
+      '2026-09-15 15:00',
+      '2026-09-15 17:00',
+    ])
+  })
+
+  it('nunca empieza dentro del almuerzo', () => {
+    const v = obtenerProximaVentana(enQuito('2026-09-15T13:10'), CON_ALMUERZO)
+    expect(comoQuito(v.inicio)).toBe('2026-09-15 15:00')
+  })
+
+  it('si la ventana de 2 horas ya no cabe hoy, pasa al día siguiente', () => {
+    const v = obtenerProximaVentana(enQuito('2026-09-15T15:30'), CON_ALMUERZO)
+    expect([comoQuito(v.inicio), comoQuito(v.fin)]).toEqual([
+      '2026-09-16 09:00',
+      '2026-09-16 11:00',
+    ])
+  })
+
+  it('sin almuerzo ni duración todo sigue como antes', () => {
+    const v = obtenerProximaVentana(enQuito('2026-09-15T02:00'), HORARIO)
+    expect(comoQuito(v.fin)).toBe('2026-09-15 12:00')
+  })
+})

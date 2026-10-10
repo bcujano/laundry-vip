@@ -43,5 +43,9 @@ export function horarioLegible(config: Configuracion): string {
     partes.push(`domingos de ${hhmm(config.hora_apertura)} a ${hhmm(config.hora_cierre_sabado)}`)
   }
 
-  return partes.join(' y ')
+  const horario = partes.join(' y ')
+  if (config.almuerzo_inicio && config.almuerzo_fin) {
+    return `${horario} (cerrado al almuerzo de ${hhmm(config.almuerzo_inicio)} a ${hhmm(config.almuerzo_fin)})`
+  }
+  return horario
 }

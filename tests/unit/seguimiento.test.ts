@@ -177,6 +177,10 @@ describe('seguimiento: solo en horario del local', () => {
   it('escribe en horario y no de madrugada, de noche ni en domingo', () => {
     expect(dentroDelHorario(AHORA, config)).toBe(true) // jueves 10:00
     expect(dentroDelHorario(new Date('2026-10-01T11:00:00Z'), config)).toBe(false) // 06:00
+    // jueves 14:30 Quito = 19:30 UTC: dentro del horario pero en el almuerzo
+    const almuerzo = { ...config, almuerzo_inicio: '14:00', almuerzo_fin: '15:00' }
+    expect(dentroDelHorario(new Date('2026-10-01T19:30:00Z'), almuerzo)).toBe(false)
+    expect(dentroDelHorario(new Date('2026-10-01T20:10:00Z'), almuerzo)).toBe(true) // 15:10
     expect(dentroDelHorario(new Date('2026-10-02T00:00:00Z'), config)).toBe(false) // 19:00
     expect(dentroDelHorario(new Date('2026-10-04T15:00:00Z'), config)).toBe(false) // domingo
   })

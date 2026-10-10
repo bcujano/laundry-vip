@@ -130,12 +130,27 @@ export function elegirCandidatos(filas: FilaConversacion[], ctx: ContextoSelecci
 /** ¿Es hora de escribir? Solo dentro del horario del local, en hora de Quito (UTC-5). */
 export function dentroDelHorario(
   ahora: Date,
-  config: { dias_operacion: number[]; hora_apertura: string; hora_cierre: string },
+  config: {
+    dias_operacion: number[]
+    hora_apertura: string
+    hora_cierre: string
+    almuerzo_inicio?: string
+    almuerzo_fin?: string
+  },
 ): boolean {
   const quito = new Date(ahora.getTime() - 5 * 3_600_000)
   const dia = quito.getUTCDay() === 0 ? 7 : quito.getUTCDay()
   if (!config.dias_operacion.includes(dia)) return false
   const minutos = quito.getUTCHours() * 60 + quito.getUTCMinutes()
   const aMinutos = (hhmm: string) => Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3, 5))
+  // Nunca en el almuerzo: el local está cerrado y nadie contestaría.
+  if (
+    config.almuerzo_inicio &&
+    config.almuerzo_fin &&
+    minutos >= aMinutos(config.almuerzo_inicio) &&
+    minutos < aMinutos(config.almuerzo_fin)
+  ) {
+    return false
+  }
   return minutos >= aMinutos(config.hora_apertura) && minutos < aMinutos(config.hora_cierre) - 30
 }

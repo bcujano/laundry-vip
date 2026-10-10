@@ -108,6 +108,10 @@ export type Configuracion = {
   hora_cierre: string
   /** El sábado se cierra antes; hora_cierre rige de lunes a viernes. */
   hora_cierre_sabado: string
+  /** Cierre por almuerzo y duración de las ventanas de recogida (migración 0024). */
+  almuerzo_inicio: string
+  almuerzo_fin: string
+  ventana_minutos: number
   /** Hasta dónde llega la recolección, en km a la redonda del local. */
   radio_cobertura_km: number
   /** Dónde queda el local, el fijo y el enlace de Google Maps (migración 0014). */

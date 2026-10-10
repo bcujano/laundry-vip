@@ -25,6 +25,9 @@ export async function parametrosVentana(): Promise<ParametrosVentana> {
     horaInicio: config.hora_recoleccion_inicio,
     horaFin: config.hora_recoleccion_fin,
     margenMinutos: config.margen_minimo_minutos,
+    almuerzoInicio: config.almuerzo_inicio?.slice(0, 5),
+    almuerzoFin: config.almuerzo_fin?.slice(0, 5),
+    duracionMinutos: config.ventana_minutos,
   }
 }
 
@@ -39,6 +42,9 @@ export type CambiosConfiguracion = Partial<
     | 'hora_apertura'
     | 'hora_cierre'
     | 'hora_cierre_sabado'
+    | 'almuerzo_inicio'
+    | 'almuerzo_fin'
+    | 'ventana_minutos'
     | 'radio_cobertura_km'
     | 'sectores_cobertura'
     | 'seguimiento_modo'

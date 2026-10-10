@@ -24,6 +24,9 @@ const esquema = z
     hora_apertura: hora,
     hora_cierre: hora,
     hora_cierre_sabado: hora,
+    almuerzo_inicio: hora,
+    almuerzo_fin: hora,
+    ventana_minutos: z.coerce.number().int().min(30).max(480),
     radio_cobertura_km: z.coerce.number().positive('El radio de recogida debe ser mayor que cero.'),
     // Un sector por línea (o separados por coma); las líneas vacías se descartan.
     sectores_cobertura: z.string().transform((texto) =>
@@ -43,6 +46,9 @@ const esquema = z
     horas_entrega_min: z.coerce.number().int().min(1).max(720),
     horas_entrega_max: z.coerce.number().int().min(1).max(720),
     limite_mensajes_diarios_por_telefono: z.coerce.number().int().min(1),
+  })
+  .refine((v) => v.almuerzo_fin > v.almuerzo_inicio, {
+    message: 'El almuerzo debe terminar después de que empieza.',
   })
   .refine((v) => v.horas_entrega_max >= v.horas_entrega_min, {
     message: 'El máximo de horas de entrega no puede ser menor que el mínimo.',

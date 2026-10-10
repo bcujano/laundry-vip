@@ -195,6 +195,33 @@ export function FormularioConfiguracion({ config }: { config: Configuracion }) {
             type="time"
           />
         </Etiquetado>
+        <Etiquetado para="campo-almuerzo_inicio" texto="Almuerzo: cierra a las">
+          <Campo
+            defaultValue={hhmm(config.almuerzo_inicio)}
+            id="campo-almuerzo_inicio"
+            name="almuerzo_inicio"
+            type="time"
+          />
+        </Etiquetado>
+        <Etiquetado para="campo-almuerzo_fin" texto="Almuerzo: reabre a las">
+          <Campo
+            defaultValue={hhmm(config.almuerzo_fin)}
+            id="campo-almuerzo_fin"
+            name="almuerzo_fin"
+            type="time"
+          />
+        </Etiquetado>
+        <Etiquetado para="campo-ventana_minutos" texto="Ventana de recogida (minutos)">
+          <Campo
+            defaultValue={config.ventana_minutos}
+            min="30"
+            max="480"
+            step="30"
+            id="campo-ventana_minutos"
+            name="ventana_minutos"
+            type="number"
+          />
+        </Etiquetado>
         <Etiquetado para="campo-radio_cobertura_km" texto="Recogida hasta (km a la redonda)">
           <Campo
             defaultValue={config.radio_cobertura_km}
