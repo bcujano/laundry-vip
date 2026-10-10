@@ -10,9 +10,11 @@
 // Un mensaje de la simulación que empiece por «#prod» va a la rama de producción: así se prueba
 // también esa rama sin un cliente real (`simular-cliente.ts --prod`).
 const crypto = require('node:crypto')
+const fs = require('node:fs')
+const path = require('node:path')
 
 const BANDEJA_PRUEBAS = 'PRUEBAS simulación (borrar)'
-const MODELO_LAB = 'models/gemini-3.1-flash-lite'
+const MODELO_LAB = 'models/gemini-3-flash-preview'
 const CRED_GEMINI = { googlePalmApi: { id: 'jbOxhXuz7QS5IefQ', name: 'Gemini Aiuda' } }
 
 function aplicar({ nodes, connections, nodo }) {
@@ -22,6 +24,12 @@ function aplicar({ nodes, connections, nodo }) {
   lab.id = crypto.randomUUID()
   lab.position = [prod.position[0], prod.position[1] + 520]
   lab.notes = 'Solo atiende la bandeja de pruebas. Modelo a probar: «Gemini Lab».'
+  // Prompt del laboratorio: el mismo que producción, salvo que exista `n8n/prompt-laboratorio.md`
+  // (un experimento en curso). Así se prueba un prompt nuevo sin tocar a ningún cliente.
+  const archivoLab = path.join(__dirname, '..', 'prompt-laboratorio.md')
+  if (fs.existsSync(archivoLab)) {
+    lab.parameters.options.systemMessage = fs.readFileSync(archivoLab, 'utf8').replace(/\n$/, '')
+  }
   nodes.push(lab)
 
   nodes.push({

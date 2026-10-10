@@ -76,6 +76,8 @@ async function limpiar(conversacion: number) {
   try {
     await sql`delete from n8n_laundry_chat_histories where session_id = ${DIGITOS}`
     await sql`delete from conversaciones where telefono = ${TELEFONO}`
+    // Un pedido de prueba (si la simulación llegó a crearlo) impide borrar al cliente: sus hijos caen en cascada.
+    await sql`delete from pedidos where cliente_id in (select id from clientes where telefono = ${TELEFONO})`
     await sql`delete from clientes where telefono = ${TELEFONO}`
   } finally {
     await sql.end()

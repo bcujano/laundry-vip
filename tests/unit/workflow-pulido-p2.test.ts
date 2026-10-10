@@ -4,13 +4,13 @@ import { porNombre, systemMessage, workflow } from '../util/workflow.ts'
 /** Pulido de lo que mostró el tráfico real del 2026-10-05 (conversaciones 26 y 27). */
 describe('pulido P2: lo que falló con clientes reales', () => {
   it('F2: la cantidad que el cliente ya dijo se usa y no se vuelve a preguntar', () => {
-    expect(systemMessage).toContain('LA CANTIDAD QUE EL CLIENTE YA DIJO SE USA')
-    expect(systemMessage).toContain('Volver a preguntar «¿cuántas?»')
+    expect(systemMessage).toContain('Si el cliente ya dijo cuántas prendas son, úsalo')
+    expect(systemMessage).toContain('no vuelvas a preguntarlo')
   })
 
   it('F4: fuera de la zona una sola pregunta clara, sin «agendar para que pase por su ropa»', () => {
-    expect(systemMessage).toContain('UNA pregunta clara y única')
-    expect(systemMessage).toContain('nadie pasa a recoger')
+    expect(systemMessage).toContain('con UNA pregunta clara')
+    expect(systemMessage).toContain('puede traer y retirar su ropa en el local sin recargo')
   })
 
   it('F3: el redactor del seguimiento lee la conversación y no ofrece recoger fuera de zona', () => {

@@ -89,6 +89,14 @@ describe('guardia de valores sin herramienta (Extraer JSON)', () => {
     expect(r.valor_sin_herramienta).toBe(false)
   })
 
+  it('un total que suma cifras ya dichas (subtotal + tarifa) tampoco es inventado', () => {
+    const r = correr({
+      respuesta: 'Su pedido: $22,50 de ternos más $2,50 de recogida, total $25,00.',
+      previos: ['Los ternos salen en $22,50.', 'La recogida y entrega cuesta $2,50.'],
+    })
+    expect(r.valor_sin_herramienta).toBe(false)
+  })
+
   it('un monto distinto al que se dijo antes sí se bloquea', () => {
     const r = correr({ respuesta: 'Serían $25,00.', previos: ['Salen en $22,50.'] })
     expect(r.valor_sin_herramienta).toBe(true)
