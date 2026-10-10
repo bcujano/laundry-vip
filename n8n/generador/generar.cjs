@@ -228,6 +228,7 @@ require('./operador.cjs').aplicar({ nodes, connections, nodo, REPO })
 
 // Motor: Gemini (gratis) principal y OpenAI de respaldo en el agente de clientes.
 require('./modelos.cjs').aplicar({ nodes, connections, nodo })
+require('./modelos.cjs').operadorConGemini({ nodes, connections, nodo })
 
 // Guardia anti-alucinación de confirmaciones.
 require('./guardia.cjs').aplicar({ nodo })

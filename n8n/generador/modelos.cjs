@@ -63,6 +63,44 @@ function aplicar({ nodes, connections, nodo }) {
 }
 
 /**
+ * Agente de planta y de la dueña («Agente Operador»): Gemini principal y OpenAI de respaldo, igual
+ * que Fagal. Sus herramientas ya reciben cadenas sencillas (n8n/generador/operador.cjs). Usa
+ * gemini-3.1-flash-lite: la capa gratis aguanta el uso de planta (pocas decenas de llamadas al día).
+ */
+const MODELO_OPERADOR = 'models/gemini-3.1-flash-lite'
+
+function operadorConGemini({ nodes, connections, nodo }) {
+  const agente = nodo('Agente Operador')
+  agente.typeVersion = 3.1
+  agente.parameters.needsFallback = true
+  const sinItem = (v) =>
+    typeof v === 'string'
+      ? v.replace(
+          /\$\('(WhatsApp Inicio|Preparar Mensaje Final|Verificar Operador)'\)\.item\b/g,
+          "$('$1').first()",
+        )
+      : v
+  agente.parameters.text = sinItem(agente.parameters.text)
+
+  const openai = nodo('OpenAI Operador')
+  nodes.push({
+    parameters: { modelName: MODELO_OPERADOR, options: { temperature: 0.4 } },
+    type: '@n8n/n8n-nodes-langchain.lmChatGoogleGemini',
+    typeVersion: 1.1,
+    position: [openai.position[0], openai.position[1] - 140],
+    id: crypto.randomUUID(),
+    name: 'Gemini Operador',
+    notes: 'Principal del agente de planta y de la dueña; OpenAI Operador es el respaldo.',
+    credentials: CRED_GEMINI,
+  })
+  const entrada = (indice) => ({
+    ai_languageModel: [[{ node: 'Agente Operador', type: 'ai_languageModel', index: indice }]],
+  })
+  connections['Gemini Operador'] = entrada(0)
+  connections['OpenAI Operador'] = entrada(1)
+}
+
+/**
  * Cuando el modelo principal falla y entra el de respaldo, el nodo Agente v3.1 NO guarda ese turno
  * en la memoria (prueba del 2026-10-09: el agente volvía a preguntar lo que el cliente ya había
  * dicho). Este nodo lo guarda: si la última fila de la memoria no es ya la respuesta de este turno,
@@ -76,7 +114,7 @@ function respaldarMemoria({ nodes, connections }) {
         "INSERT INTO n8n_laundry_chat_histories (session_id, message) SELECT $1, v.m FROM (VALUES (1, $2::jsonb), (2, $3::jsonb)) AS v(o, m) WHERE $4 <> '' AND NOT EXISTS (SELECT 1 FROM (SELECT message FROM n8n_laundry_chat_histories WHERE session_id = $1 ORDER BY id DESC LIMIT 1) u WHERE u.message->>'type' = 'ai' AND position($4 in u.message->>'content') > 0) ORDER BY v.o",
       options: {
         queryReplacement:
-          "={{ [String($('WhatsApp Inicio').first().json.contacts[0].wa_id), JSON.stringify({ type: 'human', content: String($('Preparar Mensaje Final').first().json.message_text || ''), additional_kwargs: {}, response_metadata: {} }), JSON.stringify({ type: 'ai', content: $json.texto_limpio, tool_calls: [], additional_kwargs: {}, response_metadata: {}, invalid_tool_calls: [] }), String($json.texto_limpio || '').split(/[^a-zA-Z0-9áéíóúñÁÉÍÓÚÑ ]/)[0].slice(0, 30)] }}",
+          "={{ [($('Verificar Operador').first().json.data?.es_operador === true ? 'operador_' : '') + String($('WhatsApp Inicio').first().json.contacts[0].wa_id), JSON.stringify({ type: 'human', content: String($('Preparar Mensaje Final').first().json.message_text || ''), additional_kwargs: {}, response_metadata: {} }), JSON.stringify({ type: 'ai', content: $json.texto_limpio, tool_calls: [], additional_kwargs: {}, response_metadata: {}, invalid_tool_calls: [] }), String($json.texto_limpio || '').split(/[^a-zA-Z0-9áéíóúñÁÉÍÓÚÑ ]/)[0].slice(0, 30)] }}",
       },
     },
     name: 'Respaldar Memoria',
@@ -139,4 +177,11 @@ function corregirPares({ nodes, connections }) {
   for (const n of nodes) if (afectados.has(n.name)) n.parameters = reemplazar(n.parameters)
 }
 
-module.exports = { aplicar, corregirPares, respaldarMemoria, MODELO_GEMINI, CRED_GEMINI }
+module.exports = {
+  aplicar,
+  operadorConGemini,
+  corregirPares,
+  respaldarMemoria,
+  MODELO_GEMINI,
+  CRED_GEMINI,
+}

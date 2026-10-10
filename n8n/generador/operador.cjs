@@ -6,27 +6,32 @@ const CRED_CRM = { httpHeaderAuth: { id: '9456EHfb8yxpZOmr', name: 'CRM Laundry 
 const OP = "+{{ $('WhatsApp Inicio').first().json.contacts[0].wa_id }}"
 const fromAI = (clave, desc, tipo = 'string') =>
   `{{ JSON.stringify($fromAI('${clave}', '${desc}', '${tipo}')) }} `
-const ITEMS =
-  'Array JSON de prendas: [{"descripcion":"camisa","cantidad":6,"metodo":"agua"}]. metodo opcional: unico, agua, seco o planchado.'
+// Las herramientas reciben cadenas sencillas (no JSON anidado): cualquier modelo las llama bien y el
+// servidor las convierte (src/server/pricing/prendas-texto.ts).
+const PRENDAS =
+  'Las prendas, una por línea: «cantidad nombre» y, si ya se eligió el método, « | agua», « | seco» o « | planchado». Ejemplo de formato: «6 camisa | agua» y «2 pantalón».'
+const CONTEO =
+  'Lo contado en planta, una prenda por línea: «cantidad nombre». TODAS las prendas de la orden.'
+const OPCIONAL_ID = 'uuid completo del pedido; cadena vacía para usar la última orden que se tocó'
 
 const TOOLS = [
   [
     'cotizar_prendas_operador',
     'cotizar_prendas',
     'Resuelve prendas, métodos y precios contra el catálogo. Úsala antes de registrar una orden.',
-    `{"items": ${fromAI('items', ITEMS, 'json')}}`,
+    `{"prendas": ${fromAI('prendas', PRENDAS)}}`,
   ],
   [
     'registrar_cliente_presencial',
     'registrar_cliente_presencial',
     'Registra una ORDEN presencial: crea o reutiliza el cliente por teléfono y guarda sus prendas. Devuelve pedido_id y monto estimado.',
-    `{"telefono_operador": "${OP}", "telefono_cliente": ${fromAI('telefono_cliente', 'Teléfono del cliente en formato +593XXXXXXXXX')}, "nombre_contacto": ${fromAI('nombre_contacto', 'Nombre del cliente')}, "nombre_negocio": ${fromAI('nombre_negocio', 'Nombre del negocio o cadena vacía')}, "items": ${fromAI('items', ITEMS, 'json')}}`,
+    `{"telefono_operador": "${OP}", "telefono_cliente": ${fromAI('telefono_cliente', 'Teléfono del cliente en formato +593XXXXXXXXX')}, "nombre_contacto": ${fromAI('nombre_contacto', 'Nombre del cliente')}, "nombre_negocio": ${fromAI('nombre_negocio', 'Nombre del negocio o cadena vacía')}, "prendas": ${fromAI('prendas', PRENDAS)}}`,
   ],
   [
     'actualizar_registro',
     'actualizar_registro',
     'Corrige la última orden registrada (o la del pedido_id): reemplaza la lista completa de prendas y/o completa nombres. Nunca crea una orden nueva.',
-    "={{ JSON.stringify(Object.assign({telefono_operador: '+' + $('WhatsApp Inicio').first().json.contacts[0].wa_id}, $fromAI('correccion', 'Objeto JSON con lo que cambia: pedido_id (opcional, uuid), items (lista COMPLETA corregida, opcional), nombre_contacto, nombre_negocio (opcionales).', 'json'))) }}",
+    `{"telefono_operador": "${OP}", "pedido_id": ${fromAI('pedido_id', OPCIONAL_ID)}, "prendas": ${fromAI('prendas', 'Lista COMPLETA y corregida de prendas con el mismo formato; cadena vacía si las prendas no cambian')}, "nombre_contacto": ${fromAI('nombre_contacto', 'Nombre del cliente; cadena vacía si no cambia')}, "nombre_negocio": ${fromAI('nombre_negocio', 'Nombre del negocio; cadena vacía si no cambia')}}`,
   ],
   [
     'consultar_pedido',
@@ -44,13 +49,13 @@ const TOOLS = [
     'avanzar_estado',
     'avanzar_estado',
     'Mueve una orden a recolectado, en_proceso, listo_para_entrega o entregado. Sin pedido_id usa la última orden que tocaste.',
-    "={{ JSON.stringify(Object.assign({telefono_operador: '+' + $('WhatsApp Inicio').first().json.contacts[0].wa_id}, $fromAI('avance', 'Objeto JSON con estado (recolectado, en_proceso, listo_para_entrega o entregado) y pedido_id opcional (uuid).', 'json'))) }}",
+    `{"telefono_operador": "${OP}", "pedido_id": ${fromAI('pedido_id', OPCIONAL_ID)}, "estado": ${fromAI('estado', 'Uno de: recolectado, en_proceso, listo_para_entrega, entregado')}}`,
   ],
   [
     'registrar_conteo',
     'registrar_conteo',
     'Registra lo que se contó en planta, TODAS las prendas de la orden. Si no cuadra, la orden se congela y se resuelve en el CRM.',
-    "={{ JSON.stringify(Object.assign({telefono_operador: '+' + $('WhatsApp Inicio').first().json.contacts[0].wa_id}, $fromAI('conteo', 'Objeto JSON con conteos: [{descripcion, cantidad}] de TODAS las prendas, y pedido_id opcional (uuid).', 'json'))) }}",
+    `{"telefono_operador": "${OP}", "pedido_id": ${fromAI('pedido_id', OPCIONAL_ID)}, "conteos": ${fromAI('conteos', CONTEO)}}`,
   ],
   [
     'consulta_admin',
@@ -133,7 +138,8 @@ function aplicar({ nodes, connections, nodo, REPO }) {
     position: [2060, 60],
   })
   const memoria = structuredClone(nodo('Memory Laundry'))
-  memoria.parameters.sessionKey = "=operador_{{ $('WhatsApp Inicio').item.json.contacts[0].wa_id }}"
+  memoria.parameters.sessionKey =
+    "=operador_{{ $('WhatsApp Inicio').first().json.contacts[0].wa_id }}"
   nodes.push({ ...memoria, name: 'Memory Operador', id: crypto.randomUUID(), position: [2200, 60] })
 
   TOOLS.forEach(([nombre, accion, descripcion, parametros], i) => {

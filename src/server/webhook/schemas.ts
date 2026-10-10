@@ -82,6 +82,24 @@ function prepararPrendas(bruto: unknown): unknown {
   return o
 }
 
+/**
+ * Lo que se contó en planta, escrito como lo dicta el operador, una línea por prenda:
+ *   6 camisa
+ *   2 pantalón
+ * Un modelo pequeño no arma bien un arreglo de objetos; una cadena sí.
+ */
+function prepararConteo(bruto: unknown): unknown {
+  const o = prepararPrendas(bruto) as Record<string, unknown>
+  if (!o || typeof o !== 'object') return o
+  if (typeof o.conteos === 'string') {
+    o.conteos = parsearPrendas(o.conteos).map((p) => ({
+      descripcion: p.descripcion,
+      cantidad: p.cantidad,
+    }))
+  }
+  return o
+}
+
 /** Quien trae y retira su ropa no necesita transporte nuestro: se completa solo. */
 function prepararPedido(bruto: unknown): unknown {
   const o = prepararPrendas(bruto) as Record<string, unknown>
@@ -200,21 +218,27 @@ export const parametrosPorAccion = {
 
   consultar_estado_pedido: z.object({ telefono }),
 
-  registrar_cliente_presencial: z.object({
-    telefono_operador: telefono,
-    telefono_cliente: telefono.optional(),
-    nombre_contacto: z.string().optional(),
-    nombre_negocio: z.string().optional(),
-    items: z.array(itemCotizable),
-  }),
+  registrar_cliente_presencial: z.preprocess(
+    prepararPrendas,
+    z.object({
+      telefono_operador: telefono,
+      telefono_cliente: telefono.optional(),
+      nombre_contacto: z.string().optional(),
+      nombre_negocio: z.string().optional(),
+      items: z.array(itemCotizable),
+    }),
+  ),
 
-  actualizar_registro: z.object({
-    telefono_operador: telefono,
-    pedido_id: z.uuid().optional(),
-    items: z.array(itemCotizable).optional(),
-    nombre_contacto: z.string().optional(),
-    nombre_negocio: z.string().optional(),
-  }),
+  actualizar_registro: z.preprocess(
+    prepararPrendas,
+    z.object({
+      telefono_operador: telefono,
+      pedido_id: z.uuid().optional(),
+      items: z.array(itemCotizable).optional(),
+      nombre_contacto: z.string().optional(),
+      nombre_negocio: z.string().optional(),
+    }),
+  ),
 
   // ── Planta (operador y admin) ─────────────────────────────────────────
   buscar_pedidos: z.object({
@@ -222,20 +246,26 @@ export const parametrosPorAccion = {
     texto: z.string().trim().min(2, 'Escribe al menos 2 letras del cliente o del teléfono.'),
   }),
 
-  avanzar_estado: z.object({
-    telefono_operador: telefono,
-    pedido_id: z.uuid().optional(),
-    // Solo el avance normal de planta. Cancelar y todo lo que toca dinero es del CRM.
-    estado: z.enum(['recolectado', 'en_proceso', 'listo_para_entrega', 'entregado']),
-  }),
+  avanzar_estado: z.preprocess(
+    prepararPrendas,
+    z.object({
+      telefono_operador: telefono,
+      pedido_id: z.uuid().optional(),
+      // Solo el avance normal de planta. Cancelar y todo lo que toca dinero es del CRM.
+      estado: z.enum(['recolectado', 'en_proceso', 'listo_para_entrega', 'entregado']),
+    }),
+  ),
 
-  registrar_conteo: z.object({
-    telefono_operador: telefono,
-    pedido_id: z.uuid().optional(),
-    conteos: z
-      .array(z.object({ descripcion: z.string().min(1), cantidad: z.number().int().min(0) }))
-      .min(1, 'Falta el conteo de las prendas.'),
-  }),
+  registrar_conteo: z.preprocess(
+    prepararConteo,
+    z.object({
+      telefono_operador: telefono,
+      pedido_id: z.uuid().optional(),
+      conteos: z
+        .array(z.object({ descripcion: z.string().min(1), cantidad: z.number().int().min(0) }))
+        .min(1, 'Falta el conteo de las prendas.'),
+    }),
+  ),
 
   // ── Solo admin ────────────────────────────────────────────────────────
   consulta_admin: z.object({

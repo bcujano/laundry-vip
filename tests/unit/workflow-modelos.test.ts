@@ -46,9 +46,28 @@ describe('motor del agente de clientes: OpenAI principal y Gemini gratis de resp
     expect(openai).toContain('json_object')
   })
 
-  it('el agente de planta y de la dueña sigue solo con OpenAI hasta probar sus tools con Gemini', () => {
-    expect(c['OpenAI Operador']?.ai_languageModel?.[0]?.[0]?.index).toBe(0)
-    expect(porNombre('Gemini Operador')).toBeUndefined()
+  it('el agente de planta y de la dueña usa Gemini principal y OpenAI de respaldo, con herramientas de cadenas', () => {
+    expect(c['Gemini Operador']?.ai_languageModel?.[0]?.[0]?.index).toBe(0)
+    expect(c['OpenAI Operador']?.ai_languageModel?.[0]?.[0]?.index).toBe(1)
+    const agente = porNombre('Agente Operador') as unknown as {
+      typeVersion: number
+      parameters: { needsFallback?: boolean; text: string }
+    }
+    expect(agente.typeVersion).toBeGreaterThanOrEqual(3)
+    expect(agente.parameters.needsFallback).toBe(true)
+    expect(agente.parameters.text).not.toContain('.item')
+    // ninguna herramienta del operador pide JSON anidado (los modelos pequeños no lo arman bien)
+    for (const nombre of [
+      'cotizar_prendas_operador',
+      'registrar_cliente_presencial',
+      'actualizar_registro',
+      'avanzar_estado',
+      'registrar_conteo',
+    ]) {
+      const cuerpo = String(porNombre(nombre)?.parameters.jsonBody)
+      expect(cuerpo, nombre).not.toContain("'json'")
+    }
+    expect(String(porNombre('registrar_conteo')?.parameters.jsonBody)).toContain('conteos')
   })
 })
 

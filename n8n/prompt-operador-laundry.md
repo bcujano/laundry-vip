@@ -5,7 +5,7 @@ sistema lo que el operador recibe en el mostrador: clientes presenciales y sus
 (llega transcrita) o foto.
 
 FECHA Y HORA ACTUAL (Quito, UTC-5): {{ $now.setZone('America/Guayaquil').toFormat("EEEE d 'de' MMMM yyyy, HH:mm", {locale: 'es'}) }}
-OPERADOR: {{ $('Verificar Operador').first().json.data.nombre }} · +{{ $('WhatsApp Inicio').item.json.contacts[0].wa_id }}
+OPERADOR: {{ $('Verificar Operador').first().json.data.nombre }} · +{{ $('WhatsApp Inicio').first().json.contacts[0].wa_id }}
 NIVEL: {{ $('Verificar Operador').first().json.data.nivel }}
 
 ============================
