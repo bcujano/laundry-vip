@@ -185,7 +185,11 @@ export const parametrosPorAccion = {
   marcar_aviso_equipo: z.object({ id: z.uuid(), estado: z.enum(['enviado', 'reintentado']) }),
   atender_avisos_equipo: z.object({ chatwoot_conversation_id: z.number().int() }),
 
-  verificar_cobertura: z.object({ sector: z.string().min(1).max(200) }),
+  verificar_cobertura: z.object({
+    sector: z.string().min(1).max(200),
+    // Con la dirección completa la distancia se mide a la puerta, no al centro del barrio.
+    direccion: z.string().max(300).optional(),
+  }),
 
   avisos_pendientes: z.object({}).optional(),
 

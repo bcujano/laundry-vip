@@ -23,7 +23,7 @@ function agregar(nodes) {
     [
       'verificar_cobertura',
       'Dice si se recoge en el barrio o sector que nombró el cliente. Llámala apenas lo diga. Devuelve cubre: true (sí se recoge), false (no se recoge) o null (no se puede verificar).',
-      `{"sector": ${fromAI('sector', 'Barrio o sector que dijo el cliente, tal como lo escribió', 'string')}}`,
+      `{"sector": ${fromAI('sector', 'Barrio o sector que dijo el cliente, tal como lo escribió', 'string')}, "direccion": ${fromAI('direccion', 'Dirección completa si el cliente ya la dio; cadena vacía si no', 'string')}}`,
     ],
     [
       'find_or_create_client',

@@ -1,7 +1,8 @@
 import { horarioLegible } from '@/server/configuracion/horario'
 import { datosDelLocal } from '@/server/configuracion/local'
 import { obtener as obtenerConfig, parametrosVentana } from '@/server/configuracion/repo'
-import { verificarSector } from '@/server/pedidos/cobertura'
+import { evaluarCobertura } from '@/server/pedidos/cobertura-geo'
+import { geocodificar } from '@/server/pedidos/geocodificar'
 import { calcularVehiculo } from '@/server/pricing/cotizar'
 import { limitesDelDia, obtenerProximaVentana, ultimaHoraDelDia } from '@/server/scheduling/ventana'
 import { plazosHabituales } from '@/server/servicios/repo'
@@ -101,9 +102,15 @@ export async function verificarCobertura(
   parametros: ParametrosDe<'verificar_cobertura'>,
 ): Promise<ResultadoAccion<{ cubre: boolean | null }>> {
   const config = await obtenerConfig()
-  const veredicto = verificarSector(parametros.sector, config.sectores_cobertura)
-  if (veredicto === 'falta_sector') {
+  const veredicto = await evaluarCobertura(
+    { sector: parametros.sector, direccion: parametros.direccion },
+    config,
+    (texto) => geocodificar(texto),
+  )
+  if (veredicto.estado === 'falta_sector') {
     return fallo('PARAMETROS_INVALIDOS', 'No se entiende el sector. Pídele el barrio al cliente.')
   }
-  return exito({ cubre: veredicto === 'sin_verificar' ? null : veredicto === 'dentro' })
+  return exito({
+    cubre: veredicto.estado === 'sin_verificar' ? null : veredicto.estado === 'dentro',
+  })
 }

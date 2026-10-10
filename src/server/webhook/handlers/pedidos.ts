@@ -1,7 +1,8 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { obtener as obtenerConfig } from '@/server/configuracion/repo'
-import { verificarSector } from '@/server/pedidos/cobertura'
+import { evaluarCobertura } from '@/server/pedidos/cobertura-geo'
 import { crearPedido } from '@/server/pedidos/crear'
+import { geocodificar } from '@/server/pedidos/geocodificar'
 import { obtener as obtenerPedido, ultimoDelCliente } from '@/server/pedidos/repo'
 import { ErrorCotizacion } from '@/server/pricing/cotizar'
 import type { Cliente, Pedido } from '@/types/database'
@@ -41,14 +42,18 @@ export async function crear(
     // por el agente: el equipo puede crear desde el CRM una excepción a mano.
     if (parametros.canal === 'whatsapp_agente' && parametros.tipo_entrega === 'combo') {
       const config = await obtenerConfig()
-      const veredicto = verificarSector(parametros.sector, config.sectores_cobertura)
-      if (veredicto === 'falta_sector') {
+      const veredicto = await evaluarCobertura(
+        { sector: parametros.sector, direccion: parametros.direccion_recoleccion },
+        config,
+        (texto) => geocodificar(texto),
+      )
+      if (veredicto.estado === 'falta_sector') {
         return fallo(
           'PARAMETROS_INVALIDOS',
           'Falta el sector o barrio de la recogida. Pregúntaselo al cliente.',
         )
       }
-      if (veredicto === 'fuera') {
+      if (veredicto.estado === 'fuera') {
         return fallo(
           'FUERA_DE_COBERTURA',
           'Por ese sector no se recoge. Díselo en una frase, sin explicar distancias, y ofrécele traer y retirar su ropa en el local, sin recargo.',
