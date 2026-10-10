@@ -5,7 +5,8 @@ import { distanciaKm, type Geocodificacion, type Punto } from './geocodificar'
  * Cobertura por distancia en línea recta a la planta (radio de Configuración, hoy 2,5 km),
  * con la lista de sectores de respaldo. Reglas, en orden:
  *
- *  1. Con dirección y un geocodificado preciso (calle o número), manda la distancia.
+ *  1. Con dirección y un geocodificado preciso (calle o número), manda la distancia — pero si el
+ *     geocodificador no es fiable (OpenStreetMap) y el sector está en la lista, manda la lista.
  *  2. Sin eso, un sector de la lista del dueño cuenta como dentro.
  *  3. Si el sector se geocodifica (zona), solo se decide si está claramente dentro o fuera del
  *     radio (con un margen, porque el centro de un barrio no es la casa del cliente).
@@ -46,15 +47,16 @@ export async function evaluarCobertura(
   const radio = Number(config.radio_cobertura_km)
   const km = (g: Geocodificacion) => distanciaKm(planta, g.punto)
 
+  const lista = verificarSector(sector, config.sectores_cobertura)
+
   if (direccion.length >= 3) {
     const g = await geocodificar([direccion, sector].filter(Boolean).join(', '))
-    if (g?.preciso) {
+    if (g?.preciso && (g.confiable || lista !== 'dentro')) {
       const d = km(g)
       return { estado: d <= radio ? 'dentro' : 'fuera', km: d, metodo: 'distancia' }
     }
   }
 
-  const lista = verificarSector(sector, config.sectores_cobertura)
   if (lista === 'dentro') return { estado: 'dentro', km: null, metodo: 'lista' }
 
   if (sector.length >= 3) {

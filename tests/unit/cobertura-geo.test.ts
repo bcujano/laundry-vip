@@ -12,7 +12,13 @@ const CONFIG = {
 
 /** Un punto a `km` kilómetros al norte de la planta (1° de latitud ≈ 111,19 km). */
 const alNorte = (km: number) => ({ lat: PLANTA.lat + km / 111.19, lng: PLANTA.lng })
-const geo = (km: number, preciso: boolean) => async () => ({ punto: alNorte(km), preciso })
+const geo =
+  (km: number, preciso: boolean, confiable = true) =>
+  async () => ({
+    punto: alNorte(km),
+    preciso,
+    confiable,
+  })
 const sinGeo = async () => null
 
 describe('distancia en línea recta', () => {
@@ -37,6 +43,15 @@ describe('cobertura por distancia con la lista de sectores de respaldo', () => {
       geo(3.4, true),
     )
     expect(lejos).toMatchObject({ estado: 'fuera', metodo: 'distancia' })
+  })
+
+  it('un geocodificador poco fiable (OpenStreetMap) no vence a un sector de la lista', async () => {
+    const r = await evaluarCobertura(
+      { sector: 'La Kennedy', direccion: 'Av. de los Pinos y Pedro Barrios' },
+      CONFIG,
+      geo(7, true, false),
+    )
+    expect(r).toMatchObject({ estado: 'dentro', metodo: 'lista' })
   })
 
   it('solo con el sector, uno de la lista cuenta como dentro', async () => {
@@ -111,6 +126,6 @@ describe('geocodificar', () => {
       respuesta([{ lat: '-0.14', lon: '-78.48', addresstype: 'suburb' }]),
       undefined,
     )
-    expect(r).toEqual({ punto: { lat: -0.14, lng: -78.48 }, preciso: false })
+    expect(r).toEqual({ punto: { lat: -0.14, lng: -78.48 }, preciso: false, confiable: false })
   })
 })

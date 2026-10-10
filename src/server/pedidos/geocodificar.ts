@@ -9,6 +9,8 @@ export type Geocodificacion = {
   punto: Punto
   /** true si es una calle o un número; false si es solo un barrio o una zona (menos fiable). */
   preciso: boolean
+  /** true solo con Google: OpenStreetMap acierta barrios, pero a menudo falla con calles de Quito. */
+  confiable: boolean
 }
 
 const TIEMPO_MAXIMO_MS = 4000
@@ -46,7 +48,11 @@ async function conGoogle(texto: string, llave: string, buscar: Buscar) {
   const mejor = cuerpo.results?.[0]
   if (cuerpo.status !== 'OK' || !mejor) return null
   const { lat, lng } = mejor.geometry.location
-  return { punto: { lat, lng }, preciso: mejor.geometry.location_type !== 'APPROXIMATE' }
+  return {
+    punto: { lat, lng },
+    preciso: mejor.geometry.location_type !== 'APPROXIMATE',
+    confiable: true,
+  }
 }
 
 async function conNominatim(texto: string, buscar: Buscar) {
@@ -66,6 +72,7 @@ async function conNominatim(texto: string, buscar: Buscar) {
   return {
     punto: { lat: Number(mejor.lat), lng: Number(mejor.lon) },
     preciso: !ZONAS.includes(mejor.addresstype ?? ''),
+    confiable: false,
   }
 }
 
