@@ -72,57 +72,55 @@ describe('agente Laundry VIP (clon del 321)', () => {
   })
 
   it('la constitución trae las reglas duras', () => {
-    expect(systemMessage).toContain('UN COMPROBANTE NUNCA CONFIRMA UN PAGO')
-    expect(systemMessage).toContain('NO COTICES CONTANDO PRENDAS EN LA FOTO')
-    expect(systemMessage).toContain('UNA MANCHA NO SE PROMETE')
-    expect(systemMessage).toContain('NUNCA borra')
+    expect(systemMessage).toContain('Confirmar un pago, dar cuentas bancarias o corregir un monto')
+    expect(systemMessage).toContain('Contar prendas en una foto para cotizar')
+    expect(systemMessage).toContain('Prometer que una mancha sale')
+    expect(systemMessage).toContain('Borrar, anular, cancelar ni modificar nada')
     expect(systemMessage).toContain('requiere_metodo')
     expect(systemMessage).toContain('sí explícito')
+    expect(systemMessage).toContain('SOLO se escribe si salió de una herramienta')
   })
 
   it('suena a persona del local, no a robot (2026-09-24)', () => {
-    // El saludo se escribe cada vez; nunca sale de una plantilla fija.
-    expect(systemMessage).toContain('EL SALUDO NUNCA ES EL MISMO')
-    expect(systemMessage).toContain('VARÍA SIEMPRE')
+    // El saludo se varía; nunca sale de una plantilla fija.
+    expect(systemMessage).toContain('Varía el saludo y los cierres')
     // Jamás se anuncia como asistente virtual: eso asusta al cliente.
-    expect(systemMessage).toContain('NUNCA DIGAS QUÉ ERES')
+    expect(systemMessage).toContain('No te presentes como asistente ni digas qué eres')
     expect(systemMessage).not.toContain('Soy la asistente virtual')
     expect(systemMessage.split('\n')[0]).not.toContain('asistente virtual')
     // Pero si se lo preguntan de frente, no miente.
-    expect(systemMessage).toContain('NO\n   MIENTA')
+    expect(systemMessage).toContain('NO mientas')
     // Lee el tono del cliente y se ajusta.
-    expect(systemMessage).toContain('LEE EL TONO Y AJÚSTATE')
+    expect(systemMessage).toContain('Lee el tono del cliente y ajústate')
     // Y tiene prohibido el repertorio de call center.
-    expect(systemMessage).toContain('Estoy para servirle')
-    expect(systemMessage).toContain('quedo atenta a su pronta')
+    expect(systemMessage).toContain('estoy para servirle')
+    expect(systemMessage).toContain('quedo atenta a su respuesta')
   })
 
   it('nunca le niega un servicio al cliente y el aviso de datos va al cierre', () => {
     // Dijo «no ofrecemos tinturado» teniendo tinturado en el catálogo.
-    expect(systemMessage).toContain('JAMÁS DIGAS QUE NO SE OFRECE UN SERVICIO')
+    expect(systemMessage).toContain('Decir que NO se ofrece un servicio')
+    expect(systemMessage).toContain('NUNCA digas que no se hace')
     expect(systemMessage).toContain('sugerencias')
-    expect(systemMessage).toContain('EL AVISO DE DATOS NO VA EN EL SALUDO')
+    expect(systemMessage).toContain('una sola vez, al pedir los datos para cerrar, no en el saludo')
   })
 
   it('trae las reglas que pidió el dueño el 2026-09-23', () => {
-    // Saludo, nombre y aviso de datos en el primer mensaje.
-    expect(systemMessage).toContain('PRIMER MENSAJE Y NOMBRE DEL CLIENTE')
+    // Nombre y aviso de datos.
     expect(systemMessage).toContain('Protección de Datos Personales')
     expect(systemMessage).toContain('datos_lead.nombre')
-    // Siempre un estimado, nunca solo «se confirma en planta».
-    expect(systemMessage).toContain('SIEMPRE DA UN ESTIMADO EN DÓLARES')
-    // Peso en libras y solo para ropa suelta; las cortinas siguen por kilo.
-    expect(systemMessage).toContain('EL PESO SE HABLA EN LIBRAS')
-    expect(systemMessage).toContain('las cortinas se cobran\n   POR KILO')
-    expect(systemMessage).toContain('POR PESO (por libra)')
-    // El lapso de entrega y la tarifa salen del CRM, no del prompt.
-    expect(systemMessage).toContain('plazos_por_metodo')
+    expect(systemMessage).toContain('NUNCA inventes el nombre')
+    // Siempre un estimado en dólares.
+    expect(systemMessage).toContain('Siempre es un ESTIMADO en dólares')
+    // Peso en libras y solo para ropa de diario; las cortinas siguen por kilo.
+    expect(systemMessage).toContain('va al peso en libras')
+    expect(systemMessage).toContain('cortinas por kilo')
+    // El lapso de entrega y la tarifa salen de la herramienta, no del prompt.
     expect(systemMessage).toContain('plazo_entrega')
     expect(systemMessage).toContain('tarifa_recoleccion_entrega')
     expect(systemMessage).not.toMatch(/48 a 72 horas.{0,40}\$/)
     // Ni combos ni carta: esto es una lavandería.
-    expect(systemMessage).toContain('no un restaurante')
-    expect(systemMessage).toContain('Jamás uses esas dos palabras')
+    expect(systemMessage).toContain('Nada de «combo» ni «a la carta»')
     // El método lo manda el catálogo.
     expect(systemMessage).toContain('metodo_unico')
     expect(systemMessage).toContain('advertencia')

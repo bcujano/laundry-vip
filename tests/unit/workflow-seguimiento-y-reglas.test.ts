@@ -49,7 +49,7 @@ describe('agente Laundry VIP: protecciones, seguimiento y reglas del dueño', ()
   })
 
   it('el sector de la recogida se pregunta y viaja al crear el pedido (B4)', () => {
-    expect(systemMessage).toContain('`sector`')
+    expect(systemMessage).toContain('referencia y sector')
     expect(systemMessage).toContain('FUERA_DE_COBERTURA')
     expect(JSON.stringify(porNombre('crear_pedido')?.parameters)).toContain('sector')
   })
@@ -143,31 +143,31 @@ describe('agente Laundry VIP: protecciones, seguimiento y reglas del dueño', ()
   })
 
   it('si el cliente responde a un aviso de diferencia, el agente no discute montos y escala (2026-09-30)', () => {
-    expect(systemMessage).toContain('AVISOS DE DIFERENCIA')
-    expect(systemMessage).toContain('NO')
-    expect(systemMessage).toContain('no das\n   cuentas de pago')
+    expect(systemMessage).toContain('responde a un aviso de diferencia')
+    expect(systemMessage).toContain('no discutes montos')
+    expect(systemMessage).toContain('dar cuentas bancarias')
   })
 
   it('usa el saludo de la casa que define el dueño en Configuración (2026-09-30)', () => {
     expect(systemMessage).toContain('negocio?.saludo')
-    expect(systemMessage).toContain('SALUDO DE LA CASA')
+    expect(systemMessage).toContain('Saludo de la casa')
   })
 
   it('ya no pregunta cuántas fundas: la recogida y la entrega siempre van en auto (2026-10-01)', () => {
     expect(porNombre('calcular_vehiculo')).toBeUndefined()
     expect(systemMessage).not.toContain('calcular_vehiculo')
-    expect(systemMessage).toContain('SIEMPRE van en auto')
-    expect(systemMessage).toContain('NUNCA\n   preguntes cuántas fundas')
+    expect(systemMessage).toContain('siempre va en auto')
+    expect(systemMessage).toContain('nunca preguntes por fundas')
     // el pedido tampoco lleva el número de fundas
     expect(JSON.stringify(porNombre('crear_pedido')?.parameters)).not.toContain('numero_fundas')
     // al peso: siempre un estimado, y las libras reales se confirman en planta
-    expect(systemMessage).toContain('se pesan en\n     planta')
+    expect(systemMessage).toContain('lo verifica planta')
   })
 
   it('verifica la cobertura por dentro y nunca le habla de kilómetros al cliente (2026-10-01)', () => {
     expect(porNombre('verificar_cobertura')).toBeDefined()
     expect(systemMessage).toContain('verificar_cobertura')
-    expect(systemMessage).toContain('NUNCA menciones kilómetros')
+    expect(systemMessage).toContain('Nunca menciones kilómetros')
     // el prompt no lleva el radio escrito
     expect(systemMessage).not.toMatch(/\d+[,.]?\d*\s*km/i)
     // la ventana de recolección ya no entrega el radio al modelo
@@ -177,11 +177,11 @@ describe('agente Laundry VIP: protecciones, seguimiento y reglas del dueño', ()
   })
 
   it('responde solo lo necesario, sin soltar horario ni plazo que no preguntaron (2026-10-01)', () => {
-    expect(systemMessage).toContain('DIRECTO, SIN RELLENO')
+    expect(systemMessage).toContain('relleno que no agrega nada')
     // precio y plazo van juntos, apenas dice qué quiere lavar
-    expect(systemMessage).toContain('Dilo junto con el')
+    expect(systemMessage).toContain('en ese mismo mensaje van el precio estimado y el plazo')
     // la regla es una forma de actuar, no una plantilla que se copia
-    expect(systemMessage).toContain('NO una plantilla')
+    expect(systemMessage).toContain('Cierra con el siguiente paso concreto')
   })
 
   it('el primer seguimiento es a los 5 minutos y avisa a la dueña con un resumen (2026-10-05)', () => {
@@ -228,7 +228,7 @@ describe('agente Laundry VIP: protecciones, seguimiento y reglas del dueño', ()
     expect(JSON.stringify(porNombre('Primer Contacto?')?.parameters)).toContain(
       'previos.length === 0',
     )
-    expect(systemMessage).toContain('LA LISTA DE PRECIOS LLEGA SOLA')
+    expect(systemMessage).toContain('La lista de precios en imagen le llega sola')
     // cadena conectada tras la respuesta al cliente
     const c = workflow.connections as unknown as Record<string, { main: { node: string }[][] }>
     expect(c['Enviar Respuesta Chatwoot']?.main[0]?.map((x) => x.node)).toContain(
