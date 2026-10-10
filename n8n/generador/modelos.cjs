@@ -4,19 +4,22 @@
 // entradas de modelo (índice 0 principal, 1 respaldo); n8n pasa al respaldo cuando el principal
 // responde con ERROR (límite, caída, cuota).
 //
-// Por qué NO es Gemini el principal (prueba real del 2026-10-09, simulador): con el prompt de
-// Lavandería VIP y sus 6 herramientas, gemini-3.1-flash-lite NO llamó a ninguna herramienta,
-// inventó «$31,50» y «48 horas» y declaró tool_consultada «cotizar_prendas». gpt-4.1-mini cuesta
-// ~$0,01–0,04 al día; el ahorro no compensa el riesgo de un precio inventado. La guardia
-// «valor sin herramienta» (n8n/generador/guardia.cjs) bloquea ese tipo de respuesta con cualquier modelo.
-// Para volver a probar Gemini como principal: MOTOR_PRINCIPAL = 'gemini' y correr
-// `pnpm tsx scripts/simular-cliente.ts` con varios casos antes de publicar.
+// Por qué NO es Gemini el principal (pruebas reales del 2026-10-09):
+//  1. gemini-3.1-flash-lite NO llamó a las herramientas e inventó «$31,50» y «48 horas». Con
+//     gemini-3-flash-preview + prompt compacto + herramientas de cadenas simples SÍ funciona
+//     (cotiza, cubre, crea el pedido, no regala descuentos) — es el modelo de «Gemini Lab».
+//  2. Pero la capa gratis de gemini-3-flash da solo 20 llamadas POR DÍA (error 429): con tools cada
+//     turno gasta 2–3, así que se agota con ~4 conversaciones y la llave es la de AIUDA (Fagal).
+//  3. Cuando el principal falla y entra el respaldo, la memoria del chat NO se guarda ese turno
+//     (el cliente tendría que repetir todo). Mientras Gemini sea el principal, eso pasa a diario.
+// Para pasar a Gemini como principal: MOTOR_PRINCIPAL = 'gemini', una llave de Google con
+// facturación activa (centavos al día) y resolver el punto 3; probar con `simular-cliente.ts`.
 //
 // El agente de planta/dueña («Agente Operador») sigue solo con OpenAI (sus tools usan parámetros
 // JSON complejos). La credencial «Gemini Aiuda» es de AIUDA (no de 321); una lavandería nueva usa la suya.
 const crypto = require('node:crypto')
 
-const MOTOR_PRINCIPAL = 'gemini' // 'openai' | 'gemini'
+const MOTOR_PRINCIPAL = 'openai' // 'openai' | 'gemini'
 const MODELO_GEMINI = 'models/gemini-3-flash-preview'
 const CRED_GEMINI = { googlePalmApi: { id: 'jbOxhXuz7QS5IefQ', name: 'Gemini Aiuda' } }
 

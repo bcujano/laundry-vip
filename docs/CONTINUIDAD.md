@@ -58,7 +58,7 @@ workflow.
 |---|---|
 | CRM | **https://laundry-vip.vercel.app** · Vercel `bcujanos-projects/laundry-vip` · deploy: `npx vercel --prod --yes` desde `C:\dev\laundry-vip` (el CLI ya tiene sesión) |
 | Base | Supabase `cvdlslltevwxprdktmfu` (São Paulo), **solo de VIP** (sin tablas de 321). Pruebas y producción comparten esa base (decidido: seguir así). Migraciones `0001`–`0021` aplicadas |
-| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · **116 nodos** · activo · versión activa `058e2ec1-e003-4bd0-ac9b-8b36411445fc` (2026-10-09; agente v3.1 con OpenAI principal y Gemini de respaldo; la anterior, `dd349fa7…`, sigue en el historial para volver) |
+| Agente | n8n `https://primary-production-ed243.up.railway.app` · workflow **`Bleb55WBKPfBdxVg`** «iAgente Laundry VIP» · **116 nodos** · activo · versión activa `e52f8fb8-6be9-4fb0-bb45-8efe38e90b1f` (2026-10-10; agente v3.1, prompt compacto, OpenAI principal y Gemini 3 Flash de respaldo; anteriores para volver: `a625f7c1…`, `dd349fa7…`). Ojo: el agente «(lab)» tiene un prompt compacto un poco anterior al de producción; no afecta a clientes |
 | Chatwoot | `https://chatwoot-production-8564.up.railway.app` · **cuenta 3** · bandeja «Vip Laundry». El agente publica como **«Agente VIP»** (usuario 8). La cuenta 1 es de 321: **no se toca ni para leer** |
 | WhatsApp | **+593 98 566 2822** · phone ID `1220603671147410` · WABA `1755486442349144` · app Meta «Laundry VIP» |
 | Repo | `github.com/bcujano/laundry-vip` (privado) · rama `agente-n8n-laundry`, etiqueta `v1.0` (estado con el número de prueba). Local en `C:\dev\laundry-vip`. Historial reescrito el 2026-09-23 |

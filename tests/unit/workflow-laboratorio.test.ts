@@ -37,7 +37,7 @@ describe('laboratorio de modelos (agente de prueba)', () => {
       node: 'Agente Laundry VIP (lab)',
       index: 0,
     })
-    expect(c['OpenAI Laundry']?.ai_languageModel?.[0]?.map((d) => d.index)).toEqual([1, 1])
+    expect(c['OpenAI Laundry']?.ai_languageModel?.[0]?.map((d) => d.index)).toEqual([0, 1])
   })
 
   it('el laboratorio usa su propio prompt compacto y conserva las reglas duras', () => {
