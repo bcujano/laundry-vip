@@ -14,6 +14,7 @@ function correr(opts: {
   pasos?: Paso[]
   previos?: string[]
   operador?: boolean
+  mensajeCliente?: string
 }) {
   const codigo = String(porNombre('Extraer JSON')?.parameters.jsCode)
   const salida = {
@@ -36,6 +37,9 @@ function correr(opts: {
     },
     'Verificar Operador': {
       first: () => ({ json: { data: { es_operador: opts.operador === true } } }),
+    },
+    'Preparar Mensaje Final': {
+      first: () => ({ json: { message_text: opts.mensajeCliente ?? '' } }),
     },
     'Obtener Ultimos Mensajes': {
       first: () => ({
@@ -111,5 +115,32 @@ describe('guardia de valores sin herramienta (Extraer JSON)', () => {
   it('el agente de planta y de la dueña no se ve afectado', () => {
     const r = correr({ respuesta: 'Total $10,00', operador: true })
     expect(r.valor_sin_herramienta).toBe(false)
+  })
+})
+
+describe('cancelar un pedido lo hace una persona (regla del servidor)', () => {
+  it('«quiero cancelar mi pedido» escala aunque el modelo conteste otra cosa', () => {
+    const r = correr({
+      respuesta: '¿Qué desea lavar?',
+      mensajeCliente: 'Quiero cancelar mi pedido',
+    })
+    expect(r.escalar_humano).toBe('si')
+    expect(r.texto_limpio).toContain('Eso lo gestiona nuestro equipo')
+  })
+
+  it('anular o borrar una orden también', () => {
+    for (const mensaje of ['Anulen mi orden por favor', 'quiero borrar la recogida de mañana']) {
+      expect(correr({ respuesta: 'ok', mensajeCliente: mensaje }).escalar_humano).toBe('si')
+    }
+  })
+
+  it('una conversación normal no se toca, ni el modo operador', () => {
+    expect(
+      correr({ respuesta: 'ok', mensajeCliente: 'Hola, ¿cuánto cuesta un terno?' }).escalar_humano,
+    ).toBe('')
+    expect(
+      correr({ respuesta: 'ok', mensajeCliente: 'cancelar el pedido de Juan', operador: true })
+        .escalar_humano,
+    ).toBe('')
   })
 })

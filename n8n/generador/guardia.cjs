@@ -37,6 +37,18 @@ if (valorSinHerramienta) {
   parsed.respuesta_lead = 'Permítame confirmarle ese valor con una persona de nuestro equipo y le escribe en breve.';
   parsed.escalar_humano = true;
 }
+// ── Cancelar o borrar un pedido: lo hace una persona ─────────────────────
+// El prompt lo dice, pero lo que tiene consecuencias lo hace cumplir el servidor, no el modelo:
+// un modelo respondió «¿qué desea lavar?» a «quiero cancelar mi pedido».
+let mensajeCliente = '';
+try { mensajeCliente = String($('Preparar Mensaje Final').first().json.message_text || ''); } catch (e) {}
+const pideCancelar = !parseFailed && !esOperadorGuardia
+  && /\\b(cancel\\w*|anul\\w*|elimin\\w*|borr\\w*)\\b/i.test(mensajeCliente)
+  && /\\b(pedido|orden|recolecci\\w*|recogida|reserva)\\b/i.test(mensajeCliente);
+if (pideCancelar) {
+  parsed.respuesta_lead = 'Eso lo gestiona nuestro equipo; le paso con una persona y en breve le escriben.';
+  parsed.escalar_humano = true;
+}
 if (confirmacionFalsa) {
   parsed.respuesta_lead = esOperadorGuardia
     ? '⚠️ La orden NO quedó registrada: no llegué a guardarla en el sistema. Responde «registrar» y la guardo ahora con los mismos datos.'

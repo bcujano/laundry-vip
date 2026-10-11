@@ -72,10 +72,12 @@ Resumen 8:00 (L-S) → datos del CRM → un mensaje por admin → ¿escribió en
 
 ## 3. Las herramientas
 
-**Clientes (6), todas contra `POST /api/webhook` con el secreto
+**Clientes (8), todas contra `POST /api/webhook` con el secreto
 `x-webhook-secret`:** `cotizar_prendas`, `obtener_proxima_ventana`,
-`verificar_cobertura`, `find_or_create_client`, `crear_pedido`,
-`consultar_estado_pedido`.
+`verificar_cobertura` (sector y, si la dio, dirección completa: mide la distancia a la planta),
+`find_or_create_client`, `crear_pedido`, `consultar_estado_pedido`,
+`consultar_politica` (reglas de criterio editables en Configuración) y
+`no_seguir` («no me escriban más»). Todas reciben cadenas sencillas, no JSON anidado.
 
 **Planta (operador y admin):** `cotizar_prendas_operador`,
 `registrar_cliente_presencial`, `actualizar_registro`, `consultar_pedido`,
@@ -182,6 +184,11 @@ como a cualquiera: la respuesta queda en la conversación pero **no sale a ning�
 `--limpiar <conv>` borra todo (Chatwoot, memoria del agente y filas del CRM). **Úsalo antes de dejar
 publicado cualquier cambio de modelo, prompt o herramientas, y revisa `ai.agent.tool_calls.requested`
 en la ejecución de n8n:** si es 0 y el agente dio un precio, inventó.
+
+**Banco de escenarios:** `pnpm escenarios` (laboratorio) o `pnpm escenarios --prod` corre ~12 frases reales y
+reglas de Sol y Byron (precio y plazo, fuera de zona, robot, descuento, comprobante, cancelar, política,
+«no me escriban más»…) y dice cuáles cumple. **Córrelo antes de publicar** un cambio de prompt, de herramientas
+o de motor, y agrega un escenario por cada frase real que falle (regla 14).
 
 Trampas del nodo Agente v3.x (aprendidas el 2026-10-09): las expresiones de la memoria deben usar
 `.first()` y no `.item` (con `.item` falla en cuanto el agente llama a una herramienta); el validador

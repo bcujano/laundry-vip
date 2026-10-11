@@ -33,7 +33,8 @@ describe('migraciones', () => {
       await aislada.unsafe(`drop schema if exists ${esquema} cascade`)
       await aislada.end()
     }
-  })
+    // 26 migraciones por la red: con el tiempo por defecto (30 s) se quedaba justo.
+  }, 120_000)
 
   it('dejó registro de cada archivo aplicado', async () => {
     const filas = await sql<{ nombre: string }[]>`select nombre from schema_migrations`

@@ -24,7 +24,8 @@
     "check:integraciones": "tsx scripts/check-integraciones-env.ts",
     "chatwoot:revisar": "tsx scripts/revisar-chatwoot.ts",
     "test:e2e": "playwright test",
-    "db:password": "tsx scripts/poner-password.ts"
+    "db:password": "tsx scripts/poner-password.ts",
+    "escenarios": "tsx scripts/escenarios.ts"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",

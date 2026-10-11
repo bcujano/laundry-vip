@@ -42,7 +42,7 @@ function agregar(nodes) {
     ],
     [
       'no_seguir',
-      'Llámala SOLO cuando el cliente pida que no le escriban más, que dejes de contactarlo o que no le mandes mensajes. El sistema deja de enviarle seguimientos.',
+      'Llámala SOLO cuando el cliente pida con esas palabras que no le escriban más, que dejes de contactarlo o que no le mandes mensajes. NUNCA para cancelar un pedido, una queja o un agradecimiento (eso se escala a una persona). El sistema deja de enviarle seguimientos.',
       `{"telefono": "${telefono}"}`,
     ],
     [
