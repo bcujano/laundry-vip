@@ -43,6 +43,7 @@ export const ACCIONES = [
   'marcar_aviso_equipo',
   'atender_avisos_equipo',
   'consultar_politica',
+  'no_seguir',
 ] as const
 
 export type Accion = (typeof ACCIONES)[number]
@@ -204,6 +205,7 @@ export const parametrosPorAccion = {
   marcar_aviso_equipo: z.object({ id: z.uuid(), estado: z.enum(['enviado', 'reintentado']) }),
   atender_avisos_equipo: z.object({ chatwoot_conversation_id: z.number().int() }),
   consultar_politica: z.object({ tema: z.string().max(60).optional() }),
+  no_seguir: z.object({ telefono }),
 
   verificar_cobertura: z.object({
     sector: z.string().min(1).max(200),

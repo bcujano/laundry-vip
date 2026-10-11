@@ -1,9 +1,11 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { crearAvisoEquipo } from '@/server/avisos-equipo/repo'
 import { obtener as obtenerConfig } from '@/server/configuracion/repo'
 import { evaluarCobertura } from '@/server/pedidos/cobertura-geo'
 import { crearPedido } from '@/server/pedidos/crear'
 import { geocodificar } from '@/server/pedidos/geocodificar'
 import { obtener as obtenerPedido, ultimoDelCliente } from '@/server/pedidos/repo'
+import { requiereRevisionDelEquipo } from '@/server/pedidos/revision'
 import { ErrorCotizacion } from '@/server/pricing/cotizar'
 import type { Cliente, Pedido } from '@/types/database'
 import { exito, fallo, noEncontrado, type ResultadoAccion } from '../respuesta'
@@ -81,11 +83,30 @@ export async function crear(
       return fallo(resultado.codigo, resultado.mensaje, estadoHttp)
     }
 
+    // Pedido grande: se avisa al equipo y el agente le dice al cliente que una persona lo confirma.
+    const grande =
+      parametros.canal === 'whatsapp_agente' &&
+      requiereRevisionDelEquipo(parametros.items, resultado.pedido.monto_estimado_lavado)
+    if (grande) {
+      await crearAvisoEquipo({
+        tipo: 'pedido_borrador',
+        caso: `pedido-${resultado.pedido.id}`,
+        resumen: `Pedido grande por confirmar: estimado $${Number(resultado.pedido.monto_estimado_lavado ?? 0).toFixed(2)}. Revíselo en el CRM antes de recoger.`,
+      })
+    }
+
     return exito({
       ...resumirPedido(resultado.pedido),
       // El monto del agente SIEMPRE es un estimado hasta que planta cuente.
       estado_cotizacion: 'estimado_pendiente_verificacion',
       requiere_respuesta_del_cliente: resultado.requiereRespuestaDelCliente,
+      ...(grande
+        ? {
+            confirma_el_equipo: true,
+            instruccion:
+              'El pedido quedó registrado, pero es grande: dile al cliente que una persona del equipo lo confirma con él en breve.',
+          }
+        : {}),
     })
   } catch (error) {
     if (error instanceof ErrorCotizacion) return fallo(error.codigo, error.message, 400)

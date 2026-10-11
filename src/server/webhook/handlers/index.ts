@@ -16,6 +16,7 @@ import {
   verificarWhitelistOperador,
 } from './cliente'
 import { proximaVentana, vehiculo, verificarCobertura } from './logistica'
+import { noSeguir } from './no-seguir'
 import { actualizarRegistro, registrarClientePresencial } from './operador'
 import { consultarEstadoPorTelefono, consultarPedidoPorId, crear } from './pedidos'
 import { avanzarEstadoPlanta, buscarPedidos, registrarConteo } from './planta'
@@ -60,6 +61,7 @@ const MANEJADORES: Record<Accion, Manejador> = {
   marcar_aviso_equipo: marcarAvisoEquipoAccion,
   atender_avisos_equipo: atenderAvisosAccion,
   consultar_politica: consultarPolitica,
+  no_seguir: noSeguir,
 }
 
 export async function despachar(

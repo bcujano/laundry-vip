@@ -28,7 +28,7 @@ export async function buscarCandidatos(
   const db = supabaseAdmin()
   const { data: filas, error } = await db
     .from('conversaciones')
-    .select('telefono, chatwoot_conversation_id, ultima_interaccion, contexto')
+    .select('telefono, chatwoot_conversation_id, ultima_interaccion, contexto, no_seguir')
     .gte('ultima_interaccion', haceMinutos(ahora, SILENCIO_MAX_MINUTOS))
     .lte('ultima_interaccion', haceMinutos(ahora, SILENCIO_MIN_MINUTOS))
     .order('ultima_interaccion', { ascending: true })
@@ -69,6 +69,8 @@ export async function buscarCandidatos(
   const conPedido = new Set((pedidos ?? []).map((p) => p.cliente_id as string))
 
   const excluidos = new Set<string>()
+  // Quien pidió que no le escriban más no recibe ningún seguimiento.
+  for (const c of conversaciones) if (c.no_seguir) excluidos.add(c.telefono)
   const nombres = new Map<string, string>()
   for (const c of clientesFila) {
     if (conPedido.has(c.id)) excluidos.add(c.telefono)

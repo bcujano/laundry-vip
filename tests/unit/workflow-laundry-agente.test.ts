@@ -39,7 +39,7 @@ describe('agente Laundry VIP (clon del 321)', () => {
     expect(JSON.stringify(porNombre('Transcribir Audio')?.parameters)).toContain('gpt-transcribe')
   })
 
-  it('cuelga las siete tools del CRM y la calculadora del agente', () => {
+  it('cuelga las ocho tools del CRM y la calculadora del agente', () => {
     const tools = Object.entries(workflow.connections)
       .filter(([, tipos]) => tipos.ai_tool?.[0]?.[0]?.node === 'Agente Laundry VIP')
       .map(([nombre]) => nombre)
@@ -49,6 +49,7 @@ describe('agente Laundry VIP (clon del 321)', () => {
         'Calculator',
         'consultar_estado_pedido',
         'consultar_politica',
+        'no_seguir',
         'cotizar_prendas',
         'crear_pedido',
         'find_or_create_client',

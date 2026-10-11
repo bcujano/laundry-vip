@@ -1,4 +1,4 @@
-// Las 7 tools del agente de clientes: HTTP Request Tool contra /api/webhook del CRM.
+// Las 8 tools del agente de clientes: HTTP Request Tool contra /api/webhook del CRM.
 const crypto = require('node:crypto')
 
 const CRM_URL = 'https://laundry-vip.vercel.app/api/webhook'
@@ -39,6 +39,11 @@ function agregar(nodes) {
       'consultar_politica',
       'Consulta una política del negocio: promociones, vacaciones_feriados, ropa_no_retirada, facturas, perdida_o_dano, express_urgente, capacidad_volumen, recargos, servicios_no_ofrecidos, formas_de_pago. Devuelve la regla que puedes decir o indica que lo decide una persona. Úsala antes de contestar cualquiera de esos temas.',
       `{"tema": ${fromAI('tema', 'Tema de la política, en minúsculas y con guion bajo, de la lista de la descripción', 'string')}}`,
+    ],
+    [
+      'no_seguir',
+      'Llámala SOLO cuando el cliente pida que no le escriban más, que dejes de contactarlo o que no le mandes mensajes. El sistema deja de enviarle seguimientos.',
+      `{"telefono": "${telefono}"}`,
     ],
     [
       'consultar_estado_pedido',

@@ -46,6 +46,7 @@ export type FilaConversacion = {
   chatwoot_conversation_id: number | null
   ultima_interaccion: string
   contexto: Record<string, unknown>
+  no_seguir?: boolean
 }
 
 export type Candidato = {
