@@ -40,17 +40,6 @@ try {
   sim('--mensaje', c, '#prod Perfecto, ¿cuánto era en total y a qué hora vienen?')
   for (let i = 0; i < 40 && agente(c).length <= antes; i++) await esperar(4000)
   console.log('RESPUESTA TRAS LA PERSONA:', agente(c).at(-1))
-  // pausa sin mensajes de persona a la vista (etiqueta vieja): debe retomar y dejar una nota
-  await api(`/conversations/${c}/labels`, 'POST', { labels: ['humano'] })
-  const n = agente(c).length
-  sim('--mensaje', c, '#prod Gracias, ¿y el plazo de entrega?')
-  console.log('retoma por pausa vencida, ¿responde el agente?')
-  for (let i = 0; i < 30 && agente(c).length <= n; i++) await esperar(4000)
-  console.log(
-    'RESPUESTA TRAS RETOMAR:',
-    agente(c).length > n ? agente(c).at(-1) : '(sin respuesta)',
-  )
-  console.log('ETIQUETAS:', JSON.stringify((await api(`/conversations/${c}/labels`)).payload))
 } finally {
   sim('--limpiar', c)
 }
