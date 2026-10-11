@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { FormularioConfiguracion } from '@/components/configuracion/formularios'
 import { ListaBlanca } from '@/components/configuracion/lista-blanca'
+import { InterruptorPlantillas } from '@/components/configuracion/plantillas'
 import { ListaPoliticas } from '@/components/configuracion/politicas'
 import { Tarjeta, TituloSeccion } from '@/components/ui/primitivos'
 import { exigirPermiso } from '@/lib/auth'
@@ -48,6 +49,11 @@ export default async function ConfiguracionPagina() {
       <Tarjeta>
         <TituloSeccion>Negocio y horario</TituloSeccion>
         <FormularioConfiguracion config={config} />
+      </Tarjeta>
+
+      <Tarjeta>
+        <TituloSeccion>Mensajes automáticos por plantilla</TituloSeccion>
+        <InterruptorPlantillas activas={config.plantillas_automaticas} />
       </Tarjeta>
 
       <Tarjeta>

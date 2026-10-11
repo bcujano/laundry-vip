@@ -120,6 +120,8 @@ export type Configuracion = {
   /** Coordenadas de la planta para medir la cobertura por distancia (migración 0023). */
   local_latitud: number
   local_longitud: number
+  /** Plantillas de reactivación y de ropa no retirada (migración 0028); apagado por defecto. */
+  plantillas_automaticas: boolean
   /** Agente de seguimiento (migración 0016). */
   seguimiento_modo: 'apagado' | 'borrador' | 'activo'
   direccion_local: string

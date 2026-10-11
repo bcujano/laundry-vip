@@ -11,8 +11,8 @@
       "type": "n8n-nodes-base.webhook",
       "position": [-2000, 512],
       "typeVersion": 2,
-      "webhookId": "9bcaf402-e717-4ef6-bcfa-17622ca21789",
-      "id": "47363550-4f6d-46e0-98d2-788d5eaa1961"
+      "webhookId": "cb1a0e6b-4261-4913-ac7a-a33be1f12222",
+      "id": "18f08916-18da-4e4a-bfd6-209ae35cdfd6"
     },
     {
       "parameters": {
@@ -51,7 +51,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-1776, 512],
       "typeVersion": 2.2,
-      "id": "fb130b83-0930-4310-b34a-e44d67311b16"
+      "id": "40667a33-ea32-4546-ad8b-ab80c36e4f9d"
     },
     {
       "parameters": {
@@ -82,7 +82,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-1552, 512],
       "typeVersion": 2.2,
-      "id": "ab2ee3b5-8abc-44b0-b950-a305e63690c2"
+      "id": "1428b105-454c-4a6e-bd2e-9ee32e5c2ace"
     },
     {
       "parameters": {
@@ -186,7 +186,7 @@
       "type": "n8n-nodes-base.set",
       "position": [-1296, 384],
       "typeVersion": 3.4,
-      "id": "5db1ff85-8eea-43b4-96d3-50305f4bb35d"
+      "id": "3a791dd1-2907-4311-ad58-f40dfeee25ae"
     },
     {
       "parameters": {
@@ -201,7 +201,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [-432, 384],
       "typeVersion": 4.2,
-      "id": "112b6cbd-7381-4c54-9dd9-589e54dcc35f",
+      "id": "f962e15b-bfd5-47b4-9148-2416cdae3c73",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -238,7 +238,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-208, 384],
       "typeVersion": 2.2,
-      "id": "b7174609-b8d8-44c3-a9cc-bb2091b93556"
+      "id": "55fac245-0196-47db-a10b-e2daef68438d"
     },
     {
       "parameters": {
@@ -258,7 +258,7 @@
       "type": "n8n-nodes-base.set",
       "position": [16, 384],
       "typeVersion": 3.4,
-      "id": "11f2893e-7f00-4fa6-9809-67b301fb1046"
+      "id": "2a951f2b-4b44-422a-b143-ef6f1a57cd65"
     },
     {
       "parameters": {
@@ -325,7 +325,7 @@
       "type": "n8n-nodes-base.switch",
       "position": [240, 368],
       "typeVersion": 3.2,
-      "id": "b5d85eaa-989c-40c5-800d-0a43c01315ca"
+      "id": "7b87de22-2a7b-439b-a358-0a75ac8c9fad"
     },
     {
       "parameters": {
@@ -345,7 +345,7 @@
       "type": "n8n-nodes-base.set",
       "position": [464, -16],
       "typeVersion": 3.4,
-      "id": "e9cb0fb4-81a3-4327-9ad9-f74ebabc8304"
+      "id": "a95ef3e7-36a6-4fcb-a5df-8e5c7be778c0"
     },
     {
       "parameters": {
@@ -358,7 +358,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [688, -16],
       "typeVersion": 4.2,
-      "id": "84fbba7a-2d56-4328-a902-3ed4c59a3c3f",
+      "id": "2f600652-1b24-4ab4-b552-390d021fa188",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -399,7 +399,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [976, -16],
       "typeVersion": 4.2,
-      "id": "8b72a60d-b610-4f50-8ddb-f6f87d7bc583",
+      "id": "0d402e48-23c6-4b2e-885e-9f94ac9d06d4",
       "credentials": {
         "openAiApi": {
           "id": "GvNmUCZRx5ZvZerQ",
@@ -425,7 +425,7 @@
       "type": "n8n-nodes-base.set",
       "position": [464, 288],
       "typeVersion": 3.4,
-      "id": "e1ac874f-05c7-4693-bb26-c69132e56eb2"
+      "id": "5db3b779-7866-4045-9cd1-e8891ba327f8"
     },
     {
       "parameters": {
@@ -438,7 +438,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [688, 288],
       "typeVersion": 4.2,
-      "id": "b7ba1170-d62b-4d4b-ad58-40ead6953d5c",
+      "id": "8dc3df90-ac44-4d98-b29f-ebe2f79594d3",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -463,7 +463,7 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "position": [912, 176],
       "typeVersion": 1.4,
-      "id": "5b84c3c4-a3a5-4c8e-814f-bb0673f42e32"
+      "id": "714c76f3-6108-4d8b-9f0c-da5a66c1f36f"
     },
     {
       "parameters": {
@@ -479,7 +479,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "position": [976, 400],
       "typeVersion": 1.2,
-      "id": "7bb2d303-7972-4fc4-93e1-503f344f2593",
+      "id": "8afd5e8d-42e8-45cd-8b24-78052a4137f0",
       "credentials": {
         "openAiApi": {
           "id": "GvNmUCZRx5ZvZerQ",
@@ -494,9 +494,9 @@
       "name": "Espera Texto",
       "type": "n8n-nodes-base.wait",
       "position": [976, 576],
-      "webhookId": "24cf3900-b20c-4fa6-8a61-3fe391de1845",
+      "webhookId": "57a0a7a9-0492-4344-a411-d60a19ae0c79",
       "typeVersion": 1.1,
-      "id": "561de240-050e-4edd-8ad9-be9e0388fac0"
+      "id": "3b2e476e-87b9-44ca-9996-3f434d9ec29f"
     },
     {
       "parameters": {
@@ -547,7 +547,7 @@
       "type": "n8n-nodes-base.set",
       "position": [1264, 288],
       "typeVersion": 3.4,
-      "id": "3b5c8b57-ac8c-4789-8923-4ce65d4c7e12"
+      "id": "141b7e0f-5818-4051-9019-a2bf8ad3f2f5"
     },
     {
       "parameters": {
@@ -564,7 +564,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [2960, 400],
       "typeVersion": 4.2,
-      "id": "a92607d3-8231-4bd1-8549-cd3add1c8a3a",
+      "id": "6a0a0524-30ad-4e5a-b057-e1d1429870ca",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -601,7 +601,7 @@
       "type": "n8n-nodes-base.if",
       "position": [2960, 96],
       "typeVersion": 2.2,
-      "id": "5bf54a7d-d73b-4f06-bcdc-d896c684aa48",
+      "id": "25171028-4710-4108-ac5e-b7ed44bcc002",
       "continueOnFail": true
     },
     {
@@ -621,7 +621,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [3200, 80],
       "typeVersion": 4.2,
-      "id": "5858e5db-3b60-4019-aea0-dad02191116f",
+      "id": "2c37862c-3eec-43ca-8c99-3292a950d8ef",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -647,7 +647,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "position": [3440, 80],
       "typeVersion": 4.2,
-      "id": "27f9ddf6-584a-431f-8cd2-dd8635ddd2b5",
+      "id": "120e227a-327d-4100-9214-598a709ac4f0",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -664,15 +664,15 @@
       "type": "n8n-nodes-base.wait",
       "position": [-656, 384],
       "typeVersion": 1.1,
-      "webhookId": "c2a22a30-7be7-423b-bdf6-e6442082cca2",
-      "id": "2f22d053-7d0a-44fd-9c4c-e1f4da6d5582"
+      "webhookId": "d0b4bbf9-9470-4fa3-a8d0-d056c4d7ddcd",
+      "id": "5be11211-8573-42b4-bfa0-9dff6443622e"
     },
     {
       "parameters": {},
       "type": "@n8n/n8n-nodes-langchain.toolCalculator",
       "typeVersion": 1,
       "position": [2580, 752],
-      "id": "7ca036d7-5ea6-4558-b135-6d522cebc224",
+      "id": "b564d21b-f0fd-4cd2-8cd5-502391051a8f",
       "name": "Calculator"
     },
     {
@@ -689,7 +689,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [2256, 288],
-      "id": "cbee648b-73c4-42d2-a887-1226d41eebf8",
+      "id": "27ec4d7f-f580-4606-92c0-6954ed870684",
       "name": "Agente Laundry VIP"
     },
     {
@@ -711,7 +711,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [1984, 448],
-      "id": "44e5b983-75f0-4946-8ced-3638ed3396ef",
+      "id": "d115d821-0241-4858-b435-2d0bd9c62b3a",
       "name": "OpenAI Laundry",
       "credentials": {
         "openAiApi": {
@@ -731,7 +731,7 @@
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.3,
       "position": [2128, 448],
-      "id": "5bda71de-c260-4311-9692-3200aedcc463",
+      "id": "5558d338-f173-4a2b-96c5-7b20373be93e",
       "name": "Memory Laundry",
       "credentials": {
         "postgres": {
@@ -760,7 +760,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [1472, 288],
-      "id": "6b1eef8c-7038-4875-8c06-d1a8a9852c76",
+      "id": "6da42e56-3674-4331-ac46-22f8b2d77811",
       "name": "Typing Indicator",
       "credentials": {
         "httpHeaderAuth": {
@@ -779,7 +779,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [-1088, 384],
-      "id": "a49649de-b4e6-4532-9e53-f923ee9a986a",
+      "id": "b76f0276-0d8f-474e-b154-1414a82224e4",
       "name": "Buscar Referral",
       "credentials": {
         "postgres": {
@@ -796,7 +796,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-880, 384],
-      "id": "68373a0b-e550-4ed0-af46-29e96f8f84ad",
+      "id": "bafb21d5-6198-48c9-a6b5-6af98e8f64c1",
       "name": "Agregar Referral"
     },
     {
@@ -806,7 +806,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [2700, 288],
-      "id": "14ee67ab-c9f6-4e65-b501-b402687d9c79",
+      "id": "f3bc0d94-be72-48b9-9b60-8afb997748e1",
       "name": "Extraer JSON"
     },
     {
@@ -832,7 +832,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [1500, 752],
-      "id": "9cb47b6a-fc54-45a3-97c3-5427dc1ecb6f",
+      "id": "e4eccaf9-64e9-4de4-88da-fe90c78cd3a4",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -863,7 +863,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [1680, 752],
-      "id": "e0e7fdfe-7bdf-4df0-8942-de2ffb72ff6e",
+      "id": "11b88453-fb47-49c3-99d3-a2d8ec821f6a",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -894,7 +894,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [1860, 752],
-      "id": "b567c9bf-0016-4cd2-9953-14b0c6d4d798",
+      "id": "1f253531-aa80-4139-9288-e5efd8f4948b",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -925,7 +925,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2040, 752],
-      "id": "8470e6f2-3250-4fe5-b7e6-5201a4b6e87f",
+      "id": "5ba28dc7-8f02-46ef-9629-9cd58ee364f5",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -956,7 +956,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2220, 752],
-      "id": "ce4f2bf5-32fc-46bb-8be8-6a4683686a9d",
+      "id": "d974089e-4c61-4d93-89ab-74e9b703664c",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -987,7 +987,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2400, 752],
-      "id": "e59e940a-0b0b-4824-aa5a-27f7db8fe6a6",
+      "id": "e3cf594b-cac4-4693-89ee-0ac2035eb1b3",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1018,7 +1018,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2580, 752],
-      "id": "568492ec-b814-41a9-ab16-8b4442c0dd73",
+      "id": "bf36d54b-3003-47a1-9eb5-542af280b764",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1049,7 +1049,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2760, 752],
-      "id": "ea08db95-9f49-47ac-94bc-576ba96164c2",
+      "id": "a0ce46fb-8ade-4372-92cd-059fc253edc6",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1074,7 +1074,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [1640, 288],
-      "id": "9d942695-68e8-4b75-95a7-f45c541e4fb5",
+      "id": "be0bf0f3-c516-4a00-923e-efb840eec493",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1113,7 +1113,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [1860, 288],
-      "id": "498343d6-1197-4231-8f78-17e2e64e66c0"
+      "id": "9740ccab-e8cc-4f6e-b094-cf140eb6c5ce"
     },
     {
       "parameters": {
@@ -1129,7 +1129,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [2256, -120],
-      "id": "d2969a00-89ac-4d5d-8ae3-3dd43b362f9e",
+      "id": "40acd545-748f-4703-bdd5-6f822556b425",
       "name": "Agente Operador"
     },
     {
@@ -1151,7 +1151,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [2060, 60],
-      "id": "bffdcaef-760f-46c3-9650-62547be53eb4",
+      "id": "e8b39b83-45eb-49fe-b240-b24402958379",
       "name": "OpenAI Operador",
       "credentials": {
         "openAiApi": {
@@ -1170,7 +1170,7 @@
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.3,
       "position": [2200, 60],
-      "id": "f4e21b2d-2a50-4cac-8ddc-3e1e1f7d04f0",
+      "id": "8cc70621-ce81-4a87-a393-923e5bf4c4b3",
       "name": "Memory Operador",
       "credentials": {
         "postgres": {
@@ -1202,7 +1202,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2360, -300],
-      "id": "0d45d77a-038d-4ff4-b6ed-dd9bef902285",
+      "id": "f7cc52b5-a690-4040-b101-57480a07faef",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1233,7 +1233,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2530, -300],
-      "id": "154c6eb1-a7fa-46fb-b04a-97d683358fd9",
+      "id": "37123f23-6e3b-403f-9902-d2baaa62659e",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1264,7 +1264,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2700, -300],
-      "id": "94aa6f25-5d29-4594-b41a-1f4d92d9f7f6",
+      "id": "3f620b71-fded-4cd7-bbf0-0edc215048c3",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1295,7 +1295,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [2870, -300],
-      "id": "bc08aba9-c12a-4473-8293-cf8ba1490fa3",
+      "id": "8d09bfb8-71c0-439e-b868-5a8846eca6e1",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1326,7 +1326,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3040, -300],
-      "id": "5c1a7c5c-6264-434e-8c27-51cd51067c69",
+      "id": "6b0e47d3-b35a-42ab-a2a3-69013a3ad452",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1357,7 +1357,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3210, -300],
-      "id": "1b324354-cff3-4795-8d74-7ac5441dce47",
+      "id": "10fa2743-63de-444b-84c8-e1f754bd9e13",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1388,7 +1388,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3380, -300],
-      "id": "cc779f05-5ac8-4622-9001-24d6eb56036f",
+      "id": "428faff7-bebb-4c04-847b-fabd28087d64",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1419,7 +1419,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3550, -300],
-      "id": "f2e5fde6-e10a-4895-b19a-5644a958ce25",
+      "id": "b2d7a304-c0dd-496c-a410-7ae378a9bced",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1450,7 +1450,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [3720, -300],
-      "id": "610ba1ac-9bf9-49e3-9418-a31765288996",
+      "id": "66fdb09e-329f-47a9-8ad4-10116d4e3c2d",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1468,7 +1468,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.1,
       "position": [1984, 308],
-      "id": "34afb6c1-c79e-4bd4-8aea-7d8815182597",
+      "id": "9ed19a1c-2f05-4182-9f0d-10b2a330f352",
       "name": "Gemini Laundry",
       "notes": "Respaldo gratis: solo se usa si «OpenAI Laundry» da error (ver n8n/generador/modelos.cjs).",
       "credentials": {
@@ -1488,7 +1488,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.1,
       "position": [2060, -80],
-      "id": "e0b63e1c-360d-4986-b8ba-f541553c7d46",
+      "id": "38ebac37-ecd8-410c-862c-92850fdc634c",
       "name": "Gemini Operador",
       "notes": "Principal del agente de planta y de la dueña; OpenAI Operador es el respaldo.",
       "credentials": {
@@ -1512,7 +1512,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [2256, 808],
-      "id": "bf5c9786-4607-4e39-a626-8023d031a17d",
+      "id": "e717ff66-6e42-4fbd-8c5d-04d401b61cb6",
       "name": "Agente Laundry VIP (lab)",
       "notes": "Solo atiende la bandeja de pruebas. Modelo a probar: «Gemini Lab»."
     },
@@ -1526,7 +1526,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.1,
       "position": [1984, 848],
-      "id": "9a76d4d2-4424-4a57-9e92-aacbeefd2d2d",
+      "id": "bc9fc5ee-64f4-41f6-90ef-2890ba95cc6e",
       "name": "Gemini Lab",
       "notes": "Modelo en prueba (laboratorio). Cambiar aquí el modelName para probar otro.",
       "credentials": {
@@ -1565,7 +1565,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [1984, 548],
-      "id": "3a28b54d-a94a-4819-907c-c4fd02835063",
+      "id": "37326026-038e-4bfb-9cfc-b442975e48bb",
       "notes": "Laboratorio: solo la bandeja «PRUEBAS simulación (borrar)» (y sin «#prod») va al agente de prueba."
     },
     {
@@ -1576,7 +1576,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [2960, 640],
-      "id": "795a6760-30cf-426a-9c98-f20a57dbc0aa",
+      "id": "0f4e436f-532a-4824-b7ca-abac5ef26a25",
       "onError": "continueRegularOutput"
     },
     {
@@ -1596,7 +1596,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [3200, 640],
-      "id": "ccc3c66b-d719-4c00-9165-d964cbdd2052",
+      "id": "57da0a23-b848-405f-915d-2b54adb50162",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1622,7 +1622,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [3440, 640],
-      "id": "2bf48372-e982-4a86-b10f-19d7ef075ab9",
+      "id": "c28e4a74-08a1-4883-8406-44757bc082fe",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1646,7 +1646,7 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [-2000, 1200],
-      "id": "dfe93eaa-df60-411d-87df-5e4123626414",
+      "id": "13b26ebd-4e3a-4715-83a4-d49e0888fee8",
       "notes": "Lunes a sábado 8:00 (zona del workflow: America/Guayaquil)."
     },
     {
@@ -1666,7 +1666,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1760, 1200],
-      "id": "ef9b83d2-ab85-4761-84c5-334bb7f8f824",
+      "id": "359b9178-aaac-4f8e-a355-429fb35b919b",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1682,7 +1682,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-1520, 1200],
-      "id": "873150b4-3352-4aa6-b63c-7f2da2e9df4b"
+      "id": "0fe3baef-f31f-4332-b518-557d2dcd1ea8"
     },
     {
       "parameters": {
@@ -1714,7 +1714,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [-1280, 1200],
-      "id": "1f73c2b2-c01d-45fc-a4a6-2bb8a16a17a6"
+      "id": "b62d9d52-4fd0-442c-a4f2-14efbab97ab6"
     },
     {
       "parameters": {
@@ -1733,7 +1733,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 1100],
-      "id": "e2ced24d-3c47-473f-8214-7fe8ce01d215",
+      "id": "08f3fd39-0000-418f-8391-24528d03fcde",
       "credentials": {
         "httpHeaderAuth": {
           "id": "baJJfX3zWMindSEN",
@@ -1759,7 +1759,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 1300],
-      "id": "ce08fef4-3d99-4c3a-a7c4-3763e60a6c1f",
+      "id": "408a9563-0f0d-4c6b-84e8-9237a6a8de63",
       "credentials": {
         "httpHeaderAuth": {
           "id": "baJJfX3zWMindSEN",
@@ -1833,7 +1833,7 @@
       "type": "n8n-nodes-base.if",
       "position": [-1776, 160],
       "typeVersion": 2.2,
-      "id": "b234c050-75bf-42b1-ab91-8a2606f3d027"
+      "id": "1b8443f3-3aff-43c5-b4e3-69fc8be99444"
     },
     {
       "parameters": {
@@ -1852,7 +1852,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1552, 160],
-      "id": "dfe0240c-0bc7-426d-87b1-38c2fc7c8a66",
+      "id": "d096a68c-457b-4cbb-83a5-2d4f14f8f8de",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -1878,7 +1878,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1328, 160],
-      "id": "a97a4ef8-70cf-4b32-8a57-0499bdea73aa",
+      "id": "bfd00cc2-bda8-43c4-8d25-9ac5f7a90b57",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -1901,7 +1901,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1552, 700],
-      "id": "527120e1-98f4-45c7-b84c-e9b04f418e82",
+      "id": "774a9d0b-a5ef-4424-826b-070b1f1d9f09",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -1927,7 +1927,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1328, 700],
-      "id": "6f12aa66-394e-4db4-8d80-796111e7b8dc",
+      "id": "38cc3e73-3c8b-4bce-a08f-5a08df1ef3f4",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -1965,7 +1965,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [-1104, 700],
-      "id": "cff96643-ce9c-49d7-ab63-81c31b71db41"
+      "id": "a70f867e-adeb-4747-8fe6-22cd511c814a"
     },
     {
       "parameters": {
@@ -1984,7 +1984,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-880, 700],
-      "id": "6bb7668e-3319-47e8-9655-05c324a0d1c1",
+      "id": "8ef57f3f-49ad-40be-80d3-c361059323a4",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -2010,7 +2010,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-656, 700],
-      "id": "9ec598fd-87f6-4cd8-9a68-616f22e08632",
+      "id": "df6b9c31-27a5-4b39-b043-0ae74bac55ad",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -2028,8 +2028,161 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-432, 700],
-      "id": "4aaa6066-a4c7-4698-908c-e56c4168490c",
+      "id": "0ced2f55-8187-4287-a14e-cf29829104e3",
       "notes": "Devuelve el evento original del webhook para que el flujo normal siga como si nada."
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 10 * * 1-6"
+            }
+          ]
+        }
+      },
+      "name": "Plantillas 10:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-2000, 3200],
+      "id": "3037f7bb-2983-4108-82ef-83aad8308e43",
+      "notes": "Lunes a sábado a las 10:00 (America/Guayaquil)."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ accion: 'plantillas_pendientes', parametros: {} }) }}",
+        "options": {
+          "timeout": 20000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "name": "Plantillas Pendientes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-1760, 3200],
+      "id": "c5f92519-2a99-4e80-90c4-6290e228e8b4",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Un elemento por envío. El CRM devuelve la lista vacía si el interruptor está apagado.\nconst r = $input.first().json || {};\nreturn ((r.data && r.data.envios) || []).map((e) => ({ json: e }));"
+      },
+      "name": "Uno por Plantilla",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-1520, 3200],
+      "id": "c9f88042-3214-418a-a30e-cfb4040c7a4d"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v22.0/1220603671147410/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ messaging_product: \"whatsapp\", to: $json.telefono.replace(/[^0-9]/g, \"\"), type: \"template\", template: { name: $json.plantilla, language: { code: \"es\" }, components: [{ type: \"body\", parameters: $json.parametros.map((t) => ({ type: \"text\", text: String(t) })) }] } }) }}",
+        "options": {
+          "timeout": 15000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "name": "Enviar Plantilla",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-1280, 3200],
+      "id": "560934bc-8a44-4d76-97f7-a67d08d024de",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "baJJfX3zWMindSEN",
+          "name": "Meta WhatsApp Laundry VIP"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Falla (sin marcar) mientras Meta no haya aprobado la plantilla."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "enviada",
+              "leftValue": "={{ !!$json.messages?.[0]?.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "¿Se Envió?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-1040, 3200],
+      "id": "869efb04-ce27-4b11-bd66-74bfacea48fa"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://laundry-vip.vercel.app/api/webhook",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ accion: 'marcar_plantilla', parametros: { telefono: $('Uno por Plantilla').item.json.telefono, plantilla: $('Uno por Plantilla').item.json.plantilla, clave: $('Uno por Plantilla').item.json.clave } }) }}",
+        "options": {
+          "timeout": 20000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "name": "Marcar Plantilla",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-800, 3200],
+      "id": "de9ffe3f-128e-4b39-b68b-64f674056289",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9456EHfb8yxpZOmr",
+          "name": "CRM Laundry VIP Webhook"
+        }
+      },
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
@@ -2053,7 +2206,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-96, 384],
-      "id": "cb44ef3e-9616-4cfd-9a41-48359895e989",
+      "id": "d1a814a3-8864-4544-a94c-434e5b40543a",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -2091,7 +2244,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [128, 384],
-      "id": "3a861846-2680-4d2f-b0a4-a6dde4e26717"
+      "id": "d154b30f-6beb-45c4-a500-0aee16d51539"
     },
     {
       "parameters": {
@@ -2101,7 +2254,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [352, 560],
-      "id": "d5c0d332-c402-4359-b144-02cf4b0ce4f8",
+      "id": "c0d63432-f70c-4b94-8a37-71467fc0a403",
       "onError": "continueRegularOutput"
     },
     {
@@ -2121,7 +2274,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [576, 560],
-      "id": "b8c5e76e-6c63-43af-843e-8db20a8772a5",
+      "id": "0263e40e-45da-4a02-a6a7-d0e28278d227",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -2138,7 +2291,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [2960, 880],
-      "id": "499fc9fc-a2fd-4ee2-b533-af06bbe04fcb",
+      "id": "2320a2da-1d09-46d6-bc2e-cf2fb35fc193",
       "onError": "continueRegularOutput"
     },
     {
@@ -2163,7 +2316,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [3200, 880],
-      "id": "c69de280-a8f1-4791-8db6-779995e655eb",
+      "id": "b0f2c901-02d4-4b30-a917-b0d355f47bbf",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -2187,7 +2340,7 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [-2000, 1600],
-      "id": "c780f759-fe8c-486a-a55e-532e06d33b01",
+      "id": "7ff2c79a-4e3c-46d4-b9e8-63b5fc9f62fd",
       "notes": "Lunes a sábado, 9:00 a 18:55 (zona America/Guayaquil). El CRM además revisa el horario del local y decide qué paso toca."
     },
     {
@@ -2212,7 +2365,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1760, 1600],
-      "id": "b46fc0d9-766f-476e-bcfc-b897985f2da8",
+      "id": "764a9064-9687-4d59-94d6-ed7effb0feb9",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -2229,7 +2382,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-1520, 1600],
-      "id": "63574cc3-2b9c-42bb-a627-dbcd0354b4d6"
+      "id": "f0ab9dc7-00aa-4bc9-953e-bf552ad0b164"
     },
     {
       "parameters": {
@@ -2244,7 +2397,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1280, 1600],
-      "id": "8344255d-18a7-490a-b842-75372cef5d86",
+      "id": "0090cc18-d4f6-4b8c-abf4-7aecd3e5ff87",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -2266,7 +2419,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1160, 1600],
-      "id": "295ff10d-a54a-491f-a448-79e9d7ae5658",
+      "id": "79b888f8-f6d2-4293-b430-ad39a613477f",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -2304,7 +2457,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [-1040, 1600],
-      "id": "5f21493d-8825-4a25-abe3-fa3a454def5e"
+      "id": "908688e3-563d-429f-839a-b03d034d674c"
     },
     {
       "parameters": {
@@ -2323,7 +2476,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-800, 1600],
-      "id": "db17b2cd-772c-4327-84c2-a941acd7a2ef",
+      "id": "0c00d9e6-83a3-4ec6-b9e3-c78c48c89da9",
       "credentials": {
         "openAiApi": {
           "id": "GvNmUCZRx5ZvZerQ",
@@ -2340,7 +2493,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-560, 1600],
-      "id": "6ffab1a7-bcd0-46ed-8c30-db7f0e88e437"
+      "id": "b7289d26-d678-448e-9100-8a4a2cbcdfaa"
     },
     {
       "parameters": {
@@ -2359,7 +2512,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-320, 1600],
-      "id": "151c7ce0-ba97-419d-912a-cec5aab32134",
+      "id": "ae6de41f-3a43-47c6-9a12-e60d80a0763c",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -2380,7 +2533,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [-200, 1600],
-      "id": "029ccd30-928c-4684-b310-619bceae161b",
+      "id": "7fa10ad8-ccbc-4be2-bd75-e36818e46004",
       "credentials": {
         "postgres": {
           "id": "uS6oHAzjK8OQg6K3",
@@ -2412,7 +2565,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [40, 1600],
-      "id": "c39a65e4-6f9e-4f1b-b89e-17c9f962dcf6",
+      "id": "40ff748e-81c5-4a6c-bc1f-072bc2d2224c",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -2429,7 +2582,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-800, 1850],
-      "id": "d1dca76f-8d13-48fe-bdd6-19ee25ecf0d1",
+      "id": "632ff82c-d27b-4e9e-8d45-175a893f5841",
       "onError": "continueRegularOutput"
     },
     {
@@ -2449,7 +2602,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-560, 1850],
-      "id": "f0fd9744-536f-491e-becd-f850e75ed3ad",
+      "id": "fc52561e-2496-4d6a-9619-291329e8b284",
       "credentials": {
         "openAiApi": {
           "id": "GvNmUCZRx5ZvZerQ",
@@ -2466,7 +2619,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-320, 1850],
-      "id": "310c4961-ca40-4926-9856-70529b3f9118"
+      "id": "5327330b-37e5-4118-b1c9-ad9b72be0d4b"
     },
     {
       "parameters": {
@@ -2497,7 +2650,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [-80, 1850],
-      "id": "0bea4141-7ef3-430b-adbf-bd82d5fcfd61",
+      "id": "ebc1523b-d149-4b8e-8627-8c2071d64f9c",
       "notes": "Si ya contrató, agendó o dijo que no, no se le insiste (y si compró, entra al CRM)."
     },
     {
@@ -2522,7 +2675,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [160, 2050],
-      "id": "e2be57f4-6816-40de-88b2-447bf8b3ad48",
+      "id": "8491c268-6c4f-45b1-9a26-14019c5a52f8",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -2548,7 +2701,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [400, 2050],
-      "id": "7cb46935-c6f6-4ac2-a1e0-32ac6e1c1edd",
+      "id": "a6f82c3c-843d-43e6-a642-51af607c6330",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -2586,7 +2739,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [280, 1600],
-      "id": "fc9bc2ab-5de1-45cc-8337-7e388cb991cc",
+      "id": "3d4bc3e2-f0cd-41ca-803d-a7e4beaa15b7",
       "notes": "Con el primer seguimiento (5 min) se avisa a la dueña."
     },
     {
@@ -2606,7 +2759,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [520, 1600],
-      "id": "3d5eac03-7ef3-48a3-bab3-1c2ac86e55b2",
+      "id": "620e39dd-c1e3-4f54-b8ba-4de229d6213e",
       "credentials": {
         "openAiApi": {
           "id": "GvNmUCZRx5ZvZerQ",
@@ -2632,7 +2785,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [760, 1600],
-      "id": "c1a9d70e-190e-4c47-9e9e-d0522976259a",
+      "id": "dbb35ded-a256-409a-846d-0a54ae99213c",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -2663,7 +2816,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [1000, 1600],
-      "id": "ab5c0b43-816c-4f88-b413-14c2b834d44b",
+      "id": "b5c16df6-7e2d-40cc-8aa7-6aea939860da",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -2680,7 +2833,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [1240, 1600],
-      "id": "61fe9870-4ccd-4356-983a-b7b8575e1de8"
+      "id": "e59ec12d-8cd9-4389-88fd-75f2a7ff8d35"
     },
     {
       "parameters": {
@@ -2711,7 +2864,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [1480, 1600],
-      "id": "0dd30741-dc22-4974-a377-15ff71208ced",
+      "id": "c41c5e2d-3b0b-48b8-8ebd-4779fed9ae06",
       "notes": "Si no escribió al agente en 24 h, solo queda la nota interna del chat."
     },
     {
@@ -2731,7 +2884,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [1720, 1600],
-      "id": "c8de4cae-022e-45a2-8a7a-d40416d444df",
+      "id": "88d319bc-e870-4ed7-a32f-83f72ccd2736",
       "credentials": {
         "httpHeaderAuth": {
           "id": "baJJfX3zWMindSEN",
@@ -2755,7 +2908,7 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [-2000, 2400],
-      "id": "fe17d3c8-a8b8-4427-a938-01cabbdf7e16",
+      "id": "8e5036fa-b9da-4f5f-9426-03c9080926c9",
       "notes": "Lunes a sábado, 9:00 a 18:55 (zona America/Guayaquil)."
     },
     {
@@ -2780,7 +2933,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1760, 2400],
-      "id": "76a84974-1f26-4dc0-a85d-516f0bb17f97",
+      "id": "a288c0be-aabe-4788-92e2-12cf95c8609d",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -2797,7 +2950,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-1520, 2400],
-      "id": "9f55a3c3-0b38-4647-84d5-107d42415096"
+      "id": "b39ab583-3d22-442c-a2cc-e7fa1a0d4ce7"
     },
     {
       "parameters": {
@@ -2828,7 +2981,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [-1280, 2400],
-      "id": "9bcc81ec-bb17-41f5-b480-09ce14c937d7"
+      "id": "b1d189af-0ed0-4670-8f18-176f9fe59649"
     },
     {
       "parameters": {
@@ -2847,7 +3000,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 2300],
-      "id": "9ca1b1c5-5d4e-44ba-97a0-53e21a92c098",
+      "id": "759a5c44-9d61-446c-a445-3e664dbb3f2d",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -2878,7 +3031,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-800, 2300],
-      "id": "eed3380d-3e35-44b6-a732-815a9090126c",
+      "id": "c0e55b9c-5606-4766-859d-de1b6affe105",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -2916,7 +3069,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [-1160, 2500],
-      "id": "7907b8a5-613a-4686-9bbf-c5f9c8b59267",
+      "id": "21432289-b88e-403a-843d-117be34c6354",
       "notes": "Un aviso sin conversación de Chatwoot no puede dejar nota (daba 404): solo se marca como requiere_persona."
     },
     {
@@ -2936,7 +3089,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 2500],
-      "id": "77cf7582-908d-4ed4-9a4c-700a289239fa",
+      "id": "926c07b2-d590-4715-aaa9-5c65cfee7671",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -2967,7 +3120,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-800, 2500],
-      "id": "e50dd2f6-1f4c-4af7-b274-6a9bffbcb326",
+      "id": "85b5fb81-adff-48db-9dfa-c34cc911f559",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -3005,7 +3158,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [3200, 400],
-      "id": "257e79c4-4334-4325-8360-04f00ad45174",
+      "id": "23be9731-ff06-4e5a-861b-9ae9d3832a5e",
       "notes": "Solo la primera vez que alguien escribe: se le manda el catálogo en imagen."
     },
     {
@@ -3025,7 +3178,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [3440, 400],
-      "id": "ce4cca22-0432-4dda-ae65-175e4d7e6bbd",
+      "id": "c5f328b4-45a0-4d3e-8120-0988b4b229ae",
       "onError": "continueRegularOutput"
     },
     {
@@ -3036,7 +3189,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [3680, 400],
-      "id": "7da85cbe-596c-4702-8547-5b2d4bf39571",
+      "id": "e71e4354-e601-4618-be08-f84e828bd10c",
       "onError": "continueRegularOutput"
     },
     {
@@ -3072,7 +3225,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [3920, 400],
-      "id": "5d866d4e-0178-4559-8388-ff6161db6843",
+      "id": "9f7d00f7-a60d-4bb5-87c4-2e7c7947d8b4",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3W2BykSid0f9dMTV",
@@ -3103,7 +3256,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [3680, 80],
-      "id": "cfc0c864-0972-4af4-8531-fd65f06b5256",
+      "id": "e4fbf78a-73c5-497f-a652-7a2ea9ba1554",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -3134,7 +3287,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1552, 360],
-      "id": "d0d04331-2f16-4658-9f0d-24949fad8291",
+      "id": "a5835c82-c74d-4e4e-abcb-75576da79791",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -3158,7 +3311,7 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [-2000, 2800],
-      "id": "88f750e4-28a5-4a1f-89f5-a0dc362150c8",
+      "id": "6b3b1516-621f-4ea8-89f0-7d01676b3254",
       "notes": "Todos los días, a cualquier hora (zona America/Guayaquil): los avisos al equipo no esperan al horario."
     },
     {
@@ -3183,7 +3336,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1760, 2800],
-      "id": "486352ed-a6c9-4413-ad63-75e914fb155c",
+      "id": "3e06faf4-0b82-4ff1-bd5c-58293df62ed9",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -3200,7 +3353,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-1520, 2700],
-      "id": "e46ae331-434c-4407-a6eb-646db75e069a"
+      "id": "3b7c3114-454c-4eee-923e-50bf061603d0"
     },
     {
       "parameters": {
@@ -3231,7 +3384,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [-1280, 2700],
-      "id": "1cd0ab65-3868-4682-909d-8017033b90a0",
+      "id": "55b5c445-e2de-4e92-8d11-3836332b5ba8",
       "notes": "Con ventana abierta (escribió al agente en 24 h): texto libre. Si no: plantilla aprobada."
     },
     {
@@ -3251,7 +3404,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 2600],
-      "id": "c4dcffa5-3b75-4ed1-932e-97b893bd6921",
+      "id": "a262c895-1ee0-405d-a399-7f64d1a9d466",
       "credentials": {
         "httpHeaderAuth": {
           "id": "baJJfX3zWMindSEN",
@@ -3277,7 +3430,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 2800],
-      "id": "07d9d686-79c9-4963-93a4-90c4800c32ea",
+      "id": "bd980a20-31ed-487e-80c6-a25e2e1b08e2",
       "credentials": {
         "httpHeaderAuth": {
           "id": "baJJfX3zWMindSEN",
@@ -3295,7 +3448,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [-1520, 2900],
-      "id": "6d320a72-93b3-4d05-8df1-f73ee69eb049"
+      "id": "d85c43d8-2d74-4550-9552-e9bfcd1a1dfc"
     },
     {
       "parameters": {
@@ -3319,7 +3472,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1280, 2900],
-      "id": "8218e435-1e56-4701-816d-1bf2992ef30f",
+      "id": "e3ac377f-e764-4ef9-9e28-4cee0f4c44ae",
       "credentials": {
         "httpHeaderAuth": {
           "id": "9456EHfb8yxpZOmr",
@@ -3340,7 +3493,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [2960, 700],
-      "id": "0e15f74e-26c1-4197-8939-4f6b4b1f18e6",
+      "id": "be525784-18a3-4329-88a7-9c21f890323f",
       "credentials": {
         "postgres": {
           "id": "uS6oHAzjK8OQg6K3",
@@ -4238,6 +4391,62 @@
             "index": 0
           }
         ]
+      ]
+    },
+    "Plantillas 10:00": {
+      "main": [
+        [
+          {
+            "node": "Plantillas Pendientes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plantillas Pendientes": {
+      "main": [
+        [
+          {
+            "node": "Uno por Plantilla",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Uno por Plantilla": {
+      "main": [
+        [
+          {
+            "node": "Enviar Plantilla",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Plantilla": {
+      "main": [
+        [
+          {
+            "node": "¿Se Envió?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Se Envió?": {
+      "main": [
+        [
+          {
+            "node": "Marcar Plantilla",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
       ]
     },
     "Registrar Entrante": {

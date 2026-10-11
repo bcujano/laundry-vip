@@ -45,6 +45,8 @@ export const ACCIONES = [
   'consultar_politica',
   'no_seguir',
   'evaluar_pausa',
+  'plantillas_pendientes',
+  'marcar_plantilla',
 ] as const
 
 export type Accion = (typeof ACCIONES)[number]
@@ -158,6 +160,12 @@ export const parametrosPorAccion = {
   atender_avisos_equipo: z.object({ chatwoot_conversation_id: z.number().int() }),
   consultar_politica: z.object({ tema: z.string().max(60).optional() }),
   no_seguir: z.object({ telefono }),
+  plantillas_pendientes: z.object({}).optional(),
+  marcar_plantilla: z.object({
+    telefono: z.string().min(8).max(20),
+    plantilla: z.string().min(1).max(60),
+    clave: z.string().min(1).max(120),
+  }),
   evaluar_pausa: z.object({
     etiquetas: z.array(z.string()),
     // Cuándo escribió por última vez una persona del equipo (ISO); vacío = no se encontró ninguna.

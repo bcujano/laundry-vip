@@ -165,3 +165,17 @@ describe('el nodo Agente v3 vuelve a evaluar sus expresiones en cada vuelta de h
     }
   })
 })
+
+describe('mensajes automáticos por plantilla', () => {
+  it('el flujo diario existe, no marca lo que Meta rechazó y sus nodos conservan «continuar si falla»', () => {
+    const c = workflow.connections as unknown as Record<string, { main: { node: string }[][] }>
+    expect(c['Plantillas 10:00']?.main[0]?.[0]?.node).toBe('Plantillas Pendientes')
+    expect(c['¿Se Envió?']?.main[0]?.[0]?.node).toBe('Marcar Plantilla')
+    expect(c['¿Se Envió?']?.main[1]).toEqual([])
+    for (const nombre of ['Plantillas Pendientes', 'Enviar Plantilla', 'Marcar Plantilla']) {
+      expect((porNombre(nombre) as unknown as { onError?: string }).onError).toBe(
+        'continueRegularOutput',
+      )
+    }
+  })
+})

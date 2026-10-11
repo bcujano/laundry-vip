@@ -255,6 +255,9 @@ connections['Chatwoot Webhook'].main[0].push({ node: 'Respondio Persona?', type:
 // Vencimiento de la pausa: tras 3 horas hábiles sin que el equipo escriba, el agente retoma.
 require('./pausa.cjs').aplicar({ nodes, connections })
 
+// Plantillas de Meta: reactivación y ropa no retirada (interruptor en Configuración, apagado).
+require('./plantillas.cjs').aplicar({ nodes, connections })
+
 // Protecciones del CRM: tope de mensajes, deduplicación y tope de gasto (B2).
 const protecciones = require('./protecciones.cjs')
 nodes.push(...protecciones.nodos)

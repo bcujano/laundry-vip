@@ -21,6 +21,7 @@ import { actualizarRegistro, registrarClientePresencial } from './operador'
 import { evaluarPausaAccion } from './pausa'
 import { consultarEstadoPorTelefono, consultarPedidoPorId, crear } from './pedidos'
 import { avanzarEstadoPlanta, buscarPedidos, registrarConteo } from './planta'
+import { marcarPlantillaAccion, plantillasPendientesAccion } from './plantillas'
 import { consultarPolitica } from './politicas'
 import { generarReporte } from './reportes'
 import { anotarSeguimiento, candidatosSeguimiento, registrarConversion } from './seguimiento'
@@ -64,6 +65,8 @@ const MANEJADORES: Record<Accion, Manejador> = {
   consultar_politica: consultarPolitica,
   no_seguir: noSeguir,
   evaluar_pausa: evaluarPausaAccion,
+  plantillas_pendientes: plantillasPendientesAccion,
+  marcar_plantilla: marcarPlantillaAccion,
 }
 
 export async function despachar(
