@@ -115,7 +115,13 @@ rompe el shell); y no uses `` ` `` dentro de `node -e "…"`.
 
 ## 3. Cómo está el sistema hoy (resumen verificado)
 
-- **Agente de clientes** (`n8n/prompt-agente-laundry.md`, 6 tools): cotiza del
+- **Estado al 2026-10-11 (verificado):** agente de clientes con **8 tools** (`consultar_politica`, `no_seguir`
+  nuevas) y motor **OpenAI `gpt-4.1-mini` a 0,4 principal + Gemini 3 Flash de respaldo**; agente de planta y
+  dueña con **Gemini 3 Flash principal + OpenAI de respaldo**; cobertura por distancia (OpenStreetMap hasta que
+  haya llave de Google Maps **sin restricción de referer**); almuerzo 14–15 y ventanas de 2 h; cargo por
+  cancelar; pedido grande avisa al equipo; cancelar/borrar lo escala el servidor. Migraciones hasta la
+  **0026**. `pnpm escenarios --prod` pasa 12 de 12. Para cambiar de motor ver E10 abajo.
+- **Agente de clientes** (`n8n/prompt-agente-laundry.md`, 8 tools): cotiza del
   catálogo, **verifica la cobertura por dentro** (`verificar_cobertura`, solo dice
   sí/no), **precio y plazo juntos** apenas el cliente dice qué quiere lavar, la
   **recogida y la entrega siempre en auto** (no pregunta fundas), saluda con el
@@ -254,6 +260,7 @@ de discrepancia real; primer pedido real creado por el agente con `sector` y veh
 | E8 | ~~Token de Meta inválido en n8n~~ **RESUELTO** (verificado 2026-10-11): el dueño corrigió la credencial «Meta WhatsApp Laundry VIP»; un aviso de prueba al +593963987124 salió por la plantilla `aviso_equipo` y Meta lo aceptó (wamid). Los avisos al equipo, a la dueña y el resumen de las 8:00 funcionan | — |
 | E9 | ~~Plantilla de Meta `aviso_equipo`~~ **APROBADA** (verificado 2026-10-10 por la API: estado APPROVED, idioma es). Falta E8 para que se pueda usar | — |
 | E10 | **Gemini como motor principal del agente de clientes (decisión del dueño, 2026-10-11: a nivel de n8n, de pago si hace falta, para el trato de Fagal).** Faltan dos cosas del dueño: (1) activar **facturación** en el proyecto de la llave de Gemini de Lavandería (hoy es capa gratis: 5 llamadas/minuto, `generate_content_free_tier_requests`); (2) en n8n → Credenciales → «Google Gemini(PaLM) Api» con esa llave, nombre «Gemini VIP Laundry» (no hay herramienta MCP para crear credenciales). Con eso, el cambio son 6 operaciones MCP: `setNodeCredential` en `Gemini Laundry`, `Gemini Operador` y `Gemini Lab`; `Gemini Laundry` como entrada 0 y `OpenAI Laundry` como entrada 1 del agente de clientes (`removeConnection`/`addConnection`, ver `n8n/generador/modelos.cjs` → `MOTOR_PRINCIPAL`); luego `verificar-prompts`, publicar y probar con `scripts/simular-cliente.ts`. La memoria del turno con respaldo ya está cubierta (nodo `Respaldar Memoria`) | Dueño (facturación + credencial) |
+| E11 | **Llave de Google Maps (Geocoding API)**: la del dueño responde `REQUEST_DENIED: API keys with referer restrictions cannot be used with this API`. En Google Cloud → Credenciales → esa llave: «Restricciones de la aplicación» = Ninguna (o direcciones IP) y «Restricciones de API» = Geocoding API. Ya está guardada como `GOOGLE_MAPS_API_KEY` en `.env.local` y en Vercel (producción y desarrollo); mientras no funcione el servidor usa OpenStreetMap sin errores. Se verifica con `curl` a `maps.googleapis.com/maps/api/geocode/json` | Dueño |
 | E2 | ~~Plazo de entrega~~ **Resuelto el 2026-10-09** por María Sol en el cuestionario: 24 h agua / 72 h seco / 1 semana alfombras, desde que llega a planta | Hecho: columna `servicios.plazo_horas` (migración 0020); `cotizar_prendas` lo devuelve y el prompt lo usa. `horas_entrega_min/max` de Configuración quedan sin uso |
 | E3 | **Cuestionario respondido por María Sol** y sus decisiones sobre el Anexo A | Nada; P3 espera |
 | E4 | **María Sol debe escribirle algo al agente cada día** (su número de admin) para que el aviso de «lead sin respuesta» y el resumen de las 8:00 le lleguen por WhatsApp | Solo quedan las notas internas en Chatwoot |

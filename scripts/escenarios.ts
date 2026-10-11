@@ -85,7 +85,7 @@ const ESCENARIOS: Escenario[] = [
   {
     nombre: 'no-seguir',
     mensajes: ['Hola, quiero un precio', 'Por favor ya no me escriban más'],
-    contiene: [/(no le escribiremos|respet|entendido|de acuerdo)/i],
+    contiene: [/(no (le )?(escribir|enviar)|respet|entendido|de acuerdo)/i],
   },
   {
     nombre: 'nombre-inventado',
