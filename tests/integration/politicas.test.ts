@@ -17,17 +17,25 @@ afterAll(async () => {
 })
 
 describe('políticas que consulta el agente', () => {
-  it('las políticas de Sol vienen sembradas y sin regla inventada', async () => {
+  it('las políticas de Sol vienen escritas con sus respuestas y lo delicado deriva a una persona', async () => {
     const todas = await listarPoliticas()
     const temas = todas.map((p) => p.tema)
     expect(temas).toEqual(
       expect.arrayContaining(['promociones', 'perdida_o_dano', 'formas_de_pago']),
     )
-    // nadie inventó una regla por Sol: las sembradas solo derivan al equipo
-    const sembrada = await consultar('perdida_o_dano')
-    expect(sembrada.encontrada).toBe(true)
-    expect(sembrada.regla).toBeNull()
-    expect(String(sembrada.instruccion)).toContain('Esto no lo resuelves tú')
+
+    // Pérdida o daño: lo decide la dueña, el agente no promete ni niega compensación.
+    const dano = await consultar('perdida_o_dano')
+    expect(dano.encontrada).toBe(true)
+    expect(String(dano.regla)).toContain('nunca el agente')
+    expect(String(dano.instruccion)).toContain('Esto no lo resuelves tú')
+    // y no se filtra al cliente ningún tope de compensación
+    expect(String(dano.regla)).toContain('No menciones topes')
+
+    // Formas de pago: la regla la puede decir el agente, sin datos bancarios.
+    const pago = await consultar('formas_de_pago')
+    expect(String(pago.regla)).toContain('DEUNA')
+    expect(String(pago.instruccion)).toContain('Puedes responder con la regla')
   })
 
   it('una política con regla y decide el agente se puede responder; si la decide una persona, se deriva', async () => {

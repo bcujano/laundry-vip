@@ -123,3 +123,32 @@ describe('memoria cuando entra el modelo de respaldo', () => {
     expect(c['Extraer JSON']?.main[0]?.map((d) => d.node)).toContain('Respaldar Memoria')
   })
 })
+
+describe('pausa que vence y contexto de lo que habló una persona', () => {
+  it('el chat tomado por una persona pasa por evaluar_pausa antes de callar al agente', () => {
+    const c = workflow.connections as unknown as Record<string, { main: { node: string }[][] }>
+    expect(c['Filtro Humano']?.main[1]?.[0]?.node).toBe('Mensajes Para Pausa')
+    expect(c['Pausa Vencida']?.main[0]?.[0]?.node).toBe('¿Retomar Pausa?')
+    expect(c['¿Retomar Pausa?']?.main[0]?.[0]?.node).toBe('Quitar Humano')
+    expect(c['Restaurar Evento']?.main[0]?.[0]?.node).toBe('WhatsApp Inicio')
+    for (const nombre of ['Mensajes Para Pausa', 'Pausa Vencida', 'Quitar Humano', 'Nota Retomo']) {
+      expect((porNombre(nombre) as unknown as { onError?: string }).onError).toBe(
+        'continueRegularOutput',
+      )
+    }
+    // si no se pudo leer la conversación, la pausa NO se da por vencida
+    expect(JSON.stringify(porNombre('Pausa Vencida')?.parameters)).toContain(
+      'new Date().toISOString()',
+    )
+  })
+
+  it('el agente lee lo que habló una persona del equipo y las notas de traspaso', () => {
+    const prompt = String(
+      (porNombre('Agente Laundry VIP')?.parameters.options as { systemMessage: string })
+        .systemMessage,
+    )
+    expect(prompt).toContain('LO QUE PERSONAS DEL EQUIPO YA HABLARON CON ESTE CLIENTE')
+    expect(prompt).toContain('Su palabra manda')
+    expect(prompt).toContain('Acordado')
+  })
+})
