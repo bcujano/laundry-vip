@@ -50,6 +50,7 @@ function aplicar({ nodo }) {
     nodo(nombre).parameters.options.returnIntermediateSteps = true
   }
   const extraer = nodo('Extraer JSON')
+  require('./rescate.cjs').aplicar(extraer)
   const ancla = 'const imagenes = Array.isArray(parsed.imagenes)'
   if (!extraer.parameters.jsCode.includes(ancla))
     throw new Error('No encontré dónde poner la guardia')

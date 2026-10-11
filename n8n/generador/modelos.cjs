@@ -51,6 +51,7 @@ function aplicar({ nodes, connections, nodo }) {
     credentials: CRED_GEMINI,
   })
   openai.notes = 'Motor principal del agente de clientes.'
+  afinarOpenAI(openai)
 
   const gemini = MOTOR_PRINCIPAL === 'gemini'
   const entrada = (principal) => ({
@@ -60,6 +61,17 @@ function aplicar({ nodes, connections, nodo }) {
   })
   connections['Gemini Laundry'] = entrada(gemini)
   connections['OpenAI Laundry'] = entrada(!gemini)
+}
+
+/**
+ * OpenAI a temperatura 0 con topP 0,1 sonaba a robot y, en modo JSON, una vez dejó una comilla sin
+ * cerrar y siguió hablando hasta el tope de tokens (2026-10-11). Con 0,4 (la misma que usa el agente
+ * de AIUDA Empresas) conversa con más naturalidad y no se atasca.
+ */
+function afinarOpenAI(nodoOpenAI) {
+  const opciones = nodoOpenAI.parameters.options
+  opciones.temperature = 0.4
+  delete opciones.topP
 }
 
 /**
@@ -85,6 +97,7 @@ function operadorConGemini({ nodes, connections, nodo }) {
   agente.parameters.text = sinItem(agente.parameters.text)
 
   const openai = nodo('OpenAI Operador')
+  afinarOpenAI(openai)
   nodes.push({
     parameters: { modelName: MODELO_OPERADOR, options: { temperature: 0.4 } },
     type: '@n8n/n8n-nodes-langchain.lmChatGoogleGemini',
