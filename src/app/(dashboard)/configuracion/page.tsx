@@ -1,9 +1,11 @@
 import { redirect } from 'next/navigation'
 import { FormularioConfiguracion } from '@/components/configuracion/formularios'
 import { ListaBlanca } from '@/components/configuracion/lista-blanca'
+import { ListaPoliticas } from '@/components/configuracion/politicas'
 import { Tarjeta, TituloSeccion } from '@/components/ui/primitivos'
 import { exigirPermiso } from '@/lib/auth'
 import { fechaHora } from '@/lib/format'
+import { listarPoliticas } from '@/server/configuracion/politicas'
 import { listarWhitelist, obtener, parametrosVentana } from '@/server/configuracion/repo'
 import { obtenerProximaVentana, ultimaHoraDelDia } from '@/server/scheduling/ventana'
 
@@ -13,10 +15,11 @@ export default async function ConfiguracionPagina() {
   // Se vuelve a exigir el permiso aquí: ocultar el enlace no es control.
   if (!(await exigirPermiso('configuracion'))) redirect('/')
 
-  const [config, operadores, parametros] = await Promise.all([
+  const [config, operadores, parametros, politicas] = await Promise.all([
     obtener(),
     listarWhitelist(),
     parametrosVentana(),
+    listarPoliticas(),
   ])
   const ventana = obtenerProximaVentana(new Date(), parametros)
 
@@ -45,6 +48,11 @@ export default async function ConfiguracionPagina() {
       <Tarjeta>
         <TituloSeccion>Negocio y horario</TituloSeccion>
         <FormularioConfiguracion config={config} />
+      </Tarjeta>
+
+      <Tarjeta>
+        <TituloSeccion>Políticas que el agente consulta</TituloSeccion>
+        <ListaPoliticas politicas={politicas} />
       </Tarjeta>
 
       <Tarjeta>

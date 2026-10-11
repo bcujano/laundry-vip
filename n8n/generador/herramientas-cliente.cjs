@@ -1,4 +1,4 @@
-// Las 6 tools del agente de clientes: HTTP Request Tool contra /api/webhook del CRM.
+// Las 7 tools del agente de clientes: HTTP Request Tool contra /api/webhook del CRM.
 const crypto = require('node:crypto')
 
 const CRM_URL = 'https://laundry-vip.vercel.app/api/webhook'
@@ -34,6 +34,11 @@ function agregar(nodes) {
       'crear_pedido',
       'Crea el pedido. SOLO después de que el cliente confirmó el resumen con un sí explícito.',
       `{"canal": "whatsapp_agente", "cliente_id": ${fromAI('cliente_id', 'uuid completo que devolvió find_or_create_client')}, "tipo_entrega": ${fromAI('tipo_entrega', 'combo si la lavandería recoge y entrega con la tarifa única; a_la_carta si el cliente trae y retira su ropa')}, "prendas": ${fromAI('prendas', 'Las prendas del pedido, una por línea, con el mismo formato de cotizar_prendas y con el método ya elegido')}, "direccion_recoleccion": ${fromAI('direccion_recoleccion', 'Dirección completa de la recogida; cadena vacía si el cliente trae su ropa')}, "sector": ${fromAI('sector', 'Barrio o sector de la recogida tal como lo dijo el cliente; cadena vacía si no aplica')}, "ventana_recoleccion_inicio": ${fromAI('ventana_recoleccion_inicio', 'Inicio de la ventana en ISO, tal como vino de obtener_proxima_ventana; cadena vacía si el cliente trae su ropa')}, "ventana_recoleccion_fin": ${fromAI('ventana_recoleccion_fin', 'Fin de la ventana en ISO, tal como vino de obtener_proxima_ventana; cadena vacía si el cliente trae su ropa')}}`,
+    ],
+    [
+      'consultar_politica',
+      'Consulta una política del negocio: promociones, vacaciones_feriados, ropa_no_retirada, facturas, perdida_o_dano, express_urgente, capacidad_volumen, recargos, servicios_no_ofrecidos, formas_de_pago. Devuelve la regla que puedes decir o indica que lo decide una persona. Úsala antes de contestar cualquiera de esos temas.',
+      `{"tema": ${fromAI('tema', 'Tema de la política, en minúsculas y con guion bajo, de la lista de la descripción', 'string')}}`,
     ],
     [
       'consultar_estado_pedido',

@@ -137,6 +137,21 @@ export type Configuracion = {
   updated_at: string
 }
 
+export type QuienDecide = 'agente' | 'equipo' | 'duena'
+
+/** Regla de criterio del negocio que el agente consulta (migración 0025). */
+export type Politica = {
+  id: string
+  tema: string
+  titulo: string
+  regla: string
+  quien_decide: QuienDecide
+  plazo_respuesta: string
+  frase_guia: string
+  activa: boolean
+  actualizado_en: string
+}
+
 export type NivelOperador = 'operador' | 'admin'
 
 export type OperadorWhitelist = {

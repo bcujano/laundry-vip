@@ -19,6 +19,7 @@ import { proximaVentana, vehiculo, verificarCobertura } from './logistica'
 import { actualizarRegistro, registrarClientePresencial } from './operador'
 import { consultarEstadoPorTelefono, consultarPedidoPorId, crear } from './pedidos'
 import { avanzarEstadoPlanta, buscarPedidos, registrarConteo } from './planta'
+import { consultarPolitica } from './politicas'
 import { generarReporte } from './reportes'
 import { anotarSeguimiento, candidatosSeguimiento, registrarConversion } from './seguimiento'
 
@@ -58,6 +59,7 @@ const MANEJADORES: Record<Accion, Manejador> = {
   avisos_equipo_pendientes: avisosEquipoPendientesAccion,
   marcar_aviso_equipo: marcarAvisoEquipoAccion,
   atender_avisos_equipo: atenderAvisosAccion,
+  consultar_politica: consultarPolitica,
 }
 
 export async function despachar(
