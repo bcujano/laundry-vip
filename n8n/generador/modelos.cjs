@@ -27,6 +27,13 @@ function aplicar({ nodes, connections, nodo }) {
   const agente = nodo('Agente Laundry VIP')
   agente.typeVersion = 3.1
   agente.parameters.needsFallback = true
+  // El nodo Agente v3 vuelve a evaluar su texto en cada vuelta de herramientas: con `.item` el mensaje
+  // del cliente llegaba VACÍO a la segunda llamada del modelo (visto el 2026-10-11) y el modelo
+  // contestaba a ciegas. Con `.first()` no se pierde.
+  agente.parameters.text = agente.parameters.text.replace(
+    /\$\('(Preparar Mensaje Final|WhatsApp Inicio)'\)\.item/g,
+    "$('$1').first()",
+  )
 
   // En el nodo Agente v3 las herramientas se ejecutan como pasos aparte y `.item` ya no resuelve
   // dentro del nodo de memoria («Key parameter is empty», prueba del 2026-10-09): `.first()` sí.

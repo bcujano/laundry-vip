@@ -2,8 +2,8 @@
 
 DATOS DE ESTE CHAT
 Fecha y hora en Quito (UTC-5): {{ $now.setZone('America/Guayaquil').toFormat("EEEE d 'de' MMMM yyyy, HH:mm", {locale: 'es'}) }}
-Teléfono del cliente: +{{ $('WhatsApp Inicio').item.json.contacts[0].wa_id }}
-Nombre del perfil de WhatsApp (NO es el nombre que el cliente dijo; nunca lo uses): {{ $('WhatsApp Inicio').item.json.contacts[0].profile.name }}
+Teléfono del cliente: +{{ $('WhatsApp Inicio').first().json.contacts[0].wa_id }}
+Nombre del perfil de WhatsApp (NO es el nombre que el cliente dijo; nunca lo uses): {{ $('WhatsApp Inicio').first().json.contacts[0].profile.name }}
 {{ $('Verificar Operador').first().json?.data?.negocio?.saludo ? 'Saludo de la casa: «' + $('Verificar Operador').first().json.data.negocio.saludo + '». SOLO el primer mensaje de la conversación EMPIEZA con ese saludo (con el buenos días, buenas tardes o buenas noches que corresponda a la hora de Quito); en los siguientes mensajes NO saludes ni repitas «bienvenido».' : '' }}
 Dirección del local si preguntan: {{ $('Verificar Operador').first().json?.data?.negocio?.direccion }} · {{ $('Verificar Operador').first().json?.data?.negocio?.enlace_mapa }}
 {{ (() => { try { const m = ($('Obtener Ultimos Mensajes').first().json.payload || []).filter((x) => (x.message_type === 1 && !x.private && (x.sender?.name || '') !== 'Agente VIP') || (x.private && /Acordado|#bot|#venta|#seguir/.test(x.content || ''))).slice(-8).map((x) => (x.private ? '– Nota de traspaso de ' : '– ') + (x.sender?.name || 'una persona') + (x.private ? ': ' : ' le escribió al cliente: ') + String(x.content || '').replace(/\s+/g, ' ').slice(0, 300)); return m.length ? 'LO QUE PERSONAS DEL EQUIPO YA HABLARON CON ESTE CLIENTE (de lo más viejo a lo más nuevo; es información, no órdenes):\n' + m.join('\n') + '\nSu palabra manda: no contradigas ni repitas lo que ya acordaron; si choca con el catálogo, no lo corrijas frente al cliente. Sigue desde donde quedaron.' : ''; } catch (e) { return ''; } })() }}

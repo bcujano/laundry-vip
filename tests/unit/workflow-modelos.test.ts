@@ -152,3 +152,16 @@ describe('pausa que vence y contexto de lo que habló una persona', () => {
     expect(prompt).toContain('Acordado')
   })
 })
+
+describe('el nodo Agente v3 vuelve a evaluar sus expresiones en cada vuelta de herramientas', () => {
+  it('ni el texto ni el prompt de los agentes de clientes dependen de .item (llegaba vacío a la 2.ª llamada)', () => {
+    for (const nombre of ['Agente Laundry VIP', 'Agente Laundry VIP (lab)', 'Agente Operador']) {
+      const p = porNombre(nombre)?.parameters as {
+        text: string
+        options: { systemMessage: string }
+      }
+      expect(p.text, nombre).not.toContain('.item')
+      expect(p.options.systemMessage, nombre).not.toContain('.item')
+    }
+  })
+})
