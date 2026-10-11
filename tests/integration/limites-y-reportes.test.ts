@@ -132,37 +132,32 @@ describe('tope diario de mensajes', () => {
 
 describe('alerta de costo de OpenAI', () => {
   it('avisa exactamente una vez por día', async () => {
-    const hoy = fechaDeHoy()
+    // Un día ficticio, lejos de hoy: esta prueba NUNCA toca la fila del día real. La vez que usó
+    // «hoy» y falló a medias, dejó $17,50 de gasto falso y el agente dejó de contestar a los clientes.
+    const ficticio = new Date('2099-06-15T12:00:00-05:00')
     const cliente = supabaseAdmin()
-    const { data: previo } = await cliente
-      .from('uso_openai_diario')
-      .select('*')
-      .eq('fecha', hoy)
-      .maybeSingle()
+    const limpiar = () =>
+      cliente.from('uso_openai_diario').delete().eq('fecha', fechaDeHoy(ficticio))
 
-    await cliente.from('uso_openai_diario').delete().eq('fecha', hoy)
+    await limpiar()
+    try {
+      const limite = Number((await obtenerConfig()).limite_costo_diario_openai_usd)
 
-    const limite = Number((await obtenerConfig()).limite_costo_diario_openai_usd)
+      const porDebajo = await registrarUso(1000, limite / 2, ficticio)
+      expect(porDebajo.debe_alertar).toBe(false)
 
-    const porDebajo = await registrarUso(1000, limite / 2)
-    expect(porDebajo.debe_alertar).toBe(false)
+      // Este cruza el techo: es el único que debe avisar.
+      const cruza = await registrarUso(1000, limite, ficticio)
+      expect(cruza.debe_alertar).toBe(true)
 
-    // Este cruza el techo: es el único que debe avisar.
-    const cruza = await registrarUso(1000, limite)
-    expect(cruza.debe_alertar).toBe(true)
+      expect((await registrarUso(1000, limite, ficticio)).debe_alertar).toBe(false)
+      expect((await registrarUso(1000, limite, ficticio)).debe_alertar).toBe(false)
 
-    const despues = await registrarUso(1000, limite)
-    expect(despues.debe_alertar).toBe(false)
-
-    const otroMas = await registrarUso(1000, limite)
-    expect(otroMas.debe_alertar).toBe(false)
-
-    const resumen = await usoDeHoy()
-    expect(resumen.tokens_dia).toBe(4000)
-
-    // Se deja el día como estaba, para no ensuciar la contabilidad real.
-    await cliente.from('uso_openai_diario').delete().eq('fecha', hoy)
-    if (previo) await cliente.from('uso_openai_diario').insert(previo)
+      const resumen = await usoDeHoy(ficticio)
+      expect(resumen.tokens_dia).toBe(4000)
+    } finally {
+      await limpiar()
+    }
   })
 })
 

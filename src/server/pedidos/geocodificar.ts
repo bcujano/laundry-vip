@@ -84,9 +84,9 @@ export async function geocodificar(
   const limpio = texto.trim()
   if (limpio.length < 3) return null
   try {
-    const encontrado = llave
-      ? await conGoogle(limpio, llave, buscar)
-      : await conNominatim(limpio, buscar)
+    // Si Google falla (llave mal configurada, cuota, sin resultados), OpenStreetMap lo intenta.
+    const deGoogle = llave ? await conGoogle(limpio, llave, buscar).catch(() => null) : null
+    const encontrado = deGoogle ?? (await conNominatim(limpio, buscar))
     if (!encontrado || !enQuito(encontrado.punto)) return null
     return encontrado
   } catch {
