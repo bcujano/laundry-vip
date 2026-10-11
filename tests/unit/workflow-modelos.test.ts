@@ -143,10 +143,10 @@ describe('pausa que vence y contexto de lo que habló una persona', () => {
   })
 
   it('el agente lee lo que habló una persona del equipo y las notas de traspaso', () => {
-    const prompt = String(
-      (porNombre('Agente Laundry VIP')?.parameters.options as { systemMessage: string })
-        .systemMessage,
-    )
+    const opciones = porNombre('Agente Laundry VIP')?.parameters.options as
+      | { systemMessage: string }
+      | undefined
+    const prompt = String(opciones?.systemMessage)
     expect(prompt).toContain('LO QUE PERSONAS DEL EQUIPO YA HABLARON CON ESTE CLIENTE')
     expect(prompt).toContain('Su palabra manda')
     expect(prompt).toContain('Acordado')
