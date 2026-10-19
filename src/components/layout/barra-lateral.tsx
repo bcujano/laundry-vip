@@ -12,6 +12,7 @@ import {
   Settings,
   ShieldCheck,
   Shirt,
+  Target,
   Users,
   X,
 } from 'lucide-react'
@@ -47,6 +48,7 @@ const SECCIONES: Seccion[] = [
     titulo: 'Clientes',
     enlaces: [
       { href: '/clientes', texto: 'Clientes', icono: Users, area: 'clientes' },
+      { href: '/prospectos', texto: 'Prospectos', icono: Target, area: 'clientes' },
       { href: CHATWOOT_BANDEJA, texto: 'Chatwoot', icono: MessageCircle, externo: true },
     ],
   },

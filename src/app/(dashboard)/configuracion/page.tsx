@@ -3,11 +3,14 @@ import { FormularioConfiguracion } from '@/components/configuracion/formularios'
 import { ListaBlanca } from '@/components/configuracion/lista-blanca'
 import { InterruptorPlantillas } from '@/components/configuracion/plantillas'
 import { ListaPoliticas } from '@/components/configuracion/politicas'
+import { InterruptorProspeccion } from '@/components/configuracion/prospeccion'
 import { Tarjeta, TituloSeccion } from '@/components/ui/primitivos'
 import { exigirPermiso } from '@/lib/auth'
 import { fechaHora } from '@/lib/format'
 import { listarPoliticas } from '@/server/configuracion/politicas'
 import { listarWhitelist, obtener, parametrosVentana } from '@/server/configuracion/repo'
+import { listarProspectos } from '@/server/prospectos/repo'
+import { resumirProspectos } from '@/server/prospectos/resumen'
 import { obtenerProximaVentana, ultimaHoraDelDia } from '@/server/scheduling/ventana'
 
 export const dynamic = 'force-dynamic'
@@ -16,11 +19,12 @@ export default async function ConfiguracionPagina() {
   // Se vuelve a exigir el permiso aquí: ocultar el enlace no es control.
   if (!(await exigirPermiso('configuracion'))) redirect('/')
 
-  const [config, operadores, parametros, politicas] = await Promise.all([
+  const [config, operadores, parametros, politicas, prospectos] = await Promise.all([
     obtener(),
     listarWhitelist(),
     parametrosVentana(),
     listarPoliticas(),
+    listarProspectos(),
   ])
   const ventana = obtenerProximaVentana(new Date(), parametros)
 
@@ -54,6 +58,15 @@ export default async function ConfiguracionPagina() {
       <Tarjeta>
         <TituloSeccion>Mensajes automáticos por plantilla</TituloSeccion>
         <InterruptorPlantillas activas={config.plantillas_automaticas} />
+      </Tarjeta>
+
+      <Tarjeta>
+        <TituloSeccion>Prospección automática (negocios que nunca han escrito)</TituloSeccion>
+        <InterruptorProspeccion
+          activa={config.prospeccion_automatica}
+          limite={config.prospeccion_limite_diario}
+          resumen={resumirProspectos(prospectos)}
+        />
       </Tarjeta>
 
       <Tarjeta>

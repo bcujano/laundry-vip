@@ -122,6 +122,10 @@ export type Configuracion = {
   local_longitud: number
   /** Plantillas de reactivación y de ropa no retirada (migración 0028); apagado por defecto. */
   plantillas_automaticas: boolean
+  /** true = n8n le escribe a los prospectos con la plantilla de primer contacto. */
+  prospeccion_automatica: boolean
+  /** Cuántos prospectos nuevos reciben el primer mensaje por día, como máximo. */
+  prospeccion_limite_diario: number
   /** Agente de seguimiento (migración 0016). */
   seguimiento_modo: 'apagado' | 'borrador' | 'activo'
   direccion_local: string
@@ -231,6 +235,37 @@ export type CorreccionCotizacion = {
   corregido_por_staff_id: string | null
   notificado_cliente: boolean
   created_at: string
+}
+
+export type TipoTelefono = 'celular' | 'fijo' | 'sin_telefono'
+export type CoberturaProspecto = 'dentro' | 'fuera' | 'dudoso' | 'sin_ubicar'
+export type EstadoProspecto = 'nuevo' | 'contactado' | 'descartado' | 'no_contactar'
+
+/** Un negocio de la lista de prospección al que todavía no se le vende. No es un cliente ni un lead. */
+export type Prospecto = {
+  id: string
+  nombre: string
+  segmento: string
+  telefono: string | null
+  tipo_telefono: TipoTelefono
+  telefono_original: string | null
+  direccion: string | null
+  email: string | null
+  sitio_web: string | null
+  instagram: string | null
+  google_maps: string | null
+  rating: number | null
+  resenas: number | null
+  cobertura: CoberturaProspecto
+  distancia_km: number | null
+  estado: EstadoProspecto
+  primer_contacto_en: string | null
+  canal_primer_contacto: 'plantilla_whatsapp' | 'llamada' | 'manual' | null
+  notas: string
+  fuente: string
+  fuente_ref: string
+  created_at: string
+  updated_at: string
 }
 
 export type Conversacion = {

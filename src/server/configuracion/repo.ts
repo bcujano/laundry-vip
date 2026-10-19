@@ -44,6 +44,8 @@ export type CambiosConfiguracion = Partial<
     | 'hora_cierre_sabado'
     | 'almuerzo_inicio'
     | 'plantillas_automaticas'
+    | 'prospeccion_automatica'
+    | 'prospeccion_limite_diario'
     | 'almuerzo_fin'
     | 'ventana_minutos'
     | 'radio_cobertura_km'

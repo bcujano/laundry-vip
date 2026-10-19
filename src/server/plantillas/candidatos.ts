@@ -16,7 +16,7 @@ export type EnvioPlantilla = {
 }
 
 const DIA_MS = 86_400_000
-const PAUSA_ENTRE_PLANTILLAS_DIAS = 25
+export const PAUSA_ENTRE_PLANTILLAS_DIAS = 25
 export const PASOS_REACTIVACION = [90, 30] as const
 export const PASOS_ROPA = [80, 60, 30, 7] as const
 

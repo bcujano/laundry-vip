@@ -20,6 +20,7 @@
     "db:seed": "tsx scripts/db-seed.ts",
     "db:demo": "tsx scripts/demo-datos.ts",
     "db:reset-clientes": "tsx scripts/reset-clientes.ts",
+    "db:prospectos": "tsx scripts/importar-prospectos.ts",
     "db:staff": "tsx scripts/crear-staff.ts",
     "check:integraciones": "tsx scripts/check-integraciones-env.ts",
     "chatwoot:revisar": "tsx scripts/revisar-chatwoot.ts",
