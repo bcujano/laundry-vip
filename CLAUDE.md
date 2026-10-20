@@ -10,8 +10,8 @@ plan en orden, lo que espera al dueño y el prompt para abrir la siguiente
 sesión. Todo está en producción **con clientes reales**.
 
 Si vas a tocar la prospección (negocios a quienes se les escribe primero), lee
-[`docs/PROSPECCION.md`](docs/PROSPECCION.md): el envío automático está apagado y
-así se queda hasta que el dueño lo encienda.
+[`docs/PROSPECCION.md`](docs/PROSPECCION.md): el envío automático lo enciende y
+apaga el dueño en Configuración; no lo cambies tú.
 
 Si vas a tocar el agente de WhatsApp, lee además
 [`docs/AGENTE.md`](docs/AGENTE.md) (mecánica y cómo se cambia por MCP) y

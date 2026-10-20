@@ -1,8 +1,10 @@
 # Prospección (negocios a quienes se les escribe primero)
 
-Estado: construida y desplegada el 2026-10-20. **El envío automático está APAGADO** y no se
-enciende hasta que Meta apruebe la plantilla `prospecto_primer_contacto` y el dueño lo decida.
-Nadie ha recibido ningún mensaje.
+Estado al 2026-10-20: construida, desplegada y **encendida por el dueño** (interruptor «Prospección
+automática» en Configuración, tope 10 por día). Plantilla `prospecto_primer_contacto` APROBADA por Meta,
+ubicación con Google Maps hecha y agente publicado. Los primeros envíos salen a las 10:00 (lunes a sábado)
+por el carril de plantillas de n8n; al cierre de esa sesión aún no había salido ninguno
+(0 filas en `plantillas_enviadas`).
 
 ## Qué es y qué no es
 
@@ -69,21 +71,34 @@ pnpm db:prospectos-ubicar              # simula (dice qué proveedor usa y por q
 pnpm db:prospectos-ubicar --confirmar  # escribe cobertura y distancia
 ```
 
-## Antes de encender (checklist del dueño)
+Ubicación hecha con Google el 2026-10-20: 61 dentro, 11 en el borde y 7 fuera (de 79). Si cambia la planta o el
+radio, `pnpm db:prospectos-ubicar --todos --confirmar` la repite.
 
-1. `pnpm tsx scripts/plantillas-meta.ts --estado` → `prospecto_primer_contacto` en **APPROVED**.
-2. Arreglar la llave de Google y correr `pnpm db:prospectos-ubicar --confirmar` (así se evita escribirle a
-   quien está lejos).
-3. Dejar el tope en **5 por día** al inicio y mirar a los 2–3 días cuántos bloquean o responden NO. Un
-   mensaje en frío desde el número definitivo puede bajar la calidad del WhatsApp del negocio en Meta si
-   muchos lo bloquean; cada envío tiene costo.
-4. Encender en Configuración → «Prospección automática».
+## Cómo se vigila ahora que está encendida
 
-## Pendiente (necesita el MCP de n8n, no disponible en la sesión que lo construyó)
+1. Al día siguiente de los primeros envíos: `/prospectos` (filtros «Contactados» y «Respondieron») y
+   `pnpm chatwoot:revisar --desde AAAA-MM-DD`.
+2. Si varios responden NO o bloquean el número, bajar el tope en Configuración (recomendado: 5 por día al
+   inicio) o apagar el interruptor. Un mensaje en frío desde el número definitivo puede bajar la calidad del
+   WhatsApp del negocio en Meta; cada envío tiene costo.
+3. Los envíos reales quedan en `plantillas_enviadas` (plantilla `prospecto_primer_contacto`, clave = id del
+   prospecto).
 
-- Que el prompt del agente sepa, cuando le escribe un prospecto, que es un negocio de la lista
-  (nombre y segmento) para saludarlo por su nombre y no pedirle lo que ya se sabe.
-- Que una respuesta «NO» a la plantilla se trate como `no_seguir` (hoy se atiende como mensaje normal y el
-  agente ya tiene la tool `no_seguir`, pero no hay prueba con una frase real de prospecto).
-- Que la dueña pueda preguntar «¿cómo va la prospección?» por WhatsApp (ampliar las consultas del admin).
-- Prueba de punta a punta con un número propio (nunca real) cuando se encienda.
+## Lo que ya hace el agente con un prospecto (verificado en producción el 2026-10-20)
+
+- `verificar_whitelist_operador` devuelve `prospecto: {nombre, segmento, ya_se_le_escribio}` (o `null`) y el
+  prompt del agente de clientes lo usa.
+- Un «NO» seco como primer mensaje: el agente llama `no_seguir`, se despide y el prospecto pasa a «no
+  contactar». Se simuló con un teléfono ficticio por la bandeja API de pruebas (`scripts/simular-cliente.ts`) y
+  se limpió después.
+- Un «NO» en medio de una conversación, como respuesta a una pregunta del agente, se interpreta como respuesta
+  a esa pregunta y no como baja: es el comportamiento correcto.
+- La dueña puede preguntar «¿cómo va la prospección?»: `consulta_admin` con `prospeccion` (cifras sin
+  teléfonos).
+
+## Pendiente
+
+- Tras un «NO» el flujo igual manda la imagen del catálogo (se envía en el primer contacto de toda
+  conversación nueva). Conviene saltársela cuando el agente llamó `no_seguir`; es un cambio en n8n.
+- Verificar el primer lote real de punta a punta (plantilla → Meta → `marcar_plantilla`) en
+  `plantillas_enviadas` y `/prospectos`.
