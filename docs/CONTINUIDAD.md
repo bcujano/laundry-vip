@@ -1,7 +1,7 @@
 # Estado y continuidad
 
-Última actualización: **2026-10-05** (cierre de sesión, verificado contra
-producción ese mismo día; P1 y P2 hechos esa tarde). Es el primer archivo que se lee en cada sesión; está
+Última actualización: **2026-10-20** (se añadió la prospección, verificada contra
+producción ese día; el resto del estado es del 2026-10-05/11). Es el primer archivo que se lee en cada sesión; está
 escrito para arrancar **sin hacerle preguntas al dueño**. Mapa de documentos:
 
 | Archivo | Para qué |
@@ -9,6 +9,7 @@ escrito para arrancar **sin hacerle preguntas al dueño**. Mapa de documentos:
 | **este** | Arranque, estado real, plan en orden y lo que espera al dueño |
 | [`AGENTE.md`](AGENTE.md) | Cómo funciona el agente de WhatsApp y cómo se cambia (MCP de n8n) |
 | [`INFORME_CUESTIONARIO_SOL.md`](INFORME_CUESTIONARIO_SOL.md) | El cuestionario de María Sol ya respondido (2026-10-09): qué cambia, choques con decisiones previas y plan por fases |
+| [`PROSPECCION.md`](PROSPECCION.md) | La lista de negocios (ProspectorVIP) como prospectos del CRM: reglas, carga, plantilla de Meta, interruptor apagado y qué falta |
 | [`DECISIONES.md`](DECISIONES.md) | Lo que el dueño decidió (no revertir) y los fallos ya encontrados |
 | [`Cuestionario_Conocimiento_del_Agente.pdf`](Cuestionario_Conocimiento_del_Agente.pdf) · `cuestionario/*.md` | Lo que María Sol debe transmitirle al agente (en proceso con ella). Se regenera con `python scripts/cuestionario_pdf.py` |
 | [`CHATWOOT_Y_WHATSAPP.md`](CHATWOOT_Y_WHATSAPP.md) | De dónde sale cada credencial de integración |
@@ -121,6 +122,10 @@ rompe el shell); y no uses `` ` `` dentro de `node -e "…"`.
   haya llave de Google Maps **sin restricción de referer**); almuerzo 14–15 y ventanas de 2 h; cargo por
   cancelar; pedido grande avisa al equipo; cancelar/borrar lo escala el servidor. Migraciones hasta la
   **0026**. `pnpm escenarios --prod` pasa 12 de 12. Para cambiar de motor ver E10 abajo.
+- **Prospección (2026-10-20, desplegada, APAGADA):** 79 negocios en `prospectos` (migración **0029**), pantalla
+  `/prospectos`, tarjeta en Configuración con interruptor y tope diario, plantilla `prospecto_primer_contacto`
+  **PENDING en Meta**. `plantillas_pendientes` devuelve `envios: []` (verificado). Detalle y checklist para
+  encenderla en [`PROSPECCION.md`](PROSPECCION.md). Nadie ha recibido mensajes.
 - **Agente de clientes** (`n8n/prompt-agente-laundry.md`, 8 tools): cotiza del
   catálogo, **verifica la cobertura por dentro** (`verificar_cobertura`, solo dice
   sí/no), **precio y plazo juntos** apenas el cliente dice qué quiere lavar, la
@@ -260,8 +265,9 @@ de discrepancia real; primer pedido real creado por el agente con `sector` y veh
 | E8 | ~~Token de Meta inválido en n8n~~ **RESUELTO** (verificado 2026-10-11): el dueño corrigió la credencial «Meta WhatsApp Laundry VIP»; un aviso de prueba al +593963987124 salió por la plantilla `aviso_equipo` y Meta lo aceptó (wamid). Los avisos al equipo, a la dueña y el resumen de las 8:00 funcionan | — |
 | E9 | ~~Plantilla de Meta `aviso_equipo`~~ **APROBADA** (verificado 2026-10-10 por la API: estado APPROVED, idioma es). Falta E8 para que se pueda usar | — |
 | E10 | **Gemini como motor principal del agente de clientes (decisión del dueño, 2026-10-11: a nivel de n8n, de pago si hace falta, para el trato de Fagal).** Faltan dos cosas del dueño: (1) activar **facturación** en el proyecto de la llave de Gemini de Lavandería (hoy es capa gratis: 5 llamadas/minuto, `generate_content_free_tier_requests`); (2) en n8n → Credenciales → «Google Gemini(PaLM) Api» con esa llave, nombre «Gemini VIP Laundry» (no hay herramienta MCP para crear credenciales). Con eso, el cambio son 6 operaciones MCP: `setNodeCredential` en `Gemini Laundry`, `Gemini Operador` y `Gemini Lab`; `Gemini Laundry` como entrada 0 y `OpenAI Laundry` como entrada 1 del agente de clientes (`removeConnection`/`addConnection`, ver `n8n/generador/modelos.cjs` → `MOTOR_PRINCIPAL`); luego `verificar-prompts`, publicar y probar con `scripts/simular-cliente.ts`. La memoria del turno con respaldo ya está cubierta (nodo `Respaldar Memoria`) | Dueño (facturación + credencial) |
-| E11 | **Llave de Google Maps (Geocoding API)**: la del dueño responde `REQUEST_DENIED: API keys with referer restrictions cannot be used with this API`. En Google Cloud → Credenciales → esa llave: «Restricciones de la aplicación» = Ninguna (o direcciones IP) y «Restricciones de API» = Geocoding API. Ya está guardada como `GOOGLE_MAPS_API_KEY` en `.env.local` y en Vercel (producción y desarrollo); mientras no funcione el servidor usa OpenStreetMap sin errores. Se verifica con `curl` a `maps.googleapis.com/maps/api/geocode/json` | Dueño |
+| E11 | **Llave de Google Maps (Geocoding API)**: la del dueño responde `REQUEST_DENIED: API keys with referer restrictions cannot be used with this API`. En Google Cloud → Credenciales → esa llave: «Restricciones de la aplicación» = Ninguna (o direcciones IP) y «Restricciones de API» = Geocoding API. Ya está guardada como `GOOGLE_MAPS_API_KEY` en `.env.local` y en Vercel (producción y desarrollo); mientras no funcione el servidor usa OpenStreetMap sin errores. Se verifica con Python/urllib (el `curl` de este shell estropea las tildes) o con `pnpm db:prospectos-ubicar` (dice si Google sirve). Cuando funcione: `pnpm db:prospectos-ubicar --confirmar` para ubicar a los prospectos «sin ubicar» | Dueño |
 | E12 | **Plantillas de Meta en revisión** (enviadas 2026-10-11 con `pnpm tsx scripts/plantillas-meta.ts`): `reactivacion_30_dias`, `reactivacion_90_dias`, `ropa_no_retirada`, `encuesta_satisfaccion`, `resena_google`, `reporte_negocio`. Cuando estén APPROVED (`... --estado`), el dueño enciende el interruptor «Mensajes automáticos por plantilla» en Configuración (reactivación y ropa no retirada salen solos a las 10:00 de lunes a sábado). Encuesta, reseña y reportes semanal/mensual tienen plantilla pero **no tienen flujo todavía** (la encuesta necesita leer la respuesta 1–5 y la reseña depende de ella) | Meta (aprobación) y dueño (interruptor) |
+| E13 | **Prospección:** (1) Meta debe aprobar `prospecto_primer_contacto` (`pnpm tsx scripts/plantillas-meta.ts --estado`); (2) resolver E11 y re-ubicar; (3) el dueño enciende «Prospección automática» en Configuración con tope bajo (5/día) y vigila bloqueos. Los 16 fijos se llaman y los 6 sin teléfono se contactan por Instagram o correo (filtros de `/prospectos`). Faltan 3 cosas del agente que piden el MCP de n8n (ver `PROSPECCION.md`, «Pendiente») | Meta, dueño |
 | E2 | ~~Plazo de entrega~~ **Resuelto el 2026-10-09** por María Sol en el cuestionario: 24 h agua / 72 h seco / 1 semana alfombras, desde que llega a planta | Hecho: columna `servicios.plazo_horas` (migración 0020); `cotizar_prendas` lo devuelve y el prompt lo usa. `horas_entrega_min/max` de Configuración quedan sin uso |
 | E3 | **Cuestionario respondido por María Sol** y sus decisiones sobre el Anexo A | Nada; P3 espera |
 | E4 | **María Sol debe escribirle algo al agente cada día** (su número de admin) para que el aviso de «lead sin respuesta» y el resumen de las 8:00 le lleguen por WhatsApp | Solo quedan las notas internas en Chatwoot |
@@ -294,6 +300,7 @@ Supabase de pruebas (se sigue como está); la lista de barrios (cargada); el lí
 | Configuración (pantalla) | `src/app/(dashboard)/configuracion/` · `src/components/configuracion/` |
 | Descargas CSV | `src/server/exportar/` · rutas `/clientes/exportar`, `/pedidos/exportar`, `/servicios/exportar` |
 | Enlaces a Chatwoot | `src/lib/chatwoot.ts` |
+| Prospección | `src/server/prospectos/` (`elegir`, `etapa`, `mensaje`, `candidatos`, `repo`, `resumen`) · `src/app/(dashboard)/prospectos/` · `scripts/importar-prospectos.ts`, `reubicar-prospectos.ts` · interruptor en `handlers/plantillas.ts` |
 | Workflow n8n | `n8n/generador/*.cjs` (`generar`, `agente` [nombre del agente y hora de corte], `persona`, `protecciones`, `seguimiento*` [núcleo, conversión, dueña, común], `avisos`, `herramientas-cliente`, `operador`, `resumen`, `crm`, `guardia`) → `n8n/workflows/laundry-vip-agente.json` · prompts en `n8n/*.md` · referencias sin desplegar en `n8n/referencia/` |
 | Catálogo inicial (solo carga en vacío) | `scripts/catalogo-datos.ts` · `scripts/db-seed.ts` |
 | Pruebas | `tests/unit`, `tests/integration` (contra la base real), `tests/e2e` (Playwright) · utilidades en `tests/util/` (`corrida`, `catalogo`, `workflow`) |
