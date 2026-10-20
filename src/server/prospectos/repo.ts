@@ -74,3 +74,29 @@ export async function marcarContactadoPorPlantilla(id: string): Promise<void> {
     .eq('estado', 'nuevo')
   if (error) throw new Error(`No se pudo marcar el prospecto como contactado: ${error.message}`)
 }
+
+/** Lo que el agente necesita saber de quien le escribe, si ese número es un negocio de la lista. */
+export async function prospectoPorTelefono(
+  telefono: string,
+): Promise<{ nombre: string; segmento: string; ya_se_le_escribio: boolean } | null> {
+  const { data, error } = await supabaseAdmin()
+    .from('prospectos')
+    .select('nombre, segmento, primer_contacto_en')
+    .eq('telefono', telefono)
+    .maybeSingle()
+  if (error || !data) return null
+  return {
+    nombre: data.nombre as string,
+    segmento: data.segmento as string,
+    ya_se_le_escribio: data.primer_contacto_en !== null,
+  }
+}
+
+/** Pidió que no le escriban: el prospecto sale de toda lista de envío, también la de llamadas. */
+export async function marcarNoContactarPorTelefono(telefono: string): Promise<void> {
+  const { error } = await supabaseAdmin()
+    .from('prospectos')
+    .update({ estado: 'no_contactar' })
+    .eq('telefono', telefono)
+  if (error) throw new Error(`No se pudo marcar al prospecto como «no contactar»: ${error.message}`)
+}

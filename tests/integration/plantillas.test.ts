@@ -13,13 +13,16 @@ afterAll(async () => {
 })
 
 describe('plantillas automáticas', () => {
-  it('con el interruptor apagado (por defecto) nadie recibe nada', async () => {
+  // El interruptor lo maneja el dueño en Configuración: la prueba no depende de cómo lo deje. Que apagado
+  // no salga nada se prueba con la configuración simulada en tests/unit/prospectos-envio.test.ts.
+  it('responde con la forma que espera n8n y no inventa envíos para un teléfono de prueba', async () => {
     const r = (await plantillasPendientesAccion()) as {
       ok: true
-      data: { activo: boolean; envios: unknown[] }
+      data: { activo: boolean; envios: { telefono: string }[] }
     }
-    expect(r.data.activo).toBe(false)
-    expect(r.data.envios).toEqual([])
+    expect(typeof r.data.activo).toBe('boolean')
+    expect(Array.isArray(r.data.envios)).toBe(true)
+    expect(r.data.envios.find((e) => e.telefono === TELEFONO)).toBeUndefined()
   })
 
   it('lo ya enviado no se vuelve a elegir y marcar es idempotente', async () => {

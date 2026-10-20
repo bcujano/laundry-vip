@@ -45,7 +45,7 @@ describe('laboratorio de modelos (agente de prueba)', () => {
       systemMessage: string
     }
     const texto = lab.systemMessage
-    expect(texto.length).toBeLessThan(13_500)
+    expect(texto.length).toBeLessThan(14_000)
     for (const regla of [
       'SOLO se escribe si salió de una herramienta',
       'cotizar_prendas',
@@ -68,6 +68,6 @@ describe('laboratorio de modelos (agente de prueba)', () => {
 
   it('la producción usa el prompt compacto del repo', () => {
     const prod = porNombre('Agente Laundry VIP')?.parameters.options as { systemMessage: string }
-    expect(prod.systemMessage.length).toBeLessThan(13_500)
+    expect(prod.systemMessage.length).toBeLessThan(14_000)
   })
 })

@@ -246,6 +246,7 @@ export const parametrosPorAccion = {
       'leads_calientes',
       'clientes_top',
       'como_vamos',
+      'prospeccion',
     ]),
   }),
 

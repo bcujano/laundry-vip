@@ -3,6 +3,7 @@ import { horarioLegible } from '@/server/configuracion/horario'
 import { datosDelLocal } from '@/server/configuracion/local'
 import { obtener as obtenerConfig } from '@/server/configuracion/repo'
 import { cotizarPrendas, ErrorCotizacion } from '@/server/pricing/cotizar'
+import { prospectoPorTelefono } from '@/server/prospectos/repo'
 import type { Cliente, Conversacion } from '@/types/database'
 import { type ResultadoUso, registrarUso, usoDeHoy } from '../cost-tracking'
 import { exito, fallo, type ResultadoAccion } from '../respuesta'
@@ -111,6 +112,8 @@ export async function verificarWhitelistOperador(
     es_operador: boolean
     nombre: string | null
     nivel: string | null
+    /** Si quien escribe es un negocio de la lista de prospección: el agente lo atiende sabiéndolo. */
+    prospecto: { nombre: string; segmento: string; ya_se_le_escribio: boolean } | null
     negocio: {
       nombre: string
       saludo: string
@@ -119,7 +122,7 @@ export async function verificarWhitelistOperador(
     }
   }>
 > {
-  const [{ data, error }, negocio] = await Promise.all([
+  const [{ data, error }, negocio, prospecto] = await Promise.all([
     supabaseAdmin()
       .from('operador_whitelist')
       .select('nombre, nivel')
@@ -127,6 +130,7 @@ export async function verificarWhitelistOperador(
       .eq('activo', true)
       .maybeSingle(),
     obtenerConfig(),
+    prospectoPorTelefono(parametros.telefono),
   ])
 
   if (error) return fallo('ERROR_INTERNO', error.message, 500)
@@ -144,6 +148,7 @@ export async function verificarWhitelistOperador(
     es_operador: data !== null,
     nombre: data?.nombre ?? null,
     nivel: data?.nivel ?? null,
+    prospecto: data ? null : prospecto,
     negocio: {
       nombre: negocio.nombre_negocio,
       saludo: negocio.saludo_agente,

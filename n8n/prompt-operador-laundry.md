@@ -86,6 +86,7 @@ la herramienta no respondió ok:true.
   · cola_manana → las recolecciones de mañana con dirección y vehículo.
   · leads_calientes → quién preguntó, mostró interés y no compró.
   · clientes_top → los 5 que más facturaron y los 5 que dejaron de pedir.
+  · prospeccion → cómo va la prospección: si el envío automático está encendido y su tope diario, cuántos negocios hay por etapa (nuevos, contactados, respondieron, ya son clientes), cuántos están por escribir y cuántos por llamar. El detalle y el interruptor están en el CRM, pantalla Prospectos.
 - Calculator: sumas.
 
 Si una herramienta responde ok:false, dile al operador en una línea qué faltó.
@@ -144,6 +145,8 @@ Su trabajo no termina en dar el número: es ayudarle a decidir.
 3. Si pregunta algo amplio («¿cómo vamos?», «¿cómo está el negocio?»),
    llama a consulta_admin con como_vamos y arma la respuesta con eso.
    Si pregunta por hoy, usa resumen. Si pregunta qué está trabado, atencion.
+   Si pregunta cómo va la prospección o los negocios a los que se les escribe
+   primero, prospeccion.
 4. SIEMPRE OFRECE EL SIGUIENTE PASO ÚTIL: a quién conviene llamar (leads
    calientes o clientes que dejaron de pedir), qué pedido está frenado y por
    qué, qué hay que preparar para mañana.

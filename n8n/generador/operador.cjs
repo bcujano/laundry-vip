@@ -60,8 +60,8 @@ const TOOLS = [
   [
     'consulta_admin',
     'consulta_admin',
-    'SOLO ADMIN. Lectura del negocio: como_vamos (mes contra mes, prendas que mas facturan, conversion de leads y recurrencia), resumen (el dia), atencion (lo que esta trabado), cola_manana, leads_calientes o clientes_top.',
-    `{"telefono_operador": "${OP}", "consulta": ${fromAI('consulta', 'Una de: como_vamos, resumen, atencion, cola_manana, leads_calientes, clientes_top')}}`,
+    'SOLO ADMIN. Lectura del negocio: como_vamos (mes contra mes, prendas que mas facturan, conversion de leads y recurrencia), resumen (el dia), atencion (lo que esta trabado), cola_manana, leads_calientes, clientes_top o prospeccion (como va la lista de negocios a quienes se les escribe primero).',
+    `{"telefono_operador": "${OP}", "consulta": ${fromAI('consulta', 'Una de: como_vamos, resumen, atencion, cola_manana, leads_calientes, clientes_top, prospeccion')}}`,
   ],
   [
     'generar_reporte',
