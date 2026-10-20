@@ -89,3 +89,51 @@ export async function ubicar(
   }
   return null
 }
+
+/** Google Maps entiende la dirección completa de Maps tal cual; se usa si la llave sirve. */
+export async function ubicarConGoogle(
+  direccion: string,
+  llave: string,
+  buscar: typeof fetch = fetch,
+): Promise<Ubicado | null> {
+  const url = new URL('https://maps.googleapis.com/maps/api/geocode/json')
+  url.searchParams.set(
+    'address',
+    direccion.includes('Quito') ? direccion : `${direccion}, Quito, Ecuador`,
+  )
+  url.searchParams.set('components', 'country:EC')
+  url.searchParams.set('language', 'es')
+  url.searchParams.set('key', llave)
+  try {
+    const respuesta = await buscar(url, { signal: AbortSignal.timeout(6000) })
+    const cuerpo = (await respuesta.json()) as {
+      status?: string
+      results?: { geometry: { location: Punto; location_type: string } }[]
+    }
+    const mejor = cuerpo.results?.[0]
+    if (cuerpo.status !== 'OK' || !mejor) return null
+    const punto = mejor.geometry.location
+    if (
+      punto.lat < QUITO.sur ||
+      punto.lat > QUITO.norte ||
+      punto.lng < QUITO.oeste ||
+      punto.lng > QUITO.este
+    )
+      return null
+    return { punto, preciso: mejor.geometry.location_type !== 'APPROXIMATE' }
+  } catch {
+    return null
+  }
+}
+
+/** ¿La llave de Google sirve para geocodificar? Devuelve el motivo si no (p. ej. REQUEST_DENIED). */
+export async function probarLlaveGoogle(llave: string, buscar: typeof fetch = fetch) {
+  const url = new URL('https://maps.googleapis.com/maps/api/geocode/json')
+  url.searchParams.set('address', 'Quito, Ecuador')
+  url.searchParams.set('key', llave)
+  const cuerpo = (await (await buscar(url, { signal: AbortSignal.timeout(6000) })).json()) as {
+    status?: string
+    error_message?: string
+  }
+  return cuerpo.status === 'OK' ? null : `${cuerpo.status}: ${cuerpo.error_message ?? ''}`.trim()
+}

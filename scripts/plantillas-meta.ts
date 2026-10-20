@@ -62,6 +62,13 @@ const PLANTILLAS: Plantilla[] = [
     ejemplos: ['Ana', 'https://g.page/r/ejemplo/review'],
   },
   {
+    name: 'prospecto_primer_contacto',
+    category: 'MARKETING',
+    texto:
+      'Hola, somos VIP Laundry, lavandería en La Kennedy, Quito. Atendemos a negocios como {{1}} con el lavado de {{2}}. Si le interesa conocer nuestra lista de precios, responda a este mensaje. Si no desea recibir mensajes nuestros, responda NO.',
+    ejemplos: ['Eventos Quito', 'manteles, mandiles y ropa de trabajo'],
+  },
+  {
     name: 'reporte_negocio',
     category: 'UTILITY',
     texto:
