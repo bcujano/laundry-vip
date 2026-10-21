@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { anotarEnChatwoot } from '@/server/chatwoot/notas'
 
 /**
  * Bitácora de contactos con prospectos. Guarda lo que hace el equipo y el envío en frío; lo que pasa
@@ -76,7 +77,31 @@ export async function registrarContacto(
       autor: c.autor ?? 'Automático',
       automatico: c.automatico ?? c.autor === undefined,
     })
-  return error ? { ok: false, error: error.message } : { ok: true }
+  if (error) return { ok: false, error: error.message }
+  // Las pruebas corren contra la base real y no deben crear contactos en la bandeja del equipo.
+  if (!process.env.VITEST) await anotarEnBandeja(c)
+  return { ok: true }
+}
+
+/** La misma línea de la bitácora, como nota privada en la conversación de Chatwoot del prospecto. */
+async function anotarEnBandeja(c: NuevoContacto): Promise<void> {
+  const { data } = await supabaseAdmin()
+    .from('prospectos')
+    .select('nombre, telefono')
+    .eq('id', c.prospectoId)
+    .maybeSingle()
+  if (!data?.telefono) return
+  const partes = [
+    ETIQUETA_TIPO[c.tipo],
+    c.canal ? ETIQUETA_CANAL[c.canal] : '',
+    c.resultado ?? '',
+    c.detalle ?? '',
+  ].filter((x) => x !== '')
+  await anotarEnChatwoot(
+    data.telefono as string,
+    data.nombre as string,
+    `📋 Prospección · ${partes.join(' · ')} (${c.autor ?? 'Automático'})`,
+  )
 }
 
 type FilaAgente = { telefono: string; fecha: string; tipo: 'respuesta' | 'agente'; texto: string }

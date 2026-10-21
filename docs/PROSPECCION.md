@@ -84,6 +84,15 @@ que el prospecto responde no se duplica: al leer se junta con `conversaciones` (
 `seguimientos` (cada seguimiento automático). Se ve en `/prospectos` (último movimiento por negocio) y en
 `/prospectos/historial` (todo, con filtros por tipo y negocio). Código: `src/server/prospectos/bitacora.ts`.
 
+### Y en Chatwoot
+
+Cada línea de la bitácora se copia como **nota privada** en la conversación de Chatwoot del prospecto (cuenta 3,
+bandeja de WhatsApp); si no hay contacto o conversación, se crean (sin enviar nada). Así quien atiende la
+bandeja ve la historia de la prospección junto a los mensajes. Es de mejor esfuerzo: si Chatwoot falla, la
+bitácora del CRM igual queda. Código: `src/server/chatwoot/notas.ts`; usa `CHATWOOT_BASE_URL`,
+`CHATWOOT_ACCOUNT_ID` y `CHATWOOT_API_TOKEN` en Vercel (el token es de Byron ADMIN; se niega a operar fuera de la
+cuenta 3). Las notas privadas no pausan al agente. Las pruebas no escriben en Chatwoot (`VITEST`).
+
 ## Cómo se vigila ahora que está encendida
 
 1. Al día siguiente de los primeros envíos: `/prospectos` (filtros «Contactados» y «Respondieron») y
