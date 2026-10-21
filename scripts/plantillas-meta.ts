@@ -9,6 +9,7 @@
  * deja editar una aprobada sin volver a revisarla). Una lavandería nueva cambia los textos aquí.
  * scripts/ no usa el alias @/.
  */
+import { readFileSync } from 'node:fs'
 import { cargarEntorno } from './db-conexion.ts'
 
 cargarEntorno()
@@ -22,6 +23,8 @@ type Plantilla = {
   texto: string
   /** Un ejemplo por cada {{n}} del texto (Meta los pide para revisarla). */
   ejemplos: string[]
+  /** Ruta de un PDF que viaja en el encabezado del mensaje (el de ejemplo que Meta revisa). */
+  documentoPdf?: string
 }
 
 /** Textos sin «ahorita», «un ratito» ni «la ropita» (tono de Sol); de usted siempre. */
@@ -76,6 +79,14 @@ const PLANTILLAS: Plantilla[] = [
     ejemplos: [],
   },
   {
+    name: 'prospecto_catalogo',
+    category: 'MARKETING',
+    texto:
+      '📌 VIP LAUNDRY: Cuidado Textil y Lavandería Premium\n\nNuestro servicio está diseñado para liberarle de la carga del lavado y planchado, optimizando su tiempo libre. Cuidamos sus prendas más delicadas (ternos, vestidos de fiesta), la ropa de cama pesada (edredones, alfombras) y la ropa de uso diario, garantizando un acabado impecable.\n\n🚚 Modalidad: recogida y entrega a domicilio ($2,50)\n⏱️ Tiempos: entrega en 24 a 72 horas según el servicio\n📄 Precios: le enviamos la lista de precios apenas nos escriba\n🎖️ Garantía: cuidado corporativo y VIP para cada prenda\n\nPara programar un retiro a domicilio o hacer consultas, escríbanos por este chat de WhatsApp: +593 98 566 2822.\n\nQuedamos a sus órdenes para coordinar sus pedidos. Saludos cordiales. Si no desea recibir mensajes nuestros, responda NO.',
+    ejemplos: [],
+    documentoPdf: 'public/catalogo.pdf',
+  },
+  {
     name: 'reporte_negocio',
     category: 'UTILITY',
     texto:
@@ -99,7 +110,40 @@ async function listar(): Promise<Existente[]> {
   return cuerpo.data ?? []
 }
 
+/** Sube el PDF a Meta (subida reanudable) y devuelve el identificador que pide el encabezado. */
+async function subirPdf(ruta: string): Promise<string> {
+  const datos = readFileSync(ruta)
+  const quien = await fetch(`https://graph.facebook.com/v21.0/debug_token?input_token=${TOKEN}`, {
+    headers: { authorization: `Bearer ${TOKEN}` },
+  })
+  const appId = ((await quien.json()) as { data?: { app_id?: string } }).data?.app_id
+  if (!appId) throw new Error('No se pudo saber el id de la app de Meta.')
+  const sesion = await fetch(
+    `https://graph.facebook.com/v21.0/${appId}/uploads?file_length=${datos.length}&file_type=application/pdf&file_name=catalogo.pdf`,
+    { method: 'POST', headers: { authorization: `Bearer ${TOKEN}` } },
+  )
+  const { id } = (await sesion.json()) as { id?: string }
+  if (!id) throw new Error('Meta no abrió la subida del PDF.')
+  const subida = await fetch(`https://graph.facebook.com/v21.0/${id}`, {
+    method: 'POST',
+    headers: { authorization: `OAuth ${TOKEN}`, file_offset: '0' },
+    body: datos,
+  })
+  const { h } = (await subida.json()) as { h?: string }
+  if (!h) throw new Error('Meta no devolvió el identificador del PDF.')
+  return h
+}
+
 async function crear(p: Plantilla) {
+  const encabezado = p.documentoPdf
+    ? [
+        {
+          type: 'HEADER',
+          format: 'DOCUMENT',
+          example: { header_handle: [await subirPdf(p.documentoPdf)] },
+        },
+      ]
+    : []
   const r = await fetch(API, {
     method: 'POST',
     headers: { authorization: `Bearer ${TOKEN}`, 'content-type': 'application/json' },
@@ -109,6 +153,7 @@ async function crear(p: Plantilla) {
       category: p.category,
       allow_category_change: true,
       components: [
+        ...encabezado,
         {
           type: 'BODY',
           text: p.texto,

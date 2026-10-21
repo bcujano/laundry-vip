@@ -2,6 +2,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 import type { EstadoProspecto, Prospecto } from '@/types/database'
 import { registrarContacto } from './bitacora'
 import { derivarEtapa, type Etapa } from './etapa'
+import { PLANTILLA_PRIMER_CONTACTO } from './mensaje'
 
 export type FilaProspecto = Prospecto & { etapa: Etapa }
 
@@ -107,7 +108,7 @@ export async function marcarContactadoPorPlantilla(id: string): Promise<void> {
       tipo: 'primer_contacto',
       canal: 'plantilla_whatsapp',
       resultado: 'Enviado',
-      detalle: 'Plantilla prospecto_primer_contacto',
+      detalle: `Plantilla ${PLANTILLA_PRIMER_CONTACTO}`,
     })
 }
 

@@ -13,6 +13,8 @@ export type EnvioPlantilla = {
   telefono: string
   parametros: string[]
   clave: string
+  /** URL de un PDF para el encabezado de la plantilla (la prospección lo usa). */
+  documento?: string
 }
 
 const DIA_MS = 86_400_000

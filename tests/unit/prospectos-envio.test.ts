@@ -5,11 +5,7 @@ import {
   type ProspectoElegible,
 } from '@/server/prospectos/elegir'
 import { derivarEtapa } from '@/server/prospectos/etapa'
-import {
-  fraseDeSegmento,
-  nombreParaMensaje,
-  parametrosPrimerContacto,
-} from '@/server/prospectos/mensaje'
+import { DOCUMENTO_PRIMER_CONTACTO, parametrosPrimerContacto } from '@/server/prospectos/mensaje'
 
 /**
  * Las reglas de a quién se le escribe en frío. Son lo más delicado de la prospección: un error aquí
@@ -173,33 +169,9 @@ describe('en qué etapa va un prospecto', () => {
 })
 
 describe('el primer mensaje', () => {
-  it('cada tipo de negocio recibe lo que de verdad se le puede lavar', () => {
-    expect(fraseDeSegmento('catering')).toContain('manteles')
-    expect(fraseDeSegmento('hogares de ancianos')).toContain('ropa de cama')
-    expect(fraseDeSegmento('tiendas de alquiler de ropa')).toContain('trajes')
-  })
-
-  it('un segmento que no conoce no inventa nada: frase general', () => {
-    expect(fraseDeSegmento('submarinos')).toBe('ropa, manteles y cobijas')
-  })
-
-  it('las dos variables de la plantilla: el nombre y qué se les ofrece', () => {
-    expect(parametrosPrimerContacto({ nombre: 'Zeraty Eventos', segmento: 'catering' })).toEqual([
-      'Zeraty Eventos',
-      'manteles, mandiles y ropa de trabajo',
-    ])
-  })
-
-  it('Meta rechaza saltos de línea y espacios repetidos en una variable: se limpian', () => {
-    expect(nombreParaMensaje('  Hogar\n  de   Ancianos\t Sol  ')).toBe('Hogar de Ancianos Sol')
-  })
-
-  it('un nombre larguísimo se corta en una palabra completa', () => {
-    const largo = 'Centro de Convenciones y Eventos Metropolitano de la Ciudad de Quito Norte S.A.'
-    const corto = nombreParaMensaje(largo)
-    expect(corto.length).toBeLessThanOrEqual(60)
-    expect(largo.startsWith(corto)).toBe(true)
-    expect(largo[corto.length]).toBe(' ')
+  it('la plantilla no tiene variables y lleva el catálogo en PDF como documento', () => {
+    expect(parametrosPrimerContacto()).toEqual([])
+    expect(DOCUMENTO_PRIMER_CONTACTO).toBe('https://laundry-vip.vercel.app/catalogo.pdf')
   })
 })
 

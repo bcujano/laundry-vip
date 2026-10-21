@@ -79,11 +79,9 @@ describe('a quién se le escribe, con datos reales', () => {
       plantilla: PLANTILLA_PRIMER_CONTACTO,
       clave: ids.get('bueno'),
     })
-    // Las dos variables de la plantilla: el nombre del negocio y qué se le ofrece.
-    expect(envios[0]?.parametros).toEqual([
-      `Negocio bueno ${ID}`,
-      'manteles, mandiles y ropa de trabajo',
-    ])
+    // Sin variables, con el catálogo en PDF como documento del encabezado.
+    expect(envios[0]?.parametros).toEqual([])
+    expect(envios[0]?.documento).toBe('https://laundry-vip.vercel.app/catalogo.pdf')
   })
 
   it('cuando Meta lo acepta, queda contactado y no se le vuelve a escribir', async () => {

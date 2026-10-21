@@ -68,7 +68,7 @@ const nodos = [
       sendBody: true,
       specifyBody: 'json',
       jsonBody:
-        '={{ JSON.stringify({ messaging_product: "whatsapp", to: $json.telefono.replace(/[^0-9]/g, ""), type: "template", template: { name: $json.plantilla, language: { code: "es" }, components: [{ type: "body", parameters: $json.parametros.map((t) => ({ type: "text", text: String(t) })) }] } }) }}',
+        '={{ JSON.stringify({ messaging_product: "whatsapp", to: $json.telefono.replace(/[^0-9]/g, ""), type: "template", template: { name: $json.plantilla, language: { code: "es" }, components: [...($json.documento ? [{ type: "header", parameters: [{ type: "document", document: { link: $json.documento, filename: "Catalogo VIP Laundry.pdf" } }] }] : []), ...($json.parametros.length ? [{ type: "body", parameters: $json.parametros.map((t) => ({ type: "text", text: String(t) })) }] : [])] } }) }}',
       options: { timeout: 15000, response: { response: { neverError: true } } },
     },
     name: 'Enviar Plantilla',

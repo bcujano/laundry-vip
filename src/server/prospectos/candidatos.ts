@@ -6,7 +6,11 @@ import {
 } from '@/server/plantillas/candidatos'
 import { limitesDelDia } from '@/server/scheduling/ventana'
 import { elegirProspectos, type ProspectoElegible } from './elegir'
-import { PLANTILLA_PRIMER_CONTACTO, parametrosPrimerContacto } from './mensaje'
+import {
+  DOCUMENTO_PRIMER_CONTACTO,
+  PLANTILLA_PRIMER_CONTACTO,
+  parametrosPrimerContacto,
+} from './mensaje'
 
 /**
  * Los prospectos a los que n8n debe escribirles hoy con la plantilla de primer contacto. Va por el
@@ -63,7 +67,8 @@ export async function prospectosPendientes(
   }).map((p) => ({
     plantilla: PLANTILLA_PRIMER_CONTACTO,
     telefono: p.telefono as string,
-    parametros: parametrosPrimerContacto(p),
+    parametros: parametrosPrimerContacto(),
+    documento: DOCUMENTO_PRIMER_CONTACTO,
     // La clave es el id del prospecto: un negocio recibe el primer contacto una sola vez en la vida.
     clave: p.id,
   }))
