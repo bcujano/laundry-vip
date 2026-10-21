@@ -217,10 +217,10 @@ describe('agente Laundry VIP: protecciones, seguimiento y reglas del dueño', ()
     )
   })
 
-  it('el catálogo en imagen sale como adjunto de Chatwoot, solo en el primer contacto', () => {
+  it('el catálogo en PDF sale como adjunto de Chatwoot, solo en el primer contacto', () => {
     const descarga = JSON.stringify(porNombre('Descargar Catalogo')?.parameters)
-    // la imagen es la del dueño, servida por el CRM: nada la genera ni es un enlace pegado al chat
-    expect(descarga).toContain('https://laundry-vip.vercel.app/catalogo.png')
+    // el PDF es el del dueño, servida por el CRM: nada la genera ni es un enlace pegado al chat
+    expect(descarga).toContain('https://laundry-vip.vercel.app/catalogo.pdf')
     expect(JSON.stringify(workflow.connections)).not.toContain('/api/catalogo')
     const envio = JSON.stringify(porNombre('Enviar Catalogo')?.parameters)
     expect(envio).toContain('attachments[]')
@@ -228,7 +228,7 @@ describe('agente Laundry VIP: protecciones, seguimiento y reglas del dueño', ()
     expect(JSON.stringify(porNombre('Primer Contacto?')?.parameters)).toContain(
       'previos.length === 0',
     )
-    expect(systemMessage).toContain('La lista de precios en imagen le llega sola')
+    expect(systemMessage).toContain('La lista de precios en PDF le llega sola')
     // cadena conectada tras la respuesta al cliente
     const c = workflow.connections as unknown as Record<string, { main: { node: string }[][] }>
     expect(c['Enviar Respuesta Chatwoot']?.main[0]?.map((x) => x.node)).toContain(
@@ -239,9 +239,9 @@ describe('agente Laundry VIP: protecciones, seguimiento y reglas del dueño', ()
     expect(c['Nombrar Catalogo']?.main[0]?.[0]?.node).toBe('Enviar Catalogo')
   })
 
-  it('la imagen del catálogo existe en el CRM y es un PNG', () => {
-    const png = readFileSync('public/catalogo.png')
-    expect(png.subarray(1, 4).toString()).toBe('PNG')
-    expect(png.length).toBeLessThan(5 * 1024 * 1024) // límite de WhatsApp para imágenes
+  it('el PDF del catálogo existe en el CRM y cabe en una plantilla de WhatsApp', () => {
+    const pdf = readFileSync('public/catalogo.pdf')
+    expect(pdf.subarray(0, 4).toString()).toBe('%PDF')
+    expect(pdf.length).toBeLessThan(5 * 1024 * 1024) // límite práctico para que abra rápido en el celular
   })
 })

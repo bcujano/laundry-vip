@@ -66,7 +66,7 @@ workflow.
 | Gate | typecheck, lint (sin advertencias), build y **363 pruebas** en verde · 10 E2E de Playwright (`pnpm test:e2e`, necesita `pnpm build` y el puerto 3000 libre) |
 | Credenciales en n8n | `CRM Laundry VIP Webhook` (id `9456EHfb8yxpZOmr`), `Chatwoot Laundry VIP API` (token de «Agente VIP»), `Meta WhatsApp Laundry VIP`, `Postgres Laundry VIP`, `OpenAi account` (compartida con 321). Nunca en el JSON |
 | Variables (`.env.local`) | Solo nombres: `SUPABASE_*`, `N8N_WEBHOOK_SECRET`, `CHATWOOT_*` (el token de ahí es el de Byron: no lo uses para publicar como agente), `WHATSAPP_*`, `OPENAI_API_KEY` (vacía a propósito: vive solo en n8n), `LOCAL_LATITUD/LONGITUD/DIRECCION` |
-| Imagen del catálogo | `public/catalogo.png` → **https://laundry-vip.vercel.app/catalogo.png** (pública: está excluida del proxy de sesión). Es `vip5.png` de la carpeta de Drive del dueño (2026-09-24). **Es una foto fija: no sigue a Configuración.** Para cambiarla: reemplazar el archivo y `npx vercel --prod --yes` (n8n la descarga cada vez) |
+| Catálogo en PDF | `public/catalogo.pdf` → **https://laundry-vip.vercel.app/catalogo.pdf** (pública: está excluida del proxy de sesión). Es `vip5.png` de la carpeta de Drive del dueño (2026-09-24). **Es una foto fija: no sigue a Configuración.** Para cambiarla: reemplazar el archivo y `npx vercel --prod --yes` (n8n la descarga cada vez) |
 | Conectores de esta sesión | Google Drive (`mcp__12076c00…`): `download_file_content` devuelve base64 en un archivo JSON; se decodifica con `node` |
 
 **Personas:** Byron David (dueño, superadmin, `brncjn@gmail.com`) · **María Sol
@@ -180,7 +180,7 @@ commit y push → si tocó el agente, publicación en n8n + `verificar-prompts.c
 
 **P1 · Catálogo en imagen al primer contacto — HECHO el 2026-10-05, falta verlo con un cliente real.**
 La imagen es la del dueño (`vip5.png`, «Servicios y precios VIP», 1080×1920), servida por el CRM
-(`public/catalogo.png`) y enviada por n8n como **adjunto de Chatwoot** (foto nativa, sin enlace):
+(`public/catalogo.pdf`, desde 2026-10-21; antes era una imagen) y enviada por n8n como **adjunto de Chatwoot** (foto nativa, sin enlace):
 `Enviar Respuesta Chatwoot` → `Primer Contacto?` → `Descargar Catalogo` → `Nombrar Catalogo` →
 `Enviar Catalogo` (`n8n/generador/catalogo.cjs`). Primer contacto = nadie ha escrito aún en la
 conversación y no es del equipo ni escalado. El prompt (Sección 1, punto 9) le dice al agente que la

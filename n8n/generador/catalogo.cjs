@@ -1,16 +1,16 @@
-// Catálogo en imagen en el primer contacto. La imagen es la que puso el dueño (public/catalogo.png,
+// Catálogo en PDF en el primer contacto. El PDF es el que puso el dueño (public/catalogo.pdf,
 // servida por el CRM en URL_CATALOGO); no la genera nadie. n8n la descarga y la sube a Chatwoot
-// como ADJUNTO: así llega a WhatsApp como foto nativa (no como enlace) y queda en el chat.
-// Para cambiarla basta reemplazar public/catalogo.png y desplegar el CRM.
+// como ADJUNTO: así llega a WhatsApp como documento nativo (no como enlace) y queda en el chat.
+// Para cambiarlo basta reemplazar public/catalogo.pdf y desplegar el CRM.
 const crypto = require('node:crypto')
-const URL_CATALOGO = 'https://laundry-vip.vercel.app/catalogo.png'
+const URL_CATALOGO = 'https://laundry-vip.vercel.app/catalogo.pdf'
 const CW = 'https://chatwoot-production-8564.up.railway.app/api/v1/accounts/3/conversations'
 const CRED_CW = { httpHeaderAuth: { id: '3W2BykSid0f9dMTV', name: 'Chatwoot Laundry VIP API' } }
 
 const nombrarImagen = `// Chatwoot y WhatsApp deciden cómo mostrarlo por el nombre y el tipo del archivo.
 const it = $input.first();
-it.binary.data.fileName = 'catalogo.png';
-it.binary.data.mimeType = 'image/png';
+it.binary.data.fileName = 'Catalogo VIP Laundry.pdf';
+it.binary.data.mimeType = 'application/pdf';
 return [{ json: it.json, binary: it.binary }];`
 
 // Primer contacto = en esta conversación nadie (ni el agente ni una persona) ha
@@ -44,7 +44,7 @@ const nodos = [
     typeVersion: 2.2,
     position: [3200, 400],
     id: crypto.randomUUID(),
-    notes: 'Solo la primera vez que alguien escribe: se le manda el catálogo en imagen.',
+    notes: 'Solo la primera vez que alguien escribe: se le manda el catálogo en PDF.',
   },
   {
     parameters: {

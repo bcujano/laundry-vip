@@ -96,9 +96,9 @@ describe('sesión rota', () => {
     expect(respuesta.headers.get('location')).toContain('/login')
   })
 
-  it('la imagen del catálogo es pública: n8n la descarga sin sesión', () => {
+  it('el PDF del catálogo es público: n8n la descarga sin sesión', () => {
     const patron = new RegExp(`^${config.matcher[0]}$`)
-    expect(patron.test('/catalogo.png')).toBe(false)
+    expect(patron.test('/catalogo.pdf')).toBe(false)
     expect(patron.test('/clientes')).toBe(true)
   })
 })
