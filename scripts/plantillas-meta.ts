@@ -69,6 +69,13 @@ const PLANTILLAS: Plantilla[] = [
     ejemplos: ['Eventos Quito', 'manteles, mandiles y ropa de trabajo'],
   },
   {
+    name: 'prospecto_presentacion',
+    category: 'MARKETING',
+    texto:
+      '📌 VIP LAUNDRY: Cuidado Textil y Lavandería Premium\n\nNuestro servicio está diseñado para liberarle de la carga del lavado y planchado, optimizando su tiempo libre. Cuidamos sus prendas más delicadas (ternos, vestidos de fiesta), la ropa de cama pesada (edredones, alfombras) y la ropa de uso diario, garantizando un acabado impecable.\n\n🚚 Modalidad: recogida y entrega a domicilio ($2,50)\n⏱️ Tiempos: entrega en 24 a 72 horas según el servicio\n📄 Precios: le enviamos la lista de precios apenas nos escriba\n🎖️ Garantía: cuidado corporativo y VIP para cada prenda\n\nPara programar un retiro a domicilio o hacer consultas, escríbanos por este chat de WhatsApp: +593 98 566 2822.\n\nQuedamos a sus órdenes para coordinar sus pedidos. Saludos cordiales. Si no desea recibir mensajes nuestros, responda NO.',
+    ejemplos: [],
+  },
+  {
     name: 'reporte_negocio',
     category: 'UTILITY',
     texto:
