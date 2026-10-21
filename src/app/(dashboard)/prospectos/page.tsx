@@ -1,5 +1,7 @@
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { AccionesProspecto, NotasProspecto } from '@/components/prospectos/acciones'
+import { RegistroContacto } from '@/components/prospectos/registro-contacto'
 import {
   Boton,
   CabeceraTarjeta,
@@ -13,7 +15,8 @@ import {
   Vacio,
 } from '@/components/ui/primitivos'
 import { exigirPermiso } from '@/lib/auth'
-import { telefonoLegible } from '@/lib/format'
+import { fechaHora, telefonoLegible } from '@/lib/format'
+import { ETIQUETA_TIPO, historial } from '@/server/prospectos/bitacora'
 import { ETIQUETA_ETAPA, type Etapa } from '@/server/prospectos/etapa'
 import { type FilaProspecto, listarProspectos } from '@/server/prospectos/repo'
 import { resumirProspectos } from '@/server/prospectos/resumen'
@@ -77,7 +80,11 @@ export default async function Prospectos({ searchParams }: { searchParams: Promi
   const telefono = leer(params, 'telefono')
   const cobertura = leer(params, 'cobertura')
 
-  const todos = await listarProspectos()
+  const [todos, contactos] = await Promise.all([listarProspectos(), historial()])
+  // Ya vienen de lo más nuevo a lo más viejo: el primero de cada prospecto es su último movimiento.
+  const porProspecto = new Map<string, typeof contactos>()
+  for (const c of contactos)
+    porProspecto.set(c.prospecto_id, [...(porProspecto.get(c.prospecto_id) ?? []), c])
   const resumen = resumirProspectos(todos)
   const segmentos = [...new Set(todos.map((p) => p.segmento))].sort()
 
@@ -93,6 +100,9 @@ export default async function Prospectos({ searchParams }: { searchParams: Promi
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-baseline gap-3">
         <h1 className="font-semibold text-2xl">Prospectos</h1>
+        <Link className="text-sm underline" href="/prospectos/historial">
+          Ver historial de contactos
+        </Link>
         <span className="text-[var(--texto-suave)] text-sm">
           {resumen.total} negocios de la lista de prospección · aún no son clientes
         </span>
@@ -166,6 +176,7 @@ export default async function Prospectos({ searchParams }: { searchParams: Promi
                 <Th>Teléfono</Th>
                 <Th>Zona</Th>
                 <Th>Etapa</Th>
+                <Th>Contactos</Th>
                 <Th>Notas</Th>
                 <Th> </Th>
               </tr>
@@ -214,6 +225,30 @@ export default async function Prospectos({ searchParams }: { searchParams: Promi
                   </Td>
                   <Td>
                     <Etiqueta tono={TONO_ETAPA[p.etapa]}>{ETIQUETA_ETAPA[p.etapa]}</Etiqueta>
+                  </Td>
+                  <Td>
+                    {(() => {
+                      const suyos = porProspecto.get(p.id) ?? []
+                      const ultimo = suyos[0]
+                      return (
+                        <>
+                          {ultimo ? (
+                            <span className="block text-xs">
+                              {suyos.length} · último: {ETIQUETA_TIPO[ultimo.tipo]},{' '}
+                              {fechaHora(ultimo.ocurrio_en)}
+                              {ultimo.resultado ? ` (${ultimo.resultado})` : ''}
+                            </span>
+                          ) : (
+                            <span className="block text-[var(--texto-suave)] text-xs">
+                              Sin contactos
+                            </span>
+                          )}
+                          {p.etapa === 'cliente' ? null : (
+                            <RegistroContacto id={p.id} primero={suyos.length === 0} />
+                          )}
+                        </>
+                      )
+                    })()}
                   </Td>
                   <Td>
                     <NotasProspecto id={p.id} notas={p.notas} />

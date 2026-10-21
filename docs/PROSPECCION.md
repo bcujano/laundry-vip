@@ -74,6 +74,16 @@ pnpm db:prospectos-ubicar --confirmar  # escribe cobertura y distancia
 Ubicación hecha con Google el 2026-10-20: 61 dentro, 11 en el borde y 7 fuera (de 79). Si cambia la planta o el
 radio, `pnpm db:prospectos-ubicar --todos --confirmar` la repite.
 
+## Bitácora de contactos (migración 0030)
+
+Cada contacto con un prospecto queda anotado en `prospecto_contactos` (una fila por hecho, nunca se edita):
+el mensaje en frío por plantilla (automático, lo escribe `marcar_plantilla`), las llamadas y mensajes que el
+equipo registra a mano con el formulario «Registrar contacto» de cada fila, las notas, los cambios de estado y
+las bajas («no contactar», también cuando el prospecto se lo pide al agente). Lo que el agente hace después de
+que el prospecto responde no se duplica: al leer se junta con `conversaciones` (cuándo escribió) y
+`seguimientos` (cada seguimiento automático). Se ve en `/prospectos` (último movimiento por negocio) y en
+`/prospectos/historial` (todo, con filtros por tipo y negocio). Código: `src/server/prospectos/bitacora.ts`.
+
 ## Cómo se vigila ahora que está encendida
 
 1. Al día siguiente de los primeros envíos: `/prospectos` (filtros «Contactados» y «Respondieron») y
