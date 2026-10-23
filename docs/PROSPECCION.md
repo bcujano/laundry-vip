@@ -115,6 +115,20 @@ cuenta 3). Las notas privadas no pausan al agente. Las pruebas no escriben en Ch
 - La dueña puede preguntar «¿cómo va la prospección?»: `consulta_admin` con `prospeccion` (cifras sin
   teléfonos).
 
+## Bots y contestadores automáticos (2026-10-23)
+
+Muchos negocios responden con un menú o un «gracias por comunicarte…» automático. No nos interesan: el agente no los
+contesta ni les hace seguimientos. Si después escribe una persona, ese mensaje se atiende normal.
+
+- Detector: `src/server/webhook/automatico.ts` (heurístico; una señal fuerte —menú numerado, «mensaje automático»,
+  «digite la opción», fuera de horario— o dos de cortesía juntas). Las frases reales que lo motivaron son sus pruebas
+  (`tests/unit/respuesta-automatica.test.ts`). Nunca se aplica a números del equipo.
+- Flujo: n8n manda el texto en `verificar_whitelist_operador`; si el CRM responde `automatico: true`, el nodo
+  «¿Es Respuesta Automática?» termina el flujo. La conversación queda con `respuesta_automatica = true` (migración
+  0031) y `buscarCandidatos` la excluye de los seguimientos. Si es un prospecto, queda en su bitácora «Respuesta
+  automática (bot): se ignora» y NO cuenta como que respondió.
+- Si un bot salta un falso positivo (una persona con tono de contestador), basta con que escriba otra vez.
+
 ## Pendiente
 
 - Tras un «NO» el flujo igual manda la imagen del catálogo (se envía en el primer contacto de toda

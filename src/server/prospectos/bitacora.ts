@@ -104,6 +104,32 @@ async function anotarEnBandeja(c: NuevoContacto): Promise<void> {
   )
 }
 
+/**
+ * Un bot o contestador automático respondió: se marca la conversación (si ya existe) para que no reciba
+ * seguimientos, y si el número es de un prospecto se anota en su bitácora que se ignoró.
+ */
+export async function marcarRespuestaAutomatica(
+  telefono: string,
+  automatica: boolean,
+  texto: string,
+): Promise<void> {
+  const db = supabaseAdmin()
+  await db
+    .from('conversaciones')
+    .update({ respuesta_automatica: automatica })
+    .eq('telefono', telefono)
+  if (!automatica) return
+  const { data } = await db.from('prospectos').select('id').eq('telefono', telefono).maybeSingle()
+  if (!data) return
+  await registrarContacto({
+    prospectoId: data.id as string,
+    tipo: 'respuesta',
+    canal: 'whatsapp',
+    resultado: 'Respuesta automática (bot): se ignora',
+    detalle: texto.replace(/s+/g, ' ').slice(0, 200),
+  })
+}
+
 type FilaAgente = { telefono: string; fecha: string; tipo: 'respuesta' | 'agente'; texto: string }
 
 /**

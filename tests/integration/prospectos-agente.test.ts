@@ -103,3 +103,44 @@ describe('la dueña pregunta cómo va la prospección', () => {
     expect(JSON.stringify(datos)).not.toContain(PREFIJO)
   })
 })
+
+describe('un bot o contestador automático no se atiende ni se persigue', () => {
+  const MENU = 'Bienvenido a Prueba\n\nElija Su requerimiento:\n\n1.- Alquiler\n2.- Decoración'
+
+  it('lo marca como automático, lo anota en la bitácora del prospecto y no crea conversación', async () => {
+    const r = await verificarWhitelistOperador({ telefono: tel(2), texto: MENU })
+    if (!r.ok) throw new Error('debía responder')
+    expect(r.data.automatico).toBe(true)
+    const { data: conv } = await db.from('conversaciones').select('id').eq('telefono', tel(2))
+    expect(conv).toEqual([])
+    const { data: filas } = await db
+      .from('prospecto_contactos')
+      .select('tipo, resultado')
+      .eq('resultado', 'Respuesta automática (bot): se ignora')
+    expect((filas ?? []).length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('una persona que escribe después sí se atiende, y el marcador se limpia', async () => {
+    await db
+      .from('conversaciones')
+      .insert({ telefono: tel(2), contexto: {}, respuesta_automatica: true })
+    const r = await verificarWhitelistOperador({
+      telefono: tel(2),
+      texto: 'Hola, necesito lavar 30 manteles para el sábado',
+    })
+    if (!r.ok) throw new Error('debía responder')
+    expect(r.data.automatico).toBe(false)
+    const { data } = await db
+      .from('conversaciones')
+      .select('respuesta_automatica')
+      .eq('telefono', tel(2))
+      .single()
+    expect(data?.respuesta_automatica).toBe(false)
+  })
+
+  it('al equipo nunca se le aplica el detector', async () => {
+    const r = await verificarWhitelistOperador({ telefono: tel(9), texto: MENU })
+    if (!r.ok) throw new Error('debía responder')
+    expect(r.data.automatico).toBe(false)
+  })
+})

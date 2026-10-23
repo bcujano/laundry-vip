@@ -81,7 +81,7 @@ function aplicar({ nodes, connections, nodo, REPO }) {
       genericAuthType: 'httpHeaderAuth',
       sendBody: true,
       specifyBody: 'json',
-      jsonBody: `={"accion":"verificar_whitelist_operador","parametros":{"telefono":"${OP}"}}`,
+      jsonBody: `={"accion":"verificar_whitelist_operador","parametros":{"telefono":"${OP}","texto":{{ JSON.stringify((() => { try { return $('Combinar Textos').first().json.combined_text || '' } catch (e) { return '' } })()) }}}}`,
       options: { timeout: 10000 },
     },
     name: 'Verificar Operador',

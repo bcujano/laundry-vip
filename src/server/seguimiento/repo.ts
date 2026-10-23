@@ -29,6 +29,7 @@ export async function buscarCandidatos(
   const { data: filas, error } = await db
     .from('conversaciones')
     .select('telefono, chatwoot_conversation_id, ultima_interaccion, contexto, no_seguir')
+    .eq('respuesta_automatica', false)
     .gte('ultima_interaccion', haceMinutos(ahora, SILENCIO_MAX_MINUTOS))
     .lte('ultima_interaccion', haceMinutos(ahora, SILENCIO_MIN_MINUTOS))
     .order('ultima_interaccion', { ascending: true })

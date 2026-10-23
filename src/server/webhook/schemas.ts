@@ -88,7 +88,7 @@ export const parametrosPorAccion = {
     chatwoot_conversation_id: z.number().int().optional(),
   }),
 
-  verificar_whitelist_operador: z.object({ telefono }),
+  verificar_whitelist_operador: z.object({ telefono, texto: z.string().max(4000).optional() }),
 
   find_or_create_client: z.object({
     telefono,

@@ -37,7 +37,9 @@ describe('modo operador (lista blanca de planta)', () => {
 
   it('verifica la lista blanca y bifurca entre operador y cliente', () => {
     expect(destinos('Typing Indicator')).toEqual([['Verificar Operador']])
-    expect(destinos('Verificar Operador')).toEqual([['¿Es Operador?']])
+    // un bot o contestador automático de otro negocio se descarta antes de llegar a los agentes
+    expect(destinos('Verificar Operador')).toEqual([['¿Es Respuesta Automática?']])
+    expect(destinos('¿Es Respuesta Automática?')).toEqual([[], ['¿Es Operador?']])
     // clientes: pasan por el laboratorio, que solo desvía a la bandeja de simulación
     expect(destinos('¿Es Operador?')).toEqual([['Agente Operador'], ['¿Es Prueba?']])
     expect(destinos('¿Es Prueba?')).toEqual([['Agente Laundry VIP (lab)'], ['Agente Laundry VIP']])

@@ -271,6 +271,8 @@ export type Prospecto = {
 export type Conversacion = {
   id: string
   telefono: string
+  /** El último mensaje entrante parece un bot o contestador automático: no se le hacen seguimientos. */
+  respuesta_automatica: boolean
   contexto: Record<string, unknown>
   chatwoot_conversation_id: number | null
   ultima_interaccion: string

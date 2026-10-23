@@ -12,6 +12,7 @@ function conversacion(
   return {
     id: telefono,
     telefono,
+    respuesta_automatica: false,
     contexto,
     chatwoot_conversation_id: null,
     ultima_interaccion: creada,

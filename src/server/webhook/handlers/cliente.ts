@@ -3,8 +3,10 @@ import { horarioLegible } from '@/server/configuracion/horario'
 import { datosDelLocal } from '@/server/configuracion/local'
 import { obtener as obtenerConfig } from '@/server/configuracion/repo'
 import { cotizarPrendas, ErrorCotizacion } from '@/server/pricing/cotizar'
+import { marcarRespuestaAutomatica } from '@/server/prospectos/bitacora'
 import { prospectoPorTelefono } from '@/server/prospectos/repo'
 import type { Cliente, Conversacion } from '@/types/database'
+import { esRespuestaAutomatica } from '../automatico'
 import { type ResultadoUso, registrarUso, usoDeHoy } from '../cost-tracking'
 import { exito, fallo, type ResultadoAccion } from '../respuesta'
 import type { ParametrosDe } from '../schemas'
@@ -110,6 +112,8 @@ export async function verificarWhitelistOperador(
 ): Promise<
   ResultadoAccion<{
     es_operador: boolean
+    /** El mensaje parece de un bot o contestador: n8n no lo responde. */
+    automatico: boolean
     nombre: string | null
     nivel: string | null
     /** Si quien escribe es un negocio de la lista de prospección: el agente lo atiende sabiéndolo. */
@@ -144,8 +148,17 @@ export async function verificarWhitelistOperador(
       .eq('telefono', parametros.telefono)
   }
 
+  // Un bot o contestador no es una persona: no se contesta ni se le insiste. Al equipo nunca se le aplica.
+  const automatico = !data && !!parametros.texto && esRespuestaAutomatica(parametros.texto)
+  if (!data && parametros.texto) {
+    await marcarRespuestaAutomatica(parametros.telefono, automatico, parametros.texto).catch(
+      () => undefined,
+    )
+  }
+
   return exito({
     es_operador: data !== null,
+    automatico,
     nombre: data?.nombre ?? null,
     nivel: data?.nivel ?? null,
     prospecto: data ? null : prospecto,

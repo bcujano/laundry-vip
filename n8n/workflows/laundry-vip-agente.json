@@ -1065,7 +1065,7 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\"accion\":\"verificar_whitelist_operador\",\"parametros\":{\"telefono\":\"+{{ $('WhatsApp Inicio').first().json.contacts[0].wa_id }}\"}}",
+        "jsonBody": "={\"accion\":\"verificar_whitelist_operador\",\"parametros\":{\"telefono\":\"+{{ $('WhatsApp Inicio').first().json.contacts[0].wa_id }}\",\"texto\":{{ JSON.stringify((() => { try { return $('Combinar Textos').first().json.combined_text || '' } catch (e) { return '' } })()) }}}}",
         "options": {
           "timeout": 10000
         }
@@ -1672,7 +1672,10 @@
           "id": "9456EHfb8yxpZOmr",
           "name": "CRM Laundry VIP Webhook"
         }
-      }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
     },
     {
       "parameters": {
@@ -2078,7 +2081,10 @@
           "name": "CRM Laundry VIP Webhook"
         }
       },
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 4000
     },
     {
       "parameters": {
@@ -3502,6 +3508,38 @@
       },
       "onError": "continueRegularOutput",
       "notes": "Guarda el turno en la memoria si el agente no lo hizo (pasa cuando entra el modelo de respaldo)."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "es-automatico",
+              "leftValue": "={{ $json.data?.automatico === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "¿Es Respuesta Automática?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1750, 420],
+      "id": "6eb91c19-eb4f-4776-98ce-08a38b68a9bf",
+      "notes": "Un bot o contestador automático de otro negocio no se atiende ni se persigue (el CRM lo decide). Rama verdadera: fin."
     }
   ],
   "pinData": {},
@@ -4106,7 +4144,7 @@
       "main": [
         [
           {
-            "node": "¿Es Operador?",
+            "node": "¿Es Respuesta Automática?",
             "type": "main",
             "index": 0
           }
@@ -4956,6 +4994,18 @@
         [
           {
             "node": "Marcar Aviso Equipo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Respuesta Automática?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "¿Es Operador?",
             "type": "main",
             "index": 0
           }
