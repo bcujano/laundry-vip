@@ -19,6 +19,7 @@ const FUERTES: RegExp[] = [
   /elij[ae]\b.{0,20}(opcion|requerimiento|servicio)/,
   /(^|\n)\s*[1-9]\s*[.)-]+\s*\S[\s\S]*\n\s*[2-9]\s*[.)-]+\s*\S/, // menú: «1.- Alquiler  2.- Decoración»
   /fuera de(l)? horario|horario de atencion|en este momento no (estamos|podemos|me encuentro|nos encontramos)/,
+  /no (te |le |me )?(puedo|podemos) (contestar|atender|responder)|\b(deja|dejanos|dejenos|dejeme)\b.{0,12}\bmensaje/,
   /(te|le|les) responderemos (a la brevedad|en breve|pronto|lo antes posible)|nos pondremos en contacto/,
 ]
 
@@ -30,13 +31,19 @@ const DEBILES: RegExp[] = [
   /(envianos|envienos|dejanos|dejenos) (tu|su) (e-?mail|correo|nombre|numero)/,
   /en la brevedad posible|a la brevedad posible/,
   /tu evento en las mejores manos/,
+  /con quien tengo el gusto|nos especializamos en|desde que (centro|ciudad|empresa|institucion)/,
   /catalogos?:/,
   /linktr\.ee|bit\.ly/,
 ]
 
+/** Una persona que sospecha y pregunta («¿es una respuesta automática o de una persona?») no es un bot. */
+const PREGUNTA_SI_ES_BOT =
+  /\bo (de )?(una )?persona\b|\b(eres|es|hablo con|estoy hablando con) (un |una )?(bot|robot|maquina|humano|persona)\b/
+
 export function esRespuestaAutomatica(texto: string): boolean {
   const t = normalizar(texto)
   if (t.trim().length < 12) return false
+  if (PREGUNTA_SI_ES_BOT.test(t)) return false
   if (FUERTES.some((r) => r.test(t))) return true
   return DEBILES.filter((r) => r.test(t)).length >= 2
 }

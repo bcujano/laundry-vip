@@ -10,6 +10,8 @@ describe('detector de respuestas automáticas', () => {
     'Hola, este es un mensaje automático. Nuestro horario de atención es de 9 a 18.',
     'Para ventas digite la opción 1, para soporte la opción 2',
     'En este momento no podemos atenderle, le responderemos a la brevedad.',
+    'Hola en este momento no te puedo contestar déjame tu mensaje o comunicata al 2243091 que con gusto te ayudaremos.',
+    'Gracias por comunicarse con Apetito Medical.\n\nNos especializamos en ofrecer, a clínicas y hospitales, todo tipo de dietas.\n\nPor favor, ¿con quién tengo el gusto y desde qué centro hospitalario y ciudad nos escribe?',
   ])('detecta: %s', (t) => expect(esRespuestaAutomatica(t)).toBe(true))
 
   it.each([
@@ -21,5 +23,8 @@ describe('detector de respuestas automáticas', () => {
     'Bienvenido, claro que sí, ¿cuánto cuesta lavar 30 edredones?',
     'Hola, soy Marcela del catering. ¿Recogen en La Floresta?',
     '1 mantel y 2 delantales',
+    'Es una respuesta automática o de una persona.',
+    '¿Hablo con una persona o con un bot?',
+    'No entiendo la conveniencia de su servicio con nuestra línea de trabajo.',
   ])('no descarta a una persona: %s', (t) => expect(esRespuestaAutomatica(t)).toBe(false))
 })
